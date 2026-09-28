@@ -41,7 +41,22 @@
       "DeleteTitle": "Delete quest",
       "DeleteConfirm": "Delete <strong>{name}</strong>? Its subquests are kept.",
       "LimitedNote": "You know this quest exists, but not its details.",
-      "InProgressHint": "Show this quest above the players list for everyone who can see it"
+      "InProgressHint": "Show this quest above the players list for everyone who can see it",
+      "MoreActions": "More actions",
+      "PopOut": "Open in its own window",
+      "ManageAccess": "Manage player access",
+      "SetParent": "Set parent quest",
+      "Parent": "Parent quest",
+      "NoParent": "None (top level)",
+      "PartOf": "Part of",
+      "DropGiver": "Drop an actor, item, or journal entry",
+      "ClearGiver": "Unlink quest giver",
+      "Subquests": "Subquests",
+      "AddSubquest": "Add",
+      "Rewards": "Rewards",
+      "GMNotes": "GM notes",
+      "GMOnly": "GM only",
+      "GMNotesEmpty": "No GM notes yet. Add some in edit mode."
     },
     "Objective": {
       "Name": "Objective",
@@ -95,6 +110,28 @@
     },
     "Widget": {
       "Label": "In progress: {name}. Open in Quest Log."
+    },
+    "Section": {
+      "Empty": "Empty",
+      "None": "None",
+      "NoneYet": "None yet"
+    },
+    "Reward": {
+      "Name": "Reward",
+      "Placeholder": "Describe the reward",
+      "AddText": "Text reward",
+      "Delete": "Remove reward",
+      "Hidden": "Hidden from players",
+      "HiddenHint": "Hidden from players",
+      "DropHint": "Drop items or actors here",
+      "EmptyHint": "None yet · drop items here"
+    },
+    "Drop": {
+      "Rejected": {
+        "giver": "Quest givers can be actors, items, or journal entries.",
+        "rewards": "Rewards can be items or actors."
+      },
+      "CannotOpen": "You don't have permission to open that."
     }
   }
 }

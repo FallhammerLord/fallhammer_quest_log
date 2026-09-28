@@ -11,7 +11,7 @@
   <ul class="fhql-list-items">
     {{#each quests}}
     <li>
-      <button type="button" class="fhql-row fhql-status-{{status}} {{#if selected}}is-selected{{/if}}"
+      <button type="button" class="fhql-row fhql-status-{{status}} {{#if selected}}is-selected{{/if}}" style="--fhql-depth: {{depth}}"
               data-action="selectQuest" data-quest-id="{{id}}" {{#if selected}}aria-current="true"{{/if}}>
         <i class="fhql-status-icon {{statusIcon}}" inert></i>
         <span class="fhql-row-name" data-tooltip="{{name}}">{{name}}</span>

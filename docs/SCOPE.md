@@ -372,7 +372,7 @@ Test and document behavior with:
 
 1. **Skeleton.** Manifest, empty ApplicationV2 windows, theme tokens, theme setting. *Done, verified on v14.*
 2. **Data model.** Quest subtype, create/edit/delete, permissions. *Built 2026-09-28; plain-text readable page deferred to milestone 3.*
-3. **Quest Sheet.** Full editing UI: rich text editor, giver and reward drag-drop, GM notes page, plain-text readable page, subquests.
+3. **Quest Sheet.** Full editing UI: rich text editor, giver and reward drag-drop, GM notes page, plain-text readable page, subquests. *Built 2026-09-28 from the approved mockup, except the plain-text readable page (open decision).*
 4. **Quest Log, In Progress widget, entry points.** *Entry points and widget pulled forward, built 2026-09-28. GM toggles per entry point still to do.*
 5. **Tracker.**
 6. **Player workflows.** GM relay, accept, create, reward dragging.

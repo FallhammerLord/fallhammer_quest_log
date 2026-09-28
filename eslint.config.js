@@ -3,6 +3,7 @@ import globals from 'globals';
 
 export default [
    js.configs.recommended,
+   { rules: { 'no-unused-vars': ['error', { argsIgnorePattern: '^_' }] } },
    {
       files: ['src/**/*.js'],
       languageOptions: {
@@ -18,7 +19,8 @@ export default [
             CONST: 'readonly',
             Folder: 'readonly',
             JournalEntry: 'readonly',
-            JournalEntryPage: 'readonly'
+            JournalEntryPage: 'readonly',
+            fromUuid: 'readonly'
          }
       }
    },

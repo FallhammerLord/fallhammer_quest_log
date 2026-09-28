@@ -6,6 +6,7 @@ import { api } from './api.js';
 import { QuestData } from './data/QuestData.js';
 import { QuestPageSheet } from './sheets/QuestPageSheet.js';
 import { QuestLog } from './apps/QuestLog.js';
+import { QuestSheetApp } from './apps/QuestSheetApp.js';
 import { questPage } from './data/quests.js';
 import { registerEntryPoints } from './ui/entryPoints.js';
 import { refreshInProgressWidget } from './ui/InProgressWidget.js';
@@ -32,6 +33,7 @@ Hooks.on('renderPlayers', () => refreshInProgressWidget());
 const refresh = (options, userId) =>
 {
    QuestLog.instance.onQuestChanged(options, userId);
+   QuestSheetApp.refreshAll(options, userId);
    refreshInProgressWidget();
 };
 
@@ -39,7 +41,7 @@ for (const action of ['create', 'update', 'delete'])
 {
    Hooks.on(`${action}JournalEntryPage`, (page, ...rest) =>
    {
-      if (page.type === QUEST_TYPE) { refresh(rest.at(-2), rest.at(-1)); }
+      if (page.type === QUEST_TYPE || page.getFlag(MODULE_ID, 'gmNotes')) { refresh(rest.at(-2), rest.at(-1)); }
    });
    Hooks.on(`${action}JournalEntry`, (entry, ...rest) =>
    {

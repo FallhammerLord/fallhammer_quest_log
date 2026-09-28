@@ -16,7 +16,7 @@ export const fields = foundry.data.fields;
 
 /** Journal page sheet base and sheet registration. */
 export const { JournalEntryPageHandlebarsSheet } = foundry.applications.sheets.journal;
-export const { DocumentSheetConfig } = foundry.applications.apps;
+export const { DocumentSheetConfig, DocumentOwnershipConfig } = foundry.applications.apps;
 
 /** @returns {typeof foundry.applications.ux.TextEditor} The configured TextEditor class. */
 export function textEditor()

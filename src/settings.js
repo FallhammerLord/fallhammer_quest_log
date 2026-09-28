@@ -45,6 +45,13 @@ export function registerSettings()
       onChange: () => refreshInProgressWidget()
    });
 
+   game.settings.register(MODULE_ID, 'gmNotesOpen', {
+      scope: 'client',
+      config: false,
+      type: Boolean,
+      default: false
+   });
+
    const { LIMITED, OBSERVER } = CONST.DOCUMENT_OWNERSHIP_LEVELS;
    game.settings.register(MODULE_ID, 'defaultOwnership', {
       name: 'FHQL.Settings.DefaultOwnership.Name',

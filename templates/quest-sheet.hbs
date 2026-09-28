@@ -1,0 +1,283 @@
+<div class="fhql-sheet">
+{{#with sheet}}
+<div class="fhql-sheet-inner">
+
+  {{! ---------- Header ---------- }}
+  <header class="fhql-sheet-head">
+    {{#if editing}}
+    <div class="fhql-portrait fhql-portrait-drop" data-drop="giver">
+      {{#if giver.img}}<img src="{{giver.img}}" alt="">{{else}}<i class="fa-solid fa-user-plus" inert></i>{{/if}}
+      <span class="fhql-portrait-hint">{{localize "FHQL.Quest.DropGiver"}}</span>
+    </div>
+    {{else if giver.linked}}
+    <button type="button" class="fhql-portrait" data-action="openDocument" data-uuid="{{giver.uuid}}"
+            data-tooltip="{{giver.name}}" aria-label="{{giver.name}}">
+      {{#if giver.img}}<img src="{{giver.img}}" alt="">{{else}}<i class="fa-solid fa-user-shield" inert></i>{{/if}}
+    </button>
+    {{else}}
+    <div class="fhql-portrait">
+      {{#if giver.img}}<img src="{{giver.img}}" alt="">{{else}}<i class="fa-solid fa-scroll" inert></i>{{/if}}
+    </div>
+    {{/if}}
+
+    <div class="fhql-sheet-title">
+      {{#if editing}}
+      <input type="text" class="fhql-input fhql-title-input" name="name" data-field="name" value="{{name}}"
+             aria-label="{{localize 'FHQL.Quest.Name'}}">
+      {{else}}
+      <h2 class="fhql-heading">{{name}}</h2>
+      {{/if}}
+    </div>
+
+    {{#if gm}}
+    <details class="fhql-menu">
+      <summary class="fhql-icon-button" aria-label="{{localize 'FHQL.Quest.MoreActions'}}" data-tooltip="{{localize 'FHQL.Quest.MoreActions'}}">
+        <i class="fa-solid fa-ellipsis-vertical" inert></i></summary>
+      <div class="fhql-menu-pop" role="menu">
+        {{#unless @root.popout}}
+        <button type="button" role="menuitem" data-action="popOut"><i class="fa-solid fa-up-right-from-square" inert></i> {{localize "FHQL.Quest.PopOut"}}</button>
+        {{/unless}}
+        <button type="button" role="menuitem" data-action="manageAccess"><i class="fa-solid fa-user-lock" inert></i> {{localize "FHQL.Quest.ManageAccess"}}</button>
+        <button type="button" role="menuitem" data-action="setParent"><i class="fa-solid fa-diagram-project" inert></i> {{localize "FHQL.Quest.SetParent"}}</button>
+        <button type="button" role="menuitem" class="fhql-danger" data-action="deleteQuest"><i class="fa-solid fa-trash" inert></i> {{localize "FHQL.Quest.Delete"}}</button>
+      </div>
+    </details>
+    {{else}}
+    <span></span>
+    {{/if}}
+
+    <div class="fhql-sheet-meta">
+      <span class="fhql-status-badge fhql-status-{{status}}"><i class="{{statusIcon}}" inert></i> {{statusLabel}}</span>
+      {{#if inProgress}}<i class="fa-solid fa-star fhql-in-progress" data-tooltip="{{localize 'FHQL.Quest.InProgress'}}" aria-label="{{localize 'FHQL.Quest.InProgress'}}"></i>{{/if}}
+      {{#if giver.name}}<span class="fhql-sep">·</span><span>{{giver.name}}</span>{{/if}}
+      {{#if parent}}<span class="fhql-sep">·</span><span>{{localize "FHQL.Quest.PartOf"}}
+        <button type="button" class="fhql-link" data-action="showQuest" data-quest-id="{{parent.id}}">{{parent.name}}</button></span>{{/if}}
+    </div>
+
+    {{#if editing}}
+    <div class="fhql-sheet-actions">
+      <span class="fhql-muted"><i class="fa-solid fa-pen" inert></i> {{localize "FHQL.QuestLog.EditingNote"}}</span>
+      <button type="button" class="fhql-button fhql-primary fhql-push" data-action="finishEditing">
+        <i class="fa-solid fa-check" inert></i> {{localize "FHQL.QuestLog.Done"}}</button>
+    </div>
+    <div class="fhql-sheet-fields">
+      <label class="fhql-field">
+        <span>{{localize "FHQL.Quest.Status"}}</span>
+        <select class="fhql-input" name="status" data-field="status" {{#unless gm}}disabled{{/unless}}>
+          {{#each statusOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+        </select>
+      </label>
+      <label class="fhql-field fhql-grow">
+        <span>{{localize "FHQL.Quest.Giver"}}</span>
+        <span class="fhql-inline">
+          <input type="text" class="fhql-input" name="giver.name" data-field="giver.name" value="{{giver.name}}">
+          {{#if giver.linked}}<button type="button" class="fhql-icon-button" data-action="clearGiver"
+            data-tooltip="{{localize 'FHQL.Quest.ClearGiver'}}" aria-label="{{localize 'FHQL.Quest.ClearGiver'}}"><i class="fa-solid fa-link-slash" inert></i></button>{{/if}}
+        </span>
+      </label>
+      {{#if gm}}
+      <label class="fhql-check">
+        <input type="checkbox" name="inProgress" data-field="inProgress" {{#if inProgress}}checked{{/if}}>
+        <span>{{localize "FHQL.Quest.InProgress"}}</span>
+      </label>
+      {{/if}}
+    </div>
+    {{else if editable}}
+    <div class="fhql-sheet-actions">
+      {{#each statusActions}}
+      <button type="button" class="fhql-button fhql-status-{{status}}" data-action="setQuestStatus" data-status="{{status}}">
+        <i class="{{icon}} fhql-status-icon" inert></i> {{label}}</button>
+      {{/each}}
+      {{#if gm}}
+      <button type="button" class="fhql-button fhql-toggle {{#if inProgress}}is-on{{/if}}" data-action="toggleInProgress"
+              aria-pressed="{{#if inProgress}}true{{else}}false{{/if}}" data-tooltip="{{localize 'FHQL.Quest.InProgressHint'}}">
+        <i class="{{#if inProgress}}fa-solid{{else}}fa-regular{{/if}} fa-star" inert></i> {{localize "FHQL.Quest.InProgress"}}</button>
+      {{/if}}
+      <button type="button" class="fhql-button fhql-push" data-action="editQuest">
+        <i class="fa-solid fa-pen" inert></i> {{localize "FHQL.QuestLog.Edit"}}</button>
+    </div>
+    {{/if}}
+  </header>
+
+  {{#if showHiddenNotice}}
+  <p class="fhql-notice"><i class="fa-solid fa-eye-slash" inert></i> {{localize "FHQL.QuestLog.HiddenNotice"}}</p>
+  {{/if}}
+
+  {{#if full}}
+  <div class="fhql-sheet-body">
+    <div class="fhql-col">
+
+      {{! ---------- Description ---------- }}
+      {{#if editing}}
+      <section class="fhql-card fhql-area-description">
+        <h3 class="fhql-subheading">{{localize "FHQL.Quest.Description"}}</h3>
+        <prose-mirror name="description" data-field="description" toggled value="{{description}}">{{{descriptionHTML}}}</prose-mirror>
+      </section>
+      {{else if descriptionHTML}}
+      <section class="fhql-card fhql-area-description">
+        <h3 class="fhql-subheading">{{localize "FHQL.Quest.Description"}}</h3>
+        <div class="fhql-prose">{{{descriptionHTML}}}</div>
+      </section>
+      {{/if}}
+
+      {{! ---------- Player notes ---------- }}
+      {{#if editing}}
+      <section class="fhql-card fhql-area-notes">
+        <h3 class="fhql-subheading">{{localize "FHQL.Quest.PlayerNotes"}}</h3>
+        <prose-mirror name="playerNotes" data-field="playerNotes" toggled value="{{playerNotes}}">{{{playerNotesHTML}}}</prose-mirror>
+      </section>
+      {{else if playerNotesHTML}}
+      <section class="fhql-card fhql-area-notes">
+        <h3 class="fhql-subheading">{{localize "FHQL.Quest.PlayerNotes"}}</h3>
+        <div class="fhql-prose">{{{playerNotesHTML}}}</div>
+      </section>
+      {{else if editable}}
+      <section class="fhql-card fhql-compact fhql-area-notes">
+        <h3 class="fhql-subheading">{{localize "FHQL.Quest.PlayerNotes"}}<span class="fhql-empty-note">{{localize "FHQL.Section.Empty"}}</span></h3>
+      </section>
+      {{/if}}
+    </div>
+
+    <div class="fhql-col">
+
+      {{! ---------- Objectives ---------- }}
+      {{#if showObjectives}}
+      <section class="fhql-card fhql-area-objectives">
+        <h3 class="fhql-subheading">{{localize "FHQL.Quest.Objectives"}}
+          <span class="fhql-count">{{doneCount}}/{{objectives.length}}</span></h3>
+        <ul class="fhql-objectives">
+          {{#each objectives}}
+          <li class="is-{{state}}" data-objective-id="{{id}}">
+            {{#if ../editable}}
+            <button type="button" class="fhql-icon-button" data-action="cycleObjective" data-tooltip="{{stateLabel}}"
+                    aria-label="{{stateLabel}}"><i class="fhql-state-icon {{icon}}" inert></i></button>
+            {{else}}
+            <i class="fhql-state-icon {{icon}}" aria-label="{{stateLabel}}"></i>
+            {{/if}}
+            {{#if ../editing}}
+            <input type="text" class="fhql-input" name="objective-{{id}}" data-field="objective.name" value="{{name}}"
+                   placeholder="{{localize 'FHQL.Objective.Placeholder'}}" aria-label="{{localize 'FHQL.Objective.Name'}}">
+            {{#if ../gm}}
+            <label class="fhql-check" data-tooltip="{{localize 'FHQL.Objective.HiddenHint'}}">
+              <input type="checkbox" data-field="objective.hidden" {{#if hidden}}checked{{/if}}>
+              <i class="fa-solid fa-eye-slash" inert></i><span class="sr-only">{{localize "FHQL.Objective.Hidden"}}</span></label>
+            {{/if}}
+            <button type="button" class="fhql-icon-button" data-action="deleteObjective"
+                    data-tooltip="{{localize 'FHQL.Objective.Delete'}}" aria-label="{{localize 'FHQL.Objective.Delete'}}">
+              <i class="fa-solid fa-trash" inert></i></button>
+            {{else}}
+            <span>{{name}}</span>
+            {{#if hidden}}<i class="fa-solid fa-eye-slash fhql-muted" data-tooltip="{{localize 'FHQL.Objective.Hidden'}}" aria-label="{{localize 'FHQL.Objective.Hidden'}}"></i>{{/if}}
+            {{/if}}
+          </li>
+          {{/each}}
+        </ul>
+        {{#if editing}}
+        <button type="button" class="fhql-button fhql-add" data-action="addObjective">
+          <i class="fa-solid fa-plus" inert></i> {{localize "FHQL.Objective.Add"}}</button>
+        {{/if}}
+      </section>
+      {{else if editable}}
+      <section class="fhql-card fhql-compact fhql-area-objectives">
+        <h3 class="fhql-subheading">{{localize "FHQL.Quest.Objectives"}}<span class="fhql-empty-note">{{localize "FHQL.Section.NoneYet"}}</span></h3>
+      </section>
+      {{/if}}
+
+      {{! ---------- Subquests ---------- }}
+      {{#if subquests.length}}
+      <section class="fhql-card fhql-area-subquests">
+        <h3 class="fhql-subheading">{{localize "FHQL.Quest.Subquests"}}
+          <span class="fhql-count">{{subquests.length}}</span>
+          {{#if gm}}<button type="button" class="fhql-button fhql-small" data-action="addSubquest"><i class="fa-solid fa-plus" inert></i> {{localize "FHQL.Quest.AddSubquest"}}</button>{{/if}}
+        </h3>
+        <ul class="fhql-rows">
+          {{#each subquests}}
+          <li class="fhql-status-{{status}}">
+            <button type="button" class="fhql-row-link" data-action="showQuest" data-quest-id="{{id}}">
+              <span class="fhql-thumb"><i class="{{icon}} fhql-status-icon" inert></i></span>
+              <span class="fhql-row-name">{{name}}</span>
+              <span class="fhql-row-status">{{label}}</span>
+            </button>
+          </li>
+          {{/each}}
+        </ul>
+      </section>
+      {{else if gm}}
+      <section class="fhql-card fhql-compact fhql-area-subquests">
+        <h3 class="fhql-subheading">{{localize "FHQL.Quest.Subquests"}}<span class="fhql-empty-note">{{localize "FHQL.Section.None"}}</span>
+          <button type="button" class="fhql-button fhql-small" data-action="addSubquest"><i class="fa-solid fa-plus" inert></i> {{localize "FHQL.Quest.AddSubquest"}}</button></h3>
+      </section>
+      {{/if}}
+
+      {{! ---------- Rewards ---------- }}
+      {{#if showRewards}}
+      <section class="fhql-card fhql-area-rewards" {{#if editable}}data-drop="rewards"{{/if}}>
+        <h3 class="fhql-subheading">{{localize "FHQL.Quest.Rewards"}}<span class="fhql-count">{{rewards.length}}</span></h3>
+        <ul class="fhql-rows">
+          {{#each rewards}}
+          <li data-reward-id="{{id}}">
+            <span class="fhql-thumb">{{#if img}}<img src="{{img}}" alt="">{{else}}<i class="{{icon}}" inert></i>{{/if}}</span>
+            {{#if (lookup ../textRewardEditing type)}}
+            <input type="text" class="fhql-input" name="reward-{{id}}" data-field="reward.name" value="{{name}}"
+                   placeholder="{{localize 'FHQL.Reward.Placeholder'}}" aria-label="{{localize 'FHQL.Reward.Name'}}">
+            {{else if linked}}
+            <button type="button" class="fhql-link fhql-row-name" data-action="openDocument" data-uuid="{{uuid}}">{{name}}</button>
+            {{else}}
+            <span class="fhql-row-name">{{name}}</span>
+            {{/if}}
+            {{#if ../editing}}
+            {{#if ../gm}}
+            <label class="fhql-check" data-tooltip="{{localize 'FHQL.Reward.HiddenHint'}}">
+              <input type="checkbox" data-field="reward.hidden" {{#if hidden}}checked{{/if}}>
+              <i class="fa-solid fa-eye-slash" inert></i><span class="sr-only">{{localize "FHQL.Reward.Hidden"}}</span></label>
+            {{/if}}
+            <button type="button" class="fhql-icon-button" data-action="deleteReward"
+                    data-tooltip="{{localize 'FHQL.Reward.Delete'}}" aria-label="{{localize 'FHQL.Reward.Delete'}}">
+              <i class="fa-solid fa-xmark" inert></i></button>
+            {{else if hidden}}
+            <i class="fa-solid fa-eye-slash fhql-muted" data-tooltip="{{localize 'FHQL.Reward.Hidden'}}" aria-label="{{localize 'FHQL.Reward.Hidden'}}"></i>
+            {{/if}}
+          </li>
+          {{/each}}
+        </ul>
+        {{#if editable}}
+        <div class="fhql-drop-hint">
+          <i class="fa-solid fa-hand-pointer" inert></i> {{localize "FHQL.Reward.DropHint"}}
+          {{#if editing}}<button type="button" class="fhql-button fhql-small" data-action="addTextReward">
+            <i class="fa-solid fa-plus" inert></i> {{localize "FHQL.Reward.AddText"}}</button>{{/if}}
+        </div>
+        {{/if}}
+      </section>
+      {{else if editable}}
+      <section class="fhql-card fhql-compact fhql-area-rewards" data-drop="rewards">
+        <h3 class="fhql-subheading">{{localize "FHQL.Quest.Rewards"}}<span class="fhql-empty-note">{{localize "FHQL.Reward.EmptyHint"}}</span></h3>
+      </section>
+      {{/if}}
+    </div>
+
+    {{! ---------- GM notes ---------- }}
+    {{#if gmNotes}}
+    <details class="fhql-card fhql-gm-notes" {{#if gmNotes.open}}open{{/if}}>
+      <summary>
+        <i class="fa-solid fa-chevron-right fhql-chevron" inert></i>
+        <i class="fa-solid fa-user-secret" inert></i> {{localize "FHQL.Quest.GMNotes"}}
+        <span class="fhql-gm-tag">{{localize "FHQL.Quest.GMOnly"}}</span>
+      </summary>
+      {{#if editing}}
+      <prose-mirror name="gmNotes" data-field="gmNotes" toggled value="{{gmNotes.raw}}">{{{gmNotes.html}}}</prose-mirror>
+      {{else if gmNotes.html}}
+      <div class="fhql-prose">{{{gmNotes.html}}}</div>
+      {{else}}
+      <p class="fhql-muted">{{localize "FHQL.Quest.GMNotesEmpty"}}</p>
+      {{/if}}
+    </details>
+    {{/if}}
+  </div>
+  {{else}}
+  <p class="fhql-muted">{{localize "FHQL.Quest.LimitedNote"}}</p>
+  {{/if}}
+</div>
+{{else}}
+<p class="fhql-muted fhql-none">{{localize "FHQL.QuestLog.NoneSelected"}}</p>
+{{/with}}
+</div>

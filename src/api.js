@@ -1,4 +1,5 @@
 import { QuestLog } from './apps/QuestLog.js';
+import { QuestSheetApp } from './apps/QuestSheetApp.js';
 import { debugInProgressWidget } from './ui/InProgressWidget.js';
 
 /**
@@ -20,5 +21,16 @@ export function openQuestLog(questId)
    return log.render({ force: true });
 }
 
+/**
+ * Opens a quest in its own window.
+ *
+ * @param {string} questId - JournalEntry ID.
+ * @returns {QuestSheetApp|undefined} The window.
+ */
+export function openQuestSheet(questId)
+{
+   return QuestSheetApp.open(questId);
+}
+
 /** Public API, exposed as `game.modules.get('fhql').api`. Usable from macros. */
-export const api = Object.freeze({ openQuestLog, debugWidget: debugInProgressWidget });
+export const api = Object.freeze({ openQuestLog, openQuestSheet, debugWidget: debugInProgressWidget });
