@@ -34,6 +34,7 @@ export class QuestLog extends HandlebarsApp
          editQuest: QuestLog.#onEditQuest,
          finishEditing: QuestLog.#onFinishEditing,
          setQuestStatus: QuestLog.#onSetQuestStatus,
+         toggleInProgress: QuestLog.#onToggleInProgress,
          createQuest: QuestLog.#onCreateQuest,
          createSamples: QuestLog.#onCreateSamples,
          deleteQuest: QuestLog.#onDeleteQuest,
@@ -270,6 +271,13 @@ export class QuestLog extends HandlebarsApp
    {
       const entry = getQuestEntry(this.#selectedId);
       if (entry) { await setStatus(entry, target.dataset.status); }
+   }
+
+   /** @this {QuestLog} */
+   static async #onToggleInProgress()
+   {
+      const entry = getQuestEntry(this.#selectedId);
+      if (entry) { await updateQuest(entry, { 'system.inProgress': !questPage(entry).system.inProgress }); }
    }
 
    /** @this {QuestLog} */

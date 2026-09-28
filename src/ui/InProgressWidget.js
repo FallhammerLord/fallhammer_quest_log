@@ -1,10 +1,13 @@
-import { playersElement } from '../compat.js';
+import { playerRowElement, playersElement } from '../compat.js';
 import { MODULE_ID } from '../constants.js';
 import { openQuestLog } from '../api.js';
 import { questAccess, questPage, visibleQuests } from '../data/quests.js';
 import { applyTheme } from '../theme.js';
 
 const WIDGET_ID = 'fhql-in-progress';
+
+/** Keeps the widget sized to the players list as that list resizes or expands. */
+let resizeObserver;
 
 /**
  * The In Progress widget above Foundry's players list. See docs/SCOPE.md 7.2.
@@ -40,6 +43,33 @@ export function refreshInProgressWidget()
 
    applyTheme(widget);
    widget.innerHTML = renderWidget(quests);
+   matchPlayersSize(widget, players);
+
+   if (!resizeObserver)
+   {
+      resizeObserver = new ResizeObserver(() =>
+      {
+         const current = document.getElementById(WIDGET_ID);
+         if (current) { matchPlayersSize(current, playersElement()); }
+      });
+   }
+   resizeObserver.disconnect();
+   resizeObserver.observe(players);
+}
+
+/**
+ * Sets the widget's width to the players list and its minimum height to one player row.
+ *
+ * @param {HTMLElement} widget - Our widget.
+ * @param {HTMLElement} players - Core's players list.
+ */
+function matchPlayersSize(widget, players)
+{
+   const width = players?.getBoundingClientRect().width;
+   if (width) { widget.style.width = `${width}px`; }
+
+   const rowHeight = playerRowElement(players)?.getBoundingClientRect().height;
+   if (rowHeight) { widget.style.setProperty('--fhql-widget-height', `${rowHeight}px`); }
 }
 
 /**

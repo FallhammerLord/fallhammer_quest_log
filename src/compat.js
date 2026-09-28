@@ -60,5 +60,14 @@ export function playersElement()
    return ui.players?.element ?? document.getElementById('players');
 }
 
+/**
+ * @param {HTMLElement} players - The players list element.
+ * @returns {HTMLElement|null} One player row, used to match the widget's height.
+ */
+export function playerRowElement(players)
+{
+   return players?.querySelector('li.player, [data-user-id]') ?? null;
+}
+
 /** Name of the scene control group our button joins. */
 export const SCENE_CONTROL_GROUP = 'tokens';

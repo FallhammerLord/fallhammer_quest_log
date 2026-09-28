@@ -95,6 +95,12 @@
         <i class="{{icon}} fhql-status-icon" inert></i> {{label}}
       </button>
       {{/each}}
+      {{#if gm}}
+      <button type="button" class="fhql-button fhql-toggle {{#if inProgress}}is-on{{/if}}" data-action="toggleInProgress"
+              aria-pressed="{{#if inProgress}}true{{else}}false{{/if}}" data-tooltip="{{localize 'FHQL.Quest.InProgressHint'}}">
+        <i class="{{#if inProgress}}fa-solid{{else}}fa-regular{{/if}} fa-star" inert></i> {{localize "FHQL.Quest.InProgress"}}
+      </button>
+      {{/if}}
     </div>
     <button type="button" class="fhql-button" data-action="editQuest">
       <i class="fa-solid fa-pen" inert></i> {{localize "FHQL.QuestLog.Edit"}}

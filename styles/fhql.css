@@ -325,6 +325,8 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
 }
 .fhql-app .fhql-quick-actions { display: flex; flex-wrap: wrap; gap: 0.4em; }
 .fhql-app .fhql-quick-actions .fhql-status-icon { color: var(--fhql-status); }
+.fhql-app .fhql-toggle.is-on { border-color: var(--fhql-accent); }
+.fhql-app .fhql-toggle.is-on i { color: var(--fhql-accent); }
 .fhql-app .fhql-button.fhql-primary {
   color: var(--fhql-accent-ink);
   background: var(--fhql-accent);
@@ -339,15 +341,19 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
 
 /* ---------- In Progress widget ---------- */
 .fhql-widget {
-  width: fit-content;
-  max-width: 300px;
+  box-sizing: border-box;
+  width: 200px;
   margin-block-end: 6px;
   pointer-events: auto;
 }
 .fhql-widget .fhql-widget-button {
+  box-sizing: border-box;
   display: grid;
+  align-content: center;
   gap: 2px;
   width: 100%;
+  min-height: var(--fhql-widget-height, 2.8em);
+  margin: 0;
   padding: 0.35em 0.7em;
   text-align: start;
   color: var(--fhql-ink);

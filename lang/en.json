@@ -40,7 +40,8 @@
       "Delete": "Delete quest",
       "DeleteTitle": "Delete quest",
       "DeleteConfirm": "Delete <strong>{name}</strong>? Its subquests are kept.",
-      "LimitedNote": "You know this quest exists, but not its details."
+      "LimitedNote": "You know this quest exists, but not its details.",
+      "InProgressHint": "Show this quest above the players list for everyone who can see it"
     },
     "Objective": {
       "Name": "Objective",
