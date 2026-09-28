@@ -1,0 +1,236 @@
+/*
+ * Fallhammer Quest Log styles.
+ * Themes set tokens only. Components below use tokens only, never raw colors. See docs/SCOPE.md section 6.
+ */
+
+/* ---------- Tokens: Light (also the default) ---------- */
+.fhql-app {
+  --fhql-surface: #efe6d2;
+  --fhql-surface-raised: #f8f2e4;
+  --fhql-surface-sunken: #e4d8bf;
+  --fhql-ink: #1f1a14;
+  --fhql-ink-muted: #5a4f40;
+  --fhql-rule: #b9a888;
+  --fhql-hover: rgb(120 80 20 / 0.12);
+  --fhql-accent: #7a2e1c;
+  --fhql-accent-ink: #fff8ec;
+  --fhql-status-hidden: #5f564d;
+  --fhql-status-available: #6b4e0e;
+  --fhql-status-active: #1f5f9e;
+  --fhql-status-completed: #2e6b2e;
+  --fhql-status-failed: #9b2020;
+  --fhql-font-body: var(--font-body, "Signika", sans-serif);
+  --fhql-font-heading: var(--font-body, "Signika", sans-serif);
+  --fhql-radius: 4px;
+  --fhql-chamfer: 0px;
+  --fhql-glow: none;
+  --fhql-texture: url("../../../ui/parchment.jpg");
+  --fhql-texture-blend: normal;
+}
+
+/* ---------- Tokens: Dark (candlelit parchment) ---------- */
+.fhql-app.fhql-theme-dark,
+.fhql-app.fhql-theme-auto.theme-dark,
+body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
+  --fhql-surface: #1e1812;
+  --fhql-surface-raised: #2a221a;
+  --fhql-surface-sunken: #15110c;
+  --fhql-ink: #eadfc8;
+  --fhql-ink-muted: #b3a58a;
+  --fhql-rule: #4a3d2c;
+  --fhql-hover: rgb(255 200 120 / 0.08);
+  --fhql-accent: #e0a054;
+  --fhql-accent-ink: #1e1812;
+  --fhql-status-hidden: #9a8f80;
+  --fhql-status-available: #e0c070;
+  --fhql-status-active: #7fb2e5;
+  --fhql-status-completed: #8cc98c;
+  --fhql-status-failed: #e38a7a;
+  --fhql-texture-blend: multiply;
+}
+
+/* ---------- Tokens: Sci-fi ---------- */
+.fhql-app.fhql-theme-scifi {
+  --fhql-surface: #0b1218;
+  --fhql-surface-raised: #111c25;
+  --fhql-surface-sunken: #070c10;
+  --fhql-ink: #d6f1ff;
+  --fhql-ink-muted: #86a9bb;
+  --fhql-rule: #1f4a5e;
+  --fhql-hover: rgb(0 229 255 / 0.08);
+  --fhql-accent: #34e4ff;
+  --fhql-accent-ink: #04161c;
+  --fhql-status-hidden: #7a909e;
+  --fhql-status-available: #ffd166;
+  --fhql-status-active: #34e4ff;
+  --fhql-status-completed: #5cf2a4;
+  --fhql-status-failed: #ff5c7a;
+  --fhql-font-heading: ui-monospace, "Cascadia Mono", "Consolas", monospace;
+  --fhql-radius: 0px;
+  --fhql-chamfer: 10px;
+  --fhql-glow: 0 0 6px rgb(52 228 255 / 0.35);
+  --fhql-texture: none;
+}
+
+/* ---------- Window ---------- */
+.fhql-app {
+  container-type: inline-size;
+  container-name: fhql;
+}
+
+.fhql-app .window-content {
+  display: grid;
+  grid-template-columns: minmax(200px, 1fr) 2fr;
+  gap: 0;
+  padding: 0;
+  color: var(--fhql-ink);
+  font-family: var(--fhql-font-body);
+  background-color: var(--fhql-surface);
+  background-image: var(--fhql-texture);
+  background-blend-mode: var(--fhql-texture-blend);
+}
+
+/* Narrow layout: stack list above detail. */
+@container fhql (max-width: 520px) {
+  .fhql-app .window-content {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(120px, 35%) 1fr;
+  }
+  .fhql-list {
+    border-inline-end: none;
+    border-block-end: 1px solid var(--fhql-rule);
+  }
+}
+
+/* ---------- Shared ---------- */
+.fhql-app .fhql-muted { color: var(--fhql-ink-muted); }
+
+.fhql-app .fhql-heading,
+.fhql-app .fhql-subheading {
+  margin: 0;
+  border: none;
+  color: var(--fhql-ink);
+  font-family: var(--fhql-font-heading);
+}
+.fhql-app .fhql-heading { font-size: 1.4em; }
+.fhql-app .fhql-subheading {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.1em;
+  margin-block-end: 0.4em;
+}
+
+.fhql-app .fhql-card {
+  margin-block-start: 0.75em;
+  padding: 0.6em 0.8em;
+  background: var(--fhql-surface-raised);
+  border: 1px solid var(--fhql-rule);
+  border-radius: var(--fhql-radius);
+  box-shadow: var(--fhql-glow);
+  clip-path: polygon(
+    var(--fhql-chamfer) 0, 100% 0,
+    100% calc(100% - var(--fhql-chamfer)), calc(100% - var(--fhql-chamfer)) 100%,
+    0 100%, 0 var(--fhql-chamfer)
+  );
+}
+
+/* Status colors: every status element also shows an icon and a label. */
+.fhql-app .fhql-status-hidden { --fhql-status: var(--fhql-status-hidden); }
+.fhql-app .fhql-status-available { --fhql-status: var(--fhql-status-available); }
+.fhql-app .fhql-status-active { --fhql-status: var(--fhql-status-active); }
+.fhql-app .fhql-status-completed { --fhql-status: var(--fhql-status-completed); }
+.fhql-app .fhql-status-failed { --fhql-status: var(--fhql-status-failed); }
+
+/* ---------- List ---------- */
+.fhql-list {
+  overflow-y: auto;
+  padding: 0.5em;
+  background: var(--fhql-surface-sunken);
+  border-inline-end: 1px solid var(--fhql-rule);
+}
+
+.fhql-app .fhql-preview-note {
+  margin: 0 0 0.5em;
+  font-size: 0.85em;
+  color: var(--fhql-ink-muted);
+}
+
+.fhql-list-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.fhql-app .fhql-row {
+  display: grid;
+  grid-template-columns: 1.4em minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.4em;
+  width: 100%;
+  min-height: 2.2em;
+  padding: 0.3em 0.5em;
+  text-align: start;
+  color: var(--fhql-ink);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--fhql-radius);
+  box-shadow: none;
+  font-family: var(--fhql-font-body);
+  cursor: pointer;
+}
+.fhql-app .fhql-row:hover { background: var(--fhql-hover); }
+.fhql-app .fhql-row.is-selected {
+  background: var(--fhql-surface-raised);
+  border-color: var(--fhql-rule);
+  box-shadow: inset 3px 0 0 var(--fhql-accent), var(--fhql-glow);
+}
+.fhql-app .fhql-row:focus-visible {
+  outline: 2px solid var(--fhql-accent);
+  outline-offset: -2px;
+}
+
+.fhql-app .fhql-status-icon { color: var(--fhql-status); text-align: center; }
+.fhql-app .fhql-row-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.fhql-app .fhql-row-status { font-size: 0.8em; color: var(--fhql-ink-muted); }
+
+/* ---------- Detail ---------- */
+.fhql-detail {
+  overflow-y: auto;
+  padding: 0.8em 1em;
+}
+
+.fhql-app .fhql-detail-header { display: grid; gap: 0.25em; }
+.fhql-app .fhql-detail-header p { margin: 0; }
+
+.fhql-app .fhql-status-badge {
+  justify-self: start;
+  padding: 0.1em 0.6em;
+  color: var(--fhql-status);
+  border: 1px solid var(--fhql-status);
+  border-radius: var(--fhql-radius);
+  font-size: 0.85em;
+}
+
+.fhql-objectives {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.3em;
+}
+.fhql-objectives li { display: flex; gap: 0.5em; align-items: baseline; }
+.fhql-objectives li.is-done { color: var(--fhql-ink-muted); }
+.fhql-objectives li.is-done span { text-decoration: line-through; }
+.fhql-objectives li.is-done i { color: var(--fhql-status-completed); }
+.fhql-objectives li.is-failed i { color: var(--fhql-status-failed); }
+
+/* ---------- Motion ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .fhql-app .fhql-row { transition: background-color 120ms ease; }
+}

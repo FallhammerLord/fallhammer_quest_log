@@ -102,12 +102,12 @@ A quest log module for Foundry VTT that:
 
 ### 5.1 Target versions
 
-- Minimum: v13. Verified: v14. **[decide]** (v12 fixed the invalid-embedded-parent bug, so v13+ is safe for page subtypes)
+- Minimum: v14. Verified: v14. Decided 2026-09-28.
 - Test against each new major's prerelease builds.
 
 ### 5.2 Data storage
 
-Recommended: each quest is a JournalEntry holding one page of a custom module subtype (`fallhammer-quest-log.quest`), declared in `module.json` under `documentTypes` and backed by a `TypeDataModel` **[verify v14 syntax]**.
+Recommended: each quest is a JournalEntry holding one page of a custom module subtype (`fhql.quest`), declared in `module.json` under `documentTypes` and backed by a `TypeDataModel` **[verify v14 syntax]**.
 
 Why:
 - The schema is validated by Foundry itself.
@@ -187,26 +187,27 @@ Always GM only, whatever the ownership:
 
 ### 6.1 Structure
 
-- Every window root gets `.fql-app` plus a theme class: `.fql-theme-light`, `.fql-theme-dark`, `.fql-theme-scifi`.
-- "Follow Foundry" maps to light or dark based on core's `.theme-light` / `.theme-dark`.
+- Every window root gets `.fhql-app` plus a theme class: `.fhql-theme-auto`, `.fhql-theme-light`, `.fhql-theme-dark`, `.fhql-theme-scifi`.
+- `auto` (Follow Foundry) maps to light or dark from core's `.theme-light` / `.theme-dark` classes, in CSS alone.
+- Prefix is `fhql-`, never `fql-`. FQL already uses `.fql-app` and `--fql-*` variables, and both modules run side by side during migration.
 - Styling uses CSS custom properties only. Component CSS never contains raw color values.
 
 ### 6.2 Tokens (starting set)
 
 | Token | Role |
 |---|---|
-| `--fql-surface` | Window background |
-| `--fql-surface-raised` | Rows, cards |
-| `--fql-surface-sunken` | Inputs, drop zones |
-| `--fql-ink` | Body text |
-| `--fql-ink-muted` | Secondary text, hidden items |
-| `--fql-rule` | Dividers, borders |
-| `--fql-hover` | Hover overlay |
-| `--fql-accent` | Links, focus, active tab |
-| `--fql-status-active` / `-completed` / `-failed` / `-hidden` | Status colors |
-| `--fql-font-body` / `--fql-font-heading` | Typefaces |
-| `--fql-radius` | Corner shape |
-| `--fql-texture` | Optional background image |
+| `--fhql-surface` | Window background |
+| `--fhql-surface-raised` | Rows, cards |
+| `--fhql-surface-sunken` | Inputs, drop zones |
+| `--fhql-ink` | Body text |
+| `--fhql-ink-muted` | Secondary text, hidden items |
+| `--fhql-rule` | Dividers, borders |
+| `--fhql-hover` | Hover overlay |
+| `--fhql-accent` | Links, focus, active tab |
+| `--fhql-status-active` / `-completed` / `-failed` / `-hidden` | Status colors |
+| `--fhql-font-body` / `--fhql-font-heading` | Typefaces |
+| `--fhql-radius` | Corner shape |
+| `--fhql-texture` | Optional background image |
 
 ### 6.3 Themes
 
@@ -376,12 +377,16 @@ Test and document behavior with:
 10. **Docs and release prep.** Checked against section 10.
 11. **v1.0 release.**
 
-## 12. Open decisions
+## 12. Decided
 
-- Minimum Foundry version (v13 or v14).
-- ~~Data storage~~: decided, page subtype plus plain-text page (5.2). Pending the live test.
+- Module ID `fhql`, display name "Fallhammer Quest Log", CSS prefix `fhql-`.
+- Minimum and verified Foundry version: v14.
+- Data storage: page subtype `fhql.quest` plus a plain-text page (5.2). Pending the live test.
+- License: MIT.
+
+## 13. Open decisions
+
 - Confirm the permission map (5.6).
-- Module ID and display name.
 - Sci-fi fonts and whether to bundle them.
 - Whether the `QuestAPI` shim ships in v1.0 or later.
 - In Progress: allow several quests (recommended) or exactly one.

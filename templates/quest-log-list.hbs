@@ -1,0 +1,17 @@
+<nav class="fhql-list" aria-label="{{localize 'FHQL.QuestLog.ListLabel'}}">
+  {{#if preview}}
+  <p class="fhql-preview-note"><i class="fa-solid fa-flask" inert></i> {{localize "FHQL.QuestLog.PreviewNote"}}</p>
+  {{/if}}
+  <ul class="fhql-list-items">
+    {{#each quests}}
+    <li>
+      <button type="button" class="fhql-row fhql-status-{{status}} {{#if selected}}is-selected{{/if}}"
+              data-action="selectQuest" data-quest-id="{{id}}" {{#if selected}}aria-current="true"{{/if}}>
+        <i class="fhql-status-icon {{statusIcon}}" inert></i>
+        <span class="fhql-row-name" data-tooltip="{{name}}">{{name}}</span>
+        <span class="fhql-row-status">{{statusLabel}}</span>
+      </button>
+    </li>
+    {{/each}}
+  </ul>
+</nav>

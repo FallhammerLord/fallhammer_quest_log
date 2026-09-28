@@ -1,0 +1,34 @@
+{
+  "FHQL": {
+    "QuestLog": {
+      "Title": "Quest Log",
+      "ListLabel": "Quests",
+      "PreviewNote": "Preview data. Real quests arrive with the data model.",
+      "NoneSelected": "Select a quest."
+    },
+    "Quest": {
+      "Giver": "Quest giver",
+      "Objectives": "Objectives"
+    },
+    "Status": {
+      "hidden": "Hidden",
+      "available": "Available",
+      "active": "Active",
+      "completed": "Completed",
+      "failed": "Failed"
+    },
+    "Settings": {
+      "Theme": {
+        "Name": "Quest Log theme",
+        "Hint": "Applies to your client only. Follow Foundry matches your core light or dark interface setting.",
+        "Auto": "Follow Foundry",
+        "Light": "Light",
+        "Dark": "Dark",
+        "Scifi": "Sci-fi"
+      }
+    },
+    "Keybindings": {
+      "OpenQuestLog": "Open Quest Log"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "fhql",
+  "private": true,
+  "type": "module",
+  "description": "Dev tooling only. The module itself has no build step.",
+  "scripts": {
+    "lint": "eslint src tools",
+    "contrast": "node tools/check-contrast.mjs",
+    "check": "npm run lint && npm run contrast"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "eslint": "^9.0.0",
+    "globals": "^15.0.0"
+  }
+}

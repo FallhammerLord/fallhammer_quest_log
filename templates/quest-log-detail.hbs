@@ -1,0 +1,36 @@
+<article class="fhql-detail">
+  {{#if selected}}
+  <header class="fhql-detail-header">
+    <h2 class="fhql-heading">{{selected.name}}</h2>
+    <p class="fhql-status-badge fhql-status-{{selected.status}}">
+      <i class="{{selected.statusIcon}}" inert></i> {{selected.statusLabel}}
+    </p>
+    <p class="fhql-muted">{{localize "FHQL.Quest.Giver"}}: {{selected.giver}}</p>
+  </header>
+
+  <section class="fhql-card">
+    <p>{{selected.description}}</p>
+  </section>
+
+  {{#if selected.objectives.length}}
+  <section class="fhql-card">
+    <h3 class="fhql-subheading">
+      {{localize "FHQL.Quest.Objectives"}}
+      <span class="fhql-muted">{{selected.doneCount}}/{{selected.objectives.length}}</span>
+    </h3>
+    <ul class="fhql-objectives">
+      {{#each selected.objectives}}
+      <li class="{{#if done}}is-done{{/if}} {{#if failed}}is-failed{{/if}}">
+        {{#if done}}<i class="fa-solid fa-square-check" inert></i>
+        {{else if failed}}<i class="fa-solid fa-square-xmark" inert></i>
+        {{else}}<i class="fa-regular fa-square" inert></i>{{/if}}
+        <span>{{name}}</span>
+      </li>
+      {{/each}}
+    </ul>
+  </section>
+  {{/if}}
+  {{else}}
+  <p class="fhql-muted">{{localize "FHQL.QuestLog.NoneSelected"}}</p>
+  {{/if}}
+</article>
