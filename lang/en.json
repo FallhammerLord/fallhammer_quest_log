@@ -1,14 +1,43 @@
 {
+  "TYPES": {
+    "JournalEntryPage": {
+      "fhql.quest": "Quest"
+    }
+  },
   "FHQL": {
+    "Folder": "Quests",
     "QuestLog": {
       "Title": "Quest Log",
       "ListLabel": "Quests",
-      "PreviewNote": "Preview data. Real quests arrive with the data model.",
+      "NewQuest": "New quest",
+      "Empty": "No quests yet.",
+      "AddSamples": "Add sample quests",
       "NoneSelected": "Select a quest."
     },
     "Quest": {
+      "NewName": "New Quest",
+      "Name": "Quest name",
+      "Status": "Status",
+      "InProgress": "In progress",
       "Giver": "Quest giver",
-      "Objectives": "Objectives"
+      "Description": "Description",
+      "Objectives": "Objectives",
+      "PlayerNotes": "Player notes",
+      "Delete": "Delete quest",
+      "DeleteTitle": "Delete quest",
+      "DeleteConfirm": "Delete <strong>{name}</strong>? Its subquests are kept.",
+      "LimitedNote": "You know this quest exists, but not its details."
+    },
+    "Objective": {
+      "Name": "Objective",
+      "Placeholder": "Describe the objective",
+      "Add": "Add objective",
+      "Delete": "Delete objective",
+      "Hidden": "Hidden from players",
+      "HiddenHint": "Hidden from players",
+      "open": "Open. Click to mark done",
+      "done": "Done. Click to mark failed",
+      "failed": "Failed. Click to reopen"
     },
     "Status": {
       "hidden": "Hidden",
@@ -16,6 +45,11 @@
       "active": "Active",
       "completed": "Completed",
       "failed": "Failed"
+    },
+    "Page": {
+      "SheetLabel": "Quest",
+      "OpenInLog": "Open in Quest Log",
+      "EditInLog": "Quests are edited in the Quest Log."
     },
     "Settings": {
       "Theme": {
@@ -25,6 +59,12 @@
         "Light": "Light",
         "Dark": "Dark",
         "Scifi": "Sci-fi"
+      },
+      "DefaultOwnership": {
+        "Name": "Player access when a quest is revealed",
+        "Hint": "Hidden quests give players no access. When a quest leaves Hidden, all players get this level. Adjust single quests with Foundry's ownership controls.",
+        "Limited": "Limited: name, status, and giver only",
+        "Observer": "Observer: full details"
       }
     },
     "Keybindings": {

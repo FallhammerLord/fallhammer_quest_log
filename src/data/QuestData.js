@@ -1,0 +1,66 @@
+import { TypeDataModel, fields } from '../compat.js';
+import { OBJECTIVE_STATES, REWARD_TYPES, STATUSES } from '../constants.js';
+
+/**
+ * System data for the `fhql.quest` journal page subtype. See docs/SCOPE.md section 4.1.
+ *
+ * Objectives and rewards are keyed objects, not arrays, so edits update single fields and two people
+ * editing different objectives never collide (section 5.7). GM notes are deliberately absent: they
+ * will live on a separate GM-only page so they never reach player clients.
+ */
+export class QuestData extends TypeDataModel
+{
+   static defineSchema()
+   {
+      const { BooleanField, HTMLField, IntegerSortField, NumberField, SchemaField, StringField,
+       TypedObjectField } = fields;
+
+      const text = () => new StringField({ required: true, blank: true, initial: '' });
+      const timestamp = () => new NumberField({ required: true, nullable: true, integer: true, initial: null });
+
+      return {
+         status: new StringField({
+            required: true, blank: false, choices: Object.keys(STATUSES), initial: 'hidden'
+         }),
+         inProgress: new BooleanField({ initial: false }),
+         image: text(),
+         giver: new SchemaField({ uuid: text(), name: text(), img: text() }),
+         description: new HTMLField({ required: true, blank: true, initial: '' }),
+         playerNotes: new HTMLField({ required: true, blank: true, initial: '' }),
+
+         objectives: new TypedObjectField(new SchemaField({
+            name: text(),
+            state: new StringField({ required: true, blank: false, choices: OBJECTIVE_STATES, initial: 'open' }),
+            hidden: new BooleanField({ initial: false }),
+            parent: text(),
+            sort: new IntegerSortField()
+         })),
+
+         rewards: new TypedObjectField(new SchemaField({
+            type: new StringField({ required: true, blank: false, choices: REWARD_TYPES, initial: 'text' }),
+            uuid: text(),
+            name: text(),
+            img: text(),
+            hidden: new BooleanField({ initial: false }),
+            locked: new BooleanField({ initial: true }),
+            sort: new IntegerSortField()
+         })),
+
+         /** JournalEntry ID of the parent quest. Subquests are derived from this, never stored twice. */
+         parent: text(),
+
+         dates: new SchemaField({ created: timestamp(), started: timestamp(), ended: timestamp() }),
+
+         /** Import provenance. `fqlId` is set when imported from Forien's Quest Log. */
+         source: new SchemaField({ fqlId: text() })
+      };
+   }
+
+   /** @returns {object[]} Objectives as an array with IDs, sorted. */
+   get objectiveList()
+   {
+      return Object.entries(this.objectives)
+       .map(([id, objective]) => ({ id, ...objective }))
+       .sort((a, b) => a.sort - b.sort);
+   }
+}

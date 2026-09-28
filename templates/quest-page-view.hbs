@@ -1,0 +1,8 @@
+<div class="fhql-page-view">
+  <p><i class="{{quest.statusIcon}}" inert></i> {{quest.statusLabel}}
+    {{#if quest.giverName}} · {{localize "FHQL.Quest.Giver"}}: {{quest.giverName}}{{/if}}</p>
+  {{#if quest.full}}<div class="fhql-prose">{{{quest.descriptionHTML}}}</div>{{/if}}
+  <button type="button" data-action="openInQuestLog">
+    <i class="fa-solid fa-scroll" inert></i> {{localize "FHQL.Page.OpenInLog"}}
+  </button>
+</div>

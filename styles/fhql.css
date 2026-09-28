@@ -227,10 +227,88 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
 .fhql-objectives li { display: flex; gap: 0.5em; align-items: baseline; }
 .fhql-objectives li.is-done { color: var(--fhql-ink-muted); }
 .fhql-objectives li.is-done span { text-decoration: line-through; }
-.fhql-objectives li.is-done i { color: var(--fhql-status-completed); }
-.fhql-objectives li.is-failed i { color: var(--fhql-status-failed); }
+.fhql-objectives li.is-done .fhql-state-icon { color: var(--fhql-status-completed); }
+.fhql-objectives li.is-done .fhql-input { text-decoration: line-through; color: var(--fhql-ink-muted); }
+.fhql-objectives li.is-failed .fhql-state-icon { color: var(--fhql-status-failed); }
 
 /* ---------- Motion ---------- */
 @media (prefers-reduced-motion: no-preference) {
   .fhql-app .fhql-row { transition: background-color 120ms ease; }
+}
+
+/* ---------- Controls ---------- */
+.fhql-app .fhql-toolbar { margin-block-end: 0.5em; }
+
+.fhql-app .fhql-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  width: auto;
+  padding: 0.25em 0.7em;
+  color: var(--fhql-ink);
+  background: var(--fhql-surface-raised);
+  border: 1px solid var(--fhql-rule);
+  border-radius: var(--fhql-radius);
+  font-family: var(--fhql-font-body);
+  cursor: pointer;
+}
+.fhql-app .fhql-button:hover { background: var(--fhql-hover); border-color: var(--fhql-accent); }
+.fhql-app .fhql-button.fhql-danger { color: var(--fhql-status-failed); }
+
+.fhql-app .fhql-icon-button {
+  flex: none;
+  width: 1.8em;
+  height: 1.8em;
+  padding: 0;
+  color: var(--fhql-ink-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+.fhql-app .fhql-icon-button:hover { color: var(--fhql-accent); }
+
+.fhql-app :is(.fhql-button, .fhql-icon-button, .fhql-input, .fhql-check input):focus-visible {
+  outline: 2px solid var(--fhql-accent);
+  outline-offset: 1px;
+  box-shadow: none;
+}
+
+.fhql-app .fhql-input {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: 0.25em 0.45em;
+  color: var(--fhql-ink);
+  background: var(--fhql-surface-sunken);
+  border: 1px solid var(--fhql-rule);
+  border-radius: var(--fhql-radius);
+  font-family: var(--fhql-font-body);
+  font-size: inherit;
+}
+.fhql-app textarea.fhql-input { resize: vertical; min-height: 4em; }
+.fhql-app select.fhql-input { width: auto; }
+.fhql-app .fhql-input:disabled { color: var(--fhql-ink-muted); }
+.fhql-app .fhql-title-input {
+  font-family: var(--fhql-font-heading);
+  font-size: 1.3em;
+  font-weight: bold;
+}
+
+.fhql-app .fhql-field { display: grid; gap: 0.2em; }
+.fhql-app .fhql-field > span { color: var(--fhql-ink-muted); font-size: 0.85em; }
+.fhql-app .fhql-field > .fhql-subheading { color: var(--fhql-ink); font-size: 1.1em; }
+.fhql-app .fhql-field-row { display: flex; flex-wrap: wrap; gap: 1em; align-items: end; }
+.fhql-app .fhql-check { display: inline-flex; align-items: center; gap: 0.35em; cursor: pointer; }
+.fhql-app .fhql-check input { margin: 0; accent-color: var(--fhql-accent); }
+
+.fhql-app .fhql-objectives li { align-items: center; }
+.fhql-app .fhql-objectives + .fhql-button { margin-block-start: 0.5em; }
+
+.fhql-app .fhql-in-progress { color: var(--fhql-accent); }
+.fhql-app .fhql-empty { display: grid; gap: 0.5em; justify-items: start; }
+.fhql-app .fhql-detail-footer { margin-block-start: 1em; display: flex; justify-content: flex-end; }
+.fhql-app .fhql-prose,
+.fhql-app .fhql-prewrap { white-space: pre-line; }
+.fhql-app .sr-only {
+  position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
 }

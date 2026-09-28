@@ -1,7 +1,13 @@
 <nav class="fhql-list" aria-label="{{localize 'FHQL.QuestLog.ListLabel'}}">
-  {{#if preview}}
-  <p class="fhql-preview-note"><i class="fa-solid fa-flask" inert></i> {{localize "FHQL.QuestLog.PreviewNote"}}</p>
+  {{#if gm}}
+  <div class="fhql-toolbar">
+    <button type="button" class="fhql-button" data-action="createQuest">
+      <i class="fa-solid fa-plus" inert></i> {{localize "FHQL.QuestLog.NewQuest"}}
+    </button>
+  </div>
   {{/if}}
+
+  {{#if quests.length}}
   <ul class="fhql-list-items">
     {{#each quests}}
     <li>
@@ -9,9 +15,22 @@
               data-action="selectQuest" data-quest-id="{{id}}" {{#if selected}}aria-current="true"{{/if}}>
         <i class="fhql-status-icon {{statusIcon}}" inert></i>
         <span class="fhql-row-name" data-tooltip="{{name}}">{{name}}</span>
-        <span class="fhql-row-status">{{statusLabel}}</span>
+        <span class="fhql-row-status">
+          {{#if inProgress}}<i class="fa-solid fa-star fhql-in-progress" data-tooltip="{{localize 'FHQL.Quest.InProgress'}}" aria-label="{{localize 'FHQL.Quest.InProgress'}}"></i>{{/if}}
+          {{statusLabel}}
+        </span>
       </button>
     </li>
     {{/each}}
   </ul>
+  {{else}}
+  <div class="fhql-empty">
+    <p class="fhql-muted">{{localize "FHQL.QuestLog.Empty"}}</p>
+    {{#if gm}}
+    <button type="button" class="fhql-button" data-action="createSamples">
+      <i class="fa-solid fa-flask" inert></i> {{localize "FHQL.QuestLog.AddSamples"}}
+    </button>
+    {{/if}}
+  </div>
+  {{/if}}
 </nav>

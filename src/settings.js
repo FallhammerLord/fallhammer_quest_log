@@ -19,4 +19,18 @@ export function registerSettings()
       default: THEMES.auto,
       onChange: refreshOpenApps
    });
+
+   const { LIMITED, OBSERVER } = CONST.DOCUMENT_OWNERSHIP_LEVELS;
+   game.settings.register(MODULE_ID, 'defaultOwnership', {
+      name: 'FHQL.Settings.DefaultOwnership.Name',
+      hint: 'FHQL.Settings.DefaultOwnership.Hint',
+      scope: 'world',
+      config: true,
+      type: Number,
+      choices: {
+         [LIMITED]: 'FHQL.Settings.DefaultOwnership.Limited',
+         [OBSERVER]: 'FHQL.Settings.DefaultOwnership.Observer'
+      },
+      default: OBSERVER
+   });
 }

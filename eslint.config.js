@@ -15,7 +15,10 @@ export default [
             ui: 'readonly',
             Hooks: 'readonly',
             CONFIG: 'readonly',
-            CONST: 'readonly'
+            CONST: 'readonly',
+            Folder: 'readonly',
+            JournalEntry: 'readonly',
+            JournalEntryPage: 'readonly'
          }
       }
    },

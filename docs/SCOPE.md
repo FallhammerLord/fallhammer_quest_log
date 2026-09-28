@@ -166,6 +166,10 @@ Always GM only, whatever the ownership:
 - Hidden objectives and hidden rewards
 - The FQL source flag
 
+**Hidden status drives ownership** (built in milestone 2). Setting a quest to Hidden sets its default ownership to None, so Foundry itself hides it everywhere: journal sidebar, links, and data sent to players. Revealing it restores the level from the "Player access when a quest is revealed" setting (Limited or Observer, default Observer). GMs can still adjust single players with Foundry's ownership controls.
+
+**GM notes live on a separate page** with player ownership None, never in the quest page's data. Anything on the quest page reaches every player who can see the quest, even when the UI hides it. Hidden objectives and rewards share that limit: the UI hides them, but a player with console access could read them. That matches FQL; moving them off-page is a possible later hardening.
+
 ### 5.7 Concurrent edits
 
 - Update single fields, never rewrite the whole quest. FQL rewrote its full JSON blob on every save, so simultaneous edits silently lost one side.
@@ -365,9 +369,9 @@ Test and document behavior with:
 
 ## 11. Milestones
 
-1. **Skeleton.** Manifest, empty ApplicationV2 windows, theme tokens, theme setting.
-2. **Data model.** Quest subtype, create/edit/delete, permissions.
-3. **Quest Sheet.** Full editing UI.
+1. **Skeleton.** Manifest, empty ApplicationV2 windows, theme tokens, theme setting. *Done, verified on v14.*
+2. **Data model.** Quest subtype, create/edit/delete, permissions. *Built 2026-09-28; plain-text readable page deferred to milestone 3.*
+3. **Quest Sheet.** Full editing UI: rich text editor, giver and reward drag-drop, GM notes page, plain-text readable page, subquests.
 4. **Quest Log, In Progress widget, entry points.**
 5. **Tracker.**
 6. **Player workflows.** GM relay, accept, create, reward dragging.
