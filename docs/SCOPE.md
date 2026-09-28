@@ -345,6 +345,7 @@ Test and document behavior with:
 - Monk's Enhanced Journal (FQL shipped special handling for it)
 - PopOut! (pop-out windows)
 - UI-hiding modules (they affect the In Progress widget)
+- Carolingian UI and Classic UI (restyle the players list; found in testing that the list's contents overflow its box)
 
 ### 9.6 Documentation and distribution
 

@@ -65,8 +65,9 @@ export function refreshInProgressWidget()
  */
 function matchPlayersSize(widget, players)
 {
-   const width = players?.getBoundingClientRect().width;
-   const rowHeight = playerRowElement(players)?.getBoundingClientRect().height;
+   const row = playerRowElement(players);
+   const width = visibleWidth(players, row);
+   const rowHeight = row?.getBoundingClientRect().height;
    const button = widget.querySelector('.fhql-widget-button');
 
    // Inline sizes on both the wrapper and the visible button, so no stylesheet can shrink either.
@@ -77,6 +78,20 @@ function matchPlayersSize(widget, players)
       if (rowHeight) { element.style.minHeight = `${rowHeight}px`; }
    }
    widget.dataset.fhqlMeasured = `${Math.round(width ?? 0)}x${Math.round(rowHeight ?? 0)}`;
+}
+
+/**
+ * Width of the players list as drawn. UI modules can let the list's contents spill past its box,
+ * so take the widest of the box, its scroll width, and a player row.
+ *
+ * @param {HTMLElement} players - Core's players list.
+ * @param {HTMLElement|null} row - One player row.
+ * @returns {number} Width in pixels.
+ */
+function visibleWidth(players, row)
+{
+   if (!players) { return 0; }
+   return Math.max(players.getBoundingClientRect().width, players.scrollWidth, row?.getBoundingClientRect().width ?? 0);
 }
 
 /**
@@ -97,11 +112,13 @@ export function debugInProgressWidget()
       playerRowFound: !!playerRowElement(players),
       measured: widget?.dataset.fhqlMeasured ?? null,
       playersSize: size(players),
+      playersScrollWidth: players?.scrollWidth ?? null,
+      playerRowSize: size(playerRowElement(players)),
       widgetSize: size(widget),
       buttonSize: size(button),
       widgetParent: widget?.parentElement ? `${widget.parentElement.tagName.toLowerCase()}#${widget.parentElement.id}` : null,
       parentDisplay: widget?.parentElement ? getComputedStyle(widget.parentElement).display : null,
-      stylesheetLoaded: !!document.querySelector('link[href*="fhql.css"]')
+      stylesheetLoaded: !!widget && getComputedStyle(widget).getPropertyValue('--fhql-surface').trim() !== ''
    };
    console.table(info);
    return info;
