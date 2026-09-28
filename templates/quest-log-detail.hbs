@@ -1,7 +1,13 @@
 <article class="fhql-detail">
   {{#with selected}}
-  {{#if editable}}
+  {{#if editing}}
   {{! ---------- Edit mode ---------- }}
+  <div class="fhql-mode-bar">
+    <span class="fhql-muted"><i class="fa-solid fa-pen" inert></i> {{localize "FHQL.QuestLog.EditingNote"}}</span>
+    <button type="button" class="fhql-button fhql-primary" data-action="finishEditing">
+      <i class="fa-solid fa-check" inert></i> {{localize "FHQL.QuestLog.Done"}}
+    </button>
+  </div>
   <header class="fhql-detail-header">
     <input type="text" class="fhql-input fhql-title-input" name="name" data-field="name" value="{{name}}"
            aria-label="{{localize 'FHQL.Quest.Name'}}">
@@ -68,16 +74,27 @@
     </label>
   </section>
 
-  {{#if gm}}
   <footer class="fhql-detail-footer">
+    {{#if gm}}
     <button type="button" class="fhql-button fhql-danger" data-action="deleteQuest">
       <i class="fa-solid fa-trash" inert></i> {{localize "FHQL.Quest.Delete"}}
     </button>
+    {{/if}}
+    <button type="button" class="fhql-button fhql-primary" data-action="finishEditing">
+      <i class="fa-solid fa-check" inert></i> {{localize "FHQL.QuestLog.Done"}}
+    </button>
   </footer>
-  {{/if}}
 
   {{else}}
   {{! ---------- View mode ---------- }}
+  {{#if editable}}
+  <div class="fhql-mode-bar">
+    <span></span>
+    <button type="button" class="fhql-button" data-action="editQuest">
+      <i class="fa-solid fa-pen" inert></i> {{localize "FHQL.QuestLog.Edit"}}
+    </button>
+  </div>
+  {{/if}}
   <header class="fhql-detail-header">
     <h2 class="fhql-heading">{{name}}</h2>
     <p class="fhql-status-badge fhql-status-{{status}}"><i class="{{statusIcon}}" inert></i> {{statusLabel}}</p>
@@ -95,7 +112,8 @@
     </h3>
     <ul class="fhql-objectives">
       {{#each objectives}}
-      <li class="is-{{state}}"><i class="fhql-state-icon {{icon}}" aria-label="{{stateLabel}}"></i><span>{{name}}</span></li>
+      <li class="is-{{state}}"><i class="fhql-state-icon {{icon}}" aria-label="{{stateLabel}}"></i><span>{{name}}</span>
+        {{#if hidden}}<i class="fa-solid fa-eye-slash fhql-muted" data-tooltip="{{localize 'FHQL.Objective.Hidden'}}" aria-label="{{localize 'FHQL.Objective.Hidden'}}"></i>{{/if}}</li>
       {{/each}}
     </ul>
   </section>

@@ -31,6 +31,8 @@ export class QuestLog extends HandlebarsApp
       position: { width: 780, height: 560 },
       actions: {
          selectQuest: QuestLog.#onSelectQuest,
+         editQuest: QuestLog.#onEditQuest,
+         finishEditing: QuestLog.#onFinishEditing,
          createQuest: QuestLog.#onCreateQuest,
          createSamples: QuestLog.#onCreateSamples,
          deleteQuest: QuestLog.#onDeleteQuest,
@@ -48,12 +50,19 @@ export class QuestLog extends HandlebarsApp
    /** ID of the selected quest's JournalEntry. */
    #selectedId = null;
 
+   /** Whether the selected quest is in edit mode. Edits save as each field changes; Done returns to view. */
+   #editing = false;
+
    /**
     * Selects a quest. Used by the API to open the log on a given quest.
     *
     * @param {string} id - JournalEntry ID.
     */
-   select(id) { this.#selectedId = id; }
+   select(id)
+   {
+      if (id !== this.#selectedId) { this.#editing = false; }
+      this.#selectedId = id;
+   }
 
    /**
     * Re-renders after a quest document changes anywhere.
@@ -120,6 +129,7 @@ export class QuestLog extends HandlebarsApp
          id: entry.id,
          name: entry.name,
          ...access,
+         editing: access.editable && this.#editing,
          status: system.status,
          statusIcon: STATUSES[system.status].icon,
          statusLabel: game.i18n.localize(`FHQL.Status.${system.status}`),
@@ -189,7 +199,21 @@ export class QuestLog extends HandlebarsApp
    /** @this {QuestLog} */
    static #onSelectQuest(event, target)
    {
-      this.#selectedId = target.dataset.questId;
+      this.select(target.dataset.questId);
+      this.render();
+   }
+
+   /** @this {QuestLog} */
+   static #onEditQuest()
+   {
+      this.#editing = true;
+      this.render();
+   }
+
+   /** @this {QuestLog} */
+   static #onFinishEditing()
+   {
+      this.#editing = false;
       this.render();
    }
 
@@ -198,6 +222,7 @@ export class QuestLog extends HandlebarsApp
    {
       const entry = await createQuest();
       this.#selectedId = entry.id;
+      this.#editing = true;
       this.render();
    }
 

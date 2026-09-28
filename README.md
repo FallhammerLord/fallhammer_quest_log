@@ -23,8 +23,9 @@ Scope, design, and decisions live in [`docs/SCOPE.md`](docs/SCOPE.md).
 
 As GM:
 - Empty log shows **Add sample quests**. It creates five quests in a **Quests** journal folder.
-- **New quest** creates one, set to Hidden.
+- **New quest** creates one, set to Hidden, and opens it for editing.
 - Edit name, status, giver, description, objectives, and player notes. Changes save when you leave a field.
+- **Done** returns to the read view. **Edit** reopens editing.
 - Click an objective's box to cycle open → done → failed.
 - Toggle **In progress** and an objective's hide (eye) box.
 - Delete a quest. Its subquests stay.

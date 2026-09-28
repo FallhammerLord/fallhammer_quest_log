@@ -12,7 +12,10 @@
       "NewQuest": "New quest",
       "Empty": "No quests yet.",
       "AddSamples": "Add sample quests",
-      "NoneSelected": "Select a quest."
+      "NoneSelected": "Select a quest.",
+      "Edit": "Edit",
+      "Done": "Done",
+      "EditingNote": "Editing. Changes save as you go."
     },
     "Quest": {
       "NewName": "New Quest",
