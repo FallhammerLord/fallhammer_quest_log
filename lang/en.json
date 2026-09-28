@@ -15,7 +15,14 @@
       "NoneSelected": "Select a quest.",
       "Edit": "Edit",
       "Done": "Done",
-      "EditingNote": "Editing. Changes save as you go."
+      "EditingNote": "Editing. Changes save as you go.",
+      "StatusAction": {
+        "Reveal": "Reveal",
+        "Start": "Start",
+        "Complete": "Complete",
+        "Fail": "Fail",
+        "Reopen": "Reopen"
+      }
     },
     "Quest": {
       "NewName": "New Quest",

@@ -89,7 +89,13 @@
   {{! ---------- View mode ---------- }}
   {{#if editable}}
   <div class="fhql-mode-bar">
-    <span></span>
+    <div class="fhql-quick-actions">
+      {{#each statusActions}}
+      <button type="button" class="fhql-button fhql-status-{{status}}" data-action="setQuestStatus" data-status="{{status}}">
+        <i class="{{icon}} fhql-status-icon" inert></i> {{label}}
+      </button>
+      {{/each}}
+    </div>
     <button type="button" class="fhql-button" data-action="editQuest">
       <i class="fa-solid fa-pen" inert></i> {{localize "FHQL.QuestLog.Edit"}}
     </button>
@@ -112,7 +118,14 @@
     </h3>
     <ul class="fhql-objectives">
       {{#each objectives}}
-      <li class="is-{{state}}"><i class="fhql-state-icon {{icon}}" aria-label="{{stateLabel}}"></i><span>{{name}}</span>
+      <li class="is-{{state}}" data-objective-id="{{id}}">
+        {{#if ../editable}}
+        <button type="button" class="fhql-icon-button" data-action="cycleObjective"
+                data-tooltip="{{stateLabel}}" aria-label="{{stateLabel}}"><i class="fhql-state-icon {{icon}}" inert></i></button>
+        {{else}}
+        <i class="fhql-state-icon {{icon}}" aria-label="{{stateLabel}}"></i>
+        {{/if}}
+        <span>{{name}}</span>
         {{#if hidden}}<i class="fa-solid fa-eye-slash fhql-muted" data-tooltip="{{localize 'FHQL.Objective.Hidden'}}" aria-label="{{localize 'FHQL.Objective.Hidden'}}"></i>{{/if}}</li>
       {{/each}}
     </ul>

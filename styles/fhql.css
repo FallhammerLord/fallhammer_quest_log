@@ -315,6 +315,8 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
   margin-block-end: 0.5em;
   font-size: 0.9em;
 }
+.fhql-app .fhql-quick-actions { display: flex; flex-wrap: wrap; gap: 0.4em; }
+.fhql-app .fhql-quick-actions .fhql-status-icon { color: var(--fhql-status); }
 .fhql-app .fhql-button.fhql-primary {
   color: var(--fhql-accent-ink);
   background: var(--fhql-accent);

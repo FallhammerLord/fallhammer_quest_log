@@ -26,6 +26,7 @@ As GM:
 - **New quest** creates one, set to Hidden, and opens it for editing.
 - Edit name, status, giver, description, objectives, and player notes. Changes save when you leave a field.
 - **Done** returns to the read view. **Edit** reopens editing.
+- In the read view: status buttons (Reveal, Start, Complete, Fail, Reopen) and clickable objective boxes, no edit mode needed.
 - Click an objective's box to cycle open → done → failed.
 - Toggle **In progress** and an objective's hide (eye) box.
 - Delete a quest. Its subquests stay.

@@ -33,6 +33,7 @@ export class QuestLog extends HandlebarsApp
          selectQuest: QuestLog.#onSelectQuest,
          editQuest: QuestLog.#onEditQuest,
          finishEditing: QuestLog.#onFinishEditing,
+         setQuestStatus: QuestLog.#onSetQuestStatus,
          createQuest: QuestLog.#onCreateQuest,
          createSamples: QuestLog.#onCreateSamples,
          deleteQuest: QuestLog.#onDeleteQuest,
@@ -136,6 +137,7 @@ export class QuestLog extends HandlebarsApp
          statusOptions: Object.keys(STATUSES).map((key) => ({
             value: key, label: game.i18n.localize(`FHQL.Status.${key}`), selected: key === system.status
          })),
+         statusActions: access.gm ? QuestLog.#statusActions(system.status) : [],
          inProgress: system.inProgress,
          giverName: system.giver.name,
          description: system.description,
@@ -146,6 +148,29 @@ export class QuestLog extends HandlebarsApp
          objectives,
          doneCount: objectives.filter((objective) => objective.state === 'done').length
       };
+   }
+
+   /**
+    * One-click status changes offered in the read view, based on the current status.
+    *
+    * @param {string} status - Current status.
+    * @returns {object[]} Buttons to show.
+    */
+   static #statusActions(status)
+   {
+      const targets = {
+         hidden: [['available', 'Reveal']],
+         available: [['active', 'Start'], ['completed', 'Complete'], ['failed', 'Fail']],
+         active: [['completed', 'Complete'], ['failed', 'Fail']],
+         completed: [['active', 'Reopen']],
+         failed: [['active', 'Reopen']]
+      }[status] ?? [];
+
+      return targets.map(([target, verb]) => ({
+         status: target,
+         icon: STATUSES[target].icon,
+         label: game.i18n.localize(`FHQL.QuestLog.StatusAction.${verb}`)
+      }));
    }
 
    /** @override */
@@ -238,6 +263,13 @@ export class QuestLog extends HandlebarsApp
    {
       const entry = getQuestEntry(this.#selectedId);
       if (entry && await deleteQuest(entry)) { this.#selectedId = null; }
+   }
+
+   /** @this {QuestLog} */
+   static async #onSetQuestStatus(event, target)
+   {
+      const entry = getQuestEntry(this.#selectedId);
+      if (entry) { await setStatus(entry, target.dataset.status); }
    }
 
    /** @this {QuestLog} */
