@@ -156,9 +156,18 @@ Fallback: a validated JSON flag on JournalEntry, like FQL. It's simpler, but we'
 
 - Source: `JournalEntry.flags['forien-quest-log'].json`.
 - Map every field. List unmapped fields in the import report.
-- Keep FQL's quest IDs, so parent/subquest links survive.
-- Idempotent: running it twice creates no duplicates.
-- Never deletes or edits the FQL data.
+- **Import in place.** Add our quest page to the existing journal entry; FQL's flag stays on it. Entry IDs don't change, so every link survives untouched: `@UUID` links in text, links from other journals, scene map pins, macros, quest givers, and rewards.
+- **Clicking a quest link opens our sheet.** Any link to a quest's journal entry routes to the Quest Sheet.
+- **Parent/child cleanup.** FQL stores the relationship on both sides (child `parent`, parent `subquests[]`), and they can disagree. On import:
+  - drop IDs that point at deleted entries,
+  - reconcile using the child's `parent` as the truth,
+  - list each fix in the import report.
+- **Idempotent.** Each imported quest records its FQL source ID. Re-running skips quests already imported, so it never overwrites edits. A per-quest "re-import and overwrite" is available.
+- Never deletes or edits the FQL data. Edits made in our module don't flow back to FQL.
+
+### Our parent/child model
+
+Store the relationship once: each quest holds an optional `parent` ID. Subquests are worked out from it at read time. Nothing else to keep in sync.
 
 ## 8. Development practices
 
