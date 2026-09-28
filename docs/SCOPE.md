@@ -102,7 +102,7 @@ A quest log module for Foundry VTT that:
 
 ### 5.1 Target versions
 
-- Minimum: v13. Verified: v14. **[decide]**
+- Minimum: v13. Verified: v14. **[decide]** (v12 fixed the invalid-embedded-parent bug, so v13+ is safe for page subtypes)
 - Test against each new major's prerelease builds.
 
 ### 5.2 Data storage
@@ -116,10 +116,25 @@ Why:
 
 Fallback: a validated JSON flag on JournalEntry, like FQL. It's simpler, but we'd own validation and migration ourselves.
 
-**When the module is disabled** (blocks the storage decision)
-- Pages of a module subtype likely become invalid when the module is off. Foundry keeps them but may hide or flag them **[verify]**. Flag data just sits inert.
-- Either way, keep a plain-text page on each quest entry, regenerated on save: description, objectives, rewards. The journal stays readable without us.
-- Re-enabling the module must restore everything with no loss.
+**When the module is disabled** (researched 2026-09-28)
+
+Findings:
+- Foundry's module sub-types article: when a module providing sub-types is deactivated, documents using those sub-types become invalid and disappear from view. Core warns the user before disabling such a module.
+- Invalid embedded documents are retained, not deleted. Since v10.277 they are tracked in `invalidDocumentIds` / `getInvalid()`, and the server accepts updates to them.
+- v12 fixed a bug where an invalid embedded document made its parent invalid (foundryvtt#10566, closed in V12 testing). On v13+, an invalid quest page should leave its journal entry intact **[confirm on a live v14 world]**.
+- Open v14 bug to watch: module updates can leave cached `documentTypes` stale (foundryvtt#14796, v14.369).
+
+What this means for us:
+- Disabled module: the quest page vanishes, while the journal entry, its other pages, and FQL's flag stay. Re-enabling restores the page.
+- Flags would be no better. Flag data is invisible without the module too.
+- So in both designs, readability without the module comes from a plain-text page on each quest entry, regenerated on save: description, objectives, rewards.
+- Decision: **page subtype**, plus the plain-text page. Core's disable warning is a bonus: it tells GMs what they'll lose.
+
+Live test before milestone 2 (needs a licensed v14 install):
+1. Create a quest. Disable the module. Restart the world.
+2. Check that the journal entry opens and the plain-text page shows.
+3. Check the Document Issues screen lists the invalid page.
+4. Re-enable. Check the quest is fully restored.
 
 ### 5.3 UI
 
@@ -364,7 +379,7 @@ Test and document behavior with:
 ## 12. Open decisions
 
 - Minimum Foundry version (v13 or v14).
-- Data storage: page subtype (recommended) or flag. **Blocked on** verifying disabled-module behavior (5.2).
+- ~~Data storage~~: decided, page subtype plus plain-text page (5.2). Pending the live test.
 - Confirm the permission map (5.6).
 - Module ID and display name.
 - Sci-fi fonts and whether to bundle them.
