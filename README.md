@@ -14,9 +14,12 @@ Scope, design, and decisions live in [`docs/SCOPE.md`](docs/SCOPE.md).
    git clone https://github.com/FallhammerLord/fallhammer_quest_log.git fhql
    ```
 2. Restart Foundry, open a world, and enable **Fallhammer Quest Log** in Manage Modules.
-3. Open the Quest Log:
+3. Open the Quest Log any of these ways:
+   - **Quest Log** button at the top of the Journal sidebar tab.
+   - Scroll icon in the Token controls (left toolbar). Doesn't change the active layer.
+   - The In Progress quest above the players list (appears once a quest is marked In progress).
+   - A key you bind in Configure Controls → Fallhammer Quest Log → Open Quest Log.
    - Macro: `game.modules.get('fhql').api.openQuestLog()`
-   - Or bind a key in Configure Controls → Fallhammer Quest Log → Open Quest Log.
 4. Switch themes in Configure Settings → Fallhammer Quest Log → Quest Log theme.
 
 ## What to check in milestone 2
@@ -37,7 +40,14 @@ As a player (second browser or user):
 - Hidden objectives don't show.
 - Opening a quest from the journal sidebar shows a summary with **Open in Quest Log**.
 
-Storage test (docs/SCOPE.md 5.2): with a quest created, disable the module, restart, check the journal entry still opens, then re-enable and check the quest is intact.
+Entry points:
+- Journal tab shows a **Quest Log** button in its header, for GM and players.
+- Token controls show a scroll button; clicking it opens the log and leaves the Token tool active.
+- Mark a quest **In progress**: its name and next open objective appear above the players list, on every client that can see it. Clicking opens the log on that quest.
+- Mark two quests: a **+1** badge appears, with the other name on hover.
+- Configure Settings has per-client toggles for the widget and its objective line.
+
+Storage test (passed 2026-09-28; re-run after storage changes) (docs/SCOPE.md 5.2): with a quest created, disable the module, restart, check the journal entry still opens, then re-enable and check the quest is intact.
 
 ## Dev tooling
 

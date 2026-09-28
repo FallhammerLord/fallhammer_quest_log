@@ -37,3 +37,28 @@ export function deleteKeyUpdate(path, key)
 {
    return { [`${path}.${key}`]: globalThis._del };
 }
+
+/**
+ * Where to put the Quest Log button in a sidebar directory. Prefers the header's action button row,
+ * falling back to the header itself. Returns null if neither exists, so a Foundry UI change costs us
+ * the button, never an error.
+ *
+ * @param {HTMLElement} element - The directory's root element.
+ * @returns {{ parent: HTMLElement, prepend: boolean }|null} Insertion point.
+ */
+export function directoryButtonSlot(element)
+{
+   const actions = element?.querySelector('.directory-header .header-actions');
+   if (actions) { return { parent: actions, prepend: false }; }
+   const header = element?.querySelector('.directory-header');
+   return header ? { parent: header, prepend: true } : null;
+}
+
+/** @returns {HTMLElement|null} The players list element, if rendered. */
+export function playersElement()
+{
+   return ui.players?.element ?? document.getElementById('players');
+}
+
+/** Name of the scene control group our button joins. */
+export const SCENE_CONTROL_GROUP = 'tokens';

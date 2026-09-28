@@ -372,7 +372,7 @@ Test and document behavior with:
 1. **Skeleton.** Manifest, empty ApplicationV2 windows, theme tokens, theme setting. *Done, verified on v14.*
 2. **Data model.** Quest subtype, create/edit/delete, permissions. *Built 2026-09-28; plain-text readable page deferred to milestone 3.*
 3. **Quest Sheet.** Full editing UI: rich text editor, giver and reward drag-drop, GM notes page, plain-text readable page, subquests.
-4. **Quest Log, In Progress widget, entry points.**
+4. **Quest Log, In Progress widget, entry points.** *Entry points and widget pulled forward, built 2026-09-28. GM toggles per entry point still to do.*
 5. **Tracker.**
 6. **Player workflows.** GM relay, accept, create, reward dragging.
 7. **FQL import.**
@@ -385,7 +385,7 @@ Test and document behavior with:
 
 - Module ID `fhql`, display name "Fallhammer Quest Log", CSS prefix `fhql-`.
 - Minimum and verified Foundry version: v14.
-- Data storage: page subtype `fhql.quest` plus a plain-text page (5.2). Pending the live test.
+- Data storage: page subtype `fhql.quest` plus a plain-text page (5.2). Live test passed on v14, 2026-09-28.
 - License: MIT.
 
 ## 13. Open decisions

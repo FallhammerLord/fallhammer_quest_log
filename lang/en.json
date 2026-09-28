@@ -25,7 +25,8 @@
         "RevealActive": "Reveal as Active",
         "Hide": "Hide"
       },
-      "HiddenNotice": "Hidden. Players can't see this quest until you reveal it."
+      "HiddenNotice": "Hidden. Players can't see this quest until you reveal it.",
+      "Open": "Open Quest Log"
     },
     "Quest": {
       "NewName": "New Quest",
@@ -78,10 +79,21 @@
         "Hint": "Hidden quests give players no access. When a quest leaves Hidden, all players get this level. Adjust single quests with Foundry's ownership controls.",
         "Limited": "Limited: name, status, and giver only",
         "Observer": "Observer: full details"
+      },
+      "ShowInProgress": {
+        "Name": "Show In Progress quest",
+        "Hint": "Shows the In Progress quest above the players list. Applies to your client only."
+      },
+      "ShowNextObjective": {
+        "Name": "Show next objective",
+        "Hint": "Adds the next open objective under the In Progress quest."
       }
     },
     "Keybindings": {
       "OpenQuestLog": "Open Quest Log"
+    },
+    "Widget": {
+      "Label": "In progress: {name}. Open in Quest Log."
     }
   }
 }

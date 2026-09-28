@@ -1,5 +1,6 @@
 import { MODULE_ID, THEMES } from './constants.js';
 import { refreshOpenApps } from './theme.js';
+import { refreshInProgressWidget } from './ui/InProgressWidget.js';
 
 /** Registers module settings. Called on `init`. */
 export function registerSettings()
@@ -17,7 +18,31 @@ export function registerSettings()
          [THEMES.scifi]: 'FHQL.Settings.Theme.Scifi'
       },
       default: THEMES.auto,
-      onChange: refreshOpenApps
+      onChange: () =>
+      {
+         refreshOpenApps();
+         refreshInProgressWidget();
+      }
+   });
+
+   game.settings.register(MODULE_ID, 'showInProgress', {
+      name: 'FHQL.Settings.ShowInProgress.Name',
+      hint: 'FHQL.Settings.ShowInProgress.Hint',
+      scope: 'client',
+      config: true,
+      type: Boolean,
+      default: true,
+      onChange: () => refreshInProgressWidget()
+   });
+
+   game.settings.register(MODULE_ID, 'showNextObjective', {
+      name: 'FHQL.Settings.ShowNextObjective.Name',
+      hint: 'FHQL.Settings.ShowNextObjective.Hint',
+      scope: 'client',
+      config: true,
+      type: Boolean,
+      default: true,
+      onChange: () => refreshInProgressWidget()
    });
 
    const { LIMITED, OBSERVER } = CONST.DOCUMENT_OWNERSHIP_LEVELS;

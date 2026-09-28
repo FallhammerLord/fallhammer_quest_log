@@ -7,6 +7,8 @@ import { QuestData } from './data/QuestData.js';
 import { QuestPageSheet } from './sheets/QuestPageSheet.js';
 import { QuestLog } from './apps/QuestLog.js';
 import { questPage } from './data/quests.js';
+import { registerEntryPoints } from './ui/entryPoints.js';
+import { refreshInProgressWidget } from './ui/InProgressWidget.js';
 
 Hooks.once('init', () =>
 {
@@ -19,11 +21,19 @@ Hooks.once('init', () =>
 
    registerSettings();
    registerKeybindings();
+   registerEntryPoints();
    game.modules.get(MODULE_ID).api = api;
 });
 
-/** Re-render the Quest Log when any quest changes, on any client. */
-const refresh = (options, userId) => QuestLog.instance.onQuestChanged(options, userId);
+Hooks.once('ready', () => refreshInProgressWidget());
+Hooks.on('renderPlayers', () => refreshInProgressWidget());
+
+/** Re-render our UI when any quest changes, on any client. */
+const refresh = (options, userId) =>
+{
+   QuestLog.instance.onQuestChanged(options, userId);
+   refreshInProgressWidget();
+};
 
 for (const action of ['create', 'update', 'delete'])
 {
