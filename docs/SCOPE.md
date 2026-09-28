@@ -45,11 +45,16 @@ A quest log module for Foundry VTT that:
 - Status: hidden, available, active, completed, failed
 - Parent/subquest links
 - Created/started/ended timestamps
+- In Progress marker (party-wide, set by the GM)
 
 **Windows**
-- Quest Log: tabs by status, search, sort
-- Quest Sheet: details, objectives, rewards, notes, management (GM)
-- Quest Tracker: floating panel of active quests, pin a primary quest
+- Quest Log: one window, quest list plus detail pane. Tabs by status, search, sort
+- Quest Sheet: the detail view, shown inside the log or popped out on its own
+- In Progress widget: above the players list (see 7.2)
+- Quest Tracker: optional floating panel of active quests
+
+**Entry points and quick actions**
+- See section 7
 
 **Permissions**
 - Visibility follows Foundry document ownership
@@ -73,6 +78,7 @@ A quest log module for Foundry VTT that:
 - Chat cards for quest updates
 - Custom status sets
 - Export/import quests as JSON
+- Dedicated Quests tab in the sidebar
 
 ### 4.3 Out of scope
 
@@ -152,7 +158,73 @@ Fallback: a validated JSON flag on JournalEntry, like FQL. It's simpler, but we'
 - Sci-fi motion (glow pulses, scanlines) respects `prefers-reduced-motion`.
 - Visible keyboard focus in every theme.
 
-## 7. FQL import
+## 7. UX and entry points
+
+### 7.1 Who opens it, and when
+
+- **GM mid-session:** reveal a quest, tick an objective, mark complete. Needs to be fast.
+- **GM during prep:** long-form writing and organizing. A big window is fine.
+- **Players:** mostly glance at the current goal. Opening the full log is the rare case.
+
+Design rule: most player contact happens without opening the log.
+
+### 7.2 In Progress widget
+
+The primary player-facing surface.
+
+- The GM marks quests **In Progress** from the quest sheet or a right-click menu. The marker is party-wide.
+- The widget sits directly above Foundry's players list (lower left).
+- It shows the first In Progress quest's name. If more are marked, a badge shows the count ("+2").
+- Optional second line: the next unfinished objective the viewer can see, or a progress count ("2/5"). Setting, on by default.
+- Clicking opens the Quest Log with that quest selected.
+- Only shows quests the viewer can see. The GM sees hidden ones with a hidden marker.
+- Long names truncate with an ellipsis; the full name shows on hover.
+- Re-renders on every client when the marker or objectives change.
+- Uses our theme tokens.
+
+**Fragility rules.** v13 rebuilt the players list and renamed its render hook **[verify v14]**.
+- Insert our own element next to the list. Never edit core's markup.
+- The hook lives in `src/compat.js`.
+- Fail silently: if the hook changes, we lose the widget, not the UI.
+- Other entry points stay available when the list is collapsed or hidden by another module.
+
+### 7.3 Other entry points
+
+Each is toggleable by the GM, separately for GMs and players.
+
+1. **Keyboard shortcut** via Foundry's keybinding system, rebindable. Unbound by default, or a combination that clashes with nothing in core **[verify]**.
+2. **Scene control button** under Token controls, as a button, not a tool. Opening the log never switches the canvas layer **[verify v14 API]**.
+3. **Journal sidebar header icon**, next to the create buttons. Replaces FQL's large footer bar.
+4. **Link redirect.** Any link to a quest's journal entry opens our Quest Sheet.
+5. **Hotbar drag.** Dragging a quest, or the log, to the hotbar creates a macro backed by our API. No macro compendium.
+6. **Hide from players** switch, like FQL's.
+
+### 7.4 Window form
+
+- **One window, list plus detail pane.** Avoids FQL's stack of per-quest windows.
+- **Pop-out on demand** for any quest: second monitor, side-by-side comparison.
+- **Narrow layout:** below a set width, list and detail stack vertically, so the log works docked beside the sidebar.
+- Remember size and position per client.
+
+### 7.5 Quick actions
+
+- Right-click menus on log rows, tracker rows, and the widget: change status, reveal/hide, set In Progress, tick objectives.
+- A short notice for players when a quest is revealed or updated.
+
+### 7.6 Keyboard and focus
+
+- Opening a window moves focus into it. Esc closes it.
+- Arrow keys move through the quest list.
+- Every icon-only button has a tooltip and an accessible label.
+
+### 7.7 What we avoid from FQL
+
+- Footer button that only shows while the journal tab is open.
+- Scene control tools that switch the canvas to the Notes layer.
+- One window per quest.
+- Hard-coded offsets for positioning around the hotbar.
+
+## 8. FQL import
 
 - Source: `JournalEntry.flags['forien-quest-log'].json`.
 - Map every field. List unmapped fields in the import report.
@@ -169,15 +241,15 @@ Fallback: a validated JSON flag on JournalEntry, like FQL. It's simpler, but we'
 
 Store the relationship once: each quest holds an optional `parent` ID. Subquests are worked out from it at read time. Nothing else to keep in sync.
 
-## 8. Development practices
+## 9. Development practices
 
-### 8.1 Foundry API hygiene
+### 9.1 Foundry API hygiene
 
 - Public, documented APIs only. No `_private` methods.
 - No monkey-patching core. If unavoidable, use libWrapper and record why.
 - Run with compatibility warnings on during development, and fix every deprecation as soon as it appears.
 
-### 8.2 Code
+### 9.2 Code
 
 - Native ES modules, no build step for v1. Revisit if it hurts.
 - Plain CSS with native nesting and custom properties. No SCSS.
@@ -185,34 +257,38 @@ Store the relationship once: each quest holds an optional `parent` ID. Subquests
 - ESLint with a shared config.
 - Small files with one job each.
 
-### 8.3 Testing
+### 9.3 Testing
 
 - In-Foundry automated tests with Quench **[verify maintained]** for data model, import, and permissions.
 - A manual test checklist per release: each window × each theme × GM/player.
 - A fixture world with sample FQL quests for import tests.
 
-### 8.4 Releases
+### 9.4 Releases
 
 - Semantic versioning.
 - GitHub Releases host `module.json` and the zip; the manifest URL points at the latest release.
 - Changelog entry per release.
 - Update `compatibility.verified` only after running the test checklist on that version.
 
-## 9. Milestones
+## 10. Milestones
 
 1. **Skeleton.** Manifest, empty ApplicationV2 windows, theme tokens, theme setting.
 2. **Data model.** Quest subtype, create/edit/delete, permissions.
 3. **Quest Sheet.** Full editing UI.
-4. **Quest Log and Tracker.**
-5. **Player edits.** GM relay.
-6. **FQL import.**
-7. **Theme polish.** Dark and Sci-fi, contrast audit.
-8. **v1.0 release.**
+4. **Quest Log, In Progress widget, entry points.**
+5. **Tracker.**
+6. **Player edits.** GM relay.
+7. **FQL import.**
+8. **Theme polish.** Dark and Sci-fi, contrast audit.
+9. **v1.0 release.**
 
-## 10. Open decisions
+## 11. Open decisions
 
 - Minimum Foundry version (v13 or v14).
 - Data storage: page subtype (recommended) or flag.
 - Module ID and display name.
 - Sci-fi fonts and whether to bundle them.
 - Whether the `QuestAPI` shim ships in v1.0 or later.
+- In Progress: allow several quests (recommended) or exactly one.
+- Whether quest entries show in the journal sidebar for players, or only through our UI.
+- Whether the Tracker ships in v1.0, given the In Progress widget covers the glance use.
