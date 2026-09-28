@@ -76,6 +76,9 @@ function matchPlayersSize(widget, players)
       if (!element) { continue; }
       if (width) { element.style.width = `${width}px`; }
       if (rowHeight) { element.style.minHeight = `${rowHeight}px`; }
+      // UI modules may fix button heights; let ours grow to fit the objective line.
+      element.style.height = 'auto';
+      element.style.overflow = 'visible';
    }
    widget.dataset.fhqlMeasured = `${Math.round(width ?? 0)}x${Math.round(rowHeight ?? 0)}`;
 }
@@ -114,6 +117,8 @@ export function debugInProgressWidget()
       playersSize: size(players),
       playersScrollWidth: players?.scrollWidth ?? null,
       playerRowSize: size(playerRowElement(players)),
+      nextObjectiveShown: widget?.querySelector('.fhql-widget-next')?.textContent ?? null,
+      showNextObjectiveSetting: game.settings.get(MODULE_ID, 'showNextObjective'),
       widgetSize: size(widget),
       buttonSize: size(button),
       widgetParent: widget?.parentElement ? `${widget.parentElement.tagName.toLowerCase()}#${widget.parentElement.id}` : null,
