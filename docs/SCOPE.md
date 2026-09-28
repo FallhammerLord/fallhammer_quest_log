@@ -57,8 +57,20 @@ A quest log module for Foundry VTT that:
 - See section 7
 
 **Permissions**
-- Visibility follows Foundry document ownership
+- Visibility follows Foundry document ownership, per the map in 5.6
 - Players may edit when the GM allows it. Player edits route through the GM client
+- Default ownership level for new quests (GM setting)
+
+**Player workflows** (each a GM setting, off by default unless noted)
+- Accept an available quest, moving it to active
+- Create quests. Needs core "create journal" permission; new quests land in Available with the creator as owner
+- Trusted-player editing: trusted owners get status control and fuller editing
+- Drag rewards onto an owned actor sheet. Locked rewards can't be dragged
+- Reward drop notices
+
+**Sharing**
+- Quests in compendiums and Adventure documents keep parent/child links on import to another world
+- Drop a quest onto a scene to create a map pin that opens it
 
 **Themes**
 - Light, Dark, Sci-fi
@@ -84,6 +96,7 @@ A quest log module for Foundry VTT that:
 
 - Anything under Non-goals
 - Replicating FQL's internal code structure
+- FQL's navigation-style and bookmark-background settings. Our themes replace them
 
 ## 5. Architecture
 
@@ -103,6 +116,11 @@ Why:
 
 Fallback: a validated JSON flag on JournalEntry, like FQL. It's simpler, but we'd own validation and migration ourselves.
 
+**When the module is disabled** (blocks the storage decision)
+- Pages of a module subtype likely become invalid when the module is off. Foundry keeps them but may hide or flag them **[verify]**. Flag data just sits inert.
+- Either way, keep a plain-text page on each quest entry, regenerated on save: description, objectives, rewards. The journal stays readable without us.
+- Re-enabling the module must restore everything with no loss.
+
 ### 5.3 UI
 
 - `ApplicationV2` with `HandlebarsApplicationMixin` for all windows.
@@ -112,12 +130,43 @@ Fallback: a validated JSON flag on JournalEntry, like FQL. It's simpler, but we'
 ### 5.4 Player edits
 
 - Prefer the core query API (`CONFIG.queries` / `User#query`, v13+) for GM-relayed edits **[verify]**. Fall back to `game.socket` only if needed.
-- The GM client validates every relayed change against permissions.
+- The GM client validates every relayed change against permissions and content rules (5.8).
 
 ### 5.5 Compatibility boundary
 
 - All version-sensitive calls go through `src/compat.js`.
 - A new Foundry major should mean editing that file, plus fixing what deprecation warnings flag.
+
+### 5.6 Permission map (proposed)
+
+| Ownership | Player sees | Player can |
+|---|---|---|
+| None | Nothing | Nothing |
+| Limited | Name, image, giver, status | Nothing |
+| Observer | Adds description, visible objectives, visible rewards, player notes | Accept, drag rewards (if enabled) |
+| Owner | Same as Observer | Edit description, objectives, player notes (if enabled). Trusted: change status |
+
+Always GM only, whatever the ownership:
+- GM notes
+- Hidden objectives and hidden rewards
+- The FQL source flag
+
+### 5.7 Concurrent edits
+
+- Update single fields, never rewrite the whole quest. FQL rewrote its full JSON blob on every save, so simultaneous edits silently lost one side.
+- Objectives and rewards use stable IDs, so two edits to different objectives never collide.
+- Where two edits hit the same field, last write wins, and the open sheet re-renders to show it.
+
+### 5.8 Content safety
+
+- Sanitize all rich text from players before storing and before display. FQL used DOMPurify; prefer Foundry's own sanitizer if it covers the same cases **[verify]**.
+- The GM relay rejects fields the sender can't edit, and oversized or malformed content.
+
+### 5.9 Scale
+
+- Target: a world with 500 quests stays responsive.
+- Build the quest index once, update it from document hooks, and never rescan the world on render.
+- Search and tab filtering run on the index, not the DOM.
 
 ## 6. Theming spec
 
@@ -270,22 +319,53 @@ Store the relationship once: each quest holds an optional `parent` ID. Subquests
 - Changelog entry per release.
 - Update `compatibility.verified` only after running the test checklist on that version.
 
-## 10. Milestones
+### 9.5 Module compatibility
+
+Test and document behavior with:
+- Monk's Enhanced Journal (FQL shipped special handling for it)
+- PopOut! (pop-out windows)
+- UI-hiding modules (they affect the In Progress widget)
+
+### 9.6 Documentation and distribution
+
+- README with screenshots of each theme
+- User guide: GM setup, player use, FQL import
+- Issue templates for bugs and feature requests
+- Listing on the Foundry package directory
+
+### 9.7 License and naming
+
+- FQL is MIT licensed. Reused code, icons, or fonts keep FQL's copyright notice in our LICENSE or a NOTICE file.
+- Our name and branding avoid "Forien", so users don't mistake us for the official module.
+
+## 10. Definition of done (v1.0)
+
+- Imports a real FQL world with nothing lost, and the import report lists every fix.
+- Every window passes the contrast check (6.4) in all three themes.
+- Runs on the verified Foundry version with no deprecation warnings.
+- The manual test checklist passes for each window × theme × GM/player.
+- Disabling and re-enabling the module loses nothing.
+- A 500-quest world stays responsive.
+
+## 11. Milestones
 
 1. **Skeleton.** Manifest, empty ApplicationV2 windows, theme tokens, theme setting.
 2. **Data model.** Quest subtype, create/edit/delete, permissions.
 3. **Quest Sheet.** Full editing UI.
 4. **Quest Log, In Progress widget, entry points.**
 5. **Tracker.**
-6. **Player edits.** GM relay.
+6. **Player workflows.** GM relay, accept, create, reward dragging.
 7. **FQL import.**
-8. **Theme polish.** Dark and Sci-fi, contrast audit.
-9. **v1.0 release.**
+8. **Sharing.** Compendiums, Adventures, map pins.
+9. **Theme polish.** Dark and Sci-fi, contrast audit.
+10. **Docs and release prep.** Checked against section 10.
+11. **v1.0 release.**
 
-## 11. Open decisions
+## 12. Open decisions
 
 - Minimum Foundry version (v13 or v14).
-- Data storage: page subtype (recommended) or flag.
+- Data storage: page subtype (recommended) or flag. **Blocked on** verifying disabled-module behavior (5.2).
+- Confirm the permission map (5.6).
 - Module ID and display name.
 - Sci-fi fonts and whether to bundle them.
 - Whether the `QuestAPI` shim ships in v1.0 or later.
