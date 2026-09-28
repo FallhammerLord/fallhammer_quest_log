@@ -1,4 +1,5 @@
 import { QuestLog } from './apps/QuestLog.js';
+import { debugInProgressWidget } from './ui/InProgressWidget.js';
 
 /**
  * Opens the Quest Log, or brings it to the front if already open.
@@ -20,4 +21,4 @@ export function openQuestLog(questId)
 }
 
 /** Public API, exposed as `game.modules.get('fhql').api`. Usable from macros. */
-export const api = Object.freeze({ openQuestLog });
+export const api = Object.freeze({ openQuestLog, debugWidget: debugInProgressWidget });

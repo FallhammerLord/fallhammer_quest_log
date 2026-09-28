@@ -66,10 +66,45 @@ export function refreshInProgressWidget()
 function matchPlayersSize(widget, players)
 {
    const width = players?.getBoundingClientRect().width;
-   if (width) { widget.style.width = `${width}px`; }
-
    const rowHeight = playerRowElement(players)?.getBoundingClientRect().height;
-   if (rowHeight) { widget.style.setProperty('--fhql-widget-height', `${rowHeight}px`); }
+   const button = widget.querySelector('.fhql-widget-button');
+
+   // Inline sizes on both the wrapper and the visible button, so no stylesheet can shrink either.
+   for (const element of [widget, button])
+   {
+      if (!element) { continue; }
+      if (width) { element.style.width = `${width}px`; }
+      if (rowHeight) { element.style.minHeight = `${rowHeight}px`; }
+   }
+   widget.dataset.fhqlMeasured = `${Math.round(width ?? 0)}x${Math.round(rowHeight ?? 0)}`;
+}
+
+/**
+ * Diagnostic for the widget's sizing. Run `game.modules.get('fhql').api.debugWidget()` in the console.
+ *
+ * @returns {object} What the widget measured and what the browser applied.
+ */
+export function debugInProgressWidget()
+{
+   const widget = document.getElementById(WIDGET_ID);
+   const players = playersElement();
+   const button = widget?.querySelector('.fhql-widget-button');
+   const size = (el) => (el ? `${Math.round(el.getBoundingClientRect().width)}x${Math.round(el.getBoundingClientRect().height)}` : null);
+   const info = {
+      widgetFound: !!widget,
+      playersFound: !!players,
+      playersTag: players ? `${players.tagName.toLowerCase()}#${players.id}` : null,
+      playerRowFound: !!playerRowElement(players),
+      measured: widget?.dataset.fhqlMeasured ?? null,
+      playersSize: size(players),
+      widgetSize: size(widget),
+      buttonSize: size(button),
+      widgetParent: widget?.parentElement ? `${widget.parentElement.tagName.toLowerCase()}#${widget.parentElement.id}` : null,
+      parentDisplay: widget?.parentElement ? getComputedStyle(widget.parentElement).display : null,
+      stylesheetLoaded: !!document.querySelector('link[href*="fhql.css"]')
+   };
+   console.table(info);
+   return info;
 }
 
 /**
