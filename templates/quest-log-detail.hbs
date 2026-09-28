@@ -101,6 +101,9 @@
     </button>
   </div>
   {{/if}}
+  {{#if (eq status "hidden")}}{{#if gm}}
+  <p class="fhql-notice"><i class="fa-solid fa-eye-slash" inert></i> {{localize "FHQL.QuestLog.HiddenNotice"}}</p>
+  {{/if}}{{/if}}
   <header class="fhql-detail-header">
     <h2 class="fhql-heading">{{name}}</h2>
     <p class="fhql-status-badge fhql-status-{{status}}"><i class="{{statusIcon}}" inert></i> {{statusLabel}}</p>

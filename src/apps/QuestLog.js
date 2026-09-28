@@ -159,11 +159,11 @@ export class QuestLog extends HandlebarsApp
    static #statusActions(status)
    {
       const targets = {
-         hidden: [['available', 'Reveal']],
-         available: [['active', 'Start'], ['completed', 'Complete'], ['failed', 'Fail']],
-         active: [['completed', 'Complete'], ['failed', 'Fail']],
-         completed: [['active', 'Reopen']],
-         failed: [['active', 'Reopen']]
+         hidden: [['available', 'Reveal'], ['active', 'RevealActive']],
+         available: [['active', 'Start'], ['completed', 'Complete'], ['failed', 'Fail'], ['hidden', 'Hide']],
+         active: [['completed', 'Complete'], ['failed', 'Fail'], ['hidden', 'Hide']],
+         completed: [['active', 'Reopen'], ['hidden', 'Hide']],
+         failed: [['active', 'Reopen'], ['hidden', 'Hide']]
       }[status] ?? [];
 
       return targets.map(([target, verb]) => ({

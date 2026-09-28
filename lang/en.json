@@ -17,12 +17,15 @@
       "Done": "Done",
       "EditingNote": "Editing. Changes save as you go.",
       "StatusAction": {
-        "Reveal": "Reveal",
+        "Reveal": "Reveal as Available",
         "Start": "Start",
         "Complete": "Complete",
         "Fail": "Fail",
-        "Reopen": "Reopen"
-      }
+        "Reopen": "Reopen",
+        "RevealActive": "Reveal as Active",
+        "Hide": "Hide"
+      },
+      "HiddenNotice": "Hidden. Players can't see this quest until you reveal it."
     },
     "Quest": {
       "NewName": "New Quest",

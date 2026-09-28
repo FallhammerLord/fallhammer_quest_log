@@ -315,6 +315,14 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
   margin-block-end: 0.5em;
   font-size: 0.9em;
 }
+.fhql-app .fhql-notice {
+  margin: 0 0 0.6em;
+  padding: 0.4em 0.7em;
+  color: var(--fhql-ink);
+  background: var(--fhql-surface-sunken);
+  border: 1px dashed var(--fhql-status-hidden);
+  border-radius: var(--fhql-radius);
+}
 .fhql-app .fhql-quick-actions { display: flex; flex-wrap: wrap; gap: 0.4em; }
 .fhql-app .fhql-quick-actions .fhql-status-icon { color: var(--fhql-status); }
 .fhql-app .fhql-button.fhql-primary {
