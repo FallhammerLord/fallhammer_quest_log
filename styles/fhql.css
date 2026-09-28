@@ -415,7 +415,11 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
 .fhql-app .fhql-prose { line-height: 1.5; }
 .fhql-app .fhql-prose > :first-child { margin-block-start: 0; }
 .fhql-app .fhql-prose > :last-child { margin-block-end: 0; }
-.fhql-app prose-mirror { display: block; min-height: 6em; }
+/* Leave Foundry's own editor layout alone; give it room, and make sure text can be selected and typed. */
+.fhql-app prose-mirror { min-height: 8em; }
+.fhql-app prose-mirror,
+.fhql-app prose-mirror * { user-select: text; -webkit-user-select: text; }
+.fhql-app prose-mirror .editor-content { min-height: 6em; }
 
 /* Objectives */
 .fhql-objectives {
