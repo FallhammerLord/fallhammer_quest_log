@@ -907,3 +907,11 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
 }
 .fhql-app .fhql-dates { font-variant-numeric: tabular-nums; }
 .fhql-app file-picker { display: flex; gap: 0.3em; min-width: 0; }
+
+/* ---------- Save state, target sizes ---------- */
+.fhql-app .fhql-save-state { font-size: 0.85em; color: var(--fhql-status-completed); }
+.fhql-app .fhql-save-state.is-failed { color: var(--fhql-status-failed); }
+/* WCAG 2.2 minimum target size: 24px. */
+.fhql-app .fhql-chip { min-height: 24px; min-width: 28px; justify-content: center; }
+.fhql-app .fhql-undo { min-width: 24px; min-height: 24px; display: inline-grid; place-items: center; }
+.fhql-app .fhql-icon-button { min-width: 24px; min-height: 24px; }

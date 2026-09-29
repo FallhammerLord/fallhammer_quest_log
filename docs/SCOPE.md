@@ -483,6 +483,8 @@ Test and document behavior with:
 - Data storage: page subtype `fhql.quest` (5.2). Live test passed on v14, 2026-09-28. No plain-text copy page.
 - License: MIT.
 - In Progress: several quests allowed; the Beacon shows the first with a +N badge.
+- **In Progress is labeled "Focus"** (2026-09-29), shown as a star, to separate it from the Active status and from personal Track (bookmark). The data field stays `inProgress`.
+- Rich-text editors open ready to type in edit mode; unsaved editor text is saved on Done and on close. Edit mode shows Saving… / Saved.
 - Give offers each player's assigned character only; claim mistakes are fixed with Undo.
 
 ## 13. Open decisions

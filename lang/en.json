@@ -26,13 +26,16 @@
         "Hide": "Hide"
       },
       "HiddenNotice": "Hidden. Players can't see this quest until you reveal it.",
-      "Open": "Open Quest Log"
+      "Open": "Open Quest Log",
+      "Saving": "Saving…",
+      "Saved": "Saved",
+      "SaveFailed": "Couldn't save. Check your connection and try again."
     },
     "Quest": {
       "NewName": "New Quest",
       "Name": "Quest name",
       "Status": "Status",
-      "InProgress": "In progress",
+      "InProgress": "Focus",
       "Giver": "Quest giver",
       "Description": "Description",
       "Objectives": "Objectives",
@@ -41,7 +44,7 @@
       "DeleteTitle": "Delete quest",
       "DeleteConfirm": "Delete <strong>{name}</strong>? Its subquests are kept.",
       "LimitedNote": "You know this quest exists, but not its details.",
-      "InProgressHint": "Show this quest on the Quest Beacon for everyone who can see it",
+      "InProgressHint": "Party focus: shows this quest on everyone's Quest Beacon",
       "MoreActions": "More actions",
       "PopOut": "Open in its own window",
       "ManageAccess": "Manage player access",
@@ -116,7 +119,7 @@
       },
       "ShowInProgress": {
         "Name": "Show the Quest Beacon",
-        "Hint": "Shows the In Progress quest and its objectives above the players list. Applies to your client only."
+        "Hint": "Shows the party's focus quest, or quests you track, with objectives above the players list. Applies to your client only."
       },
       "ShowNextObjective": {
         "Name": "Show objectives on the Quest Beacon",
@@ -209,7 +212,7 @@
       "Empty": "No quest tracked",
       "EmptyLabel": "No quest tracked. Open the Quest Log.",
       "Choose": "Show on your Beacon",
-      "Party": "In progress (party)",
+      "Party": "Party focus",
       "Tracked": "Tracked by you",
       "SwitchLabel": "{count} marked quests. Choose which to show."
     },
@@ -280,6 +283,14 @@
     },
     "Popover": {
       "Cancel": "Cancel"
+    },
+    "Announce": {
+      "Status": "Status: {status}",
+      "Objective": "{objective}: {state}",
+      "FocusOn": "Now the party focus",
+      "FocusOff": "No longer the party focus",
+      "TrackOn": "Tracking this quest",
+      "TrackOff": "Stopped tracking this quest"
     }
   }
 }

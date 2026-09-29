@@ -17,7 +17,7 @@ Scope, design, and decisions live in [`docs/SCOPE.md`](docs/SCOPE.md).
 3. Open the Quest Log any of these ways:
    - **Quest Log** button at the top of the Journal sidebar tab.
    - Scroll icon in the Token controls (left toolbar). Doesn't change the active layer.
-   - The In Progress quest above the players list (appears once a quest is marked In progress).
+   - The Focus quest above the players list (appears once a quest is marked Focus).
    - A key you bind in Configure Controls → Fallhammer Quest Log → Open Quest Log.
    - Macro: `game.modules.get('fhql').api.openQuestLog()`
 4. Themes: the GM sets "Quest Log theme (world default)"; each player can override it with "Quest Log theme (just you)".
@@ -31,7 +31,7 @@ As GM:
 - **Done** returns to the read view. **Edit** reopens editing.
 - In the read view: status buttons (Reveal, Start, Complete, Fail, Reopen) and clickable objective boxes, no edit mode needed.
 - Click an objective's box to cycle open → done → failed.
-- Toggle **In progress** and an objective's hide (eye) box.
+- Toggle **Focus** and an objective's hide (eye) box.
 - Delete a quest. Its subquests stay.
 
 As a player (second browser or user):
@@ -50,7 +50,7 @@ Folders and filters:
 Entry points:
 - Journal tab shows a **Quest Log** button in its header, for GM and players.
 - Token controls show a scroll button; clicking it opens the log and leaves the Token tool active.
-- Mark a quest **In progress**: its name and all its objectives appear on the Quest Beacon above the players list, on every client that can see it. Clicking opens the log on that quest.
+- Mark a quest **Focus**: its name and all its objectives appear on the Quest Beacon above the players list, on every client that can see it. Clicking opens the log on that quest.
 - Mark two quests: a **+1** badge appears, with the other name on hover.
 - Configure Settings has per-client toggles for the widget and its objective line.
 

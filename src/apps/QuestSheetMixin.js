@@ -72,6 +72,48 @@ export function QuestSheetMixin(Base)
       /** Focused control and unsaved typing, captured before a re-render and restored after it. */
       #pendingFocus = null;
 
+      /** Last save outcome shown in edit mode: '', 'saving', 'saved', or 'failed'. */
+      #saveState = '';
+
+      /**
+       * Shows save progress in the edit bar without a re-render.
+       *
+       * @param {string} state - 'saving', 'saved', or 'failed'.
+       */
+      #setSaveState(state)
+      {
+         this.#saveState = state;
+         const label = this.#saveStateLabel();
+         const node = this.element?.querySelector('[data-save-state]');
+         if (node) { node.textContent = label; node.classList.toggle('is-failed', state === 'failed'); }
+      }
+
+      /** @returns {string} Label for the current save state. */
+      #saveStateLabel()
+      {
+         const keys = { saving: 'FHQL.QuestLog.Saving', saved: 'FHQL.QuestLog.Saved', failed: 'FHQL.QuestLog.SaveFailed' };
+         return keys[this.#saveState] ? game.i18n.localize(keys[this.#saveState]) : '';
+      }
+
+      /**
+       * Announces a change to screen readers through a live region that survives re-renders.
+       *
+       * @param {string} message - What changed.
+       */
+      _announce(message)
+      {
+         let region = this.element?.querySelector(':scope > .fhql-live');
+         if (!region && this.element)
+         {
+            region = document.createElement('div');
+            region.className = 'fhql-live sr-only';
+            region.setAttribute('aria-live', 'polite');
+            region.setAttribute('role', 'status');
+            this.element.append(region);
+         }
+         if (region) { region.textContent = ''; setTimeout(() => { region.textContent = message; }, 50); }
+      }
+
       /** @override */
       async _preRender(context, options)
       {
@@ -263,6 +305,7 @@ export function QuestSheetMixin(Base)
             })) : [],
             inProgress: system.inProgress,
             tracked: isTracked(entry),
+            saveStateLabel: editing ? this.#saveStateLabel() : '',
             image: system.image,
             dateLine: QuestSheet.#dateLine(system),
             giver: { ...system.giver, linked: !!system.giver.uuid },
@@ -342,9 +385,29 @@ export function QuestSheetMixin(Base)
       async #onFieldChange(event)
       {
          const input = event.target;
-         const field = input.dataset?.field;
+         if (!input.dataset?.field || !this.questEntry) { return; }
+         this.#setSaveState('saving');
+         try
+         {
+            await this.#saveField(input);
+            this.#setSaveState('saved');
+         }
+         catch (err)
+         {
+            console.error(`${MODULE_ID} | Save failed`, err);
+            this.#setSaveState('failed');
+         }
+      }
+
+      /**
+       * Writes one edited field to the quest.
+       *
+       * @param {HTMLElement} input - The changed field, carrying `data-field`.
+       */
+      async #saveField(input)
+      {
+         const field = input.dataset.field;
          const entry = this.questEntry;
-         if (!field || !entry) { return; }
 
          const value = input.type === 'checkbox' ? input.checked : input.value;
          const objectiveId = input.closest('[data-objective-id]')?.dataset.objectiveId;
@@ -400,6 +463,7 @@ export function QuestSheetMixin(Base)
       static #onEditQuest()
       {
          this._editing = true;
+         this.#saveState = '';
          this.render();
       }
 
@@ -414,14 +478,19 @@ export function QuestSheetMixin(Base)
       /** @this {QuestSheet} */
       static async #onSetQuestStatus(event, target)
       {
-         if (this.questEntry) { await setStatus(this.questEntry, target.dataset.status); }
+         if (!this.questEntry) { return; }
+         await setStatus(this.questEntry, target.dataset.status);
+         this._announce(game.i18n.format('FHQL.Announce.Status', { status: game.i18n.localize(`FHQL.Status.${target.dataset.status}`) }));
       }
 
       /** @this {QuestSheet} */
       static async #onToggleInProgress()
       {
          const entry = this.questEntry;
-         if (entry) { await updateQuest(entry, { 'system.inProgress': !questPage(entry).system.inProgress }); }
+         if (!entry) { return; }
+         const on = !questPage(entry).system.inProgress;
+         await updateQuest(entry, { 'system.inProgress': on });
+         this._announce(game.i18n.localize(on ? 'FHQL.Announce.FocusOn' : 'FHQL.Announce.FocusOff'));
       }
 
 
@@ -435,13 +504,24 @@ export function QuestSheetMixin(Base)
       static async #onCycleObjective(event, target)
       {
          const id = target.closest('[data-objective-id]')?.dataset.objectiveId;
-         if (this.questEntry && id) { await cycleObjective(this.questEntry, id); }
+         if (!this.questEntry || !id) { return; }
+         await cycleObjective(this.questEntry, id);
+         const objective = questPage(this.questEntry)?.system.objectives[id];
+         if (objective)
+         {
+            this._announce(game.i18n.format('FHQL.Announce.Objective', {
+               objective: objective.name, state: game.i18n.localize(`FHQL.Objective.State.${objective.state}`)
+            }));
+         }
       }
 
       /** @this {QuestSheet} */
       static async #onToggleTracked()
       {
-         if (this.questEntry) { await toggleTracked(this.questEntry); }
+         if (!this.questEntry) { return; }
+         const on = !isTracked(this.questEntry);
+         await toggleTracked(this.questEntry);
+         this._announce(game.i18n.localize(on ? 'FHQL.Announce.TrackOn' : 'FHQL.Announce.TrackOff'));
       }
 
       /** @this {QuestSheet} */

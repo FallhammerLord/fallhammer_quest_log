@@ -286,6 +286,23 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
       super._onFirstRender(context, options);
       const el = this.element;
 
+      // Arrow keys, Home, and End move through visible quest and folder rows.
+      el.addEventListener('keydown', (event) =>
+      {
+         const move = { ArrowDown: 1, ArrowUp: -1 }[event.key];
+         const edge = event.key === 'Home' || event.key === 'End';
+         if (!move && !edge) { return; }
+         const current = event.target.closest?.('.fhql-list-items .fhql-row, .fhql-list-items .fhql-folder');
+         if (!current) { return; }
+         const rows = [...el.querySelectorAll('.fhql-list-items .fhql-row, .fhql-list-items .fhql-folder')]
+          .filter((row) => !row.closest('[hidden]'));
+         const index = rows.indexOf(current);
+         const next = edge ? rows[event.key === 'Home' ? 0 : rows.length - 1] : rows[index + move];
+         if (!next) { return; }
+         event.preventDefault();
+         next.focus();
+      });
+
       el.addEventListener('input', (event) =>
       {
          if (!event.target.matches('[data-list-search]')) { return; }

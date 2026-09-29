@@ -50,6 +50,7 @@
     {{#if editing}}
     <div class="fhql-sheet-actions">
       <span class="fhql-muted"><i class="fa-solid fa-pen" inert></i> {{localize "FHQL.QuestLog.EditingNote"}}</span>
+      <span class="fhql-save-state" data-save-state role="status">{{saveStateLabel}}</span>
       <button type="button" class="fhql-button fhql-primary fhql-push" data-action="finishEditing">
         <i class="fa-solid fa-check" inert></i> {{localize "FHQL.QuestLog.Done"}}</button>
     </div>
@@ -116,7 +117,7 @@
       {{#if editing}}
       <section class="fhql-card fhql-area-description">
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.Description"}}</h3>
-        <prose-mirror name="description" data-field="description" toggled value="{{description}}">{{{descriptionHTML}}}</prose-mirror>
+        <prose-mirror name="description" data-field="description" toggled open value="{{description}}">{{{descriptionHTML}}}</prose-mirror>
       </section>
       {{else if descriptionHTML}}
       <section class="fhql-card fhql-area-description">
@@ -129,7 +130,7 @@
       {{#if editing}}
       <section class="fhql-card fhql-area-notes">
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.PlayerNotes"}}</h3>
-        <prose-mirror name="playerNotes" data-field="playerNotes" toggled value="{{playerNotes}}">{{{playerNotesHTML}}}</prose-mirror>
+        <prose-mirror name="playerNotes" data-field="playerNotes" toggled open value="{{playerNotes}}">{{{playerNotesHTML}}}</prose-mirror>
       </section>
       {{else if playerNotesHTML}}
       <section class="fhql-card fhql-area-notes">
@@ -317,7 +318,7 @@
         <span class="fhql-gm-tag">{{localize "FHQL.Quest.GMOnly"}}</span>
       </summary>
       {{#if editing}}
-      <prose-mirror name="gmNotes" data-field="gmNotes" toggled value="{{gmNotes.raw}}">{{{gmNotes.html}}}</prose-mirror>
+      <prose-mirror name="gmNotes" data-field="gmNotes" toggled open value="{{gmNotes.raw}}">{{{gmNotes.html}}}</prose-mirror>
       {{else if gmNotes.html}}
       <div class="fhql-prose">{{{gmNotes.html}}}</div>
       {{else}}
