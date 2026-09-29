@@ -1,4 +1,5 @@
-import { DialogV2, HandlebarsApp } from '../compat.js';
+import { HandlebarsApp } from '../compat.js';
+import { inputPopover } from '../ui/popover.js';
 import { MODULE_ID, MODULE_PATH, STATUSES } from '../constants.js';
 import { applyTheme, trackApp, untrackApp } from '../theme.js';
 import { clampToMinSize } from './minSize.js';
@@ -305,6 +306,17 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
       });
       el.addEventListener('dragleave', (event) => event.target.closest?.('[data-folder-drop]')?.classList.remove('is-drop-target'));
       el.addEventListener('drop', (event) => this.#onFolderDrop(event));
+
+      // Right-click (or the context-menu key) on a quest row opens the quest menu for that quest.
+      el.addEventListener('contextmenu', (event) =>
+      {
+         const row = event.target.closest?.('[data-row="quest"]');
+         if (!row || !game.user.isGM) { return; }
+         event.preventDefault();
+         const button = row.querySelector('.fhql-row');
+         const anchor = event.clientX || event.clientY ? { x: event.clientX, y: event.clientY } : button;
+         this._openQuestMenu(getQuestEntry(button?.dataset.questId), anchor);
+      });
    }
 
    /** @param {DragEvent} event - A quest row dropped on a folder header or the list. */
@@ -363,14 +375,12 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
    }
 
    /** @this {QuestLog} */
-   static async #onCreateFolder()
+   static async #onCreateFolder(event, target)
    {
-      const name = await DialogV2.prompt({
-         window: { title: 'FHQL.Folders.New' },
-         content: `<label class="fhql-dialog-field">${game.i18n.localize('FHQL.Folders.Name')}
-            <input type="text" name="name" value="${game.i18n.localize('FHQL.Folders.NewName')}" autofocus></label>`,
-         ok: { label: 'FHQL.Folders.New', callback: (e, button) => button.form.elements.name.value },
-         rejectClose: false
+      const name = await inputPopover(this, target, {
+         label: game.i18n.localize('FHQL.Folders.Name'),
+         value: game.i18n.localize('FHQL.Folders.NewName'),
+         ok: game.i18n.localize('FHQL.Folders.Create')
       });
       if (name) { await createQuestFolder(name); }
    }

@@ -1,6 +1,9 @@
-import { DialogV2, DocumentOwnershipConfig, textEditor } from '../compat.js';
+import { DocumentOwnershipConfig, textEditor } from '../compat.js';
+import { confirmPopover, menuPopover } from '../ui/popover.js';
 import { MODULE_ID, STATUSES } from '../constants.js';
-import { claimLabel, claimsExhausted, claimTargets, isClaimable, pickRecipient, requestClaim, undoClaim } from '../data/rewards.js';
+import {
+   claimLabel, claimedItem, claimsExhausted, claimTargets, isClaimable, recipientOptions, requestClaim, undoClaim
+} from '../data/rewards.js';
 import {
    addObjective, addRewardFromDocument, addTextReward, clearGiver, createSubquest, cycleObjective, deleteObjective,
    deleteQuest, deleteReward, getQuestEntry, gmNotesPage, moveQuestToFolder, parentCandidates, questAccess, questPage,
@@ -42,7 +45,6 @@ export function QuestSheetMixin(Base)
             finishEditing: QuestSheet.#onFinishEditing,
             setQuestStatus: QuestSheet.#onSetQuestStatus,
             toggleInProgress: QuestSheet.#onToggleInProgress,
-            deleteQuest: QuestSheet.#onDeleteQuest,
             addObjective: QuestSheet.#onAddObjective,
             cycleObjective: QuestSheet.#onCycleObjective,
             deleteObjective: QuestSheet.#onDeleteObjective,
@@ -58,10 +60,7 @@ export function QuestSheetMixin(Base)
             clearGiver: QuestSheet.#onClearGiver,
             showQuest: QuestSheet.#onShowQuest,
             addSubquest: QuestSheet.#onAddSubquest,
-            setParent: QuestSheet.#onSetParent,
-            moveToFolder: QuestSheet.#onMoveToFolder,
-            manageAccess: QuestSheet.#onManageAccess,
-            popOut: QuestSheet.#onPopOut
+            questMenu: QuestSheet.#onQuestMenu
          }
       };
 
@@ -205,13 +204,6 @@ export function QuestSheetMixin(Base)
                game.settings.set(MODULE_ID, 'gmNotesOpen', event.target.open);
             }
          }, true);
-         el.addEventListener('click', (event) =>
-         {
-            for (const menu of el.querySelectorAll('details.fhql-menu[open]'))
-            {
-               if (!menu.contains(event.target)) { menu.open = false; }
-            }
-         });
       }
 
       /**
@@ -303,12 +295,6 @@ export function QuestSheetMixin(Base)
          if (entry) { await updateQuest(entry, { 'system.inProgress': !questPage(entry).system.inProgress }); }
       }
 
-      /** @this {QuestSheet} */
-      static async #onDeleteQuest()
-      {
-         const entry = this.questEntry;
-         if (entry && await deleteQuest(entry)) { this._editing = false; }
-      }
 
       /** @this {QuestSheet} */
       static async #onAddObjective()
@@ -351,30 +337,8 @@ export function QuestSheetMixin(Base)
          return reward ? { id, reward } : undefined;
       }
 
-      /** @this {QuestSheet} */
-      static async #onClaimReward(event, target)
-      {
-         const found = this.#rewardFor(target);
-         if (!found) { return; }
-         const recipient = await pickRecipient({ ...found.reward }, false);
-         if (recipient) { await requestClaim(this.questEntry, found.id, recipient); }
-      }
 
-      /** @this {QuestSheet} */
-      static async #onGiveReward(event, target)
-      {
-         const found = this.#rewardFor(target);
-         if (!found) { return; }
-         const recipient = await pickRecipient({ ...found.reward }, true);
-         if (recipient) { await requestClaim(this.questEntry, found.id, recipient); }
-      }
 
-      /** @this {QuestSheet} */
-      static async #onUndoClaim(event, target)
-      {
-         const found = this.#rewardFor(target);
-         if (found) { await undoClaim(this.questEntry, found.id, Number(target.dataset.claimIndex)); }
-      }
 
       /** @this {QuestSheet} */
       static async #onToggleRewardLock(event, target)
@@ -433,63 +397,164 @@ export function QuestSheetMixin(Base)
          this.render();
       }
 
-      /** @this {QuestSheet} */
-      static async #onSetParent()
-      {
-         const entry = this.questEntry;
-         if (!entry) { return; }
-         const current = questPage(entry).system.parent;
-         const escape = foundry.utils.escapeHTML;
-         const options = [`<option value="">${game.i18n.localize('FHQL.Quest.NoParent')}</option>`,
-            ...parentCandidates(entry).map((e) =>
-               `<option value="${e.id}" ${e.id === current ? 'selected' : ''}>${escape(e.name)}</option>`)];
 
-         const parentId = await DialogV2.prompt({
-            window: { title: 'FHQL.Quest.SetParent' },
-            content: `<label class="fhql-dialog-field">${game.i18n.localize('FHQL.Quest.Parent')}
-               <select name="parent">${options.join('')}</select></label>`,
-            ok: { label: 'FHQL.Quest.SetParent', callback: (e, button) => button.form.elements.parent.value },
-            rejectClose: false
-         });
-         if (parentId !== null && parentId !== undefined) { await setParent(entry, parentId); }
+
+
+      /* ---------- Quest menu (⋮ button and right-click on list rows) ---------- */
+
+      /**
+       * @param {JournalEntry} entry - The quest the menu acts on.
+       * @returns {object[]} Menu items. GM only.
+       */
+      _questMenuItems(entry)
+      {
+         const t = (key) => game.i18n.localize(key);
+         return [
+            ...(this.options.questId === entry.id ? [] : [{ value: 'popOut', label: t('FHQL.Menu.PopOut'), icon: 'fa-solid fa-up-right-from-square' }]),
+            { value: 'access', label: t('FHQL.Menu.Access'), icon: 'fa-solid fa-user-lock' },
+            { value: 'move', label: t('FHQL.Menu.Move'), icon: 'fa-solid fa-folder-open' },
+            { value: 'parent', label: t('FHQL.Menu.Parent'), icon: 'fa-solid fa-diagram-project' },
+            { value: 'delete', label: t('FHQL.Menu.Delete'), icon: 'fa-solid fa-trash', danger: true }
+         ];
+      }
+
+      /**
+       * Opens the quest menu for a quest and runs the chosen action.
+       *
+       * @param {JournalEntry} entry - The quest.
+       * @param {HTMLElement|{ x: number, y: number }} anchor - Where to open the menu.
+       */
+      async _openQuestMenu(entry, anchor)
+      {
+         if (!entry || !game.user.isGM) { return; }
+         const choice = await menuPopover(this, anchor, { items: this._questMenuItems(entry) });
+         const control = anchor instanceof HTMLElement ? anchor : null;
+         switch (choice)
+         {
+            case 'popOut': return game.modules.get(MODULE_ID).api.openQuestSheet(entry.id);
+            case 'access': return new DocumentOwnershipConfig({ document: entry }).render({ force: true });
+            case 'move': return this.#chooseFolder(entry, control ?? anchor);
+            case 'parent': return this.#chooseParent(entry, control ?? anchor);
+            case 'delete': return this.#confirmDelete(entry, control ?? anchor);
+         }
       }
 
       /** @this {QuestSheet} */
-      static async #onMoveToFolder()
+      static #onQuestMenu(event, target)
       {
-         const entry = this.questEntry;
-         if (!entry) { return; }
-         const escape = foundry.utils.escapeHTML;
+         this._openQuestMenu(this.questEntry, target);
+      }
+
+      /** Picks a folder in the quest tree and moves the quest there. */
+      async #chooseFolder(entry, anchor)
+      {
          const root = questRootFolder();
-         const current = entry.folder?.id;
-         const label = (folder) => [...folder.ancestors.filter((a) => a.id !== root?.id).reverse(), folder]
-          .map((f) => f.name).join(' / ');
-         const options = [`<option value="">${game.i18n.localize('FHQL.Folders.TopLevel')}</option>`,
-            ...questSubfolders().map((f) => ({ id: f.id, text: label(f) }))
-             .sort((a, b) => a.text.localeCompare(b.text))
-             .map((f) => `<option value="${f.id}" ${f.id === current ? 'selected' : ''}>${escape(f.text)}</option>`)];
+         const current = entry.folder?.id === root?.id ? '' : entry.folder?.id ?? '';
+         const path = (folder) => [...folder.ancestors.filter((a) => a.id !== root?.id).reverse(), folder].map((f) => f.name).join(' / ');
+         const items = [
+            { value: '', label: game.i18n.localize('FHQL.Folders.TopLevel'), current: current === '' },
+            ...questSubfolders().map((f) => ({ value: f.id, label: path(f), current: f.id === current }))
+             .sort((a, b) => a.label.localeCompare(b.label))
+         ];
+         const choice = await menuPopover(this, anchor, { title: game.i18n.localize('FHQL.Folders.MoveTo'), items });
+         if (choice !== null) { await moveQuestToFolder(entry, choice); }
+      }
 
-         const folderId = await DialogV2.prompt({
-            window: { title: 'FHQL.Folders.MoveTo' },
-            content: `<label class="fhql-dialog-field">${game.i18n.localize('FHQL.Folders.MoveTo')}
-               <select name="folder">${options.join('')}</select></label>`,
-            ok: { label: 'FHQL.Folders.MoveTo', callback: (e, button) => button.form.elements.folder.value },
-            rejectClose: false
+      /** Picks a parent quest (or none). Quests below this one are left out to prevent loops. */
+      async #chooseParent(entry, anchor)
+      {
+         const current = questPage(entry).system.parent;
+         const items = [
+            { value: '', label: game.i18n.localize('FHQL.Quest.NoParent'), current: !current },
+            ...parentCandidates(entry).map((e) => ({ value: e.id, label: e.name, current: e.id === current }))
+         ];
+         const choice = await menuPopover(this, anchor, { title: game.i18n.localize('FHQL.Quest.SetParent'), items });
+         if (choice !== null) { await setParent(entry, choice); }
+      }
+
+      /** Confirms, then deletes the quest. */
+      async #confirmDelete(entry, anchor)
+      {
+         const ok = await confirmPopover(this, anchor, {
+            message: `<p>${game.i18n.format('FHQL.Quest.DeleteConfirm', { name: foundry.utils.escapeHTML(entry.name) })}</p>`,
+            yes: game.i18n.localize('FHQL.Menu.Delete'),
+            danger: true
          });
-         if (folderId !== null && folderId !== undefined) { await moveQuestToFolder(entry, folderId); }
+         if (!ok) { return; }
+         if (entry.id === this.questId) { this._editing = false; }
+         await deleteQuest(entry);
+      }
+
+      /* ---------- Claiming ---------- */
+
+      /**
+       * Chooses a recipient in a child panel. A player with an assigned character skips the choice.
+       *
+       * @param {object} reward - Reward data.
+       * @param {boolean} asGM - Whether the GM is giving it.
+       * @param {HTMLElement} anchor - The Claim or Give button.
+       * @returns {Promise<object|null>} The chosen recipient.
+       */
+      async #chooseRecipient(reward, asGM, anchor)
+      {
+         const options = recipientOptions(reward, asGM);
+         if (!options.length)
+         {
+            ui.notifications.warn(game.i18n.localize(asGM ? 'FHQL.Reward.NoRecipients' : 'FHQL.Reward.NoCharacter'));
+            return null;
+         }
+         if (!asGM && (options.length === 1 || options[0].assigned)) { return options[0]; }
+         const choice = await menuPopover(this, anchor, {
+            title: game.i18n.format(asGM ? 'FHQL.Reward.GiveTo' : 'FHQL.Reward.ClaimFor', { reward: reward.name }),
+            items: options.map((o, i) => ({
+               value: String(i), label: o.label, icon: reward.type === 'actor' ? 'fa-solid fa-user' : 'fa-solid fa-user-shield',
+               hint: o.assigned && !asGM ? game.i18n.localize('FHQL.Reward.Assigned') : ''
+            }))
+         });
+         return choice === null ? null : options[Number(choice)];
       }
 
       /** @this {QuestSheet} */
-      static #onManageAccess()
+      static async #onClaimReward(event, target)
       {
-         const entry = this.questEntry;
-         if (entry) { new DocumentOwnershipConfig({ document: entry }).render({ force: true }); }
+         const found = this.#rewardFor(target);
+         if (!found) { return; }
+         const recipient = await this.#chooseRecipient(found.reward, false, target);
+         if (recipient) { await requestClaim(this.questEntry, found.id, recipient); }
       }
 
       /** @this {QuestSheet} */
-      static #onPopOut()
+      static async #onGiveReward(event, target)
       {
-         if (this.questId) { game.modules.get(MODULE_ID).api.openQuestSheet(this.questId); }
+         const found = this.#rewardFor(target);
+         if (!found) { return; }
+         const recipient = await this.#chooseRecipient(found.reward, true, target);
+         if (recipient) { await requestClaim(this.questEntry, found.id, recipient); }
       }
+
+      /** @this {QuestSheet} */
+      static async #onUndoClaim(event, target)
+      {
+         const found = this.#rewardFor(target);
+         if (!found) { return; }
+         const index = Number(target.dataset.claimIndex);
+         const item = found.reward.type === 'item' ? await claimedItem(this.questEntry, found.id, index) : null;
+         let removeItem = false;
+         if (item)
+         {
+            const answer = await confirmPopover(this, target, {
+               message: `<p>${game.i18n.format('FHQL.Reward.UndoItem', {
+                  item: foundry.utils.escapeHTML(item.name), actor: foundry.utils.escapeHTML(item.parent?.name ?? '')
+               })}</p>`,
+               yes: game.i18n.localize('FHQL.Reward.RemoveItem'),
+               no: game.i18n.localize('FHQL.Reward.KeepItem'),
+               danger: true
+            });
+            if (answer === null) { return; }
+            removeItem = answer;
+         }
+         await undoClaim(this.questEntry, found.id, index, { removeItem });
+      }
+
    };
 }

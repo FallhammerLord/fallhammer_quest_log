@@ -1,4 +1,4 @@
-import { DialogV2, deleteKeyUpdate } from '../compat.js';
+import { deleteKeyUpdate } from '../compat.js';
 import { MODULE_ID } from '../constants.js';
 import { getQuestEntry, questAccess, questPage } from './quests.js';
 
@@ -69,55 +69,33 @@ export function claimLabel(claim)
 }
 
 /**
- * Asks which player and character receive a reward. GMs pick from each player's assigned character;
- * players pick among the characters they own. Resolves immediately when there is only one choice.
+ * Who can receive a reward. GMs choose from each player's assigned character; players choose among
+ * the characters they own, assigned first.
  *
  * @param {object} reward - Reward data.
  * @param {boolean} asGM - Whether the GM is giving the reward.
- * @returns {Promise<{ userId: string, actorUuid: string }|null>} The choice, or null if cancelled.
+ * @returns {{ userId: string, actorUuid: string, label: string, assigned: boolean }[]} Choices.
  */
-export async function pickRecipient(reward, asGM)
+export function recipientOptions(reward, asGM)
 {
-   const escape = foundry.utils.escapeHTML;
    const players = asGM ? game.users.filter((u) => !u.isGM) : [game.user];
    const options = [];
    for (const user of players)
    {
       if (claimsExhausted(reward, user.id)) { continue; }
-      if (reward.type === 'actor') { options.push({ userId: user.id, actorUuid: '', label: user.name }); continue; }
-      // GMs give to assigned characters only; players may pick among the characters they own.
+      if (reward.type === 'actor') { options.push({ userId: user.id, actorUuid: '', label: user.name, assigned: false }); continue; }
       const targets = asGM ? (user.character ? [user.character] : []) : claimTargets(user);
       for (const actor of targets)
       {
-         const assigned = actor.id === user.character?.id;
          options.push({
             userId: user.id,
             actorUuid: actor.uuid,
             label: asGM ? `${user.name}: ${actor.name}` : actor.name,
-            assigned
+            assigned: actor.id === user.character?.id
          });
       }
    }
-
-   if (!options.length)
-   {
-      ui.notifications.warn(game.i18n.localize(asGM ? 'FHQL.Reward.NoRecipients' : 'FHQL.Reward.NoCharacter'));
-      return null;
-   }
-   // A player with an assigned character claims straight onto it.
-   if (!asGM && (options.length === 1 || options[0].assigned)) { return options[0]; }
-
-   const radios = options.map((o, i) => `<label class="fhql-pick">
-      <input type="radio" name="pick" value="${i}" ${i === 0 ? 'checked' : ''}>
-      <span>${escape(o.label)}${o.assigned ? ` <em>${game.i18n.localize('FHQL.Reward.Assigned')}</em>` : ''}</span></label>`).join('');
-
-   const index = await DialogV2.prompt({
-      window: { title: asGM ? 'FHQL.Reward.GiveTitle' : 'FHQL.Reward.ClaimTitle' },
-      content: `<fieldset class="fhql-pick-list"><legend>${escape(reward.name)}</legend>${radios}</fieldset>`,
-      ok: { label: asGM ? 'FHQL.Reward.Give' : 'FHQL.Reward.Claim', callback: (e, button) => button.form.elements.pick.value },
-      rejectClose: false
-   });
-   return index === null || index === undefined ? null : options[Number(index)];
+   return options;
 }
 
 /**
@@ -213,14 +191,27 @@ async function performClaim(data, { force = false } = {})
 }
 
 /**
- * Undoes one claim. GM only. Asks before deleting the copied item; restores a follower's previous
- * ownership.
+ * @param {JournalEntry} entry - The quest entry.
+ * @param {string} rewardId - Reward ID.
+ * @param {number} index - Index into the reward's claims.
+ * @returns {Promise<Item|null>} The item a claim copied onto a character, if it still exists.
+ */
+export async function claimedItem(entry, rewardId, index)
+{
+   const claim = questPage(entry)?.system.rewards[rewardId]?.claims[index];
+   return claim?.itemUuid ? (await fromUuid(claim.itemUuid)) ?? null : null;
+}
+
+/**
+ * Undoes one claim. GM only. Restores a follower's previous ownership; removes the copied item only
+ * when asked to.
  *
  * @param {JournalEntry} entry - The quest entry.
  * @param {string} rewardId - Reward ID.
  * @param {number} index - Index into the reward's claims.
+ * @param {{ removeItem?: boolean }} [options] - Whether to also delete the copied item.
  */
-export async function undoClaim(entry, rewardId, index)
+export async function undoClaim(entry, rewardId, index, { removeItem = false } = {})
 {
    if (!game.user.isGM) { return; }
    const page = questPage(entry);
@@ -228,22 +219,7 @@ export async function undoClaim(entry, rewardId, index)
    const claim = reward?.claims[index];
    if (!claim) { return; }
 
-   if (reward.type === 'item' && claim.itemUuid)
-   {
-      const item = await fromUuid(claim.itemUuid);
-      if (item)
-      {
-         const remove = await DialogV2.confirm({
-            window: { title: 'FHQL.Reward.UndoTitle' },
-            content: `<p>${game.i18n.format('FHQL.Reward.UndoItem', {
-               item: foundry.utils.escapeHTML(item.name), actor: foundry.utils.escapeHTML(item.parent?.name ?? '')
-            })}</p>`,
-            rejectClose: false
-         });
-         if (remove === null || remove === undefined) { return; }
-         if (remove) { await item.delete(); }
-      }
-   }
+   if (reward.type === 'item' && removeItem) { await (await claimedItem(entry, rewardId, index))?.delete(); }
    else if (reward.type === 'actor')
    {
       const actor = await fromUuid(reward.uuid);

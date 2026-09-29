@@ -347,9 +347,15 @@ Each is toggleable by the GM, separately for GMs and players.
 - One primary (filled) button per region: Done in edit mode, Claim for players.
 - `npm run layout` renders every template at each breakpoint with stress data (long names, unbroken words, every reward state) and fails on any overflow. Run it before each release and after any layout change.
 
+### 7.4b Child panels (2026-09-29)
+
+Quick choices open as child panels inside the same window, beside the control that asked, in the window's theme: the quest menu (⋮ and right-click on a list row), Move to folder, Set parent, Give and Claim recipient pickers, delete and undo confirmations, and the new-folder name prompt. Panels close on Esc or a click outside, support arrow keys, Home, and End, and return focus to the control that opened them. One per window. Built in `src/ui/popover.js`.
+
+Separate windows are kept only for full workflows: Pop out, FQL import, and Foundry's own Player access (ownership) editor.
+
 ### 7.5 Quick actions
 
-- Right-click menus on log rows, tracker rows, and the widget: change status, reveal/hide, set In Progress, tick objectives.
+- Right-click on a quest row in the log (GM) opens the quest menu: Pop out, Player access, Move to folder, Set parent, Delete. Also opens with the keyboard's context-menu key.
 - A short notice for players when a quest is revealed or updated.
 
 ### 7.6 Keyboard and focus
@@ -460,7 +466,7 @@ Test and document behavior with:
 4. **Quest Log, Quest Beacon, entry points.** *Built 2026-09-28/29: log with folders, filters, search; Beacon; journal button, token control, keybinding. To do: sort options, per-entry-point GM toggles, hide-from-players switch, link redirect straight to the Quest Sheet.*
 5. **Tracker.** *Likely dropped: the Quest Beacon covers it (open decision).*
 6. **Player workflows.** GM relay, accept, create, reward dragging. *Reward claiming built 2026-09-29. To do: accept, create, trusted-player editing, GM toggles.*
-7. **FQL import.** *Built 2026-09-29; awaiting a test on real FQL data.*
+7. **FQL import.** *Built 2026-09-29; tested on real FQL data by the user, 2026-09-29.*
 8. **Sharing.** Compendiums, Adventures, map pins.
 9. **Theme polish.** Dark and Sci-fi, contrast audit.
 10. **Docs and release prep.** Checked against section 10.

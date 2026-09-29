@@ -156,7 +156,7 @@
       "ClaimedBy": "Claimed by",
       "Undo": "Undo this claim",
       "UndoTitle": "Undo claim",
-      "UndoItem": "Also remove <strong>{item}</strong> from {actor}? Choose No to keep it there and only clear the claim.",
+      "UndoItem": "Undo this claim. Also remove <strong>{item}</strong> from {actor}?",
       "LimitLabel": "How many can claim it",
       "LimitOnce": "Once",
       "LimitPerPlayer": "Each player",
@@ -176,7 +176,11 @@
         "AlreadyClaimed": "That reward has already been claimed.",
         "SourceMissing": "The original item or actor no longer exists.",
         "NotOwner": "You don't own that character."
-      }
+      },
+      "GiveTo": "Give {reward} to",
+      "ClaimFor": "Claim {reward} for",
+      "RemoveItem": "Remove item",
+      "KeepItem": "Keep item"
     },
     "Drop": {
       "Rejected": {
@@ -198,7 +202,8 @@
       "Outside": "Outside FHQL Quests",
       "OutsideHint": "These quests were moved out of the FHQL Quests journal folder.",
       "Collapse": "Collapse folder",
-      "Expand": "Expand folder"
+      "Expand": "Expand folder",
+      "Create": "Create"
     },
     "Filter": {
       "Label": "Filter quests",
@@ -252,6 +257,9 @@
       "Move": "Move to folder",
       "Parent": "Set parent",
       "Delete": "Delete"
+    },
+    "Popover": {
+      "Cancel": "Cancel"
     }
   }
 }

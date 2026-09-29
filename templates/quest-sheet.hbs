@@ -30,19 +30,9 @@
     </div>
 
     {{#if gm}}
-    <details class="fhql-menu">
-      <summary class="fhql-icon-button" aria-label="{{localize 'FHQL.Quest.MoreActions'}}" data-tooltip="{{localize 'FHQL.Quest.MoreActions'}}">
-        <i class="fa-solid fa-ellipsis-vertical" inert></i></summary>
-      <div class="fhql-menu-pop" role="menu">
-        {{#unless @root.popout}}
-        <button type="button" role="menuitem" data-action="popOut"><i class="fa-solid fa-up-right-from-square" inert></i> {{localize "FHQL.Menu.PopOut"}}</button>
-        {{/unless}}
-        <button type="button" role="menuitem" data-action="manageAccess"><i class="fa-solid fa-user-lock" inert></i> {{localize "FHQL.Menu.Access"}}</button>
-        <button type="button" role="menuitem" data-action="moveToFolder"><i class="fa-solid fa-folder-open" inert></i> {{localize "FHQL.Menu.Move"}}</button>
-        <button type="button" role="menuitem" data-action="setParent"><i class="fa-solid fa-diagram-project" inert></i> {{localize "FHQL.Menu.Parent"}}</button>
-        <button type="button" role="menuitem" class="fhql-danger" data-action="deleteQuest"><i class="fa-solid fa-trash" inert></i> {{localize "FHQL.Menu.Delete"}}</button>
-      </div>
-    </details>
+    <button type="button" class="fhql-icon-button fhql-menu" data-action="questMenu" aria-haspopup="menu"
+            aria-label="{{localize 'FHQL.Quest.MoreActions'}}" data-tooltip="{{localize 'FHQL.Quest.MoreActions'}}">
+      <i class="fa-solid fa-ellipsis-vertical" inert></i></button>
     {{else}}
     <span></span>
     {{/if}}
