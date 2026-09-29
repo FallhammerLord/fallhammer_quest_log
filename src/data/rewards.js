@@ -69,8 +69,8 @@ export function claimLabel(claim)
 }
 
 /**
- * Asks which player and character receive a reward. GMs pick any player; players pick among their own
- * characters. Resolves immediately when there is only one choice.
+ * Asks which player and character receive a reward. GMs pick from each player's assigned character;
+ * players pick among the characters they own. Resolves immediately when there is only one choice.
  *
  * @param {object} reward - Reward data.
  * @param {boolean} asGM - Whether the GM is giving the reward.
@@ -85,7 +85,9 @@ export async function pickRecipient(reward, asGM)
    {
       if (claimsExhausted(reward, user.id)) { continue; }
       if (reward.type === 'actor') { options.push({ userId: user.id, actorUuid: '', label: user.name }); continue; }
-      for (const actor of claimTargets(user))
+      // GMs give to assigned characters only; players may pick among the characters they own.
+      const targets = asGM ? (user.character ? [user.character] : []) : claimTargets(user);
+      for (const actor of targets)
       {
          const assigned = actor.id === user.character?.id;
          options.push({

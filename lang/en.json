@@ -161,7 +161,7 @@
       "LimitPerPlayer": "Each player",
       "Summary": "{claimed} of {total} claimed",
       "UnknownPlayer": "Unknown player",
-      "NoRecipients": "No players can receive this reward.",
+      "NoRecipients": "No players can receive this reward. Items go to a player's assigned character; assign one in the player's User Configuration.",
       "NoCharacter": "You don't own a character to receive this.",
       "NeedGM": "A GM must be connected to hand out rewards.",
       "Failed": "The reward couldn't be claimed.",
