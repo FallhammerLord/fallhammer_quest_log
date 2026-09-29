@@ -430,10 +430,10 @@ Test and document behavior with:
 1. **Skeleton.** Manifest, empty ApplicationV2 windows, theme tokens, theme setting. *Done, verified on v14.*
 2. **Data model.** Quest subtype, create/edit/delete, permissions. *Built 2026-09-28.*
 3. **Quest Sheet.** Full editing UI: rich text editor, giver and reward drag-drop, GM notes page, subquests. *Built 2026-09-28 from the approved mockup. Plain-text page dropped.*
-4. **Quest Log, Quest Beacon, entry points.** *Entry points and widget pulled forward, built 2026-09-28. GM toggles per entry point still to do.*
-5. **Tracker.**
-6. **Player workflows.** GM relay, accept, create, reward dragging.
-7. **FQL import.**
+4. **Quest Log, Quest Beacon, entry points.** *Built 2026-09-28/29: log with folders, filters, search; Beacon; journal button, token control, keybinding. To do: sort options, per-entry-point GM toggles, hide-from-players switch, link redirect straight to the Quest Sheet.*
+5. **Tracker.** *Likely dropped: the Quest Beacon covers it (open decision).*
+6. **Player workflows.** GM relay, accept, create, reward dragging. *Reward claiming built 2026-09-29. To do: accept, create, trusted-player editing, GM toggles.*
+7. **FQL import.** *Built 2026-09-29; awaiting a test on real FQL data.*
 8. **Sharing.** Compendiums, Adventures, map pins.
 9. **Theme polish.** Dark and Sci-fi, contrast audit.
 10. **Docs and release prep.** Checked against section 10.
@@ -445,12 +445,13 @@ Test and document behavior with:
 - Minimum and verified Foundry version: v14.
 - Data storage: page subtype `fhql.quest` (5.2). Live test passed on v14, 2026-09-28. No plain-text copy page.
 - License: MIT.
+- In Progress: several quests allowed; the Beacon shows the first with a +N badge.
+- Give offers each player's assigned character only; claim mistakes are fixed with Undo.
 
 ## 13. Open decisions
 
 - Confirm the permission map (5.6).
 - Sci-fi fonts and whether to bundle them.
 - Whether the `QuestAPI` shim ships in v1.0 or later.
-- In Progress: allow several quests (recommended) or exactly one.
 - Whether quest entries show in the journal sidebar for players, or only through our UI.
 - Whether the Tracker ships in v1.0, given the Quest Beacon covers the glance use.
