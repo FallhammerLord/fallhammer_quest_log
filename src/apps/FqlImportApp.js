@@ -1,6 +1,7 @@
 import { HandlebarsApp } from '../compat.js';
 import { MODULE_PATH, STATUSES } from '../constants.js';
 import { applyTheme, trackApp, untrackApp } from '../theme.js';
+import { clampToMinSize } from './minSize.js';
 import { importFqlQuests, scanFqlQuests } from '../import/fql.js';
 
 const STATUS_MAP = { inactive: 'hidden', available: 'available', active: 'active', completed: 'completed', failed: 'failed' };
@@ -58,6 +59,15 @@ export class FqlImportApp extends HandlebarsApp
          newCount: quests.filter((q) => !q.imported).length,
          importedCount: quests.filter((q) => q.imported).length
       };
+   }
+
+   /** Smallest readable size; the layout reflows down to this. */
+   static MIN_SIZE = { width: 440, height: 380 };
+
+   /** @override */
+   _updatePosition(position)
+   {
+      return super._updatePosition(clampToMinSize(position, FqlImportApp.MIN_SIZE));
    }
 
    /** @override */

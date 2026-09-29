@@ -206,6 +206,11 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
 /* One column by default, ordered by how often each section is used in play. The two column wrappers
    dissolve (display: contents) so sections can reorder; at 560px+ they become real columns. */
 .fhql-sheet { container: fhql-sheet / inline-size; overflow-y: auto; min-width: 0; }
+/* Long words wrap only when they must; ordinary words never split. */
+.fhql-app .fhql-sheet, .fhql-app .fhql-list { overflow-wrap: break-word; }
+.fhql-app .fhql-sheet-body .fhql-card { container: fhql-card / inline-size; }
+.fhql-app .fhql-subheading { flex-wrap: wrap; }
+.fhql-app .fhql-button .fhql-label { white-space: nowrap; }
 .fhql-app .fhql-sheet-inner { display: grid; gap: 0.8em; padding: 0.9em 1em 1.2em; }
 .fhql-app .fhql-none { padding: 1em; }
 
@@ -786,7 +791,7 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
 }
 .fhql-app .fhql-reward[draggable="true"] { cursor: grab; }
 .fhql-app .fhql-reward-main { display: grid; gap: 0.1em; min-width: 0; }
-.fhql-app .fhql-reward-name { overflow-wrap: anywhere; text-align: start; }
+.fhql-app .fhql-reward-name { text-align: start; }
 .fhql-app .fhql-reward.is-claimed .fhql-reward-name { text-decoration: line-through; color: var(--fhql-ink-muted); }
 .fhql-app .fhql-reward.is-claimed .fhql-thumb { opacity: 0.55; }
 .fhql-app .fhql-reward-state { display: flex; flex-wrap: wrap; gap: 0.1em 0.7em; font-size: 0.82em; }
@@ -798,10 +803,6 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
 .fhql-app .fhql-grow-text { flex: 1; min-width: 0; }
 .fhql-app .fhql-eye { margin-inline-start: auto; opacity: 0.7; }
 .fhql-app .fhql-eye:hover, .fhql-app .fhql-eye[aria-pressed="true"] { opacity: 1; }
-@container fhql-sheet (max-width: 420px) {
-  .fhql-app .fhql-reward { grid-template-columns: 30px minmax(0, 1fr); }
-  .fhql-app .fhql-reward-actions { grid-column: 2; justify-content: flex-start; }
-}
 
 /* Claim picker dialog */
 .fhql-pick-list { display: grid; gap: 0.3em; border: 0; margin: 0; padding: 0; }
@@ -812,3 +813,28 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
 .fhql-chat-claim img { border: 0; flex: none; }
 
 .fhql-beacon .fhql-beacon-gift { color: var(--fhql-accent); flex: none; }
+
+/* Edit mode puts reward controls on their own line under the name. */
+.fhql-app .fhql-rewards.is-editing .fhql-reward { grid-template-columns: 30px minmax(0, 1fr); }
+.fhql-app .fhql-rewards.is-editing .fhql-reward-actions { grid-column: 2; justify-content: flex-start; }
+
+/* ---------- Narrow layouts ----------
+   Each card and the sheet header respond to their own width. Buttons keep their icon, tooltip, and
+   screen-reader label when their text is dropped. */
+@container fhql-sheet (max-width: 460px) {
+  .fhql-app .fhql-sheet-actions .fhql-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .fhql-app .fhql-sheet-actions .fhql-button { gap: 0; padding-inline: 0.55em; }
+}
+@container fhql-card (max-width: 360px) {
+  .fhql-app .fhql-reward { grid-template-columns: 30px minmax(0, 1fr); }
+  .fhql-app .fhql-reward-actions { grid-column: 2; justify-content: flex-start; }
+}
+@container fhql-card (max-width: 250px) {
+  .fhql-app .fhql-reward-actions .fhql-label,
+  .fhql-app .fhql-subheading .fhql-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .fhql-app .fhql-reward-actions .fhql-button,
+  .fhql-app .fhql-subheading .fhql-button { gap: 0; }
+  .fhql-app .fhql-row-link .fhql-row-status { display: none; }
+  .fhql-app .fhql-reward { grid-template-columns: 24px minmax(0, 1fr); }
+  .fhql-app .fhql-reward .fhql-thumb { width: 24px; height: 24px; }
+}

@@ -1,6 +1,7 @@
 import { HandlebarsApp } from '../compat.js';
 import { MODULE_PATH } from '../constants.js';
 import { applyTheme, trackApp, untrackApp } from '../theme.js';
+import { clampToMinSize } from './minSize.js';
 import { getQuestEntry } from '../data/quests.js';
 import { QuestSheetMixin } from './QuestSheetMixin.js';
 
@@ -81,6 +82,15 @@ export class QuestSheetApp extends QuestSheetMixin(HandlebarsApp)
    {
       const context = await super._prepareContext(options);
       return { ...context, popout: true, sheet: await this._prepareSheet(this.questEntry) };
+   }
+
+   /** Smallest readable size; the layout reflows down to this. */
+   static MIN_SIZE = { width: 340, height: 320 };
+
+   /** @override */
+   _updatePosition(position)
+   {
+      return super._updatePosition(clampToMinSize(position, QuestSheetApp.MIN_SIZE));
    }
 
    /** @override */

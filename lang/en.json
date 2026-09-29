@@ -56,7 +56,8 @@
       "Rewards": "Rewards",
       "GMNotes": "GM notes",
       "GMOnly": "GM only",
-      "GMNotesEmpty": "No GM notes yet. Add some in edit mode."
+      "GMNotesEmpty": "No GM notes yet. Add some in edit mode.",
+      "AddSubquestLabel": "Add a subquest"
     },
     "Objective": {
       "Name": "Objective",

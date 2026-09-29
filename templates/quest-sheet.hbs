@@ -86,16 +86,18 @@
     {{else if editable}}
     <div class="fhql-sheet-actions">
       {{#each statusActions}}
-      <button type="button" class="fhql-button fhql-status-{{status}}" data-action="setQuestStatus" data-status="{{status}}">
-        <i class="{{icon}} fhql-status-icon" inert></i> {{label}}</button>
+      <button type="button" class="fhql-button fhql-status-{{status}}" data-action="setQuestStatus" data-status="{{status}}"
+              aria-label="{{label}}" data-tooltip="{{label}}">
+        <i class="{{icon}} fhql-status-icon" inert></i><span class="fhql-label">{{label}}</span></button>
       {{/each}}
       {{#if gm}}
       <button type="button" class="fhql-button fhql-toggle {{#if inProgress}}is-on{{/if}}" data-action="toggleInProgress"
-              aria-pressed="{{#if inProgress}}true{{else}}false{{/if}}" data-tooltip="{{localize 'FHQL.Quest.InProgressHint'}}">
-        <i class="{{#if inProgress}}fa-solid{{else}}fa-regular{{/if}} fa-star" inert></i> {{localize "FHQL.Quest.InProgress"}}</button>
+              aria-pressed="{{#if inProgress}}true{{else}}false{{/if}}" data-tooltip="{{localize 'FHQL.Quest.InProgressHint'}}"
+              aria-label="{{localize 'FHQL.Quest.InProgress'}}">
+        <i class="{{#if inProgress}}fa-solid{{else}}fa-regular{{/if}} fa-star" inert></i><span class="fhql-label">{{localize "FHQL.Quest.InProgress"}}</span></button>
       {{/if}}
-      <button type="button" class="fhql-button fhql-push" data-action="editQuest">
-        <i class="fa-solid fa-pen" inert></i> {{localize "FHQL.QuestLog.Edit"}}</button>
+      <button type="button" class="fhql-button fhql-push" data-action="editQuest" aria-label="{{localize 'FHQL.QuestLog.Edit'}}">
+        <i class="fa-solid fa-pen" inert></i><span class="fhql-label">{{localize "FHQL.QuestLog.Edit"}}</span></button>
     </div>
     {{/if}}
   </header>
@@ -195,7 +197,7 @@
       <section class="fhql-card fhql-area-subquests">
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.Subquests"}}
           <span class="fhql-count">{{subquests.length}}</span>
-          {{#if gm}}<button type="button" class="fhql-button fhql-small" data-action="addSubquest"><i class="fa-solid fa-plus" inert></i> {{localize "FHQL.Quest.AddSubquest"}}</button>{{/if}}
+          {{#if gm}}<button type="button" class="fhql-button fhql-small" data-action="addSubquest" aria-label="{{localize 'FHQL.Quest.AddSubquestLabel'}}" data-tooltip="{{localize 'FHQL.Quest.AddSubquestLabel'}}"><i class="fa-solid fa-plus" inert></i><span class="fhql-label">{{localize "FHQL.Quest.AddSubquest"}}</span></button>{{/if}}
         </h3>
         <ul class="fhql-rows">
           {{#each subquests}}
@@ -212,7 +214,7 @@
       {{else if gm}}
       <section class="fhql-card fhql-compact fhql-area-subquests">
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.Subquests"}}<span class="fhql-empty-note">{{localize "FHQL.Section.None"}}</span>
-          <button type="button" class="fhql-button fhql-small" data-action="addSubquest"><i class="fa-solid fa-plus" inert></i> {{localize "FHQL.Quest.AddSubquest"}}</button></h3>
+          <button type="button" class="fhql-button fhql-small" data-action="addSubquest" aria-label="{{localize 'FHQL.Quest.AddSubquestLabel'}}" data-tooltip="{{localize 'FHQL.Quest.AddSubquestLabel'}}"><i class="fa-solid fa-plus" inert></i><span class="fhql-label">{{localize "FHQL.Quest.AddSubquest"}}</span></button></h3>
       </section>
       {{/if}}
 
@@ -221,7 +223,7 @@
       <section class="fhql-card fhql-area-rewards" {{#if editable}}data-drop="rewards"{{/if}}>
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.Rewards"}}
           <span class="fhql-count">{{#if rewardSummary}}{{rewardSummary}}{{else}}{{rewards.length}}{{/if}}</span></h3>
-        <ul class="fhql-rewards">
+        <ul class="fhql-rewards {{#if editing}}is-editing{{/if}}">
           {{#each rewards}}
           <li class="fhql-reward {{#if struck}}is-claimed{{/if}}" data-reward-id="{{id}}"
               {{#if draggable}}draggable="true" data-reward-drag data-uuid="{{uuid}}"{{/if}}>
@@ -253,12 +255,12 @@
 
             <div class="fhql-reward-actions">
               {{#if canClaim}}
-              <button type="button" class="fhql-button fhql-small fhql-primary" data-action="claimReward">
-                <i class="fa-solid fa-hand-holding" inert></i> {{claimVerb}}</button>
+              <button type="button" class="fhql-button fhql-small fhql-primary" data-action="claimReward" aria-label="{{claimVerb}}">
+                <i class="fa-solid fa-hand-holding" inert></i><span class="fhql-label">{{claimVerb}}</span></button>
               {{/if}}
               {{#if canGive}}
               <button type="button" class="fhql-button fhql-small" data-action="giveReward"
-                      data-tooltip="{{localize 'FHQL.Reward.GiveHint'}}"><i class="fa-solid fa-hand-holding-heart" inert></i> {{localize "FHQL.Reward.Give"}}</button>
+                      data-tooltip="{{localize 'FHQL.Reward.GiveHint'}}" aria-label="{{localize 'FHQL.Reward.Give'}}"><i class="fa-solid fa-hand-holding-heart" inert></i><span class="fhql-label">{{localize "FHQL.Reward.Give"}}</span></button>
               {{/if}}
               {{#if ../gm}}
               {{#if claimable}}

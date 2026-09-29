@@ -322,6 +322,29 @@ Each is toggleable by the GM, separately for GMs and players.
 - **Narrow layout:** below a set width, list and detail stack vertically, so the log works docked beside the sidebar.
 - Remember size and position per client.
 
+### 7.4a Responsive rules (2026-09-29)
+
+**Minimum window sizes** (enforced in `_updatePosition`): Quest Log 420×380, pop-out Quest Sheet 340×320, FQL import 440×380.
+
+**How layouts compress,** widest to narrowest:
+
+| Width | What changes |
+|---|---|
+| Log below 540px | Quest list stacks above the sheet |
+| Sheet below 560px | Two columns become one, ordered by use in play |
+| Sheet below 460px | Status, In progress, and Edit buttons go icon-only |
+| Sheet below 400px | Smaller portrait; details line moves under the title |
+| Card below 360px (and always in edit mode) | Reward controls move under the reward name |
+| Card below 250px | Reward and section buttons go icon-only; subquest status text hides |
+
+**Rules every component follows**
+- Components respond to their own width (container queries), not the screen's.
+- Text wraps between words; a long unbroken word breaks only when it would overflow. Nothing is clipped except list rows and the Beacon, which truncate with an ellipsis and show the full name on hover.
+- A button that drops its text keeps its icon, a tooltip, and a screen-reader label.
+- Icon buttons stay at least 24px square (WCAG 2.2 target size).
+- One primary (filled) button per region: Done in edit mode, Claim for players.
+- `npm run layout` renders every template at each breakpoint with stress data (long names, unbroken words, every reward state) and fails on any overflow. Run it before each release and after any layout change.
+
 ### 7.5 Quick actions
 
 - Right-click menus on log rows, tracker rows, and the widget: change status, reveal/hide, set In Progress, tick objectives.
@@ -387,6 +410,7 @@ Store the relationship once: each quest holds an optional `parent` ID. Subquests
 
 - In-Foundry automated tests with Quench **[verify maintained]** for data model, import, and permissions.
 - A manual test checklist per release: each window × each theme × GM/player.
+- `npm run layout`: automated overflow check across widths, modes, and viewers (7.4a).
 - A fixture world with sample FQL quests for import tests.
 
 ### 9.4 Releases
@@ -420,6 +444,7 @@ Test and document behavior with:
 
 - Imports a real FQL world with nothing lost, and the import report lists every fix.
 - Every window passes the contrast check (6.4) in all three themes.
+- `npm run layout` reports no overflow.
 - Runs on the verified Foundry version with no deprecation warnings.
 - The manual test checklist passes for each window × theme × GM/player.
 - Disabling and re-enabling the module loses nothing.

@@ -1,6 +1,7 @@
 import { DialogV2, HandlebarsApp } from '../compat.js';
 import { MODULE_ID, MODULE_PATH, STATUSES } from '../constants.js';
 import { applyTheme, trackApp, untrackApp } from '../theme.js';
+import { clampToMinSize } from './minSize.js';
 import { scanFqlQuests } from '../import/fql.js';
 import {
    createQuest, createQuestFolder, createSampleQuests, getQuestEntry, moveQuestToFolder, questPage, questRootFolder,
@@ -319,6 +320,15 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
       const id = data?.type === 'JournalEntry' ? data.uuid?.split('.').pop() : null;
       const entry = getQuestEntry(id);
       if (entry && zone.dataset.folderDrop !== 'outside') { await moveQuestToFolder(entry, zone.dataset.folderDrop); }
+   }
+
+   /** Smallest readable size; the layout reflows down to this. */
+   static MIN_SIZE = { width: 420, height: 380 };
+
+   /** @override */
+   _updatePosition(position)
+   {
+      return super._updatePosition(clampToMinSize(position, QuestLog.MIN_SIZE));
    }
 
    /** @override */
