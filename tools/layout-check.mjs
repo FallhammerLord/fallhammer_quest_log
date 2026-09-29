@@ -75,6 +75,19 @@ for (const p of pages)
             issues.push(`content wider than box by ${el.scrollWidth - el.clientWidth}px: ${label}`);
          }
       }
+      // Foundry's own form and editor styles break inside a size container (found in testing), so no
+      // text field or editor may sit inside one below the sheet level.
+      for (const field of app.querySelectorAll('input, textarea, select, prose-mirror'))
+      {
+         for (let node = field.parentElement; node && !node.classList.contains('fhql-sheet') && node !== app; node = node.parentElement)
+         {
+            if (getComputedStyle(node).containerType !== 'normal')
+            {
+               issues.push(`text field inside a width container (${node.tagName.toLowerCase()}.${[...node.classList].join('.')})`);
+               break;
+            }
+         }
+      }
       return [...new Set(issues)];
    });
    await page.screenshot({ path: `${out}/${p.id}.png`, fullPage: true });
