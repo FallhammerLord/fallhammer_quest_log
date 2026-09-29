@@ -29,7 +29,9 @@ export function getQuestEntry(id)
 
 /**
  * What a user may see and do with a quest. See the permission map in docs/SCOPE.md 5.6.
- * Hidden status removes player ownership (see setStatus), so Foundry itself enforces hiding.
+ * Hidden status removes player ownership (see setStatus), so Foundry itself enforces hiding. As a
+ * backstop, players never see a Hidden quest even if some access slipped through (e.g. a compendium
+ * import carrying per-player grants).
  *
  * @param {JournalEntry} entry - The quest entry.
  * @param {User} [user] - Defaults to the current user.
@@ -38,6 +40,7 @@ export function getQuestEntry(id)
 export function questAccess(entry, user = game.user)
 {
    const gm = user.isGM;
+   if (!gm && questPage(entry)?.system.status === 'hidden') { return { gm, visible: false, full: false, editable: false }; }
    return {
       gm,
       visible: gm || entry.testUserPermission(user, LIMITED),
@@ -66,6 +69,44 @@ export function visibleQuests(user = game.user)
 function revealedOwnership()
 {
    return game.settings.get(MODULE_ID, 'defaultOwnership');
+}
+
+/**
+ * Entry update that hides a quest from every player: default access and each player's own access go
+ * to None. Their previous access is saved on the entry so revealing restores it exactly.
+ *
+ * @param {JournalEntry} entry - The quest entry.
+ * @returns {object} Update data.
+ */
+export function hideOwnershipUpdate(entry)
+{
+   const saved = entry.getFlag(MODULE_ID, 'savedOwnership') ?? foundry.utils.deepClone(entry.ownership);
+   const update = { 'ownership.default': NONE, [`flags.${MODULE_ID}.savedOwnership`]: saved };
+   for (const [userId, level] of Object.entries(entry.ownership))
+   {
+      if (userId === 'default' || game.users.get(userId)?.isGM) { continue; }
+      if (level > NONE) { update[`ownership.${userId}`] = NONE; }
+   }
+   return update;
+}
+
+/**
+ * Entry update that reveals a quest: restores the access saved when it was hidden, or gives all
+ * players the "revealed" level from settings.
+ *
+ * @param {JournalEntry} entry - The quest entry.
+ * @returns {object} Update data.
+ */
+function revealOwnershipUpdate(entry)
+{
+   const saved = entry.getFlag(MODULE_ID, 'savedOwnership');
+   const update = deleteKeyUpdate(`flags.${MODULE_ID}`, 'savedOwnership');
+   if (saved)
+   {
+      for (const [userId, level] of Object.entries(saved)) { update[`ownership.${userId}`] = level; }
+   }
+   if (!saved || saved.default === NONE || saved.default === undefined) { update['ownership.default'] = revealedOwnership(); }
+   return update;
 }
 
 /* ---------- Folders ---------- */
@@ -214,6 +255,7 @@ export async function setStatus(entry, status)
 {
    const page = questPage(entry);
    if (!page || !(status in STATUSES) || page.system.status === status) { return; }
+   const wasHidden = page.system.status === 'hidden';
 
    const now = Date.now();
    const changes = { 'system.status': status };
@@ -231,9 +273,8 @@ export async function setStatus(entry, status)
    await page.update(changes);
 
    if (!game.user.isGM) { return; }
-   const wasHidden = entry.ownership.default === NONE;
-   if (status === 'hidden' && !wasHidden) { await entry.update({ 'ownership.default': NONE }); }
-   else if (status !== 'hidden' && wasHidden) { await entry.update({ 'ownership.default': revealedOwnership() }); }
+   if (status === 'hidden' && !wasHidden) { await entry.update(hideOwnershipUpdate(entry)); }
+   else if (status !== 'hidden' && wasHidden) { await entry.update(revealOwnershipUpdate(entry)); }
 }
 
 /**

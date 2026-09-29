@@ -1,6 +1,6 @@
 import { readStoredWorldSetting } from '../compat.js';
 import { MODULE_ID, QUEST_TYPE } from '../constants.js';
-import { createQuestFolder, questPage, questRootFolder, questSubfolders, setGmNotes } from '../data/quests.js';
+import { createQuestFolder, hideOwnershipUpdate, questPage, questRootFolder, questSubfolders, setGmNotes } from '../data/quests.js';
 
 /**
  * Import from Forien's Quest Log. See docs/SCOPE.md section 8.
@@ -225,9 +225,11 @@ export async function importFqlQuests({ overwrite = [], moveToFolder = true } = 
 
          const update = {};
          if (folder && entry.folder?.id !== folder.id) { update.folder = folder.id; }
-         if (system.status === 'hidden' && entry.ownership.default !== NONE)
+         const playerAccess = Object.entries(entry.ownership)
+          .some(([id, level]) => level > NONE && (id === 'default' || !game.users.get(id)?.isGM));
+         if (system.status === 'hidden' && playerAccess)
          {
-            update['ownership.default'] = NONE;
+            Object.assign(update, hideOwnershipUpdate(entry));
             result.fixes.push({ quest: entry.name, message: game.i18n.localize('FHQL.Import.Fix.HiddenAccess') });
          }
          if (Object.keys(update).length) { await entry.update(update); }

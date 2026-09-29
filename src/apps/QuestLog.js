@@ -82,7 +82,8 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
    {
       if (!this.rendered) { return; }
       const quiet = userId === game.user.id && options?.fhqlQuiet;
-      this.render(quiet ? { parts: ['list'] } : {});
+      // Someone else's change must not wipe text being written in an open editor here.
+      this.render(quiet || this._hasUnsavedEditor() ? { parts: ['list'] } : {});
    }
 
    /** @override */

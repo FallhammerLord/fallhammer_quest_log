@@ -164,7 +164,7 @@ Always GM only, whatever the ownership:
 - Hidden objectives and hidden rewards
 - The FQL source flag
 
-**Hidden status drives ownership** (built in milestone 2). Setting a quest to Hidden sets its default ownership to None, so Foundry itself hides it everywhere: journal sidebar, links, and data sent to players. Revealing it restores the level from the "Player access when a quest is revealed" setting (Limited or Observer, default Observer). GMs can still adjust single players with Foundry's ownership controls.
+**Hidden status drives ownership** (built in milestone 2; per-player fix 2026-09-29). Setting a quest to Hidden sets its default ownership *and each player's own access* to None (saved on the entry and restored exactly on reveal). As a backstop, players never see a Hidden quest even if some access slips through. Originally it set only the default to None, so Foundry itself hides it everywhere: journal sidebar, links, and data sent to players. Revealing it restores the level from the "Player access when a quest is revealed" setting (Limited or Observer, default Observer). GMs can still adjust single players with Foundry's ownership controls.
 
 **GM notes live on a separate page** with player ownership None, never in the quest page's data. Anything on the quest page reaches every player who can see the quest, even when the UI hides it. Hidden objectives and rewards share that limit: the UI hides them, but a player with console access could read them. That matches FQL; moving them off-page is a possible later hardening.
 

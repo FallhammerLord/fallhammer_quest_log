@@ -48,7 +48,7 @@ export class QuestSheetApp extends QuestSheetMixin(HandlebarsApp)
             continue;
          }
          const quiet = userId === game.user.id && options?.fhqlQuiet;
-         if (!quiet) { app.render(); }
+         if (!quiet && !app._hasUnsavedEditor()) { app.render(); }
       }
    }
 

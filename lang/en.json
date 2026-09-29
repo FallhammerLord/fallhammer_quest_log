@@ -60,7 +60,13 @@
       "AddSubquestLabel": "Add a subquest",
       "Track": "Track",
       "TrackHint": "Follow this quest on your Quest Beacon. Only you see this.",
-      "UntrackHint": "Tracking on your Quest Beacon. Click to stop."
+      "UntrackHint": "Tracking on your Quest Beacon. Click to stop.",
+      "Image": "Quest image",
+      "Started": "Started {date}",
+      "Ended": {
+        "completed": "Completed {date}",
+        "failed": "Failed {date}"
+      }
     },
     "Objective": {
       "Name": "Objective",

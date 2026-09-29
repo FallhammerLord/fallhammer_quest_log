@@ -895,3 +895,15 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
 .fhql-beacon .fhql-beacon-panel.is-empty { opacity: 0.85; }
 .fhql-beacon .fhql-beacon-panel.is-empty:hover { opacity: 1; }
 .fhql-beacon .fhql-popover { z-index: 1000; }
+
+/* ---------- Quest image banner ---------- */
+.fhql-app .fhql-banner {
+  display: block;
+  width: 100%;
+  max-height: 160px;
+  object-fit: cover;
+  border: 1px solid var(--fhql-rule);
+  border-radius: var(--fhql-radius);
+}
+.fhql-app .fhql-dates { font-variant-numeric: tabular-nums; }
+.fhql-app file-picker { display: flex; gap: 0.3em; min-width: 0; }

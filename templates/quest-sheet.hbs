@@ -1,6 +1,7 @@
 <div class="fhql-sheet">
 {{#with sheet}}
 <div class="fhql-sheet-inner">
+  {{#if image}}{{#unless editing}}<img class="fhql-banner" src="{{image}}" alt="">{{/unless}}{{/if}}
 
   {{! ---------- Header ---------- }}
   <header class="fhql-sheet-head">
@@ -43,6 +44,7 @@
       {{#if giver.name}}<span class="fhql-sep">·</span><span>{{giver.name}}</span>{{/if}}
       {{#if parent}}<span class="fhql-sep">·</span><span>{{localize "FHQL.Quest.PartOf"}}
         <button type="button" class="fhql-link" data-action="showQuest" data-quest-id="{{parent.id}}">{{parent.name}}</button></span>{{/if}}
+      {{#if dateLine}}<span class="fhql-sep">·</span><span class="fhql-dates">{{dateLine}}</span>{{/if}}
     </div>
 
     {{#if editing}}
@@ -72,6 +74,10 @@
         <span>{{localize "FHQL.Quest.InProgress"}}</span>
       </label>
       {{/if}}
+      <label class="fhql-field fhql-grow">
+        <span>{{localize "FHQL.Quest.Image"}}</span>
+        <file-picker name="image" type="image" value="{{image}}" data-field="image"></file-picker>
+      </label>
     </div>
     {{else}}
     <div class="fhql-sheet-actions">

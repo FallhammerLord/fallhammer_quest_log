@@ -11,6 +11,7 @@ import { questPage, renameLegacyRootFolder } from './data/quests.js';
 import { registerEntryPoints } from './ui/entryPoints.js';
 import { refreshQuestBeacon } from './ui/QuestBeacon.js';
 import { registerRewardDrop, registerRewardQueries } from './data/rewards.js';
+import { registerLifecycleHooks } from './data/lifecycle.js';
 
 Hooks.once('init', () =>
 {
@@ -26,6 +27,7 @@ Hooks.once('init', () =>
    registerEntryPoints();
    registerRewardQueries();
    registerRewardDrop();
+   registerLifecycleHooks();
    game.modules.get(MODULE_ID).api = api;
 });
 

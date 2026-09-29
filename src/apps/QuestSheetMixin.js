@@ -69,6 +69,110 @@ export function QuestSheetMixin(Base)
       /** Whether the shown quest is in edit mode. Edits save as each field changes; Done returns to view. */
       _editing = false;
 
+      /** Focused control and unsaved typing, captured before a re-render and restored after it. */
+      #pendingFocus = null;
+
+      /** @override */
+      async _preRender(context, options)
+      {
+         await super._preRender(context, options);
+         this.#pendingFocus = this.#captureFocus();
+      }
+
+      /** @override */
+      _onRender(context, options)
+      {
+         super._onRender(context, options);
+         this.#restoreFocus(this.#pendingFocus);
+         this.#pendingFocus = null;
+      }
+
+      /** @override */
+      async _preClose(options)
+      {
+         await this._flushEdits();
+         return super._preClose(options);
+      }
+
+      /**
+       * Saves anything typed but not yet saved: the focused text field, and any open rich-text editor
+       * with changes. Called before closing and before leaving edit mode.
+       */
+      async _flushEdits()
+      {
+         const active = document.activeElement;
+         if (this.element?.contains(active) && active.dataset?.field && 'defaultValue' in active
+          && active.value !== active.defaultValue)
+         {
+            await this.#onFieldChange({ target: active });
+         }
+         // Saving an editor fires its change event, which the change listener turns into an update.
+         for (const editor of this.element?.querySelectorAll('prose-mirror') ?? [])
+         {
+            if (editor.isDirty?.()) { editor.save(); }
+         }
+      }
+
+      /** @returns {boolean} Whether a rich-text editor here holds unsaved changes. */
+      _hasUnsavedEditor()
+      {
+         return [...(this.element?.querySelectorAll('prose-mirror') ?? [])].some((editor) => editor.isDirty?.());
+      }
+
+      /**
+       * Describes the focused control so the same control can be found after a re-render.
+       *
+       * @returns {object|null} Focus description.
+       */
+      #captureFocus()
+      {
+         const el = document.activeElement;
+         if (!el || el === document.body || !this.element?.contains(el) || el.closest('.fhql-popover')) { return null; }
+         const typed = 'defaultValue' in el && el.value !== el.defaultValue;
+         return {
+            name: el.getAttribute('name'),
+            action: el.dataset?.action ?? null,
+            status: el.dataset?.status ?? null,
+            questId: el.dataset?.questId ?? null,
+            objectiveId: el.closest('[data-objective-id]')?.dataset.objectiveId ?? null,
+            rewardId: el.closest('[data-reward-id]')?.dataset.rewardId ?? null,
+            value: typed ? el.value : null,
+            start: typed ? el.selectionStart : null,
+            end: typed ? el.selectionEnd : null
+         };
+      }
+
+      /**
+       * Refocuses the matching control after a re-render and puts back any unsaved typing.
+       *
+       * @param {object|null} focus - From #captureFocus.
+       */
+      #restoreFocus(focus)
+      {
+         if (!focus || !this.element) { return; }
+         let target = null;
+         if (focus.name)
+         {
+            target = this.element.querySelector(`[name="${CSS.escape(focus.name)}"]`);
+         }
+         else if (focus.action)
+         {
+            target = [...this.element.querySelectorAll(`[data-action="${CSS.escape(focus.action)}"]`)].find((el) =>
+               (!focus.questId || el.dataset.questId === focus.questId)
+               && (!focus.status || el.dataset.status === focus.status)
+               && (!focus.objectiveId || el.closest('[data-objective-id]')?.dataset.objectiveId === focus.objectiveId)
+               && (!focus.rewardId || el.closest('[data-reward-id]')?.dataset.rewardId === focus.rewardId));
+         }
+         if (!target) { return; }
+         if (focus.value !== null && 'value' in target)
+         {
+            target.value = focus.value;
+            try { target.setSelectionRange(focus.start, focus.end); }
+            catch { /* not a text input */ }
+         }
+         target.focus({ preventScroll: true });
+      }
+
       /** @returns {string|null} JournalEntry ID of the quest shown. Subclasses override. */
       get questId() { return null; }
 
@@ -159,6 +263,8 @@ export function QuestSheetMixin(Base)
             })) : [],
             inProgress: system.inProgress,
             tracked: isTracked(entry),
+            image: system.image,
+            dateLine: QuestSheet.#dateLine(system),
             giver: { ...system.giver, linked: !!system.giver.uuid },
             parent,
             description: system.description,
@@ -181,6 +287,24 @@ export function QuestSheetMixin(Base)
                open: editing || game.settings.get(MODULE_ID, 'gmNotesOpen')
             } : null
          };
+      }
+
+      /**
+       * "Started 3 Oct 2026 · Completed 9 Oct 2026", from whichever dates are recorded.
+       *
+       * @param {object} system - Quest data.
+       * @returns {string} The line, or '' if nothing is recorded.
+       */
+      static #dateLine(system)
+      {
+         const format = (ts) => new Date(ts).toLocaleDateString(game.i18n.lang, { day: 'numeric', month: 'short', year: 'numeric' });
+         const parts = [];
+         if (system.dates.started) { parts.push(game.i18n.format('FHQL.Quest.Started', { date: format(system.dates.started) })); }
+         if (system.dates.ended && ['completed', 'failed'].includes(system.status))
+         {
+            parts.push(game.i18n.format(`FHQL.Quest.Ended.${system.status}`, { date: format(system.dates.ended) }));
+         }
+         return parts.join(' · ');
       }
 
       /** @override */
@@ -232,6 +356,7 @@ export function QuestSheetMixin(Base)
             case 'status': return setStatus(entry, value);
             case 'inProgress': return updateQuest(entry, { 'system.inProgress': value });
             case 'giver.name': return updateQuest(entry, { 'system.giver.name': value }, QUIET);
+            case 'image': return updateQuest(entry, { 'system.image': value });
             case 'description':
             case 'playerNotes': return updateQuest(entry, { [`system.${field}`]: value });
             case 'gmNotes': return setGmNotes(entry, value);
@@ -279,8 +404,9 @@ export function QuestSheetMixin(Base)
       }
 
       /** @this {QuestSheet} */
-      static #onFinishEditing()
+      static async #onFinishEditing()
       {
+         await this._flushEdits();
          this._editing = false;
          this.render();
       }
