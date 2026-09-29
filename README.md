@@ -73,7 +73,8 @@ The module has no build step. `package.json` exists only for checks.
 
 ```sh
 npm install
-npm run check      # lint + contrast
+npm run check      # lint + module load + contrast
+npm run load       # loads every module file with Foundry mocked; catches bad imports
 npm run contrast   # WCAG AA contrast check for every theme token
 npm run layout     # renders templates at many widths, fails on text overflow
                    # (set CHROMIUM_PATH to use an installed Chromium)

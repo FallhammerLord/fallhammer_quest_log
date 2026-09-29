@@ -419,6 +419,7 @@ Store the relationship once: each quest holds an optional `parent` ID. Subquests
 - In-Foundry automated tests with Quench **[verify maintained]** for data model, import, and permissions.
 - A manual test checklist per release: each window × each theme × GM/player.
 - `npm run layout`: automated overflow check across widths, modes, and viewers (7.4a).
+- `npm run load`: loads the whole module with Foundry mocked. One bad import stops the whole module in Foundry and ESLint can't see it; this can. Part of `npm run check`.
 - A fixture world with sample FQL quests for import tests.
 
 ### 9.4 Releases

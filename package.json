@@ -6,8 +6,9 @@
   "scripts": {
     "lint": "eslint src tools",
     "contrast": "node tools/check-contrast.mjs",
-    "check": "npm run lint && npm run contrast",
-    "layout": "node tools/layout-check.mjs"
+    "check": "npm run lint && npm run load && npm run contrast",
+    "layout": "node tools/layout-check.mjs",
+    "load": "node tools/load-check.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",

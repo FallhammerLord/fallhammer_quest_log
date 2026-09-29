@@ -287,6 +287,177 @@ export async function deleteQuest(entry)
    await entry.delete();
 }
 
+/* ---------- Quest giver ---------- */
+
+/** Document types that can be a quest giver. */
+const GIVER_TYPES = ['Actor', 'Item', 'JournalEntry', 'JournalEntryPage'];
+
+/** Document types that can be a reward. */
+const REWARD_DOC_TYPES = ['Item', 'Actor'];
+
+/**
+ * Sets the quest giver from a dropped document. Stores name and image so the giver still shows if the
+ * document is later deleted or the viewer can't see it.
+ *
+ * @param {JournalEntry} entry - The quest entry.
+ * @param {foundry.abstract.Document} doc - The dropped document.
+ * @returns {Promise<boolean>} Whether it was accepted.
+ */
+export async function setGiverFromDocument(entry, doc)
+{
+   if (!GIVER_TYPES.includes(doc?.documentName)) { return false; }
+   await updateQuest(entry, { 'system.giver': { uuid: doc.uuid, name: doc.name, img: doc.img ?? '' } });
+   return true;
+}
+
+/** @param {JournalEntry} entry - The quest entry. */
+export async function clearGiver(entry)
+{
+   await updateQuest(entry, { 'system.giver': { uuid: '', name: '', img: '' } });
+}
+
+/* ---------- Rewards ---------- */
+
+/** @returns {number} A sort value after every existing entry. */
+function nextSort(collection)
+{
+   const sorts = Object.values(collection).map((o) => o.sort ?? 0);
+   return (sorts.length ? Math.max(...sorts) : 0) + CONST.SORT_INTEGER_DENSITY;
+}
+
+/**
+ * Adds a dropped item or actor as a reward.
+ *
+ * @param {JournalEntry} entry - The quest entry.
+ * @param {foundry.abstract.Document} doc - The dropped document.
+ * @returns {Promise<boolean>} Whether it was accepted.
+ */
+export async function addRewardFromDocument(entry, doc)
+{
+   if (!REWARD_DOC_TYPES.includes(doc?.documentName)) { return false; }
+   const rewards = questPage(entry).system.rewards;
+   await updateQuest(entry, {
+      [`system.rewards.${foundry.utils.randomID()}`]: {
+         type: doc.documentName.toLowerCase(), uuid: doc.uuid, name: doc.name, img: doc.img ?? '', sort: nextSort(rewards)
+      }
+   });
+   return true;
+}
+
+/** @param {JournalEntry} entry - The quest entry. */
+export async function addTextReward(entry)
+{
+   const rewards = questPage(entry).system.rewards;
+   await updateQuest(entry, { [`system.rewards.${foundry.utils.randomID()}`]: { type: 'text', name: '', sort: nextSort(rewards) } });
+}
+
+/**
+ * @param {JournalEntry} entry - The quest entry.
+ * @param {string} id - Reward ID.
+ */
+export async function deleteReward(entry, id)
+{
+   await updateQuest(entry, deleteKeyUpdate('system.rewards', id));
+}
+
+/* ---------- GM notes ---------- */
+
+/**
+ * GM notes live on their own text page with player ownership None, so they are never part of the quest
+ * page's data (docs/SCOPE.md 5.6).
+ *
+ * @param {JournalEntry} entry - The quest entry.
+ * @returns {JournalEntryPage|undefined} The GM notes page, if one exists.
+ */
+export function gmNotesPage(entry)
+{
+   return entry?.pages.find((page) => page.getFlag(MODULE_ID, 'gmNotes'));
+}
+
+/**
+ * Saves GM notes, creating the GM-only page on first save. GM only.
+ *
+ * @param {JournalEntry} entry - The quest entry.
+ * @param {string} html - Notes content.
+ */
+export async function setGmNotes(entry, html)
+{
+   if (!game.user.isGM) { return; }
+   const page = gmNotesPage(entry);
+   if (page) { return page.update({ 'text.content': html }); }
+
+   await entry.createEmbeddedDocuments('JournalEntryPage', [{
+      name: game.i18n.localize('FHQL.Quest.GMNotes'),
+      type: 'text',
+      text: { content: html, format: CONST.JOURNAL_ENTRY_PAGE_FORMATS.HTML },
+      ownership: { default: NONE },
+      flags: { [MODULE_ID]: { gmNotes: true } }
+   }]);
+}
+
+/* ---------- Parent and subquests ---------- */
+
+/**
+ * @param {JournalEntry} entry - A quest entry.
+ * @param {User} [user] - Defaults to the current user.
+ * @returns {JournalEntry[]} Subquests the user can see.
+ */
+export function subquests(entry, user = game.user)
+{
+   return visibleQuests(user).filter((e) => questPage(e).system.parent === entry.id);
+}
+
+/**
+ * @param {JournalEntry} entry - A quest entry.
+ * @returns {Set<string>} IDs of every quest below this one.
+ */
+function descendantIds(entry)
+{
+   const ids = new Set();
+   const walk = (id) =>
+   {
+      for (const e of game.journal)
+      {
+         if (questPage(e)?.system.parent === id && !ids.has(e.id)) { ids.add(e.id); walk(e.id); }
+      }
+   };
+   walk(entry.id);
+   return ids;
+}
+
+/**
+ * @param {JournalEntry} entry - A quest entry.
+ * @returns {JournalEntry[]} Quests that may become its parent: not itself, not below it.
+ */
+export function parentCandidates(entry)
+{
+   const blocked = descendantIds(entry).add(entry.id);
+   return visibleQuests().filter((e) => !blocked.has(e.id));
+}
+
+/**
+ * Sets or clears the parent quest. Refuses a parent that would create a loop.
+ *
+ * @param {JournalEntry} entry - The quest entry.
+ * @param {string} parentId - Parent JournalEntry ID, or '' for none.
+ */
+export async function setParent(entry, parentId)
+{
+   if (parentId && !parentCandidates(entry).some((e) => e.id === parentId)) { return; }
+   await updateQuest(entry, { 'system.parent': parentId ?? '' });
+}
+
+/**
+ * Creates a subquest of the given quest. Like any new quest, it starts Hidden.
+ *
+ * @param {JournalEntry} parent - The parent quest entry.
+ * @returns {Promise<JournalEntry>} The new quest.
+ */
+export async function createSubquest(parent)
+{
+   return createQuest({ system: { parent: parent.id, status: 'hidden' } });
+}
+
 /** Sample quests covering every status, for testing layout and themes. */
 const SAMPLES = [
    {
