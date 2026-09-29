@@ -1,7 +1,9 @@
 import { playerRowElement, playersElement } from '../compat.js';
 import { MODULE_ID } from '../constants.js';
 import { openQuestLog } from '../api.js';
-import { questAccess, questPage, visibleQuests } from '../data/quests.js';
+import { questAccess, questPage } from '../data/quests.js';
+import { beaconChoice, beaconQuests, setBeaconChoice } from '../data/tracking.js';
+import { menuPopover } from './popover.js';
 import { applyTheme } from '../theme.js';
 
 const WIDGET_ID = 'fhql-beacon';
@@ -12,8 +14,9 @@ let resizeObserver;
 const OBJECTIVE_ICONS = { open: 'fa-regular fa-square', done: 'fa-solid fa-square-check', failed: 'fa-solid fa-square-xmark' };
 
 /**
- * The Quest Beacon: the In Progress quest and its objectives, above Foundry's players list.
- * See docs/SCOPE.md 7.2.
+ * The Quest Beacon, above Foundry's players list. Always present (unless the player turns it off): it
+ * shows one marked quest (party In Progress or personally tracked) with its objectives, a switcher
+ * when several are marked, and an empty-state button that opens the Quest Log. See docs/SCOPE.md 7.2.
  * Our own element, inserted beside core's, never inside it. If the players list is missing, we skip.
  */
 export function refreshQuestBeacon()
@@ -21,11 +24,7 @@ export function refreshQuestBeacon()
    const players = playersElement();
    let widget = document.getElementById(WIDGET_ID);
 
-   const quests = game.settings.get(MODULE_ID, 'showInProgress')
-    ? visibleQuests().filter((entry) => questPage(entry).system.inProgress)
-    : [];
-
-   if (!players || !quests.length)
+   if (!players || !game.settings.get(MODULE_ID, 'showInProgress'))
    {
       widget?.remove();
       return;
@@ -36,16 +35,16 @@ export function refreshQuestBeacon()
       widget = document.createElement('section');
       widget.id = WIDGET_ID;
       widget.className = 'fhql-app fhql-beacon';
-      widget.addEventListener('click', (event) =>
-      {
-         const id = event.target.closest('[data-quest-id]')?.dataset.questId;
-         if (id) { openQuestLog(id); }
-      });
+      widget.addEventListener('click', (event) => onBeaconClick(event, widget));
    }
    if (widget.nextElementSibling !== players) { players.before(widget); }
 
+   const marked = beaconQuests();
+   const choice = beaconChoice();
+   const shown = marked.find((q) => q.entry.id === choice) ?? marked[0] ?? null;
+
    applyTheme(widget);
-   widget.innerHTML = renderWidget(quests);
+   widget.innerHTML = shown ? renderWidget(shown, marked) : renderEmpty();
    matchPlayersSize(widget, players);
 
    if (!resizeObserver)
@@ -58,6 +57,116 @@ export function refreshQuestBeacon()
    }
    resizeObserver.disconnect();
    resizeObserver.observe(players);
+}
+
+/**
+ * Handles clicks on the Beacon: the switcher opens a panel of marked quests; the empty-state button
+ * opens the Quest Log; anywhere else opens the shown quest.
+ *
+ * @param {MouseEvent} event - The click.
+ * @param {HTMLElement} widget - The Beacon.
+ */
+async function onBeaconClick(event, widget)
+{
+   if (event.target.closest('.fhql-popover')) { return; }
+   const switcher = event.target.closest('[data-beacon-switch]');
+   if (switcher)
+   {
+      event.stopPropagation();
+      const marked = beaconQuests();
+      const current = widget.querySelector('[data-quest-id]')?.dataset.questId;
+      const t = (key) => game.i18n.localize(key);
+      const choice = await menuPopover(widget, switcher, {
+         title: t('FHQL.Beacon.Choose'),
+         items: [
+            ...marked.map(({ entry, party, tracked }) => ({
+               value: entry.id,
+               label: entry.name,
+               icon: entry.id === current ? 'fa-solid fa-check' : party ? 'fa-solid fa-star' : 'fa-solid fa-bookmark',
+               hint: [party ? t('FHQL.Beacon.Party') : '', tracked ? t('FHQL.Beacon.Tracked') : ''].filter(Boolean).join(' · '),
+               current: entry.id === current
+            })),
+            { value: '__log', label: t('FHQL.QuestLog.Open'), icon: 'fa-solid fa-scroll' }
+         ]
+      });
+      if (choice === '__log') { openQuestLog(); }
+      else if (choice)
+      {
+         await setBeaconChoice(choice);
+         refreshQuestBeacon();
+      }
+      return;
+   }
+   if (event.target.closest('[data-beacon-empty]')) { openQuestLog(); return; }
+   const id = event.target.closest('[data-quest-id]')?.dataset.questId;
+   if (id) { openQuestLog(id); }
+}
+
+/** @returns {string} The Beacon with nothing marked: a button that opens the Quest Log. */
+function renderEmpty()
+{
+   const t = (key) => game.i18n.localize(key);
+   return `<div class="fhql-beacon-panel is-empty">
+      <button type="button" class="fhql-beacon-head" data-beacon-empty aria-label="${t('FHQL.Beacon.EmptyLabel')}">
+        <i class="fa-regular fa-bookmark fhql-muted" inert></i>
+        <span class="fhql-beacon-name fhql-muted">${t('FHQL.Beacon.Empty')}</span>
+        <i class="fa-solid fa-scroll fhql-beacon-gift" inert></i>
+      </button>
+    </div>`;
+}
+
+/**
+ * @param {{ entry: JournalEntry, party: boolean, tracked: boolean }} shown - The quest to show.
+ * @param {object[]} marked - Every marked quest, for the switcher.
+ * @returns {string} Beacon HTML.
+ */
+function renderWidget({ entry, party }, marked)
+{
+   const system = questPage(entry).system;
+   const access = questAccess(entry);
+   const escape = foundry.utils.escapeHTML;
+   const localize = (key) => game.i18n.localize(key);
+
+   const objectives = access.full && game.settings.get(MODULE_ID, 'showNextObjective')
+    ? system.objectiveList.filter((objective) => access.gm || !objective.hidden)
+    : [];
+
+   const hiddenMark = system.status === 'hidden'
+    ? `<i class="fa-solid fa-eye-slash" data-tooltip="${localize('FHQL.Status.hidden')}"></i>` : '';
+   const switcher = marked.length > 1
+    ? `<button type="button" class="fhql-beacon-switch" data-beacon-switch aria-haspopup="menu"
+         aria-label="${escape(game.i18n.format('FHQL.Beacon.SwitchLabel', { count: marked.length }))}"
+         data-tooltip="${localize('FHQL.Beacon.Choose')}">${marked.length}<i class="fa-solid fa-chevron-up" inert></i></button>`
+    : '';
+   const label = game.i18n.format('FHQL.Beacon.Label', { name: entry.name });
+   const hasRewards = !access.gm && access.full && Object.values(system.rewards).some((r) =>
+      (r.type === 'item' || r.type === 'actor') && r.uuid && !r.hidden && !r.locked
+      && (r.claimLimit === 'perPlayer' ? !r.claims.some((c) => c.userId === game.user.id) : r.claims.length === 0));
+   const gift = hasRewards
+    ? `<i class="fa-solid fa-gift fhql-beacon-gift" data-tooltip="${localize('FHQL.Beacon.Rewards')}" aria-label="${localize('FHQL.Beacon.Rewards')}"></i>` : '';
+   const markIcon = party
+    ? `<i class="fa-solid fa-star fhql-in-progress" data-tooltip="${localize('FHQL.Beacon.Party')}" aria-label="${localize('FHQL.Beacon.Party')}"></i>`
+    : `<i class="fa-solid fa-bookmark fhql-in-progress" data-tooltip="${localize('FHQL.Beacon.Tracked')}" aria-label="${localize('FHQL.Beacon.Tracked')}"></i>`;
+
+   const list = objectives.length ? `<ol class="fhql-beacon-objectives" aria-label="${localize('FHQL.Quest.Objectives')}">
+      ${objectives.map((o) => `<li class="is-${o.state}">
+        <i class="fhql-state-icon ${OBJECTIVE_ICONS[o.state]}" aria-label="${localize(`FHQL.Objective.State.${o.state}`)}"></i>
+        <span>${escape(o.name)}</span>
+        ${o.hidden ? `<i class="fa-solid fa-eye-slash fhql-muted" aria-label="${localize('FHQL.Objective.Hidden')}"></i>` : ''}
+      </li>`).join('')}
+    </ol>` : '';
+
+   return `<div class="fhql-beacon-panel" data-quest-id="${entry.id}">
+      <div class="fhql-beacon-headrow">
+        <button type="button" class="fhql-beacon-head" aria-label="${escape(label)}">
+          ${markIcon}
+          <span class="fhql-beacon-name" data-tooltip="${escape(entry.name)}">${escape(entry.name)}</span>
+          ${gift}${hiddenMark}
+        </button>
+        ${switcher}
+      </div>
+      ${list}
+    </div>`;
 }
 
 /**
@@ -126,50 +235,3 @@ export function debugQuestBeacon()
    console.table(info);
    return info;
 }
-
-/**
- * @param {JournalEntry[]} quests - In Progress quests the user can see. The first is shown.
- * @returns {string} Beacon HTML.
- */
-function renderWidget(quests)
-{
-   const [entry] = quests;
-   const system = questPage(entry).system;
-   const access = questAccess(entry);
-   const escape = foundry.utils.escapeHTML;
-   const localize = (key) => game.i18n.localize(key);
-
-   const objectives = access.full && game.settings.get(MODULE_ID, 'showNextObjective')
-    ? system.objectiveList.filter((objective) => access.gm || !objective.hidden)
-    : [];
-
-   const hiddenMark = system.status === 'hidden'
-    ? `<i class="fa-solid fa-eye-slash" data-tooltip="${localize('FHQL.Status.hidden')}"></i>` : '';
-   const more = quests.length > 1
-    ? `<span class="fhql-beacon-more" data-tooltip="${escape(quests.slice(1).map((q) => q.name).join(', '))}">+${quests.length - 1}</span>`
-    : '';
-   const label = game.i18n.format('FHQL.Beacon.Label', { name: entry.name });
-   const hasRewards = !access.gm && access.full && Object.values(system.rewards).some((r) =>
-      (r.type === 'item' || r.type === 'actor') && r.uuid && !r.hidden && !r.locked
-      && (r.claimLimit === 'perPlayer' ? !r.claims.some((c) => c.userId === game.user.id) : r.claims.length === 0));
-   const gift = hasRewards
-    ? `<i class="fa-solid fa-gift fhql-beacon-gift" data-tooltip="${localize('FHQL.Beacon.Rewards')}" aria-label="${localize('FHQL.Beacon.Rewards')}"></i>` : '';
-
-   const list = objectives.length ? `<ol class="fhql-beacon-objectives" aria-label="${localize('FHQL.Quest.Objectives')}">
-      ${objectives.map((o) => `<li class="is-${o.state}">
-        <i class="fhql-state-icon ${OBJECTIVE_ICONS[o.state]}" aria-label="${localize(`FHQL.Objective.State.${o.state}`)}"></i>
-        <span>${escape(o.name)}</span>
-        ${o.hidden ? `<i class="fa-solid fa-eye-slash fhql-muted" aria-label="${localize('FHQL.Objective.Hidden')}"></i>` : ''}
-      </li>`).join('')}
-    </ol>` : '';
-
-   return `<div class="fhql-beacon-panel" data-quest-id="${entry.id}">
-      <button type="button" class="fhql-beacon-head" aria-label="${escape(label)}">
-        <i class="fa-solid fa-star fhql-in-progress" inert></i>
-        <span class="fhql-beacon-name" data-tooltip="${escape(entry.name)}">${escape(entry.name)}</span>
-        ${gift}${hiddenMark}${more}
-      </button>
-      ${list}
-    </div>`;
-}
-

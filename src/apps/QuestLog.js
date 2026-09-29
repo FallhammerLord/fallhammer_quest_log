@@ -4,6 +4,7 @@ import { MODULE_ID, MODULE_PATH, STATUSES } from '../constants.js';
 import { applyTheme, trackApp, untrackApp } from '../theme.js';
 import { clampToMinSize } from './minSize.js';
 import { scanFqlQuests } from '../import/fql.js';
+import { trackedIds } from '../data/tracking.js';
 import {
    createQuest, createQuestFolder, createSampleQuests, getQuestEntry, moveQuestToFolder, questPage, questRootFolder,
    questSubfolders, visibleQuests
@@ -202,6 +203,7 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
     */
    #addQuestRows(rows, entries, depth, chain)
    {
+      const tracked = new Set(trackedIds());
       const ids = new Set(entries.map((e) => e.id));
       const childrenOf = new Map();
       const roots = [];
@@ -225,6 +227,7 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
             search: entry.name.toLowerCase(),
             status,
             inProgress,
+            tracked: tracked.has(entry.id),
             depth: Math.min(level, 6),
             chain: chain.join(' '),
             statusIcon: STATUSES[status].icon,

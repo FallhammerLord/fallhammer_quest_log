@@ -15,7 +15,8 @@ const openPanels = new WeakMap();
 /**
  * Opens a panel and resolves when it closes.
  *
- * @param {foundry.applications.api.ApplicationV2} app - The window the panel belongs to.
+ * @param {foundry.applications.api.ApplicationV2|HTMLElement} app - The window the panel belongs to, or a
+ *   themed element (the Quest Beacon) to attach it to.
  * @param {HTMLElement|{ x: number, y: number }} anchor - The control that opened it, or a pointer position.
  * @param {string} html - Panel content.
  * @param {(panel: HTMLElement, done: Function) => void} wire - Attaches behavior; call `done(value)` to close.
@@ -24,7 +25,8 @@ const openPanels = new WeakMap();
  */
 function openPanel(app, anchor, html, wire, { label, role = 'dialog' })
 {
-   const host = app.element;
+   const host = app instanceof HTMLElement ? app : app.element;
+   const fixed = app instanceof HTMLElement;
    openPanels.get(host)?.(null);
 
    const returnFocus = anchor instanceof HTMLElement ? anchor : document.activeElement;
@@ -34,7 +36,8 @@ function openPanel(app, anchor, html, wire, { label, role = 'dialog' })
    panel.setAttribute('aria-label', label);
    panel.innerHTML = html;
    host.append(panel);
-   position(panel, host, anchor);
+   if (fixed) { positionInViewport(panel, anchor); }
+   else { position(panel, host, anchor); }
 
    return new Promise((resolve) =>
    {
@@ -88,6 +91,26 @@ function position(panel, host, anchor)
 
    panel.style.left = `${left}px`;
    panel.style.top = `${top}px`;
+}
+
+/**
+ * Places a panel attached to a small element (the Beacon) against the screen instead of a window:
+ * above the anchor by preference, since the Beacon sits at the bottom of the screen.
+ *
+ * @param {HTMLElement} panel - The panel.
+ * @param {HTMLElement} anchor - The control that opened it.
+ */
+function positionInViewport(panel, anchor)
+{
+   const a = anchor.getBoundingClientRect();
+   panel.style.position = 'fixed';
+   const p = panel.getBoundingClientRect();
+   const margin = 8;
+   let top = a.top - p.height - 4;
+   if (top < margin) { top = Math.min(a.bottom + 4, window.innerHeight - p.height - margin); }
+   const left = Math.min(Math.max(a.left, margin), window.innerWidth - p.width - margin);
+   panel.style.left = `${left}px`;
+   panel.style.top = `${Math.max(margin, top)}px`;
 }
 
 /** Moves focus between a panel's items with the arrow keys, Home, and End. */

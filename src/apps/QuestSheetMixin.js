@@ -1,5 +1,6 @@
 import { DocumentOwnershipConfig, textEditor } from '../compat.js';
 import { confirmPopover, menuPopover } from '../ui/popover.js';
+import { isTracked, toggleTracked } from '../data/tracking.js';
 import { MODULE_ID, STATUSES } from '../constants.js';
 import {
    claimLabel, claimedItem, claimsExhausted, claimTargets, isClaimable, recipientOptions, requestClaim, undoClaim
@@ -45,6 +46,7 @@ export function QuestSheetMixin(Base)
             finishEditing: QuestSheet.#onFinishEditing,
             setQuestStatus: QuestSheet.#onSetQuestStatus,
             toggleInProgress: QuestSheet.#onToggleInProgress,
+            toggleTracked: QuestSheet.#onToggleTracked,
             addObjective: QuestSheet.#onAddObjective,
             cycleObjective: QuestSheet.#onCycleObjective,
             deleteObjective: QuestSheet.#onDeleteObjective,
@@ -156,6 +158,7 @@ export function QuestSheetMixin(Base)
                status: target, icon: STATUSES[target].icon, label: localize(`FHQL.QuestLog.StatusAction.${verb}`)
             })) : [],
             inProgress: system.inProgress,
+            tracked: isTracked(entry),
             giver: { ...system.giver, linked: !!system.giver.uuid },
             parent,
             description: system.description,
@@ -307,6 +310,12 @@ export function QuestSheetMixin(Base)
       {
          const id = target.closest('[data-objective-id]')?.dataset.objectiveId;
          if (this.questEntry && id) { await cycleObjective(this.questEntry, id); }
+      }
+
+      /** @this {QuestSheet} */
+      static async #onToggleTracked()
+      {
+         if (this.questEntry) { await toggleTracked(this.questEntry); }
       }
 
       /** @this {QuestSheet} */

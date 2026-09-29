@@ -5,11 +5,19 @@ const THEME_CLASSES = Object.values(THEMES).map((theme) => `fhql-theme-${theme}`
 /** Open fhql windows, so a theme change can restyle them without a re-render. */
 const openApps = new Set();
 
-/** @returns {string} The current client's theme setting. */
+/**
+ * The theme in effect for this client: their own choice, or the GM's world default when they chose
+ * "Use world theme" (the default).
+ *
+ * @returns {string} A key of THEMES.
+ */
 export function currentTheme()
 {
-   const theme = game.settings.get(MODULE_ID, 'theme');
-   return THEME_CLASSES.includes(`fhql-theme-${theme}`) ? theme : THEMES.auto;
+   const valid = (theme) => THEME_CLASSES.includes(`fhql-theme-${theme}`);
+   const own = game.settings.get(MODULE_ID, 'theme');
+   if (valid(own)) { return own; }
+   const world = game.settings.get(MODULE_ID, 'worldTheme');
+   return valid(world) ? world : THEMES.auto;
 }
 
 /**

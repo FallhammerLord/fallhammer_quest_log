@@ -5,24 +5,38 @@ import { refreshQuestBeacon } from './ui/QuestBeacon.js';
 /** Registers module settings. Called on `init`. */
 export function registerSettings()
 {
+   const themeChoices = {
+      [THEMES.auto]: 'FHQL.Settings.Theme.Auto',
+      [THEMES.light]: 'FHQL.Settings.Theme.Light',
+      [THEMES.dark]: 'FHQL.Settings.Theme.Dark',
+      [THEMES.scifi]: 'FHQL.Settings.Theme.Scifi'
+   };
+   const restyle = () =>
+   {
+      refreshOpenApps();
+      refreshQuestBeacon();
+   };
+
+   game.settings.register(MODULE_ID, 'worldTheme', {
+      name: 'FHQL.Settings.WorldTheme.Name',
+      hint: 'FHQL.Settings.WorldTheme.Hint',
+      scope: 'world',
+      config: true,
+      type: String,
+      choices: themeChoices,
+      default: THEMES.auto,
+      onChange: restyle
+   });
+
    game.settings.register(MODULE_ID, 'theme', {
       name: 'FHQL.Settings.Theme.Name',
       hint: 'FHQL.Settings.Theme.Hint',
       scope: 'client',
       config: true,
       type: String,
-      choices: {
-         [THEMES.auto]: 'FHQL.Settings.Theme.Auto',
-         [THEMES.light]: 'FHQL.Settings.Theme.Light',
-         [THEMES.dark]: 'FHQL.Settings.Theme.Dark',
-         [THEMES.scifi]: 'FHQL.Settings.Theme.Scifi'
-      },
-      default: THEMES.auto,
-      onChange: () =>
-      {
-         refreshOpenApps();
-         refreshQuestBeacon();
-      }
+      choices: { world: 'FHQL.Settings.Theme.World', ...themeChoices },
+      default: 'world',
+      onChange: restyle
    });
 
    game.settings.register(MODULE_ID, 'showInProgress', {

@@ -228,6 +228,7 @@ Known limit: the v14 query API doesn't tell the GM client which user sent a requ
 ### 6.1 Structure
 
 - Every window root gets `.fhql-app` plus a theme class: `.fhql-theme-auto`, `.fhql-theme-light`, `.fhql-theme-dark`, `.fhql-theme-scifi`.
+- The GM sets the **world theme**; each player's setting defaults to "Use world theme" and can override it on their device.
 - `auto` (Follow Foundry) maps to light or dark from core's `.theme-light` / `.theme-dark` classes, in CSS alone.
 - Prefix is `fhql-`, never `fql-`. FQL already uses `.fql-app` and `--fql-*` variables, and both modules run side by side during migration.
 - Styling uses CSS custom properties only. Component CSS never contains raw color values.
@@ -274,6 +275,8 @@ Known limit: the v14 query API doesn't tell the GM client which user sent a requ
 Design rule: most player contact happens without opening the log.
 
 ### 7.2 Quest Beacon
+
+**Update 2026-09-29:** Always visible (players can turn it off in settings). With nothing marked it shows "No quest tracked", which opens the Quest Log. It shows party In Progress quests (GM-set) and quests the player tracks personally (Track button on any quest; stored as flags on the player's own User, so it follows them between devices). When several are marked, a switcher on the Beacon opens a child panel listing them; the choice is remembered per user.
 
 Named 2026-09-29. The panel above the players list showing the In Progress quest and all its objectives.
 

@@ -20,7 +20,7 @@ Scope, design, and decisions live in [`docs/SCOPE.md`](docs/SCOPE.md).
    - The In Progress quest above the players list (appears once a quest is marked In progress).
    - A key you bind in Configure Controls → Fallhammer Quest Log → Open Quest Log.
    - Macro: `game.modules.get('fhql').api.openQuestLog()`
-4. Switch themes in Configure Settings → Fallhammer Quest Log → Quest Log theme.
+4. Themes: the GM sets "Quest Log theme (world default)"; each player can override it with "Quest Log theme (just you)".
 
 ## What to check in milestone 2
 

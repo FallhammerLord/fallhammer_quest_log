@@ -73,7 +73,7 @@
       </label>
       {{/if}}
     </div>
-    {{else if editable}}
+    {{else}}
     <div class="fhql-sheet-actions">
       {{#each statusActions}}
       <button type="button" class="fhql-button fhql-status-{{status}}" data-action="setQuestStatus" data-status="{{status}}"
@@ -86,8 +86,14 @@
               aria-label="{{localize 'FHQL.Quest.InProgress'}}">
         <i class="{{#if inProgress}}fa-solid{{else}}fa-regular{{/if}} fa-star" inert></i><span class="fhql-label">{{localize "FHQL.Quest.InProgress"}}</span></button>
       {{/if}}
+      <button type="button" class="fhql-button fhql-toggle {{#if tracked}}is-on{{/if}}" data-action="toggleTracked"
+              aria-pressed="{{#if tracked}}true{{else}}false{{/if}}" aria-label="{{localize 'FHQL.Quest.Track'}}"
+              data-tooltip="{{#if tracked}}{{localize 'FHQL.Quest.UntrackHint'}}{{else}}{{localize 'FHQL.Quest.TrackHint'}}{{/if}}">
+        <i class="{{#if tracked}}fa-solid{{else}}fa-regular{{/if}} fa-bookmark" inert></i><span class="fhql-label">{{localize "FHQL.Quest.Track"}}</span></button>
+      {{#if editable}}
       <button type="button" class="fhql-button fhql-push" data-action="editQuest" aria-label="{{localize 'FHQL.QuestLog.Edit'}}">
         <i class="fa-solid fa-pen" inert></i><span class="fhql-label">{{localize "FHQL.QuestLog.Edit"}}</span></button>
+      {{/if}}
     </div>
     {{/if}}
   </header>

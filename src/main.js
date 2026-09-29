@@ -36,6 +36,15 @@ Hooks.once('ready', () =>
 });
 Hooks.on('renderPlayers', () => refreshQuestBeacon());
 
+/** Personal tracking lives on the user's own document; refresh when it changes. */
+Hooks.on('updateUser', (user, changes) =>
+{
+   if (user.id !== game.user.id || !foundry.utils.hasProperty(changes, `flags.${MODULE_ID}`)) { return; }
+   refreshQuestBeacon();
+   QuestLog.instance.onQuestChanged({}, null);
+   QuestSheetApp.refreshAll({}, null);
+});
+
 /** Re-render our UI when any quest changes, on any client. */
 const refresh = (options, userId) =>
 {

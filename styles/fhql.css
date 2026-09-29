@@ -866,3 +866,32 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
 }
 .fhql-app.fhql-theme-dark .fhql-button.fhql-danger-fill,
 .fhql-app.fhql-theme-scifi .fhql-button.fhql-danger-fill { color: var(--fhql-surface-sunken); }
+
+/* ---------- Beacon: header row, switcher, empty state ---------- */
+.fhql-beacon { position: relative; }
+.fhql-beacon .fhql-beacon-headrow { display: flex; align-items: stretch; min-width: 0; }
+.fhql-beacon .fhql-beacon-headrow .fhql-beacon-head { flex: 1; min-width: 0; }
+.fhql-beacon .fhql-beacon-switch {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0 0.6em;
+  font: inherit;
+  font-size: 0.82em;
+  font-weight: bold;
+  color: var(--fhql-accent);
+  background: none;
+  border: 0;
+  border-inline-start: 1px solid var(--fhql-rule);
+  border-radius: 0;
+  cursor: pointer;
+}
+.fhql-beacon .fhql-beacon-switch:hover { background: var(--fhql-hover); }
+.fhql-beacon .fhql-beacon-switch:focus-visible { outline: 2px solid var(--fhql-accent); outline-offset: -2px; }
+.fhql-beacon .fhql-beacon-panel.is-empty { opacity: 0.85; }
+.fhql-beacon .fhql-beacon-panel.is-empty:hover { opacity: 1; }
+.fhql-beacon .fhql-popover { z-index: 1000; }

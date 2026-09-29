@@ -57,7 +57,10 @@
       "GMNotes": "GM notes",
       "GMOnly": "GM only",
       "GMNotesEmpty": "No GM notes yet. Add some in edit mode.",
-      "AddSubquestLabel": "Add a subquest"
+      "AddSubquestLabel": "Add a subquest",
+      "Track": "Track",
+      "TrackHint": "Follow this quest on your Quest Beacon. Only you see this.",
+      "UntrackHint": "Tracking on your Quest Beacon. Click to stop."
     },
     "Objective": {
       "Name": "Objective",
@@ -91,12 +94,13 @@
     },
     "Settings": {
       "Theme": {
-        "Name": "Quest Log theme",
-        "Hint": "Applies to your client only. Follow Foundry matches your core light or dark interface setting.",
+        "Name": "Quest Log theme (just you)",
+        "Hint": "Use world theme follows the GM's choice. Pick another to override it on this device only.",
         "Auto": "Follow Foundry",
         "Light": "Light",
         "Dark": "Dark",
-        "Scifi": "Sci-fi"
+        "Scifi": "Sci-fi",
+        "World": "Use world theme"
       },
       "DefaultOwnership": {
         "Name": "Player access when a quest is revealed",
@@ -121,6 +125,10 @@
         "Hint": "When a player claims an actor reward (a follower or mount), they get this access to it.",
         "Owner": "Owner: full control",
         "Observer": "Observer: can see its sheet"
+      },
+      "WorldTheme": {
+        "Name": "Quest Log theme (world default)",
+        "Hint": "The theme everyone sees unless they choose their own. Follow Foundry matches each person's light or dark interface setting."
       }
     },
     "Keybindings": {
@@ -191,7 +199,13 @@
     },
     "Beacon": {
       "Label": "Quest Beacon: {name}. Open in Quest Log.",
-      "Rewards": "Rewards ready to claim"
+      "Rewards": "Rewards ready to claim",
+      "Empty": "No quest tracked",
+      "EmptyLabel": "No quest tracked. Open the Quest Log.",
+      "Choose": "Show on your Beacon",
+      "Party": "In progress (party)",
+      "Tracked": "Tracked by you",
+      "SwitchLabel": "{count} marked quests. Choose which to show."
     },
     "Folders": {
       "NewName": "New Folder",
