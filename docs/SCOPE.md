@@ -217,6 +217,10 @@ Rewards that are Foundry documents can be claimed, not just read. Text rewards s
 - The Quest Beacon shows a gift icon when the In Progress quest has claimable rewards, so players notice without opening the log.
 - Keyboard: Claim is a real button; the character picker is a keyboard-navigable list.
 
+**As built (2026-09-29):** Claim / Recruit for players (straight onto the assigned character, or a picker), Give for GMs (player and character picker), lock/unlock and eye toggles in the read view, per-reward "once / each player" in edit mode, strike-through and "Claimed by…" with GM Undo, "n of m claimed" on the heading, drag onto a character sheet claims through the same path (`dropActorSheetData`), chat card, Beacon gift icon, auto-unlock on Completed, and a setting for the access actor rewards grant. `locked` is kept rather than renamed to `claimable`.
+
+Known limit: the v14 query API doesn't tell the GM client which user sent a request, so a player could in principle claim on another player's behalf. The GM side still checks visibility, lock state, claim limits, and character ownership against the named player.
+
 **Data added to each reward:** `claimable` (replaces `locked`), `claimLimit` ('once' | 'perPlayer'), `claims` (list of { userId, actorUuid, itemUuid, at }).
 
 ## 6. Theming spec

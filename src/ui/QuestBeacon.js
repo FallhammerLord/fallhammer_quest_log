@@ -149,6 +149,11 @@ function renderWidget(quests)
     ? `<span class="fhql-beacon-more" data-tooltip="${escape(quests.slice(1).map((q) => q.name).join(', '))}">+${quests.length - 1}</span>`
     : '';
    const label = game.i18n.format('FHQL.Beacon.Label', { name: entry.name });
+   const hasRewards = !access.gm && access.full && Object.values(system.rewards).some((r) =>
+      (r.type === 'item' || r.type === 'actor') && r.uuid && !r.hidden && !r.locked
+      && (r.claimLimit === 'perPlayer' ? !r.claims.some((c) => c.userId === game.user.id) : r.claims.length === 0));
+   const gift = hasRewards
+    ? `<i class="fa-solid fa-gift fhql-beacon-gift" data-tooltip="${localize('FHQL.Beacon.Rewards')}" aria-label="${localize('FHQL.Beacon.Rewards')}"></i>` : '';
 
    const list = objectives.length ? `<ol class="fhql-beacon-objectives" aria-label="${localize('FHQL.Quest.Objectives')}">
       ${objectives.map((o) => `<li class="is-${o.state}">
@@ -162,7 +167,7 @@ function renderWidget(quests)
       <button type="button" class="fhql-beacon-head" aria-label="${escape(label)}">
         <i class="fa-solid fa-star fhql-in-progress" inert></i>
         <span class="fhql-beacon-name" data-tooltip="${escape(entry.name)}">${escape(entry.name)}</span>
-        ${hiddenMark}${more}
+        ${gift}${hiddenMark}${more}
       </button>
       ${list}
     </div>`;

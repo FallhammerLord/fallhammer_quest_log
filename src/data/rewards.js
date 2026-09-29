@@ -1,0 +1,279 @@
+import { DialogV2, deleteKeyUpdate } from '../compat.js';
+import { MODULE_ID } from '../constants.js';
+import { getQuestEntry, questAccess, questPage } from './quests.js';
+
+/**
+ * Reward claiming. See docs/SCOPE.md 5.10.
+ *
+ * Item rewards are copied onto the claimer's character and marked claimed. Actor rewards (followers,
+ * mounts) give the claiming player ownership. Players can't always read the source documents, so
+ * claims run on the GM's client through `CONFIG.queries['fhql.claimReward']`.
+ *
+ * The query API doesn't tell the GM client who sent a request, so the GM side re-checks everything
+ * against the named user: quest visible, reward unlocked and unclaimed, character owned.
+ */
+
+const QUERY = `${MODULE_ID}.claimReward`;
+const { OWNER } = CONST.DOCUMENT_OWNERSHIP_LEVELS;
+
+/** Registers the GM-side claim handler. Called on `init`. */
+export function registerRewardQueries()
+{
+   CONFIG.queries[QUERY] = (data) => performClaim(data);
+}
+
+/**
+ * Characters a user can receive rewards on: their assigned character first, then other actors they own.
+ *
+ * @param {User} user - The player.
+ * @returns {Actor[]} Candidate actors.
+ */
+export function claimTargets(user)
+{
+   const owned = game.actors.filter((actor) => actor.testUserPermission(user, OWNER));
+   const assigned = user.character;
+   return assigned ? [assigned, ...owned.filter((a) => a.id !== assigned.id)] : owned;
+}
+
+/**
+ * @param {object} reward - Reward data.
+ * @returns {boolean} Whether this reward can be claimed at all (a linked item or actor).
+ */
+export function isClaimable(reward)
+{
+   return (reward.type === 'item' || reward.type === 'actor') && !!reward.uuid;
+}
+
+/**
+ * @param {object} reward - Reward data.
+ * @param {string} userId - A user ID.
+ * @returns {boolean} Whether no more claims are allowed for this user.
+ */
+export function claimsExhausted(reward, userId)
+{
+   if (reward.claimLimit === 'perPlayer') { return reward.claims.some((c) => c.userId === userId); }
+   return reward.claims.length > 0;
+}
+
+/**
+ * Describes a claim for display: "Rinn (Kestrel)" or "Rinn".
+ *
+ * @param {object} claim - Claim data.
+ * @returns {string} Label.
+ */
+export function claimLabel(claim)
+{
+   const user = game.users.get(claim.userId)?.name ?? game.i18n.localize('FHQL.Reward.UnknownPlayer');
+   const actor = claim.actorUuid ? fromUuidSync(claim.actorUuid, { strict: false })?.name : null;
+   return actor ? `${user} (${actor})` : user;
+}
+
+/**
+ * Asks which player and character receive a reward. GMs pick any player; players pick among their own
+ * characters. Resolves immediately when there is only one choice.
+ *
+ * @param {object} reward - Reward data.
+ * @param {boolean} asGM - Whether the GM is giving the reward.
+ * @returns {Promise<{ userId: string, actorUuid: string }|null>} The choice, or null if cancelled.
+ */
+export async function pickRecipient(reward, asGM)
+{
+   const escape = foundry.utils.escapeHTML;
+   const players = asGM ? game.users.filter((u) => !u.isGM) : [game.user];
+   const options = [];
+   for (const user of players)
+   {
+      if (claimsExhausted(reward, user.id)) { continue; }
+      if (reward.type === 'actor') { options.push({ userId: user.id, actorUuid: '', label: user.name }); continue; }
+      for (const actor of claimTargets(user))
+      {
+         const assigned = actor.id === user.character?.id;
+         options.push({
+            userId: user.id,
+            actorUuid: actor.uuid,
+            label: asGM ? `${user.name}: ${actor.name}` : actor.name,
+            assigned
+         });
+      }
+   }
+
+   if (!options.length)
+   {
+      ui.notifications.warn(game.i18n.localize(asGM ? 'FHQL.Reward.NoRecipients' : 'FHQL.Reward.NoCharacter'));
+      return null;
+   }
+   // A player with an assigned character claims straight onto it.
+   if (!asGM && (options.length === 1 || options[0].assigned)) { return options[0]; }
+
+   const radios = options.map((o, i) => `<label class="fhql-pick">
+      <input type="radio" name="pick" value="${i}" ${i === 0 ? 'checked' : ''}>
+      <span>${escape(o.label)}${o.assigned ? ` <em>${game.i18n.localize('FHQL.Reward.Assigned')}</em>` : ''}</span></label>`).join('');
+
+   const index = await DialogV2.prompt({
+      window: { title: asGM ? 'FHQL.Reward.GiveTitle' : 'FHQL.Reward.ClaimTitle' },
+      content: `<fieldset class="fhql-pick-list"><legend>${escape(reward.name)}</legend>${radios}</fieldset>`,
+      ok: { label: asGM ? 'FHQL.Reward.Give' : 'FHQL.Reward.Claim', callback: (e, button) => button.form.elements.pick.value },
+      rejectClose: false
+   });
+   return index === null || index === undefined ? null : options[Number(index)];
+}
+
+/**
+ * Claims a reward: runs on this client if GM, otherwise asks the active GM's client.
+ *
+ * @param {JournalEntry} entry - The quest entry.
+ * @param {string} rewardId - Reward ID.
+ * @param {{ userId: string, actorUuid: string }} recipient - Who receives it.
+ * @returns {Promise<boolean>} Whether it succeeded.
+ */
+export async function requestClaim(entry, rewardId, recipient)
+{
+   const data = { entryId: entry.id, rewardId, ...recipient };
+   let result;
+   if (game.user.isGM) { result = await performClaim(data, { force: true }); }
+   else
+   {
+      const gm = game.users.activeGM;
+      if (!gm)
+      {
+         ui.notifications.warn(game.i18n.localize('FHQL.Reward.NeedGM'));
+         return false;
+      }
+      try { result = await gm.query(QUERY, data, { timeout: 15000 }); }
+      catch (err)
+      {
+         console.error(`${MODULE_ID} | Claim request failed`, err);
+         result = { ok: false, message: game.i18n.localize('FHQL.Reward.Failed') };
+      }
+   }
+
+   if (result?.ok) { ui.notifications.info(result.message); }
+   else { ui.notifications.warn(result?.message ?? game.i18n.localize('FHQL.Reward.Failed')); }
+   return !!result?.ok;
+}
+
+/**
+ * GM side of a claim. Validates, copies the item or grants ownership, records the claim, posts a
+ * chat card.
+ *
+ * @param {{ entryId: string, rewardId: string, userId: string, actorUuid: string }} data - Request.
+ * @param {{ force?: boolean }} [options] - `force` skips lock and hidden checks (GM giving directly).
+ * @returns {Promise<{ ok: boolean, message: string }>} Outcome.
+ */
+async function performClaim(data, { force = false } = {})
+{
+   const fail = (key) => ({ ok: false, message: game.i18n.localize(`FHQL.Reward.Error.${key}`) });
+   if (!game.user.isGM) { return fail('NotGM'); }
+
+   const entry = getQuestEntry(data.entryId);
+   const page = questPage(entry);
+   const reward = page?.system.rewards[data.rewardId];
+   const user = game.users.get(data.userId);
+   if (!entry || !reward || !user) { return fail('NotFound'); }
+   if (!isClaimable(reward)) { return fail('NotClaimable'); }
+   if (!force && (!questAccess(entry, user).full || reward.hidden || reward.locked)) { return fail('Locked'); }
+   if (claimsExhausted(reward, user.id)) { return fail('AlreadyClaimed'); }
+
+   const claim = { userId: user.id, actorUuid: '', itemUuid: '', prevLevel: null, at: Date.now() };
+   const source = await fromUuid(reward.uuid);
+   if (!source) { return fail('SourceMissing'); }
+
+   if (reward.type === 'item')
+   {
+      const actor = await fromUuid(data.actorUuid);
+      if (!actor || actor.documentName !== 'Actor' || !actor.testUserPermission(user, OWNER)) { return fail('NotOwner'); }
+      const itemData = source.toObject();
+      delete itemData._id;
+      foundry.utils.setProperty(itemData, `flags.${MODULE_ID}.fromQuest`, entry.id);
+      const [created] = await actor.createEmbeddedDocuments('Item', [itemData]);
+      claim.actorUuid = actor.uuid;
+      claim.itemUuid = created?.uuid ?? '';
+   }
+   else
+   {
+      claim.prevLevel = source.ownership[user.id] ?? null;
+      await source.update({ [`ownership.${user.id}`]: game.settings.get(MODULE_ID, 'followerOwnership') });
+   }
+
+   await page.update({ [`system.rewards.${data.rewardId}.claims`]: [...reward.claims, claim] });
+
+   const who = claimLabel(claim);
+   await ChatMessage.implementation.create({
+      speaker: { alias: game.i18n.localize('FHQL.QuestLog.Title') },
+      content: `<div class="fhql-chat-claim">
+         ${reward.img ? `<img src="${foundry.utils.escapeHTML(reward.img)}" alt="" width="36" height="36">` : ''}
+         <p>${game.i18n.format('FHQL.Reward.ChatClaimed', {
+            who: foundry.utils.escapeHTML(who), reward: foundry.utils.escapeHTML(reward.name), quest: foundry.utils.escapeHTML(entry.name)
+         })}</p></div>`
+   });
+
+   return { ok: true, message: game.i18n.format('FHQL.Reward.Claimed', { reward: reward.name, who }) };
+}
+
+/**
+ * Undoes one claim. GM only. Asks before deleting the copied item; restores a follower's previous
+ * ownership.
+ *
+ * @param {JournalEntry} entry - The quest entry.
+ * @param {string} rewardId - Reward ID.
+ * @param {number} index - Index into the reward's claims.
+ */
+export async function undoClaim(entry, rewardId, index)
+{
+   if (!game.user.isGM) { return; }
+   const page = questPage(entry);
+   const reward = page?.system.rewards[rewardId];
+   const claim = reward?.claims[index];
+   if (!claim) { return; }
+
+   if (reward.type === 'item' && claim.itemUuid)
+   {
+      const item = await fromUuid(claim.itemUuid);
+      if (item)
+      {
+         const remove = await DialogV2.confirm({
+            window: { title: 'FHQL.Reward.UndoTitle' },
+            content: `<p>${game.i18n.format('FHQL.Reward.UndoItem', {
+               item: foundry.utils.escapeHTML(item.name), actor: foundry.utils.escapeHTML(item.parent?.name ?? '')
+            })}</p>`,
+            rejectClose: false
+         });
+         if (remove === null || remove === undefined) { return; }
+         if (remove) { await item.delete(); }
+      }
+   }
+   else if (reward.type === 'actor')
+   {
+      const actor = await fromUuid(reward.uuid);
+      if (actor)
+      {
+         await actor.update(claim.prevLevel === null
+          ? deleteKeyUpdate('ownership', claim.userId)
+          : { [`ownership.${claim.userId}`]: claim.prevLevel });
+      }
+   }
+
+   const claims = reward.claims.filter((c, i) => i !== index);
+   await page.update({ [`system.rewards.${rewardId}.claims`]: claims });
+}
+
+/**
+ * Handles a reward dragged from a quest onto an actor sheet: claims it for that actor instead of
+ * Foundry's plain item copy. Registered on `init`.
+ */
+export function registerRewardDrop()
+{
+   Hooks.on('dropActorSheetData', (actor, sheet, data) =>
+   {
+      const marker = data?.fhqlReward;
+      if (!marker) { return; }
+      const entry = getQuestEntry(marker.entryId);
+      if (!entry) { return false; }
+      const userId = game.user.isGM
+       ? (game.users.find((u) => !u.isGM && actor.testUserPermission(u, OWNER))?.id ?? game.user.id)
+       : game.user.id;
+      requestClaim(entry, marker.rewardId, { userId, actorUuid: actor.uuid });
+      return false;
+   });
+}
+

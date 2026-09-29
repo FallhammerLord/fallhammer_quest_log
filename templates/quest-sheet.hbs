@@ -35,12 +35,12 @@
         <i class="fa-solid fa-ellipsis-vertical" inert></i></summary>
       <div class="fhql-menu-pop" role="menu">
         {{#unless @root.popout}}
-        <button type="button" role="menuitem" data-action="popOut"><i class="fa-solid fa-up-right-from-square" inert></i> {{localize "FHQL.Quest.PopOut"}}</button>
+        <button type="button" role="menuitem" data-action="popOut"><i class="fa-solid fa-up-right-from-square" inert></i> {{localize "FHQL.Menu.PopOut"}}</button>
         {{/unless}}
-        <button type="button" role="menuitem" data-action="manageAccess"><i class="fa-solid fa-user-lock" inert></i> {{localize "FHQL.Quest.ManageAccess"}}</button>
-        <button type="button" role="menuitem" data-action="moveToFolder"><i class="fa-solid fa-folder-open" inert></i> {{localize "FHQL.Folders.MoveTo"}}</button>
-        <button type="button" role="menuitem" data-action="setParent"><i class="fa-solid fa-diagram-project" inert></i> {{localize "FHQL.Quest.SetParent"}}</button>
-        <button type="button" role="menuitem" class="fhql-danger" data-action="deleteQuest"><i class="fa-solid fa-trash" inert></i> {{localize "FHQL.Quest.Delete"}}</button>
+        <button type="button" role="menuitem" data-action="manageAccess"><i class="fa-solid fa-user-lock" inert></i> {{localize "FHQL.Menu.Access"}}</button>
+        <button type="button" role="menuitem" data-action="moveToFolder"><i class="fa-solid fa-folder-open" inert></i> {{localize "FHQL.Menu.Move"}}</button>
+        <button type="button" role="menuitem" data-action="setParent"><i class="fa-solid fa-diagram-project" inert></i> {{localize "FHQL.Menu.Parent"}}</button>
+        <button type="button" role="menuitem" class="fhql-danger" data-action="deleteQuest"><i class="fa-solid fa-trash" inert></i> {{localize "FHQL.Menu.Delete"}}</button>
       </div>
     </details>
     {{else}}
@@ -159,16 +159,22 @@
             <input type="text" class="fhql-input" name="objective-{{id}}" data-field="objective.name" value="{{name}}"
                    placeholder="{{localize 'FHQL.Objective.Placeholder'}}" aria-label="{{localize 'FHQL.Objective.Name'}}">
             {{#if ../gm}}
-            <label class="fhql-check" data-tooltip="{{localize 'FHQL.Objective.HiddenHint'}}">
-              <input type="checkbox" data-field="objective.hidden" {{#if hidden}}checked{{/if}}>
-              <i class="fa-solid fa-eye-slash" inert></i><span class="sr-only">{{localize "FHQL.Objective.Hidden"}}</span></label>
+            <button type="button" class="fhql-icon-button fhql-eye" data-action="toggleObjectiveHidden" aria-pressed="{{#if hidden}}true{{else}}false{{/if}}"
+                    data-tooltip="{{#if hidden}}{{localize 'FHQL.Objective.Show'}}{{else}}{{localize 'FHQL.Objective.HideAction'}}{{/if}}"
+                    aria-label="{{#if hidden}}{{localize 'FHQL.Objective.Show'}}{{else}}{{localize 'FHQL.Objective.HideAction'}}{{/if}}">
+              <i class="fa-solid {{#if hidden}}fa-eye-slash{{else}}fa-eye{{/if}}" inert></i></button>
             {{/if}}
             <button type="button" class="fhql-icon-button" data-action="deleteObjective"
                     data-tooltip="{{localize 'FHQL.Objective.Delete'}}" aria-label="{{localize 'FHQL.Objective.Delete'}}">
               <i class="fa-solid fa-trash" inert></i></button>
             {{else}}
-            <span>{{name}}</span>
-            {{#if hidden}}<i class="fa-solid fa-eye-slash fhql-muted" data-tooltip="{{localize 'FHQL.Objective.Hidden'}}" aria-label="{{localize 'FHQL.Objective.Hidden'}}"></i>{{/if}}
+            <span class="fhql-grow-text">{{name}}</span>
+            {{#if ../gm}}
+            <button type="button" class="fhql-icon-button fhql-eye" data-action="toggleObjectiveHidden" aria-pressed="{{#if hidden}}true{{else}}false{{/if}}"
+                    data-tooltip="{{#if hidden}}{{localize 'FHQL.Objective.Show'}}{{else}}{{localize 'FHQL.Objective.HideAction'}}{{/if}}"
+                    aria-label="{{#if hidden}}{{localize 'FHQL.Objective.Show'}}{{else}}{{localize 'FHQL.Objective.HideAction'}}{{/if}}">
+              <i class="fa-solid {{#if hidden}}fa-eye-slash{{else}}fa-eye{{/if}}" inert></i></button>
+            {{/if}}
             {{/if}}
           </li>
           {{/each}}
@@ -213,31 +219,73 @@
       {{! ---------- Rewards ---------- }}
       {{#if showRewards}}
       <section class="fhql-card fhql-area-rewards" {{#if editable}}data-drop="rewards"{{/if}}>
-        <h3 class="fhql-subheading">{{localize "FHQL.Quest.Rewards"}}<span class="fhql-count">{{rewards.length}}</span></h3>
-        <ul class="fhql-rows">
+        <h3 class="fhql-subheading">{{localize "FHQL.Quest.Rewards"}}
+          <span class="fhql-count">{{#if rewardSummary}}{{rewardSummary}}{{else}}{{rewards.length}}{{/if}}</span></h3>
+        <ul class="fhql-rewards">
           {{#each rewards}}
-          <li data-reward-id="{{id}}">
+          <li class="fhql-reward {{#if struck}}is-claimed{{/if}}" data-reward-id="{{id}}"
+              {{#if draggable}}draggable="true" data-reward-drag data-uuid="{{uuid}}"{{/if}}>
             <span class="fhql-thumb">{{#if img}}<img src="{{img}}" alt="">{{else}}<i class="{{icon}}" inert></i>{{/if}}</span>
-            {{#if (lookup ../textRewardEditing type)}}
-            <input type="text" class="fhql-input" name="reward-{{id}}" data-field="reward.name" value="{{name}}"
-                   placeholder="{{localize 'FHQL.Reward.Placeholder'}}" aria-label="{{localize 'FHQL.Reward.Name'}}">
-            {{else if linked}}
-            <button type="button" class="fhql-link fhql-row-name" data-action="openDocument" data-uuid="{{uuid}}">{{name}}</button>
-            {{else}}
-            <span class="fhql-row-name">{{name}}</span>
-            {{/if}}
-            {{#if ../editing}}
-            {{#if ../gm}}
-            <label class="fhql-check" data-tooltip="{{localize 'FHQL.Reward.HiddenHint'}}">
-              <input type="checkbox" data-field="reward.hidden" {{#if hidden}}checked{{/if}}>
-              <i class="fa-solid fa-eye-slash" inert></i><span class="sr-only">{{localize "FHQL.Reward.Hidden"}}</span></label>
-            {{/if}}
-            <button type="button" class="fhql-icon-button" data-action="deleteReward"
-                    data-tooltip="{{localize 'FHQL.Reward.Delete'}}" aria-label="{{localize 'FHQL.Reward.Delete'}}">
-              <i class="fa-solid fa-xmark" inert></i></button>
-            {{else if hidden}}
-            <i class="fa-solid fa-eye-slash fhql-muted" data-tooltip="{{localize 'FHQL.Reward.Hidden'}}" aria-label="{{localize 'FHQL.Reward.Hidden'}}"></i>
-            {{/if}}
+
+            <div class="fhql-reward-main">
+              {{#if (lookup ../textRewardEditing type)}}
+              <input type="text" class="fhql-input" name="reward-{{id}}" data-field="reward.name" value="{{name}}"
+                     placeholder="{{localize 'FHQL.Reward.Placeholder'}}" aria-label="{{localize 'FHQL.Reward.Name'}}">
+              {{else if linked}}
+              <button type="button" class="fhql-link fhql-reward-name" data-action="openDocument" data-uuid="{{uuid}}">{{name}}</button>
+              {{else}}
+              <span class="fhql-reward-name">{{name}}</span>
+              {{/if}}
+
+              {{#if claimable}}
+              <span class="fhql-reward-state">
+                {{#each claimsList}}
+                <span class="fhql-claim"><i class="fa-solid fa-check" inert></i> {{localize "FHQL.Reward.ClaimedBy"}} {{label}}
+                  {{#if @root.sheet.gm}}<button type="button" class="fhql-link fhql-undo" data-action="undoClaim" data-claim-index="{{index}}"
+                    data-tooltip="{{localize 'FHQL.Reward.Undo'}}" aria-label="{{localize 'FHQL.Reward.Undo'}}"><i class="fa-solid fa-rotate-left" inert></i></button>{{/if}}
+                </span>
+                {{/each}}
+                {{#if showLocked}}<span class="fhql-muted"><i class="fa-solid fa-lock" inert></i> {{localize "FHQL.Reward.LockedNote"}}</span>{{/if}}
+                {{#if perPlayer}}<span class="fhql-muted">{{localize "FHQL.Reward.PerPlayerNote"}}</span>{{/if}}
+              </span>
+              {{/if}}
+            </div>
+
+            <div class="fhql-reward-actions">
+              {{#if canClaim}}
+              <button type="button" class="fhql-button fhql-small fhql-primary" data-action="claimReward">
+                <i class="fa-solid fa-hand-holding" inert></i> {{claimVerb}}</button>
+              {{/if}}
+              {{#if canGive}}
+              <button type="button" class="fhql-button fhql-small" data-action="giveReward"
+                      data-tooltip="{{localize 'FHQL.Reward.GiveHint'}}"><i class="fa-solid fa-hand-holding-heart" inert></i> {{localize "FHQL.Reward.Give"}}</button>
+              {{/if}}
+              {{#if ../gm}}
+              {{#if claimable}}
+              <button type="button" class="fhql-icon-button {{#unless locked}}is-on{{/unless}}" data-action="toggleRewardLock"
+                      aria-pressed="{{#if locked}}false{{else}}true{{/if}}"
+                      data-tooltip="{{#if locked}}{{localize 'FHQL.Reward.Unlock'}}{{else}}{{localize 'FHQL.Reward.Lock'}}{{/if}}"
+                      aria-label="{{#if locked}}{{localize 'FHQL.Reward.Unlock'}}{{else}}{{localize 'FHQL.Reward.Lock'}}{{/if}}">
+                <i class="fa-solid {{#if locked}}fa-lock{{else}}fa-lock-open{{/if}}" inert></i></button>
+              {{/if}}
+              <button type="button" class="fhql-icon-button" data-action="toggleRewardHidden" aria-pressed="{{#if hidden}}true{{else}}false{{/if}}"
+                      data-tooltip="{{#if hidden}}{{localize 'FHQL.Reward.Show'}}{{else}}{{localize 'FHQL.Reward.HideAction'}}{{/if}}"
+                      aria-label="{{#if hidden}}{{localize 'FHQL.Reward.Show'}}{{else}}{{localize 'FHQL.Reward.HideAction'}}{{/if}}">
+                <i class="fa-solid {{#if hidden}}fa-eye-slash{{else}}fa-eye{{/if}}" inert></i></button>
+              {{/if}}
+              {{#if ../editing}}
+              {{#if claimable}}
+              <select class="fhql-input fhql-small-select" data-field="reward.claimLimit" aria-label="{{localize 'FHQL.Reward.LimitLabel'}}"
+                      data-tooltip="{{localize 'FHQL.Reward.LimitLabel'}}">
+                <option value="once" {{#unless perPlayer}}selected{{/unless}}>{{localize "FHQL.Reward.LimitOnce"}}</option>
+                <option value="perPlayer" {{#if perPlayer}}selected{{/if}}>{{localize "FHQL.Reward.LimitPerPlayer"}}</option>
+              </select>
+              {{/if}}
+              <button type="button" class="fhql-icon-button" data-action="deleteReward"
+                      data-tooltip="{{localize 'FHQL.Reward.Delete'}}" aria-label="{{localize 'FHQL.Reward.Delete'}}">
+                <i class="fa-solid fa-xmark" inert></i></button>
+              {{/if}}
+            </div>
           </li>
           {{/each}}
         </ul>

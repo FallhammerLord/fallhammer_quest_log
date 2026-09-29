@@ -45,6 +45,29 @@ export function registerSettings()
       onChange: () => refreshQuestBeacon()
    });
 
+   game.settings.register(MODULE_ID, 'autoUnlockRewards', {
+      name: 'FHQL.Settings.AutoUnlockRewards.Name',
+      hint: 'FHQL.Settings.AutoUnlockRewards.Hint',
+      scope: 'world',
+      config: true,
+      type: Boolean,
+      default: true
+   });
+
+   const levels = CONST.DOCUMENT_OWNERSHIP_LEVELS;
+   game.settings.register(MODULE_ID, 'followerOwnership', {
+      name: 'FHQL.Settings.FollowerOwnership.Name',
+      hint: 'FHQL.Settings.FollowerOwnership.Hint',
+      scope: 'world',
+      config: true,
+      type: Number,
+      choices: {
+         [levels.OWNER]: 'FHQL.Settings.FollowerOwnership.Owner',
+         [levels.OBSERVER]: 'FHQL.Settings.FollowerOwnership.Observer'
+      },
+      default: levels.OWNER
+   });
+
    game.settings.register(MODULE_ID, 'listFilter', {
       scope: 'client',
       config: false,

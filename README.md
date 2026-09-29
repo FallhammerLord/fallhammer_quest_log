@@ -53,6 +53,12 @@ Entry points:
 - Mark two quests: a **+1** badge appears, with the other name on hover.
 - Configure Settings has per-client toggles for the widget and its objective line.
 
+Rewards and claiming:
+- Drop an item or actor onto Rewards. Rewards start locked (lock icon). Click the lock to release one, or mark the quest Completed to release all (setting).
+- As a player: **Claim** puts an item on your assigned character (or asks which); **Recruit** gives you access to an actor reward. Dragging an item reward onto your character sheet does the same.
+- As GM: **Give** picks a player and character. Claimed items are struck through with "Claimed by…"; the ↺ button undoes a claim and asks before removing the item.
+- The eye button on objectives and rewards hides or shows them, in read view too.
+
 FQL import (if the world has Forien's Quest Log data):
 - The log shows **Import from FQL (n)**. The preview lists every FQL quest.
 - Import, then check: quests appear with objectives, rewards, giver, notes; subquests sit under parents; the report lists any fixes.

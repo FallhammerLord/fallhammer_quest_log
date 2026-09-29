@@ -20,7 +20,9 @@ export default [
             Folder: 'readonly',
             JournalEntry: 'readonly',
             JournalEntryPage: 'readonly',
-            fromUuid: 'readonly'
+            fromUuid: 'readonly',
+            fromUuidSync: 'readonly',
+            ChatMessage: 'readonly'
          }
       }
    },

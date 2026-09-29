@@ -220,6 +220,14 @@ export async function setStatus(entry, status)
    if (status === 'active') { Object.assign(changes, { 'system.dates.started': now, 'system.dates.ended': null }); }
    if (status === 'completed' || status === 'failed') { changes['system.dates.ended'] = now; }
 
+   if (status === 'completed' && game.user.isGM && game.settings.get(MODULE_ID, 'autoUnlockRewards'))
+   {
+      for (const [id, reward] of Object.entries(page.system.rewards))
+      {
+         if (reward.locked) { changes[`system.rewards.${id}.locked`] = false; }
+      }
+   }
+
    await page.update(changes);
 
    if (!game.user.isGM) { return; }

@@ -12,7 +12,7 @@ export class QuestData extends TypeDataModel
 {
    static defineSchema()
    {
-      const { BooleanField, HTMLField, IntegerSortField, NumberField, SchemaField, StringField,
+      const { ArrayField, BooleanField, HTMLField, IntegerSortField, NumberField, SchemaField, StringField,
        TypedObjectField } = fields;
 
       const text = () => new StringField({ required: true, blank: true, initial: '' });
@@ -42,7 +42,17 @@ export class QuestData extends TypeDataModel
             name: text(),
             img: text(),
             hidden: new BooleanField({ initial: false }),
+            /** Locked rewards can't be claimed yet. Unlocked by the GM, or on quest completion. */
             locked: new BooleanField({ initial: true }),
+            /** 'once': one claim total. 'perPlayer': each player may claim once. */
+            claimLimit: new StringField({ required: true, blank: false, choices: ['once', 'perPlayer'], initial: 'once' }),
+            claims: new ArrayField(new SchemaField({
+               userId: text(),
+               actorUuid: text(),
+               itemUuid: text(),
+               prevLevel: new NumberField({ required: true, nullable: true, integer: true, initial: null }),
+               at: timestamp()
+            })),
             sort: new IntegerSortField()
          })),
 

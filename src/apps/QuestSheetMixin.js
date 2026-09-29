@@ -1,5 +1,6 @@
 import { DialogV2, DocumentOwnershipConfig, textEditor } from '../compat.js';
 import { MODULE_ID, STATUSES } from '../constants.js';
+import { claimLabel, claimsExhausted, claimTargets, isClaimable, pickRecipient, requestClaim, undoClaim } from '../data/rewards.js';
 import {
    addObjective, addRewardFromDocument, addTextReward, clearGiver, createSubquest, cycleObjective, deleteObjective,
    deleteQuest, deleteReward, getQuestEntry, gmNotesPage, moveQuestToFolder, parentCandidates, questAccess, questPage,
@@ -46,6 +47,12 @@ export function QuestSheetMixin(Base)
             cycleObjective: QuestSheet.#onCycleObjective,
             deleteObjective: QuestSheet.#onDeleteObjective,
             addTextReward: QuestSheet.#onAddTextReward,
+            claimReward: QuestSheet.#onClaimReward,
+            giveReward: QuestSheet.#onGiveReward,
+            undoClaim: QuestSheet.#onUndoClaim,
+            toggleRewardLock: QuestSheet.#onToggleRewardLock,
+            toggleRewardHidden: QuestSheet.#onToggleRewardHidden,
+            toggleObjectiveHidden: QuestSheet.#onToggleObjectiveHidden,
             deleteReward: QuestSheet.#onDeleteReward,
             openDocument: QuestSheet.#onOpenDocument,
             clearGiver: QuestSheet.#onClearGiver,
@@ -95,10 +102,33 @@ export function QuestSheetMixin(Base)
           .filter((o) => access.gm || !o.hidden)
           .map((o) => ({ ...o, icon: OBJECTIVE_ICONS[o.state], stateLabel: localize(`FHQL.Objective.${o.state}`) })) : [];
 
+         const userId = game.user.id;
          const rewards = access.full ? Object.entries(system.rewards)
-          .map(([id, r]) => ({ id, ...r, icon: REWARD_ICONS[r.type] ?? REWARD_ICONS.text, linked: !!r.uuid }))
+          .map(([id, r]) =>
+          {
+             const claimable = isClaimable(r);
+             const exhaustedForAll = claimable && r.claimLimit === 'once' && r.claims.length > 0;
+             const mine = claimable && claimsExhausted(r, userId);
+             return {
+                id, ...r,
+                icon: REWARD_ICONS[r.type] ?? REWARD_ICONS.text,
+                linked: !!r.uuid,
+                claimable,
+                struck: exhaustedForAll || (!access.gm && mine && r.type === 'item'),
+                claimsList: r.claims.map((c, index) => ({ index, label: claimLabel(c) })),
+                perPlayer: r.claimLimit === 'perPlayer',
+                canClaim: !access.gm && claimable && !r.locked && !mine
+                 && (r.type === 'actor' || claimTargets(game.user).length > 0),
+                showLocked: !access.gm && claimable && r.locked,
+                canGive: access.gm && claimable && !exhaustedForAll,
+                draggable: claimable && r.type === 'item' && (access.gm ? !exhaustedForAll : (!r.locked && !mine)),
+                claimVerb: game.i18n.localize(r.type === 'actor' ? 'FHQL.Reward.Recruit' : 'FHQL.Reward.Claim')
+             };
+          })
           .filter((r) => access.gm || !r.hidden)
           .sort((a, b) => a.sort - b.sort) : [];
+         const claimableRewards = rewards.filter((r) => r.claimable);
+         const claimedCount = claimableRewards.filter((r) => r.claims.length > 0).length;
 
          const parentEntry = getQuestEntry(system.parent);
          const parent = parentEntry && questAccess(parentEntry).visible ? { id: parentEntry.id, name: parentEntry.name } : null;
@@ -134,6 +164,8 @@ export function QuestSheetMixin(Base)
             objectives,
             doneCount: objectives.filter((o) => o.state === 'done').length,
             rewards,
+            rewardSummary: claimableRewards.length
+             ? game.i18n.format('FHQL.Reward.Summary', { claimed: claimedCount, total: claimableRewards.length }) : '',
             subquests: children,
             showHiddenNotice: access.gm && system.status === 'hidden',
             showObjectives: objectives.length > 0 || editing,
@@ -158,6 +190,14 @@ export function QuestSheetMixin(Base)
          el.addEventListener('dragover', (event) => this.#onDragOver(event));
          el.addEventListener('dragleave', (event) => event.target.closest?.('[data-drop]')?.classList.remove('is-drop-target'));
          el.addEventListener('drop', (event) => this.#onDrop(event));
+         el.addEventListener('dragstart', (event) =>
+         {
+            const row = event.target.closest?.('[data-reward-drag]');
+            if (!row || !this.questEntry) { return; }
+            event.dataTransfer.setData('text/plain', JSON.stringify({
+               type: 'Item', uuid: row.dataset.uuid, fhqlReward: { entryId: this.questId, rewardId: row.dataset.rewardId }
+            }));
+         });
          el.addEventListener('toggle', (event) =>
          {
             if (event.target.matches?.('details.fhql-gm-notes') && !this._editing)
@@ -204,6 +244,7 @@ export function QuestSheetMixin(Base)
             case 'objective.hidden': return updateQuest(entry, { [`system.objectives.${objectiveId}.hidden`]: value });
             case 'reward.name': return updateQuest(entry, { [`system.rewards.${rewardId}.name`]: value }, QUIET);
             case 'reward.hidden': return updateQuest(entry, { [`system.rewards.${rewardId}.hidden`]: value });
+            case 'reward.claimLimit': return updateQuest(entry, { [`system.rewards.${rewardId}.claimLimit`]: value });
          }
       }
 
@@ -300,6 +341,61 @@ export function QuestSheetMixin(Base)
       {
          const id = target.closest('[data-reward-id]')?.dataset.rewardId;
          if (this.questEntry && id) { await deleteReward(this.questEntry, id); }
+      }
+
+      /** @returns {object|undefined} Reward data for the row containing `target`. */
+      #rewardFor(target)
+      {
+         const id = target.closest('[data-reward-id]')?.dataset.rewardId;
+         const reward = id ? questPage(this.questEntry)?.system.rewards[id] : undefined;
+         return reward ? { id, reward } : undefined;
+      }
+
+      /** @this {QuestSheet} */
+      static async #onClaimReward(event, target)
+      {
+         const found = this.#rewardFor(target);
+         if (!found) { return; }
+         const recipient = await pickRecipient({ ...found.reward }, false);
+         if (recipient) { await requestClaim(this.questEntry, found.id, recipient); }
+      }
+
+      /** @this {QuestSheet} */
+      static async #onGiveReward(event, target)
+      {
+         const found = this.#rewardFor(target);
+         if (!found) { return; }
+         const recipient = await pickRecipient({ ...found.reward }, true);
+         if (recipient) { await requestClaim(this.questEntry, found.id, recipient); }
+      }
+
+      /** @this {QuestSheet} */
+      static async #onUndoClaim(event, target)
+      {
+         const found = this.#rewardFor(target);
+         if (found) { await undoClaim(this.questEntry, found.id, Number(target.dataset.claimIndex)); }
+      }
+
+      /** @this {QuestSheet} */
+      static async #onToggleRewardLock(event, target)
+      {
+         const found = this.#rewardFor(target);
+         if (found) { await updateQuest(this.questEntry, { [`system.rewards.${found.id}.locked`]: !found.reward.locked }); }
+      }
+
+      /** @this {QuestSheet} */
+      static async #onToggleRewardHidden(event, target)
+      {
+         const found = this.#rewardFor(target);
+         if (found) { await updateQuest(this.questEntry, { [`system.rewards.${found.id}.hidden`]: !found.reward.hidden }); }
+      }
+
+      /** @this {QuestSheet} */
+      static async #onToggleObjectiveHidden(event, target)
+      {
+         const id = target.closest('[data-objective-id]')?.dataset.objectiveId;
+         const objective = id ? questPage(this.questEntry)?.system.objectives[id] : undefined;
+         if (objective) { await updateQuest(this.questEntry, { [`system.objectives.${id}.hidden`]: !objective.hidden }); }
       }
 
       /** Opens a linked giver or reward document's sheet, if the viewer may see it. */

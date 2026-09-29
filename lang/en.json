@@ -72,7 +72,9 @@
         "open": "Open",
         "done": "Done",
         "failed": "Failed"
-      }
+      },
+      "Show": "Hidden from players. Click to show",
+      "HideAction": "Visible to players. Click to hide"
     },
     "Status": {
       "hidden": "Hidden",
@@ -108,6 +110,16 @@
       "ShowNextObjective": {
         "Name": "Show objectives on the Quest Beacon",
         "Hint": "Lists the quest's objectives under its name on the Beacon."
+      },
+      "AutoUnlockRewards": {
+        "Name": "Unlock rewards when a quest is completed",
+        "Hint": "Rewards start locked. When on, marking a quest Completed lets players claim its rewards."
+      },
+      "FollowerOwnership": {
+        "Name": "Access granted by actor rewards",
+        "Hint": "When a player claims an actor reward (a follower or mount), they get this access to it.",
+        "Owner": "Owner: full control",
+        "Observer": "Observer: can see its sheet"
       }
     },
     "Keybindings": {
@@ -126,7 +138,44 @@
       "Hidden": "Hidden from players",
       "HiddenHint": "Hidden from players",
       "DropHint": "Drop items or actors here",
-      "EmptyHint": "None yet · drop items here"
+      "EmptyHint": "None yet · drop items here",
+      "Show": "Hidden from players. Click to show",
+      "HideAction": "Visible to players. Click to hide",
+      "Claim": "Claim",
+      "Recruit": "Recruit",
+      "Give": "Give",
+      "GiveHint": "Give this reward to a player",
+      "ClaimTitle": "Claim reward",
+      "GiveTitle": "Give reward",
+      "Assigned": "(assigned)",
+      "Lock": "Claimable. Click to lock",
+      "Unlock": "Locked. Click to let players claim it",
+      "LockedNote": "Locked until the GM releases it",
+      "PerPlayerNote": "One per player",
+      "ClaimedBy": "Claimed by",
+      "Undo": "Undo this claim",
+      "UndoTitle": "Undo claim",
+      "UndoItem": "Also remove <strong>{item}</strong> from {actor}? Choose No to keep it there and only clear the claim.",
+      "LimitLabel": "How many can claim it",
+      "LimitOnce": "Once",
+      "LimitPerPlayer": "Each player",
+      "Summary": "{claimed} of {total} claimed",
+      "UnknownPlayer": "Unknown player",
+      "NoRecipients": "No players can receive this reward.",
+      "NoCharacter": "You don't own a character to receive this.",
+      "NeedGM": "A GM must be connected to hand out rewards.",
+      "Failed": "The reward couldn't be claimed.",
+      "Claimed": "{reward} claimed by {who}.",
+      "ChatClaimed": "<strong>{who}</strong> claimed <strong>{reward}</strong> from {quest}.",
+      "Error": {
+        "NotGM": "Only a GM can do that.",
+        "NotFound": "That reward no longer exists.",
+        "NotClaimable": "That reward can't be claimed.",
+        "Locked": "That reward isn't available to claim yet.",
+        "AlreadyClaimed": "That reward has already been claimed.",
+        "SourceMissing": "The original item or actor no longer exists.",
+        "NotOwner": "You don't own that character."
+      }
     },
     "Drop": {
       "Rejected": {
@@ -136,7 +185,8 @@
       "CannotOpen": "You don't have permission to open that."
     },
     "Beacon": {
-      "Label": "Quest Beacon: {name}. Open in Quest Log."
+      "Label": "Quest Beacon: {name}. Open in Quest Log.",
+      "Rewards": "Rewards ready to claim"
     },
     "Folders": {
       "NewName": "New Folder",
@@ -194,6 +244,13 @@
         "HiddenAccess": "hidden quest: player access removed so it stays hidden.",
         "HasQuestPage": "already has a Fallhammer quest page not made by this importer; left alone."
       }
+    },
+    "Menu": {
+      "PopOut": "Pop out",
+      "Access": "Player access",
+      "Move": "Move to folder",
+      "Parent": "Set parent",
+      "Delete": "Delete"
     }
   }
 }

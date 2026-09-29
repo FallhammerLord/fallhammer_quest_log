@@ -10,6 +10,7 @@ import { QuestSheetApp } from './apps/QuestSheetApp.js';
 import { questPage, renameLegacyRootFolder } from './data/quests.js';
 import { registerEntryPoints } from './ui/entryPoints.js';
 import { refreshQuestBeacon } from './ui/QuestBeacon.js';
+import { registerRewardDrop, registerRewardQueries } from './data/rewards.js';
 
 Hooks.once('init', () =>
 {
@@ -23,6 +24,8 @@ Hooks.once('init', () =>
    registerSettings();
    registerKeybindings();
    registerEntryPoints();
+   registerRewardQueries();
+   registerRewardDrop();
    game.modules.get(MODULE_ID).api = api;
 });
 
