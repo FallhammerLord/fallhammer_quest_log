@@ -65,8 +65,7 @@ A quest log module for Foundry VTT that:
 - Accept an available quest, moving it to active
 - Create quests. Needs core "create journal" permission; new quests land in Available with the creator as owner
 - Trusted-player editing: trusted owners get status control and fuller editing
-- Drag rewards onto an owned actor sheet. Locked rewards can't be dragged
-- Reward drop notices
+- Claim rewards: items go onto the player's character and are struck out; actors (followers, mounts) grant ownership. See 5.10
 
 **Sharing**
 - Quests in compendiums and Adventure documents keep parent/child links on import to another world
@@ -185,6 +184,40 @@ Always GM only, whatever the ownership:
 - Target: a world with 500 quests stays responsive.
 - Build the quest index once, update it from document hooks, and never rescan the world on render.
 - Search and tab filtering run on the index, not the DOM.
+
+### 5.10 Reward claiming
+
+Rewards that are Foundry documents can be claimed, not just read. Text rewards stay narrative.
+
+**Reward states**
+- **Locked** (default): visible if not hidden, not claimable. Shows a lock icon.
+- **Claimable**: GM unlocks per reward, or all at once. World setting: unlock all rewards automatically when a quest is marked Completed (default on).
+- **Claimed**: records who and which character. Items are struck through with "Claimed by Rinn (Kestrel)". Actors show "Now with Rinn".
+
+**Claiming an item** (the +1 longsword, a set of potions)
+- Player clicks **Claim**, or drags the reward onto their character sheet.
+- With one owned character, it goes straight there. With several, a small picker asks which (remembered as the default next time).
+- The item is copied onto the character with its quantity intact. The world item is untouched, so the same reward can be restocked.
+- Players often can't read the source item, so the copy runs on the GM's client through the query API (`CONFIG.queries['fhql.claimReward']`, called with `game.users.activeGM.query(...)`, confirmed in v14 types). The GM client re-checks: quest visible to the player, reward claimable and unclaimed, target character owned by the player.
+- No GM online: the Claim button explains that a GM must be connected.
+
+**Claiming an actor** (an NPC follower, a mount)
+- Player clicks **Claim**; the GM client gives that player Owner on the actor (world setting for the level: Owner by default, Observer as the alternative).
+- Optional world setting: also place the actor in a "Followers" folder. Off by default.
+
+**Per-reward options (GM, edit mode)**
+- **Claims allowed:** once (default), or once per player (each player gets a copy; for "everyone gets a healing potion").
+- **Hidden** and **Locked** toggles, as now.
+
+**Creature comforts**
+- A chat card for each claim: "Rinn claimed +1 Longsword for Kestrel", with the item's image.
+- A short notice on the claimer's screen when it lands.
+- GM **Undo claim** on any claimed reward. It clears the claim mark; it asks before also deleting the copied item from the character, and never deletes silently.
+- Claimed and claimable counts on the Rewards heading ("2 of 3 claimed").
+- The Quest Beacon shows a gift icon when the In Progress quest has claimable rewards, so players notice without opening the log.
+- Keyboard: Claim is a real button; the character picker is a keyboard-navigable list.
+
+**Data added to each reward:** `claimable` (replaces `locked`), `claimLimit` ('once' | 'perPlayer'), `claims` (list of { userId, actorUuid, itemUuid, at }).
 
 ## 6. Theming spec
 
