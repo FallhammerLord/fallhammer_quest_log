@@ -127,12 +127,12 @@ Findings:
 What this means for us:
 - Disabled module: the quest page vanishes, while the journal entry, its other pages, and FQL's flag stay. Re-enabling restores the page.
 - Flags would be no better. Flag data is invisible without the module too.
-- So in both designs, readability without the module comes from a plain-text page on each quest entry, regenerated on save: description, objectives, rewards.
-- Decision: **page subtype**, plus the plain-text page. Core's disable warning is a bonus: it tells GMs what they'll lose.
+- A plain-text copy page was considered for readability without the module. **Dropped 2026-09-29:** it would duplicate every quest in the journal while the module runs, and the live test showed re-enabling restores everything.
+- Decision: **page subtype**. Core's disable warning is a bonus: it tells GMs what they'll lose.
 
 Live test before milestone 2 (needs a licensed v14 install):
 1. Create a quest. Disable the module. Restart the world.
-2. Check that the journal entry opens and the plain-text page shows.
+2. Check that the journal entry still opens.
 3. Check the Document Issues screen lists the invalid page.
 4. Re-enable. Check the quest is fully restored.
 
@@ -373,8 +373,8 @@ Test and document behavior with:
 ## 11. Milestones
 
 1. **Skeleton.** Manifest, empty ApplicationV2 windows, theme tokens, theme setting. *Done, verified on v14.*
-2. **Data model.** Quest subtype, create/edit/delete, permissions. *Built 2026-09-28; plain-text readable page deferred to milestone 3.*
-3. **Quest Sheet.** Full editing UI: rich text editor, giver and reward drag-drop, GM notes page, plain-text readable page, subquests. *Built 2026-09-28 from the approved mockup, except the plain-text readable page (open decision).*
+2. **Data model.** Quest subtype, create/edit/delete, permissions. *Built 2026-09-28.*
+3. **Quest Sheet.** Full editing UI: rich text editor, giver and reward drag-drop, GM notes page, subquests. *Built 2026-09-28 from the approved mockup. Plain-text page dropped.*
 4. **Quest Log, Quest Beacon, entry points.** *Entry points and widget pulled forward, built 2026-09-28. GM toggles per entry point still to do.*
 5. **Tracker.**
 6. **Player workflows.** GM relay, accept, create, reward dragging.
@@ -388,7 +388,7 @@ Test and document behavior with:
 
 - Module ID `fhql`, display name "Fallhammer Quest Log", CSS prefix `fhql-`.
 - Minimum and verified Foundry version: v14.
-- Data storage: page subtype `fhql.quest` plus a plain-text page (5.2). Live test passed on v14, 2026-09-28.
+- Data storage: page subtype `fhql.quest` (5.2). Live test passed on v14, 2026-09-28. No plain-text copy page.
 - License: MIT.
 
 ## 13. Open decisions
