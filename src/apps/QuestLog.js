@@ -21,7 +21,7 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
          icon: 'fa-solid fa-scroll',
          resizable: true
       },
-      position: { width: 820, height: 620 },
+      position: { width: 1040, height: 680 },
       actions: {
          selectQuest: QuestLog.#onSelectQuest,
          createQuest: QuestLog.#onCreateQuest,

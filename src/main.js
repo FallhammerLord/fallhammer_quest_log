@@ -9,7 +9,7 @@ import { QuestLog } from './apps/QuestLog.js';
 import { QuestSheetApp } from './apps/QuestSheetApp.js';
 import { questPage } from './data/quests.js';
 import { registerEntryPoints } from './ui/entryPoints.js';
-import { refreshInProgressWidget } from './ui/InProgressWidget.js';
+import { refreshQuestBeacon } from './ui/QuestBeacon.js';
 
 Hooks.once('init', () =>
 {
@@ -26,15 +26,15 @@ Hooks.once('init', () =>
    game.modules.get(MODULE_ID).api = api;
 });
 
-Hooks.once('ready', () => refreshInProgressWidget());
-Hooks.on('renderPlayers', () => refreshInProgressWidget());
+Hooks.once('ready', () => refreshQuestBeacon());
+Hooks.on('renderPlayers', () => refreshQuestBeacon());
 
 /** Re-render our UI when any quest changes, on any client. */
 const refresh = (options, userId) =>
 {
    QuestLog.instance.onQuestChanged(options, userId);
    QuestSheetApp.refreshAll(options, userId);
-   refreshInProgressWidget();
+   refreshQuestBeacon();
 };
 
 for (const action of ['create', 'update', 'delete'])

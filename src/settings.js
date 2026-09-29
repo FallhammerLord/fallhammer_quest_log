@@ -1,6 +1,6 @@
 import { MODULE_ID, THEMES } from './constants.js';
 import { refreshOpenApps } from './theme.js';
-import { refreshInProgressWidget } from './ui/InProgressWidget.js';
+import { refreshQuestBeacon } from './ui/QuestBeacon.js';
 
 /** Registers module settings. Called on `init`. */
 export function registerSettings()
@@ -21,7 +21,7 @@ export function registerSettings()
       onChange: () =>
       {
          refreshOpenApps();
-         refreshInProgressWidget();
+         refreshQuestBeacon();
       }
    });
 
@@ -32,7 +32,7 @@ export function registerSettings()
       config: true,
       type: Boolean,
       default: true,
-      onChange: () => refreshInProgressWidget()
+      onChange: () => refreshQuestBeacon()
    });
 
    game.settings.register(MODULE_ID, 'showNextObjective', {
@@ -42,7 +42,7 @@ export function registerSettings()
       config: true,
       type: Boolean,
       default: true,
-      onChange: () => refreshInProgressWidget()
+      onChange: () => refreshQuestBeacon()
    });
 
    game.settings.register(MODULE_ID, 'gmNotesOpen', {

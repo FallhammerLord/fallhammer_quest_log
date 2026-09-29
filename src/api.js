@@ -1,6 +1,6 @@
 import { QuestLog } from './apps/QuestLog.js';
 import { QuestSheetApp } from './apps/QuestSheetApp.js';
-import { debugInProgressWidget } from './ui/InProgressWidget.js';
+import { debugQuestBeacon } from './ui/QuestBeacon.js';
 
 /**
  * Opens the Quest Log, or brings it to the front if already open.
@@ -61,4 +61,4 @@ export function debugEditor()
 }
 
 /** Public API, exposed as `game.modules.get('fhql').api`. Usable from macros. */
-export const api = Object.freeze({ openQuestLog, openQuestSheet, debugWidget: debugInProgressWidget, debugEditor });
+export const api = Object.freeze({ openQuestLog, openQuestSheet, debugBeacon: debugQuestBeacon, debugEditor });

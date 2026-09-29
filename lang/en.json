@@ -41,7 +41,7 @@
       "DeleteTitle": "Delete quest",
       "DeleteConfirm": "Delete <strong>{name}</strong>? Its subquests are kept.",
       "LimitedNote": "You know this quest exists, but not its details.",
-      "InProgressHint": "Show this quest above the players list for everyone who can see it",
+      "InProgressHint": "Show this quest on the Quest Beacon for everyone who can see it",
       "MoreActions": "More actions",
       "PopOut": "Open in its own window",
       "ManageAccess": "Manage player access",
@@ -67,7 +67,12 @@
       "HiddenHint": "Hidden from players",
       "open": "Open. Click to mark done",
       "done": "Done. Click to mark failed",
-      "failed": "Failed. Click to reopen"
+      "failed": "Failed. Click to reopen",
+      "State": {
+        "open": "Open",
+        "done": "Done",
+        "failed": "Failed"
+      }
     },
     "Status": {
       "hidden": "Hidden",
@@ -97,19 +102,16 @@
         "Observer": "Observer: full details"
       },
       "ShowInProgress": {
-        "Name": "Show In Progress quest",
-        "Hint": "Shows the In Progress quest above the players list. Applies to your client only."
+        "Name": "Show the Quest Beacon",
+        "Hint": "Shows the In Progress quest and its objectives above the players list. Applies to your client only."
       },
       "ShowNextObjective": {
-        "Name": "Show next objective",
-        "Hint": "Adds the next open objective under the In Progress quest."
+        "Name": "Show objectives on the Quest Beacon",
+        "Hint": "Lists the quest's objectives under its name on the Beacon."
       }
     },
     "Keybindings": {
       "OpenQuestLog": "Open Quest Log"
-    },
-    "Widget": {
-      "Label": "In progress: {name}. Open in Quest Log."
     },
     "Section": {
       "Empty": "Empty",
@@ -132,6 +134,9 @@
         "rewards": "Rewards can be items or actors."
       },
       "CannotOpen": "You don't have permission to open that."
+    },
+    "Beacon": {
+      "Label": "Quest Beacon: {name}. Open in Quest Log."
     }
   }
 }

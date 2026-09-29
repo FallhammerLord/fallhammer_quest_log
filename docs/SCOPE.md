@@ -50,7 +50,7 @@ A quest log module for Foundry VTT that:
 **Windows**
 - Quest Log: one window, quest list plus detail pane. Tabs by status, search, sort
 - Quest Sheet: the detail view, shown inside the log or popped out on its own
-- In Progress widget: above the players list (see 7.2)
+- Quest Beacon: above the players list (see 7.2)
 - Quest Tracker: optional floating panel of active quests
 
 **Entry points and quick actions**
@@ -237,14 +237,16 @@ Always GM only, whatever the ownership:
 
 Design rule: most player contact happens without opening the log.
 
-### 7.2 In Progress widget
+### 7.2 Quest Beacon
+
+Named 2026-09-29. The panel above the players list showing the In Progress quest and all its objectives.
 
 The primary player-facing surface.
 
 - The GM marks quests **In Progress** from the quest sheet or a right-click menu. The marker is party-wide.
 - The widget sits directly above Foundry's players list (lower left).
 - It shows the first In Progress quest's name. If more are marked, a badge shows the count ("+2").
-- Optional second line: the next unfinished objective the viewer can see, or a progress count ("2/5"). Setting, on by default.
+- Lists every objective the viewer can see, with done/failed/open icons; hidden ones only for the GM. The list scrolls past 40% of screen height. Setting to hide the list, on by default.
 - Clicking opens the Quest Log with that quest selected.
 - Only shows quests the viewer can see. The GM sees hidden ones with a hidden marker.
 - Long names truncate with an ellipsis; the full name shows on hover.
@@ -344,7 +346,7 @@ Store the relationship once: each quest holds an optional `parent` ID. Subquests
 Test and document behavior with:
 - Monk's Enhanced Journal (FQL shipped special handling for it)
 - PopOut! (pop-out windows)
-- UI-hiding modules (they affect the In Progress widget)
+- UI-hiding modules (they affect the Quest Beacon)
 - Carolingian UI and Classic UI (restyle the players list; found in testing that the list's contents overflow its box)
 
 ### 9.6 Documentation and distribution
@@ -373,7 +375,7 @@ Test and document behavior with:
 1. **Skeleton.** Manifest, empty ApplicationV2 windows, theme tokens, theme setting. *Done, verified on v14.*
 2. **Data model.** Quest subtype, create/edit/delete, permissions. *Built 2026-09-28; plain-text readable page deferred to milestone 3.*
 3. **Quest Sheet.** Full editing UI: rich text editor, giver and reward drag-drop, GM notes page, plain-text readable page, subquests. *Built 2026-09-28 from the approved mockup, except the plain-text readable page (open decision).*
-4. **Quest Log, In Progress widget, entry points.** *Entry points and widget pulled forward, built 2026-09-28. GM toggles per entry point still to do.*
+4. **Quest Log, Quest Beacon, entry points.** *Entry points and widget pulled forward, built 2026-09-28. GM toggles per entry point still to do.*
 5. **Tracker.**
 6. **Player workflows.** GM relay, accept, create, reward dragging.
 7. **FQL import.**
@@ -396,4 +398,4 @@ Test and document behavior with:
 - Whether the `QuestAPI` shim ships in v1.0 or later.
 - In Progress: allow several quests (recommended) or exactly one.
 - Whether quest entries show in the journal sidebar for players, or only through our UI.
-- Whether the Tracker ships in v1.0, given the In Progress widget covers the glance use.
+- Whether the Tracker ships in v1.0, given the Quest Beacon covers the glance use.

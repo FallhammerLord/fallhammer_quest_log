@@ -43,7 +43,7 @@ As a player (second browser or user):
 Entry points:
 - Journal tab shows a **Quest Log** button in its header, for GM and players.
 - Token controls show a scroll button; clicking it opens the log and leaves the Token tool active.
-- Mark a quest **In progress**: its name and next open objective appear above the players list, on every client that can see it. Clicking opens the log on that quest.
+- Mark a quest **In progress**: its name and all its objectives appear on the Quest Beacon above the players list, on every client that can see it. Clicking opens the log on that quest.
 - Mark two quests: a **+1** badge appears, with the other name on hover.
 - Configure Settings has per-client toggles for the widget and its objective line.
 
