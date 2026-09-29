@@ -29,5 +29,10 @@ export default [
    {
       files: ['tools/**/*.mjs'],
       languageOptions: { globals: globals.node }
+   },
+   {
+      // Code passed to page.evaluate runs in the browser.
+      files: ['tools/layout-check.mjs'],
+      languageOptions: { globals: { ...globals.node, ...globals.browser } }
    }
 ];

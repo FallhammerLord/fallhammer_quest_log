@@ -334,11 +334,13 @@ Each is toggleable by the GM, separately for GMs and players.
 | Sheet below 560px | Two columns become one, ordered by use in play |
 | Sheet below 460px | Status, In progress, and Edit buttons go icon-only |
 | Sheet below 400px | Smaller portrait; details line moves under the title |
-| Card below 360px (and always in edit mode) | Reward controls move under the reward name |
-| Card below 250px | Reward and section buttons go icon-only; subquest status text hides |
+| Reward list below 340px (and always in edit mode) | Reward controls move under the reward name |
+| Reward list below 230px | Reward buttons go icon-only |
+| Subquest list below 230px | Subquest status text hides |
+| Sheet below 400px | Section heading buttons go icon-only |
 
 **Rules every component follows**
-- Components respond to their own width (container queries), not the screen's.
+- Components respond to their own width (container queries), not the screen's. Width containers go only on elements with no text fields or editors inside: Foundry's own form and editor styles break when a nearby ancestor is a container (found in testing, 2026-09-29).
 - Text wraps between words; a long unbroken word breaks only when it would overflow. Nothing is clipped except list rows and the Beacon, which truncate with an ellipsis and show the full name on hover.
 - A button that drops its text keeps its icon, a tooltip, and a screen-reader label.
 - Icon buttons stay at least 24px square (WCAG 2.2 target size).

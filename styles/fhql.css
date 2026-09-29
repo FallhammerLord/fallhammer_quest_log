@@ -208,7 +208,10 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
 .fhql-sheet { container: fhql-sheet / inline-size; overflow-y: auto; min-width: 0; }
 /* Long words wrap only when they must; ordinary words never split. */
 .fhql-app .fhql-sheet, .fhql-app .fhql-list { overflow-wrap: break-word; }
-.fhql-app .fhql-sheet-body .fhql-card { container: fhql-card / inline-size; }
+/* Width containers only on lists without text fields: Foundry's own form and editor styles misbehave
+   when a nearby ancestor is a size container (found in testing: edit-mode cards collapsed). */
+.fhql-app .fhql-rewards:not(.is-editing) { container: fhql-rewards / inline-size; }
+.fhql-app .fhql-rows { container: fhql-rows / inline-size; }
 .fhql-app .fhql-subheading { flex-wrap: wrap; }
 .fhql-app .fhql-button .fhql-label { white-space: nowrap; }
 .fhql-app .fhql-sheet-inner { display: grid; gap: 0.8em; padding: 0.9em 1em 1.2em; }
@@ -442,6 +445,7 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
 }
 .fhql-objectives li { display: flex; gap: 0.5em; align-items: center; min-width: 0; }
 .fhql-objectives li > span { min-width: 0; }
+.fhql-objectives li > .fhql-input { flex: 1 1 auto; }
 .fhql-objectives li.is-done { color: var(--fhql-ink-muted); }
 .fhql-objectives li.is-done > span { text-decoration: line-through; }
 .fhql-objectives li.is-done .fhql-state-icon { color: var(--fhql-status-completed); }
@@ -819,22 +823,26 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
 .fhql-app .fhql-rewards.is-editing .fhql-reward-actions { grid-column: 2; justify-content: flex-start; }
 
 /* ---------- Narrow layouts ----------
-   Each card and the sheet header respond to their own width. Buttons keep their icon, tooltip, and
-   screen-reader label when their text is dropped. */
+   The sheet, the reward list, and the subquest list respond to their own width. Buttons keep their
+   icon, tooltip, and screen-reader label when their text is dropped. */
 @container fhql-sheet (max-width: 460px) {
   .fhql-app .fhql-sheet-actions .fhql-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   .fhql-app .fhql-sheet-actions .fhql-button { gap: 0; padding-inline: 0.55em; }
 }
-@container fhql-card (max-width: 360px) {
+@container fhql-rewards (max-width: 340px) {
   .fhql-app .fhql-reward { grid-template-columns: 30px minmax(0, 1fr); }
   .fhql-app .fhql-reward-actions { grid-column: 2; justify-content: flex-start; }
 }
-@container fhql-card (max-width: 250px) {
-  .fhql-app .fhql-reward-actions .fhql-label,
-  .fhql-app .fhql-subheading .fhql-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-  .fhql-app .fhql-reward-actions .fhql-button,
-  .fhql-app .fhql-subheading .fhql-button { gap: 0; }
-  .fhql-app .fhql-row-link .fhql-row-status { display: none; }
+@container fhql-rewards (max-width: 230px) {
+  .fhql-app .fhql-reward-actions .fhql-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .fhql-app .fhql-reward-actions .fhql-button { gap: 0; }
   .fhql-app .fhql-reward { grid-template-columns: 24px minmax(0, 1fr); }
   .fhql-app .fhql-reward .fhql-thumb { width: 24px; height: 24px; }
+}
+@container fhql-rows (max-width: 230px) {
+  .fhql-app .fhql-row-link .fhql-row-status { display: none; }
+}
+@container fhql-sheet (max-width: 400px) {
+  .fhql-app .fhql-subheading .fhql-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .fhql-app .fhql-subheading .fhql-button { gap: 0; }
 }
