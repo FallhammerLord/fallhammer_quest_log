@@ -8,6 +8,11 @@
               data-tooltip="{{localize 'FHQL.Folders.New'}}" aria-label="{{localize 'FHQL.Folders.New'}}">
         <i class="fa-solid fa-folder-plus" inert></i></button>
     </div>
+    {{else if canPropose}}
+    <div class="fhql-toolbar-row">
+      <button type="button" class="fhql-button" data-action="createQuest">
+        <i class="fa-solid fa-plus" inert></i> {{localize "FHQL.Player.NewQuest"}}</button>
+    </div>
     {{#if fqlPending}}
     <button type="button" class="fhql-button fhql-import-button" data-action="openFqlImport">
       <i class="fa-solid fa-file-import" inert></i> {{localize "FHQL.Import.Button"}} ({{fqlPending}})</button>

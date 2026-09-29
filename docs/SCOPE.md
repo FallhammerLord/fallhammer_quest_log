@@ -61,7 +61,7 @@ A quest log module for Foundry VTT that:
 - Players may edit when the GM allows it. Player edits route through the GM client
 - Default ownership level for new quests (GM setting)
 
-**Player workflows** (each a GM setting, off by default unless noted)
+**Player workflows** (each a GM setting, off by default unless noted). *Built 2026-09-29: accept, propose, trusted status, shared player notes; all GM-relayed via `CONFIG.queries['fhql.playerAction']` except trusted status, which owners do natively (Hide/Reveal stay GM-only).*
 - Accept an available quest, moving it to active
 - Create quests. Needs core "create journal" permission; new quests land in Available with the creator as owner
 - Trusted-player editing: trusted owners get status control and fuller editing
@@ -300,7 +300,7 @@ The primary player-facing surface.
 
 ### 7.3 Other entry points
 
-Each is toggleable by the GM, separately for GMs and players.
+Each is toggleable by the GM, separately for GMs and players. *Built 2026-09-29 for players: Journal button and Token-control button toggles, plus "Hide the Quest Log from players" (removes log, Beacon, and buttons). GM entry points are always on.*
 
 1. **Keyboard shortcut** via Foundry's keybinding system, rebindable. Unbound by default, or a combination that clashes with nothing in core **[verify]**.
 2. **Scene control button** under Token controls, as a button, not a tool. Opening the log never switches the canvas layer **[verify v14 API]**.
@@ -469,7 +469,7 @@ Test and document behavior with:
 3. **Quest Sheet.** Full editing UI: rich text editor, giver and reward drag-drop, GM notes page, subquests. *Built 2026-09-28 from the approved mockup. Plain-text page dropped.*
 4. **Quest Log, Quest Beacon, entry points.** *Built 2026-09-28/29: log with folders, filters, search; Beacon; journal button, token control, keybinding. To do: sort options, per-entry-point GM toggles, hide-from-players switch, link redirect straight to the Quest Sheet.*
 5. **Tracker.** *Likely dropped: the Quest Beacon covers it (open decision).*
-6. **Player workflows.** GM relay, accept, create, reward dragging. *Reward claiming built 2026-09-29. To do: accept, create, trusted-player editing, GM toggles.*
+6. **Player workflows.** GM relay, accept, create, reward dragging. *Built 2026-09-29: claiming, accept, propose, trusted status, shared player notes, player entry-point toggles, hide from players.*
 7. **FQL import.** *Built 2026-09-29; tested on real FQL data by the user, 2026-09-29.*
 8. **Sharing.** Compendiums, Adventures, map pins.
 9. **Theme polish.** Dark and Sci-fi, contrast audit.

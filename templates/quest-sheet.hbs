@@ -57,7 +57,7 @@
     <div class="fhql-sheet-fields">
       <label class="fhql-field">
         <span>{{localize "FHQL.Quest.Status"}}</span>
-        <select class="fhql-input" name="status" data-field="status" {{#unless gm}}disabled{{/unless}}>
+        <select class="fhql-input" name="status" data-field="status" {{#unless canSetStatus}}disabled{{/unless}}>
           {{#each statusOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
         </select>
       </label>
@@ -92,6 +92,10 @@
               aria-pressed="{{#if inProgress}}true{{else}}false{{/if}}" data-tooltip="{{localize 'FHQL.Quest.InProgressHint'}}"
               aria-label="{{localize 'FHQL.Quest.InProgress'}}">
         <i class="{{#if inProgress}}fa-solid{{else}}fa-regular{{/if}} fa-star" inert></i><span class="fhql-label">{{localize "FHQL.Quest.InProgress"}}</span></button>
+      {{/if}}
+      {{#if canAccept}}
+      <button type="button" class="fhql-button fhql-primary" data-action="acceptQuest" data-tooltip="{{localize 'FHQL.Player.AcceptHint'}}"
+              aria-label="{{localize 'FHQL.Player.Accept'}}"><i class="fa-solid fa-flag" inert></i><span class="fhql-label">{{localize "FHQL.Player.Accept"}}</span></button>
       {{/if}}
       <button type="button" class="fhql-button fhql-toggle {{#if tracked}}is-on{{/if}}" data-action="toggleTracked"
               aria-pressed="{{#if tracked}}true{{else}}false{{/if}}" aria-label="{{localize 'FHQL.Quest.Track'}}"
@@ -132,14 +136,26 @@
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.PlayerNotes"}}</h3>
         <prose-mirror name="playerNotes" data-field="playerNotes" toggled open value="{{playerNotes}}">{{{playerNotesHTML}}}</prose-mirror>
       </section>
-      {{else if playerNotesHTML}}
+      {{else if notesEditing}}
       <section class="fhql-card fhql-area-notes">
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.PlayerNotes"}}</h3>
+        <prose-mirror name="playerNotesViaGM" data-field="playerNotesViaGM" toggled open value="{{playerNotes}}">{{{playerNotesHTML}}}</prose-mirror>
+      </section>
+      {{else if playerNotesHTML}}
+      <section class="fhql-card fhql-area-notes">
+        <h3 class="fhql-subheading">{{localize "FHQL.Quest.PlayerNotes"}}
+          {{#if canEditNotesViaGM}}<button type="button" class="fhql-button fhql-small fhql-push" data-action="editNotesViaGM"
+            aria-label="{{localize 'FHQL.Player.EditNotes'}}"><i class="fa-solid fa-pen" inert></i><span class="fhql-label">{{localize "FHQL.Player.EditNotes"}}</span></button>{{/if}}</h3>
         <div class="fhql-prose">{{{playerNotesHTML}}}</div>
       </section>
       {{else if editable}}
       <section class="fhql-card fhql-compact fhql-area-notes">
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.PlayerNotes"}}<span class="fhql-empty-note">{{localize "FHQL.Section.Empty"}}</span></h3>
+      </section>
+      {{else if canEditNotesViaGM}}
+      <section class="fhql-card fhql-compact fhql-area-notes">
+        <h3 class="fhql-subheading">{{localize "FHQL.Quest.PlayerNotes"}}<span class="fhql-empty-note">{{localize "FHQL.Section.Empty"}}</span>
+          <button type="button" class="fhql-button fhql-small" data-action="editNotesViaGM"><i class="fa-solid fa-plus" inert></i> {{localize "FHQL.Player.AddNotes"}}</button></h3>
       </section>
       {{/if}}
     </div>

@@ -58,6 +58,7 @@ export function sheetContext(t, { gm = true, editing = false } = {})
          statusActions: gm ? [['completed', 'Complete'], ['failed', 'Fail'], ['hidden', 'Hide']]
           .map(([status, verb]) => ({ status, icon: S[status], label: t(`QuestLog.StatusAction.${verb}`) })) : [],
          inProgress: true,
+         canSetStatus: gm,
          giver: { name: 'Warden Hask of the Cinderford Garrison', uuid: 'Actor.x', img: '', linked: true },
          parent: { id: 'p', name: 'The Salt Roads' },
          description: '<p>x</p>',

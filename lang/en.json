@@ -138,6 +138,34 @@
       "WorldTheme": {
         "Name": "Quest Log theme (world default)",
         "Hint": "The theme everyone sees unless they choose their own. Follow Foundry matches each person's light or dark interface setting."
+      },
+      "hideFromPlayers": {
+        "Name": "Hide the Quest Log from players",
+        "Hint": "Players see no Quest Log, Quest Beacon, or buttons. For GM-only quest tracking."
+      },
+      "playerJournalButton": {
+        "Name": "Players: Quest Log button in the Journal tab",
+        "Hint": "Show the Quest Log button at the top of the Journal tab for players."
+      },
+      "playerSceneControl": {
+        "Name": "Players: Quest Log button in Token controls",
+        "Hint": "Show the Quest Log button in the left toolbar's Token controls for players."
+      },
+      "playersCanAccept": {
+        "Name": "Players can accept quests",
+        "Hint": "Players get an Accept button on Available quests, which makes them Active. A GM must be connected."
+      },
+      "playersCanCreate": {
+        "Name": "Players can propose quests",
+        "Hint": "Players get a New quest button. Their quests start as Available, owned by them. A GM must be connected."
+      },
+      "trustedCanChangeStatus": {
+        "Name": "Trusted players can change status",
+        "Hint": "Trusted players who own a quest can start, complete, fail, or reopen it. Hiding and revealing stay with the GM."
+      },
+      "playersEditNotes": {
+        "Name": "Players can edit player notes",
+        "Hint": "Any player who can read a quest can edit its Player notes, even without owning it. A GM must be connected."
       }
     },
     "Keybindings": {
@@ -291,6 +319,22 @@
       "FocusOff": "No longer the party focus",
       "TrackOn": "Tracking this quest",
       "TrackOff": "Stopped tracking this quest"
+    },
+    "Player": {
+      "NeedGM": "A GM must be connected for that.",
+      "Failed": "That didn't go through. Try again.",
+      "Accept": "Accept",
+      "AcceptHint": "Take on this quest. It becomes Active.",
+      "Accepted": "Quest accepted.",
+      "NewQuest": "New quest",
+      "ProposedName": "Quest proposed by {user}",
+      "EditNotes": "Edit notes",
+      "AddNotes": "Add notes",
+      "Refused": {
+        "NotGM": "Only a GM can do that.",
+        "NotAllowed": "That isn't allowed in this world.",
+        "NotFound": "That quest no longer exists."
+      }
     }
   }
 }

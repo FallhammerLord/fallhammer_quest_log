@@ -2,6 +2,7 @@ import { QuestLog } from './apps/QuestLog.js';
 import { QuestSheetApp } from './apps/QuestSheetApp.js';
 import { FqlImportApp } from './apps/FqlImportApp.js';
 import { debugQuestBeacon } from './ui/QuestBeacon.js';
+import { questLogAvailable } from './data/playerActions.js';
 
 /**
  * Opens the Quest Log, or brings it to the front if already open.
@@ -11,6 +12,7 @@ import { debugQuestBeacon } from './ui/QuestBeacon.js';
  */
 export function openQuestLog(questId)
 {
+   if (!questLogAvailable()) { return undefined; }
    const log = QuestLog.instance;
    if (questId) { log.select(questId); }
    if (log.rendered)
@@ -30,6 +32,7 @@ export function openQuestLog(questId)
  */
 export function openQuestSheet(questId)
 {
+   if (!questLogAvailable()) { return undefined; }
    return QuestSheetApp.open(questId);
 }
 

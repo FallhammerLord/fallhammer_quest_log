@@ -5,6 +5,7 @@ import { applyTheme, trackApp, untrackApp } from '../theme.js';
 import { clampToMinSize } from './minSize.js';
 import { scanFqlQuests } from '../import/fql.js';
 import { trackedIds } from '../data/tracking.js';
+import { canProposeQuests, requestPlayerAction } from '../data/playerActions.js';
 import {
    createQuest, createQuestFolder, createSampleQuests, getQuestEntry, moveQuestToFolder, questPage, questRootFolder,
    questSubfolders, visibleQuests
@@ -61,7 +62,7 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
     */
    select(id)
    {
-      if (id !== this.#selectedId) { this._editing = false; }
+      if (id !== this.#selectedId) { this._editing = false; this._notesEditing = false; }
       this.#selectedId = id;
    }
 
@@ -106,6 +107,7 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
       return {
          ...context,
          gm: game.user.isGM,
+         canPropose: canProposeQuests(),
          hasQuests: entries.length > 0,
          items: this.#listItems(entries, filter),
          statusChips,
@@ -389,6 +391,15 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
    /** @this {QuestLog} */
    static async #onCreateQuest()
    {
+      if (!game.user.isGM)
+      {
+         const result = await requestPlayerAction({ action: 'create' });
+         if (!result.ok) { return; }
+         this.select(result.id);
+         this._editing = true;
+         this.render();
+         return;
+      }
       const entry = await createQuest();
       this.select(entry.id);
       this._editing = true;

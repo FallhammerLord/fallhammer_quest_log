@@ -59,6 +59,30 @@ export function registerSettings()
       onChange: () => refreshQuestBeacon()
    });
 
+   const worldToggle = (key, fallback, onChange) => game.settings.register(MODULE_ID, key, {
+      name: `FHQL.Settings.${key}.Name`,
+      hint: `FHQL.Settings.${key}.Hint`,
+      scope: 'world',
+      config: true,
+      type: Boolean,
+      default: fallback,
+      requiresReload: false,
+      onChange
+   });
+   const refreshAccess = () =>
+   {
+      refreshQuestBeacon();
+      ui.sidebar?.render?.();
+      ui.controls?.render?.({ reset: true });
+   };
+   worldToggle('hideFromPlayers', false, refreshAccess);
+   worldToggle('playerJournalButton', true, refreshAccess);
+   worldToggle('playerSceneControl', true, refreshAccess);
+   worldToggle('playersCanAccept', false);
+   worldToggle('playersCanCreate', false);
+   worldToggle('trustedCanChangeStatus', false);
+   worldToggle('playersEditNotes', false);
+
    game.settings.register(MODULE_ID, 'autoUnlockRewards', {
       name: 'FHQL.Settings.AutoUnlockRewards.Name',
       hint: 'FHQL.Settings.AutoUnlockRewards.Hint',

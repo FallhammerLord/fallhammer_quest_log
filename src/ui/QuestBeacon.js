@@ -4,6 +4,7 @@ import { openQuestLog } from '../api.js';
 import { questAccess, questPage } from '../data/quests.js';
 import { beaconChoice, beaconQuests, setBeaconChoice } from '../data/tracking.js';
 import { menuPopover } from './popover.js';
+import { questLogAvailable } from '../data/playerActions.js';
 import { applyTheme } from '../theme.js';
 
 const WIDGET_ID = 'fhql-beacon';
@@ -24,7 +25,7 @@ export function refreshQuestBeacon()
    const players = playersElement();
    let widget = document.getElementById(WIDGET_ID);
 
-   if (!players || !game.settings.get(MODULE_ID, 'showInProgress'))
+   if (!players || !questLogAvailable() || !game.settings.get(MODULE_ID, 'showInProgress'))
    {
       widget?.remove();
       return;

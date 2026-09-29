@@ -1,6 +1,7 @@
 import { DocumentOwnershipConfig, textEditor } from '../compat.js';
 import { confirmPopover, menuPopover } from '../ui/popover.js';
 import { isTracked, toggleTracked } from '../data/tracking.js';
+import { canAccept, canChangeStatusAsPlayer, canEditNotesViaGM, requestPlayerAction } from '../data/playerActions.js';
 import { MODULE_ID, STATUSES } from '../constants.js';
 import {
    claimLabel, claimedItem, claimsExhausted, claimTargets, isClaimable, recipientOptions, requestClaim, undoClaim
@@ -47,6 +48,8 @@ export function QuestSheetMixin(Base)
             setQuestStatus: QuestSheet.#onSetQuestStatus,
             toggleInProgress: QuestSheet.#onToggleInProgress,
             toggleTracked: QuestSheet.#onToggleTracked,
+            acceptQuest: QuestSheet.#onAcceptQuest,
+            editNotesViaGM: QuestSheet.#onEditNotesViaGM,
             addObjective: QuestSheet.#onAddObjective,
             cycleObjective: QuestSheet.#onCycleObjective,
             deleteObjective: QuestSheet.#onDeleteObjective,
@@ -71,6 +74,9 @@ export function QuestSheetMixin(Base)
 
       /** Focused control and unsaved typing, captured before a re-render and restored after it. */
       #pendingFocus = null;
+
+      /** Whether a player is editing shared player notes through the GM (read view only). */
+      _notesEditing = false;
 
       /** Last save outcome shown in edit mode: '', 'saving', 'saved', or 'failed'. */
       #saveState = '';
@@ -242,6 +248,8 @@ export function QuestSheetMixin(Base)
          const system = page.system;
          const access = questAccess(entry);
          const editing = access.editable && this._editing;
+         const trusted = canChangeStatusAsPlayer(entry);
+         const notesViaGM = canEditNotesViaGM(entry);
          const enrich = (html) => textEditor().enrichHTML(html ?? '', { secrets: access.editable, relativeTo: page });
          const localize = (key) => game.i18n.localize(key);
 
@@ -297,12 +305,18 @@ export function QuestSheetMixin(Base)
             status: system.status,
             statusIcon: STATUSES[system.status].icon,
             statusLabel: localize(`FHQL.Status.${system.status}`),
-            statusOptions: Object.keys(STATUSES).map((key) => ({
+            statusOptions: Object.keys(STATUSES).filter((key) => access.gm || key !== 'hidden').map((key) => ({
                value: key, label: localize(`FHQL.Status.${key}`), selected: key === system.status
             })),
-            statusActions: access.gm ? (STATUS_ACTIONS[system.status] ?? []).map(([target, verb]) => ({
-               status: target, icon: STATUSES[target].icon, label: localize(`FHQL.QuestLog.StatusAction.${verb}`)
-            })) : [],
+            statusActions: (access.gm || trusted) ? (STATUS_ACTIONS[system.status] ?? [])
+             .filter(([target]) => access.gm || target !== 'hidden')
+             .map(([target, verb]) => ({
+                status: target, icon: STATUSES[target].icon, label: localize(`FHQL.QuestLog.StatusAction.${verb}`)
+             })) : [],
+            canSetStatus: access.gm || trusted,
+            canAccept: canAccept(entry),
+            canEditNotesViaGM: notesViaGM,
+            notesEditing: notesViaGM && this._notesEditing,
             inProgress: system.inProgress,
             tracked: isTracked(entry),
             saveStateLabel: editing ? this.#saveStateLabel() : '',
@@ -428,6 +442,13 @@ export function QuestSheetMixin(Base)
             case 'reward.name': return updateQuest(entry, { [`system.rewards.${rewardId}.name`]: value }, QUIET);
             case 'reward.hidden': return updateQuest(entry, { [`system.rewards.${rewardId}.hidden`]: value });
             case 'reward.claimLimit': return updateQuest(entry, { [`system.rewards.${rewardId}.claimLimit`]: value });
+            case 'playerNotesViaGM':
+            {
+               this._notesEditing = false;
+               const result = await requestPlayerAction({ action: 'playerNotes', entryId: entry.id, html: value });
+               if (!result.ok) { throw new Error('Player notes refused'); }
+               return result;
+            }
          }
       }
 
@@ -513,6 +534,25 @@ export function QuestSheetMixin(Base)
                objective: objective.name, state: game.i18n.localize(`FHQL.Objective.State.${objective.state}`)
             }));
          }
+      }
+
+      /** @this {QuestSheet} */
+      static async #onAcceptQuest()
+      {
+         if (!this.questEntry) { return; }
+         const result = await requestPlayerAction({ action: 'accept', entryId: this.questEntry.id });
+         if (result.ok)
+         {
+            ui.notifications.info(game.i18n.localize('FHQL.Player.Accepted'));
+            this._announce(game.i18n.format('FHQL.Announce.Status', { status: game.i18n.localize('FHQL.Status.active') }));
+         }
+      }
+
+      /** @this {QuestSheet} */
+      static #onEditNotesViaGM()
+      {
+         this._notesEditing = true;
+         this.render();
       }
 
       /** @this {QuestSheet} */

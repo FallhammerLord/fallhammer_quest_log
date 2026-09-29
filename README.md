@@ -47,6 +47,14 @@ Folders and filters:
 - Status chips filter the list; the search box filters by name as you type.
 - Right-click a quest row (GM) for the quest menu. Quick choices (menus, pickers, confirmations) open as panels inside the window; Esc closes them.
 
+Player workflows (world settings, off by default):
+- **Players can accept quests**: players get Accept on Available quests; it becomes Active.
+- **Players can propose quests**: players get New quest; theirs start as Available, owned by them.
+- **Trusted players can change status**: trusted owners get the status buttons (not Hide/Reveal).
+- **Players can edit player notes**: any player who can read a quest gets Edit notes.
+- **Hide the Quest Log from players**, and per-button toggles for the Journal and Token-control buttons.
+- Accept, propose, and shared notes need a GM connected.
+
 Entry points:
 - Journal tab shows a **Quest Log** button in its header, for GM and players.
 - Token controls show a scroll button; clicking it opens the log and leaves the Token tool active.

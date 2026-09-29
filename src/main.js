@@ -12,6 +12,7 @@ import { registerEntryPoints } from './ui/entryPoints.js';
 import { refreshQuestBeacon } from './ui/QuestBeacon.js';
 import { registerRewardDrop, registerRewardQueries } from './data/rewards.js';
 import { registerLifecycleHooks } from './data/lifecycle.js';
+import { registerPlayerActionQueries } from './data/playerActions.js';
 
 Hooks.once('init', () =>
 {
@@ -28,6 +29,7 @@ Hooks.once('init', () =>
    registerRewardQueries();
    registerRewardDrop();
    registerLifecycleHooks();
+   registerPlayerActionQueries();
    game.modules.get(MODULE_ID).api = api;
 });
 
