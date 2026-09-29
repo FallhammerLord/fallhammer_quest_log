@@ -53,6 +53,11 @@ Entry points:
 - Mark two quests: a **+1** badge appears, with the other name on hover.
 - Configure Settings has per-client toggles for the widget and its objective line.
 
+FQL import (if the world has Forien's Quest Log data):
+- The log shows **Import from FQL (n)**. The preview lists every FQL quest.
+- Import, then check: quests appear with objectives, rewards, giver, notes; subquests sit under parents; the report lists any fixes.
+- Run it again: already-imported quests are skipped unless you tick Re-import.
+
 Storage test (passed 2026-09-28; re-run after storage changes) (docs/SCOPE.md 5.2): with a quest created, disable the module, restart, check the journal entry still opens, then re-enable and check the quest is intact.
 
 ## Dev tooling

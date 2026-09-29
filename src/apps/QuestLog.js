@@ -1,6 +1,7 @@
 import { DialogV2, HandlebarsApp } from '../compat.js';
 import { MODULE_ID, MODULE_PATH, STATUSES } from '../constants.js';
 import { applyTheme, trackApp, untrackApp } from '../theme.js';
+import { scanFqlQuests } from '../import/fql.js';
 import {
    createQuest, createQuestFolder, createSampleQuests, getQuestEntry, moveQuestToFolder, questPage, questRootFolder,
    questSubfolders, visibleQuests
@@ -31,7 +32,8 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
          createSamples: QuestLog.#onCreateSamples,
          createFolder: QuestLog.#onCreateFolder,
          toggleFolder: QuestLog.#onToggleFolder,
-         toggleStatusFilter: QuestLog.#onToggleStatusFilter
+         toggleStatusFilter: QuestLog.#onToggleStatusFilter,
+         openFqlImport: QuestLog.#onOpenFqlImport
       }
    };
 
@@ -104,6 +106,7 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
          items: this.#listItems(entries, filter),
          statusChips,
          query: this.#query,
+         fqlPending: game.user.isGM ? scanFqlQuests().filter((q) => !q.imported).length : 0,
          sheet: await this._prepareSheet(this.questEntry)
       };
    }
@@ -383,6 +386,12 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
       target.setAttribute('aria-pressed', String(filter.statuses.includes(status)));
       target.classList.toggle('is-on', filter.statuses.includes(status));
       this.#applyListFilters();
+   }
+
+   /** @this {QuestLog} */
+   static #onOpenFqlImport()
+   {
+      game.modules.get(MODULE_ID).api.openFqlImport();
    }
 
    /** @this {QuestLog} */

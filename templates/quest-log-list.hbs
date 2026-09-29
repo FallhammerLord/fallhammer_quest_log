@@ -8,6 +8,10 @@
               data-tooltip="{{localize 'FHQL.Folders.New'}}" aria-label="{{localize 'FHQL.Folders.New'}}">
         <i class="fa-solid fa-folder-plus" inert></i></button>
     </div>
+    {{#if fqlPending}}
+    <button type="button" class="fhql-button fhql-import-button" data-action="openFqlImport">
+      <i class="fa-solid fa-file-import" inert></i> {{localize "FHQL.Import.Button"}} ({{fqlPending}})</button>
+    {{/if}}
     {{/if}}
     {{#if hasQuests}}
     <input type="search" class="fhql-input fhql-search" data-list-search value="{{query}}"
@@ -55,6 +59,10 @@
   {{else}}
   <div class="fhql-empty">
     <p class="fhql-muted">{{localize "FHQL.QuestLog.Empty"}}</p>
+    {{#if fqlPending}}
+    <button type="button" class="fhql-button fhql-primary" data-action="openFqlImport">
+      <i class="fa-solid fa-file-import" inert></i> {{localize "FHQL.Import.Button"}} ({{fqlPending}})</button>
+    {{/if}}
     {{#if gm}}
     <button type="button" class="fhql-button" data-action="createSamples">
       <i class="fa-solid fa-flask" inert></i> {{localize "FHQL.QuestLog.AddSamples"}}

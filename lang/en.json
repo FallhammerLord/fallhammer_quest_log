@@ -153,6 +153,47 @@
       "Label": "Filter quests",
       "Search": "Search quests",
       "NoMatches": "No quests match."
+    },
+    "Import": {
+      "Title": "Import from Forien's Quest Log",
+      "Button": "Import from FQL",
+      "Intro": "These quests were found in Forien's Quest Log data. Importing adds a Fallhammer quest page to each quest's existing journal entry, so links to them keep working.",
+      "Safe": "FQL's own data is never changed. Quests already imported are skipped unless you tick Re-import.",
+      "CountNew": "new to import",
+      "CountAlready": "already imported",
+      "ColQuest": "Quest",
+      "ColState": "Import",
+      "StateNew": "New",
+      "Overwrite": "Re-import",
+      "OverwriteHint": "Replace this quest with FQL's version. Edits made here since the last import are lost.",
+      "MoveOption": "Move imported quests into FHQL Quests › Imported from FQL",
+      "MoveHint": "Recommended. FQL only reads its own hidden folder, so if you re-enable FQL later it won't see moved quests. Untick to leave them where they are; they'll show in the log under Outside FHQL Quests.",
+      "Run": "Import",
+      "Running": "Importing…",
+      "Cancel": "Cancel",
+      "Close": "Close",
+      "Done": "Import finished",
+      "CountImported": "imported",
+      "CountReimported": "re-imported",
+      "CountSkipped": "skipped",
+      "CountErrors": "failed",
+      "Errors": "Failed",
+      "Fixes": "Changes and notes",
+      "NoFixes": "Nothing needed fixing.",
+      "NoneFound": "No Forien's Quest Log quests were found in this world.",
+      "FolderName": "Imported from FQL",
+      "Fix": {
+        "MissingParent": "its parent quest no longer exists, so it's now top level.",
+        "MissingSubquest": "listed a subquest that no longer exists; dropped.",
+        "AdoptedParent": "had no parent, but {parent} listed it as a subquest; parent set to {parent}.",
+        "ConflictingParent": "{other} also listed it as a subquest; kept its own parent, {kept}.",
+        "ParentLoop": "its parents looped back to itself; made top level.",
+        "UnknownStatus": "unknown status \"{status}\"; imported as Hidden.",
+        "Unmapped": "FQL fields with no equivalent here, not imported: {fields}.",
+        "NameDiffers": "FQL's stored name was \"{name}\"; kept the journal entry's name.",
+        "HiddenAccess": "hidden quest: player access removed so it stays hidden.",
+        "HasQuestPage": "already has a Fallhammer quest page not made by this importer; left alone."
+      }
     }
   }
 }

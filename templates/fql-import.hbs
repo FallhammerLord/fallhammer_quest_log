@@ -1,0 +1,90 @@
+<div class="fhql-import-body">
+{{#if report}}
+  <section class="fhql-import-summary">
+    <h2 class="fhql-heading">{{localize "FHQL.Import.Done"}}</h2>
+    <ul class="fhql-import-counts">
+      <li><strong>{{report.imported}}</strong> {{localize "FHQL.Import.CountImported"}}</li>
+      {{#if report.reimported}}<li><strong>{{report.reimported}}</strong> {{localize "FHQL.Import.CountReimported"}}</li>{{/if}}
+      {{#if report.skipped}}<li><strong>{{report.skipped}}</strong> {{localize "FHQL.Import.CountSkipped"}}</li>{{/if}}
+      {{#if report.errors.length}}<li class="fhql-danger"><strong>{{report.errors.length}}</strong> {{localize "FHQL.Import.CountErrors"}}</li>{{/if}}
+    </ul>
+  </section>
+  <div class="fhql-import-list">
+    {{#if report.errors.length}}
+    <h3 class="fhql-subheading">{{localize "FHQL.Import.Errors"}}</h3>
+    <ul class="fhql-import-notes">
+      {{#each report.errors}}<li class="fhql-danger"><strong>{{quest}}</strong>: {{message}}</li>{{/each}}
+    </ul>
+    {{/if}}
+    <h3 class="fhql-subheading">{{localize "FHQL.Import.Fixes"}}</h3>
+    {{#if report.fixes.length}}
+    <ul class="fhql-import-notes">
+      {{#each report.fixes}}<li><strong>{{quest}}</strong>: {{message}}</li>{{/each}}
+    </ul>
+    {{else}}
+    <p class="fhql-muted">{{localize "FHQL.Import.NoFixes"}}</p>
+    {{/if}}
+  </div>
+  <footer class="fhql-import-footer">
+    <button type="button" class="fhql-button fhql-primary" data-action="closeImport"><i class="fa-solid fa-check" inert></i> {{localize "FHQL.Import.Close"}}</button>
+  </footer>
+
+{{else if quests.length}}
+  <form class="fhql-import-form" onsubmit="return false">
+    <p>{{localize "FHQL.Import.Intro"}}</p>
+    <p class="fhql-muted">{{localize "FHQL.Import.Safe"}}</p>
+    <ul class="fhql-import-counts">
+      <li><strong>{{newCount}}</strong> {{localize "FHQL.Import.CountNew"}}</li>
+      {{#if importedCount}}<li><strong>{{importedCount}}</strong> {{localize "FHQL.Import.CountAlready"}}</li>{{/if}}
+    </ul>
+
+    <div class="fhql-import-list">
+      <table class="fhql-import-table">
+        <thead><tr>
+          <th scope="col">{{localize "FHQL.Import.ColQuest"}}</th>
+          <th scope="col">{{localize "FHQL.Quest.Status"}}</th>
+          <th scope="col" class="fhql-num">{{localize "FHQL.Quest.Objectives"}}</th>
+          <th scope="col" class="fhql-num">{{localize "FHQL.Quest.Rewards"}}</th>
+          <th scope="col">{{localize "FHQL.Import.ColState"}}</th>
+        </tr></thead>
+        <tbody>
+          {{#each quests}}
+          <tr class="fhql-status-{{status}}">
+            <td>{{#if subquest}}<span class="fhql-muted">↳ </span>{{/if}}{{name}}</td>
+            <td><i class="{{icon}} fhql-status-icon" inert></i> {{label}}</td>
+            <td class="fhql-num">{{objectives}}</td>
+            <td class="fhql-num">{{rewards}}</td>
+            <td>
+              {{#if imported}}
+              <label class="fhql-check" data-tooltip="{{localize 'FHQL.Import.OverwriteHint'}}">
+                <input type="checkbox" name="overwrite" value="{{id}}"> {{localize "FHQL.Import.Overwrite"}}</label>
+              {{else}}
+              <span class="fhql-import-new">{{localize "FHQL.Import.StateNew"}}</span>
+              {{/if}}
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+
+    <label class="fhql-check fhql-import-option">
+      <input type="checkbox" name="moveToFolder" checked>
+      <span>{{localize "FHQL.Import.MoveOption"}}<br><span class="fhql-muted">{{localize "FHQL.Import.MoveHint"}}</span></span>
+    </label>
+
+    <footer class="fhql-import-footer">
+      <button type="button" class="fhql-button" data-action="closeImport">{{localize "FHQL.Import.Cancel"}}</button>
+      <button type="button" class="fhql-button fhql-primary" data-action="runImport" {{#if running}}disabled{{/if}}>
+        <i class="fa-solid {{#if running}}fa-spinner fa-spin{{else}}fa-file-import{{/if}}" inert></i>
+        {{#if running}}{{localize "FHQL.Import.Running"}}{{else}}{{localize "FHQL.Import.Run"}}{{/if}}</button>
+    </footer>
+  </form>
+
+{{else}}
+  <p>{{localize "FHQL.Import.NoneFound"}}</p>
+  <footer class="fhql-import-footer">
+    <button type="button" class="fhql-button" data-action="closeImport">{{localize "FHQL.Import.Close"}}</button>
+  </footer>
+{{/if}}
+</div>

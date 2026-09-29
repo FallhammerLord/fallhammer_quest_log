@@ -71,3 +71,24 @@ export function playerRowElement(players)
 
 /** Name of the scene control group our button joins. */
 export const SCENE_CONTROL_GROUP = 'tokens';
+
+/**
+ * Reads a world setting belonging to another package, even when that package is inactive and its
+ * setting isn't registered. Used to read FQL's primary quest during import.
+ *
+ * @param {string} key - Full setting key, e.g. `forien-quest-log.primaryQuest`.
+ * @returns {unknown} The stored value, or undefined.
+ */
+export function readStoredWorldSetting(key)
+{
+   try
+   {
+      const stored = game.settings.storage.get('world')?.find((setting) => setting.key === key);
+      if (!stored) { return undefined; }
+      return typeof stored.value === 'string' ? JSON.parse(stored.value) : stored.value;
+   }
+   catch
+   {
+      return undefined;
+   }
+}

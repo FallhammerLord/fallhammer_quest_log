@@ -349,6 +349,16 @@ Each is toggleable by the GM, separately for GMs and players.
 - **Idempotent.** Each imported quest records its FQL source ID. Re-running skips quests already imported, so it never overwrites edits. A per-quest "re-import and overwrite" is available.
 - Never deletes or edits the FQL data. Edits made in our module don't flow back to FQL.
 
+### As built (2026-09-29)
+
+- **Where:** GM button "Import from FQL (n)" in the log whenever un-imported FQL quests exist, or `game.modules.get('fhql').api.openFqlImport()`.
+- **Preview:** a table of every FQL quest with status, objective and reward counts, and New / Re-import per row.
+- **Field map:** status (inactive → Hidden), description, player notes, GM notes (to the GM-only page), tasks → objectives (done/failed/hidden kept), rewards (Item/Actor links kept, Abstract → text; hidden and locked kept), giver (document link or custom name and image), splash → quest image, dates, FQL's primary quest → In Progress. Location, priority, and type have no equivalent and are listed in the report when set.
+- **Folder move (option, on by default):** moves imported quests to FHQL Quests › Imported from FQL. FQL only reads its hidden `_fql_quests` folder, so a re-enabled FQL won't see moved quests. Unticked, quests stay put and show under Outside FHQL Quests.
+- **Hidden quests** get player access removed, so our hiding rule holds. Reported per quest.
+- **Never replaces** a quest page it didn't create.
+- **Report:** counts plus every fix and note, per quest.
+
 ### Our parent/child model
 
 Store the relationship once: each quest holds an optional `parent` ID. Subquests are worked out from it at read time. Nothing else to keep in sync.

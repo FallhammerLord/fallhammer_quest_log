@@ -1,5 +1,6 @@
 import { QuestLog } from './apps/QuestLog.js';
 import { QuestSheetApp } from './apps/QuestSheetApp.js';
+import { FqlImportApp } from './apps/FqlImportApp.js';
 import { debugQuestBeacon } from './ui/QuestBeacon.js';
 
 /**
@@ -60,5 +61,18 @@ export function debugEditor()
    return rows;
 }
 
+/**
+ * Opens the Forien's Quest Log import window. GM only.
+ *
+ * @returns {FqlImportApp|undefined} The window.
+ */
+export function openFqlImport()
+{
+   if (!game.user.isGM) { return undefined; }
+   const app = new FqlImportApp();
+   app.render({ force: true });
+   return app;
+}
+
 /** Public API, exposed as `game.modules.get('fhql').api`. Usable from macros. */
-export const api = Object.freeze({ openQuestLog, openQuestSheet, debugBeacon: debugQuestBeacon, debugEditor });
+export const api = Object.freeze({ openQuestLog, openQuestSheet, openFqlImport, debugBeacon: debugQuestBeacon, debugEditor });
