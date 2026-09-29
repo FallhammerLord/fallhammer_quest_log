@@ -5,7 +5,7 @@
     }
   },
   "FHQL": {
-    "Folder": "Quests",
+    "Folder": "FHQL Quests",
     "QuestLog": {
       "Title": "Quest Log",
       "ListLabel": "Quests",
@@ -137,6 +137,22 @@
     },
     "Beacon": {
       "Label": "Quest Beacon: {name}. Open in Quest Log."
+    },
+    "Folders": {
+      "NewName": "New Folder",
+      "New": "New folder",
+      "Name": "Folder name",
+      "MoveTo": "Move to folder",
+      "TopLevel": "Top level",
+      "Outside": "Outside FHQL Quests",
+      "OutsideHint": "These quests were moved out of the FHQL Quests journal folder.",
+      "Collapse": "Collapse folder",
+      "Expand": "Expand folder"
+    },
+    "Filter": {
+      "Label": "Filter quests",
+      "Search": "Search quests",
+      "NoMatches": "No quests match."
     }
   }
 }

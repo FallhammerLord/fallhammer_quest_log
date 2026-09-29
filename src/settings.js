@@ -45,6 +45,13 @@ export function registerSettings()
       onChange: () => refreshQuestBeacon()
    });
 
+   game.settings.register(MODULE_ID, 'listFilter', {
+      scope: 'client',
+      config: false,
+      type: Object,
+      default: { statuses: [], collapsed: [] }
+   });
+
    game.settings.register(MODULE_ID, 'gmNotesOpen', {
       scope: 'client',
       config: false,

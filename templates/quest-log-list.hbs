@@ -1,28 +1,57 @@
-<nav class="fhql-list" aria-label="{{localize 'FHQL.QuestLog.ListLabel'}}">
-  {{#if gm}}
+<nav class="fhql-list" aria-label="{{localize 'FHQL.QuestLog.ListLabel'}}" {{#if gm}}data-folder-drop=""{{/if}}>
   <div class="fhql-toolbar">
-    <button type="button" class="fhql-button" data-action="createQuest">
-      <i class="fa-solid fa-plus" inert></i> {{localize "FHQL.QuestLog.NewQuest"}}
-    </button>
+    {{#if gm}}
+    <div class="fhql-toolbar-row">
+      <button type="button" class="fhql-button" data-action="createQuest">
+        <i class="fa-solid fa-plus" inert></i> {{localize "FHQL.QuestLog.NewQuest"}}</button>
+      <button type="button" class="fhql-icon-button" data-action="createFolder"
+              data-tooltip="{{localize 'FHQL.Folders.New'}}" aria-label="{{localize 'FHQL.Folders.New'}}">
+        <i class="fa-solid fa-folder-plus" inert></i></button>
+    </div>
+    {{/if}}
+    {{#if hasQuests}}
+    <input type="search" class="fhql-input fhql-search" data-list-search value="{{query}}"
+           placeholder="{{localize 'FHQL.Filter.Search'}}" aria-label="{{localize 'FHQL.Filter.Search'}}">
+    <div class="fhql-chips" role="group" aria-label="{{localize 'FHQL.Filter.Label'}}">
+      {{#each statusChips}}
+      <button type="button" class="fhql-chip fhql-status-{{status}} {{#if active}}is-on{{/if}}" data-action="toggleStatusFilter"
+              data-status="{{status}}" aria-pressed="{{#if active}}true{{else}}false{{/if}}" data-tooltip="{{label}}" aria-label="{{label}}">
+        <i class="{{icon}} fhql-status-icon" inert></i><span>{{label}}</span></button>
+      {{/each}}
+    </div>
+    {{/if}}
   </div>
-  {{/if}}
 
-  {{#if quests.length}}
+  {{#if hasQuests}}
   <ul class="fhql-list-items">
-    {{#each quests}}
-    <li>
+    {{#each items}}
+    {{#if folder}}
+    <li class="fhql-folder-row {{#if collapsed}}is-collapsed{{/if}}" data-row="folder" data-folder-id="{{id}}" data-chain="{{chain}}"
+        {{#if @root.gm}}data-folder-drop="{{id}}"{{/if}} style="--fhql-depth: {{depth}}; --fhql-folder-color: {{#if color}}{{color}}{{else}}var(--fhql-rule){{/if}}">
+      <button type="button" class="fhql-folder" data-action="toggleFolder" aria-expanded="{{#if collapsed}}false{{else}}true{{/if}}"
+              {{#if outside}}data-tooltip="{{localize 'FHQL.Folders.OutsideHint'}}"{{/if}}>
+        <i class="fa-solid fa-chevron-down fhql-folder-chevron" inert></i>
+        <i class="fa-solid {{#if outside}}fa-circle-exclamation{{else}}fa-folder{{/if}} fhql-folder-icon" inert></i>
+        <span class="fhql-row-name">{{name}}</span>
+        <span class="fhql-row-status">{{count}}</span>
+      </button>
+    </li>
+    {{else}}
+    <li data-row="quest" data-status="{{status}}" data-search="{{search}}" data-chain="{{chain}}" data-uuid="{{uuid}}" draggable="true">
       <button type="button" class="fhql-row fhql-status-{{status}} {{#if selected}}is-selected{{/if}}" style="--fhql-depth: {{depth}}"
               data-action="selectQuest" data-quest-id="{{id}}" {{#if selected}}aria-current="true"{{/if}}>
-        <i class="fhql-status-icon {{statusIcon}}" inert></i>
+        <i class="fhql-status-icon {{statusIcon}}" data-tooltip="{{statusLabel}}" inert></i>
         <span class="fhql-row-name" data-tooltip="{{name}}">{{name}}</span>
         <span class="fhql-row-status">
           {{#if inProgress}}<i class="fa-solid fa-star fhql-in-progress" data-tooltip="{{localize 'FHQL.Quest.InProgress'}}" aria-label="{{localize 'FHQL.Quest.InProgress'}}"></i>{{/if}}
-          {{statusLabel}}
+          <span class="sr-only">{{statusLabel}}</span>
         </span>
       </button>
     </li>
+    {{/if}}
     {{/each}}
   </ul>
+  <p class="fhql-muted fhql-no-matches" hidden>{{localize "FHQL.Filter.NoMatches"}}</p>
   {{else}}
   <div class="fhql-empty">
     <p class="fhql-muted">{{localize "FHQL.QuestLog.Empty"}}</p>

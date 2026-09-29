@@ -7,7 +7,7 @@ import { QuestData } from './data/QuestData.js';
 import { QuestPageSheet } from './sheets/QuestPageSheet.js';
 import { QuestLog } from './apps/QuestLog.js';
 import { QuestSheetApp } from './apps/QuestSheetApp.js';
-import { questPage } from './data/quests.js';
+import { questPage, renameLegacyRootFolder } from './data/quests.js';
 import { registerEntryPoints } from './ui/entryPoints.js';
 import { refreshQuestBeacon } from './ui/QuestBeacon.js';
 
@@ -26,7 +26,11 @@ Hooks.once('init', () =>
    game.modules.get(MODULE_ID).api = api;
 });
 
-Hooks.once('ready', () => refreshQuestBeacon());
+Hooks.once('ready', () =>
+{
+   refreshQuestBeacon();
+   renameLegacyRootFolder();
+});
 Hooks.on('renderPlayers', () => refreshQuestBeacon());
 
 /** Re-render our UI when any quest changes, on any client. */
@@ -39,6 +43,10 @@ const refresh = (options, userId) =>
 
 for (const action of ['create', 'update', 'delete'])
 {
+   Hooks.on(`${action}Folder`, (folder, ...rest) =>
+   {
+      if (folder.type === 'JournalEntry') { QuestLog.instance.onQuestChanged(rest.at(-2), rest.at(-1)); }
+   });
    Hooks.on(`${action}JournalEntryPage`, (page, ...rest) =>
    {
       if (page.type === QUEST_TYPE || page.getFlag(MODULE_ID, 'gmNotes')) { refresh(rest.at(-2), rest.at(-1)); }

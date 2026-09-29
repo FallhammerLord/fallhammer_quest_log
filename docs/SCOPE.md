@@ -86,7 +86,6 @@ A quest log module for Foundry VTT that:
 ### 4.2 Later (v1.x)
 
 - `QuestAPI` shim matching FQL's public API for existing macros
-- Quest folders or categories
 - Chat cards for quest updates
 - Custom status sets
 - Export/import quests as JSON
@@ -269,6 +268,15 @@ Each is toggleable by the GM, separately for GMs and players.
 4. **Link redirect.** Any link to a quest's journal entry opens our Quest Sheet.
 5. **Hotbar drag.** Dragging a quest, or the log, to the hotbar creates a macro backed by our API. No macro compendium.
 6. **Hide from players** switch, like FQL's.
+
+### 7.3a Quest list organization (built 2026-09-29)
+
+- **Folders are Foundry journal folders** inside the root **FHQL Quests** folder (found by flag, so renaming is safe). Create, rename, color, and sort them in the journal sidebar or with the log's New folder button.
+- The list shows top-level quests first, then collapsible folder headers with counts. Subquests indent under parents within a folder. Players only see folders holding quests they can see.
+- Quests moved outside FHQL Quests appear in an "Outside FHQL Quests" group.
+- **Status filter chips** (icon-only, labeled for screen readers) and a **search box** filter the list without re-rendering. While searching, collapsed folders open.
+- Filters and collapsed folders are remembered per client.
+- GMs drag quest rows onto folder headers to move them, or use ⋮ → Move to folder. Rows drag as normal journal entries, so they also drop onto the hotbar or canvas.
 
 ### 7.4 Window form
 

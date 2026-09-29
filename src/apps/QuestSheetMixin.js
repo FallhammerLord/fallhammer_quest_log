@@ -2,8 +2,9 @@ import { DialogV2, DocumentOwnershipConfig, textEditor } from '../compat.js';
 import { MODULE_ID, STATUSES } from '../constants.js';
 import {
    addObjective, addRewardFromDocument, addTextReward, clearGiver, createSubquest, cycleObjective, deleteObjective,
-   deleteQuest, deleteReward, getQuestEntry, gmNotesPage, parentCandidates, questAccess, questPage, renameQuest,
-   setGiverFromDocument, setGmNotes, setParent, setStatus, subquests, updateQuest
+   deleteQuest, deleteReward, getQuestEntry, gmNotesPage, moveQuestToFolder, parentCandidates, questAccess, questPage,
+   questRootFolder, questSubfolders, renameQuest, setGiverFromDocument, setGmNotes, setParent, setStatus, subquests,
+   updateQuest
 } from '../data/quests.js';
 
 /** Update option marking a text edit made from this window, so it re-renders lightly and keeps focus. */
@@ -51,6 +52,7 @@ export function QuestSheetMixin(Base)
             showQuest: QuestSheet.#onShowQuest,
             addSubquest: QuestSheet.#onAddSubquest,
             setParent: QuestSheet.#onSetParent,
+            moveToFolder: QuestSheet.#onMoveToFolder,
             manageAccess: QuestSheet.#onManageAccess,
             popOut: QuestSheet.#onPopOut
          }
@@ -354,6 +356,31 @@ export function QuestSheetMixin(Base)
             rejectClose: false
          });
          if (parentId !== null && parentId !== undefined) { await setParent(entry, parentId); }
+      }
+
+      /** @this {QuestSheet} */
+      static async #onMoveToFolder()
+      {
+         const entry = this.questEntry;
+         if (!entry) { return; }
+         const escape = foundry.utils.escapeHTML;
+         const root = questRootFolder();
+         const current = entry.folder?.id;
+         const label = (folder) => [...folder.ancestors.filter((a) => a.id !== root?.id).reverse(), folder]
+          .map((f) => f.name).join(' / ');
+         const options = [`<option value="">${game.i18n.localize('FHQL.Folders.TopLevel')}</option>`,
+            ...questSubfolders().map((f) => ({ id: f.id, text: label(f) }))
+             .sort((a, b) => a.text.localeCompare(b.text))
+             .map((f) => `<option value="${f.id}" ${f.id === current ? 'selected' : ''}>${escape(f.text)}</option>`)];
+
+         const folderId = await DialogV2.prompt({
+            window: { title: 'FHQL.Folders.MoveTo' },
+            content: `<label class="fhql-dialog-field">${game.i18n.localize('FHQL.Folders.MoveTo')}
+               <select name="folder">${options.join('')}</select></label>`,
+            ok: { label: 'FHQL.Folders.MoveTo', callback: (e, button) => button.form.elements.folder.value },
+            rejectClose: false
+         });
+         if (folderId !== null && folderId !== undefined) { await moveQuestToFolder(entry, folderId); }
       }
 
       /** @this {QuestSheet} */

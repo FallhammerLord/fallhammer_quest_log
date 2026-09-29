@@ -68,17 +68,86 @@ function revealedOwnership()
    return game.settings.get(MODULE_ID, 'defaultOwnership');
 }
 
+/* ---------- Folders ---------- */
+
 /**
- * Finds or creates the journal folder that holds quests. GM only.
+ * The root journal folder for quests ("FHQL Quests"), found by flag so renaming it is safe.
+ * Quests and quest subfolders all live inside it.
  *
- * @returns {Promise<Folder|undefined>} The folder.
+ * @returns {Folder|undefined} The root folder, if it exists.
+ */
+export function questRootFolder()
+{
+   return game.folders.find((folder) => folder.type === 'JournalEntry' && folder.getFlag(MODULE_ID, 'quests'));
+}
+
+/**
+ * Finds or creates the root quest folder. GM only.
+ *
+ * @returns {Promise<Folder|undefined>} The root folder.
  */
 async function questFolder()
 {
-   const name = game.i18n.localize('FHQL.Folder');
-   const existing = game.folders.find((folder) => folder.type === 'JournalEntry' && folder.getFlag(MODULE_ID, 'quests'));
-   if (existing) { return existing; }
-   return Folder.implementation.create({ name, type: 'JournalEntry', flags: { [MODULE_ID]: { quests: true } } });
+   return questRootFolder() ?? Folder.implementation.create({
+      name: game.i18n.localize('FHQL.Folder'),
+      type: 'JournalEntry',
+      sorting: 'a',
+      flags: { [MODULE_ID]: { quests: true } }
+   });
+}
+
+/** Renames the root folder from the early default "Quests" to "FHQL Quests". GM only, runs once on ready. */
+export async function renameLegacyRootFolder()
+{
+   const root = questRootFolder();
+   if (game.user.isGM && root?.name === 'Quests') { await root.update({ name: game.i18n.localize('FHQL.Folder') }); }
+}
+
+/**
+ * @param {Folder} folder - A journal folder.
+ * @returns {boolean} Whether it is the root quest folder or inside it.
+ */
+function inQuestTree(folder)
+{
+   const root = questRootFolder();
+   if (!folder || !root) { return false; }
+   return folder.id === root.id || folder.ancestors.some((ancestor) => ancestor.id === root.id);
+}
+
+/**
+ * @returns {Folder[]} Every folder inside the root quest folder, excluding the root.
+ */
+export function questSubfolders()
+{
+   const root = questRootFolder();
+   return root ? game.folders.filter((folder) => folder.type === 'JournalEntry' && folder.id !== root.id && inQuestTree(folder)) : [];
+}
+
+/**
+ * Creates a folder inside the quest tree. GM only.
+ *
+ * @param {string} name - Folder name.
+ * @param {string} [parentId] - Parent folder ID; defaults to the root quest folder.
+ * @returns {Promise<Folder>} The new folder.
+ */
+export async function createQuestFolder(name, parentId)
+{
+   const root = await questFolder();
+   const parent = parentId && inQuestTree(game.folders.get(parentId)) ? parentId : root.id;
+   return Folder.implementation.create({ name: name.trim() || game.i18n.localize('FHQL.Folders.NewName'), type: 'JournalEntry', folder: parent });
+}
+
+/**
+ * Moves a quest into a folder in the quest tree. Refuses folders outside it.
+ *
+ * @param {JournalEntry} entry - The quest entry.
+ * @param {string} folderId - Target folder ID; '' or the root ID means the top level.
+ */
+export async function moveQuestToFolder(entry, folderId)
+{
+   const root = await questFolder();
+   const target = folderId && inQuestTree(game.folders.get(folderId)) ? folderId : root.id;
+   if (entry.folder?.id !== target) { await entry.update({ folder: target }); }
 }
 
 /**

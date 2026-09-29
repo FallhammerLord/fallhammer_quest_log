@@ -40,6 +40,12 @@ As a player (second browser or user):
 - Hidden objectives don't show.
 - Opening a quest from the journal sidebar shows a summary with **Open in Quest Log**.
 
+Folders and filters:
+- The journal folder is named **FHQL Quests** (an older "Quests" folder is renamed on load).
+- **New folder** (folder-plus icon) creates a folder inside it. Drag quest rows onto a folder header to move them, or use ⋮ → Move to folder.
+- Click a folder header to collapse it; the log remembers.
+- Status chips filter the list; the search box filters by name as you type.
+
 Entry points:
 - Journal tab shows a **Quest Log** button in its header, for GM and players.
 - Token controls show a scroll button; clicking it opens the log and leaves the Token tool active.
