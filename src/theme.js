@@ -6,6 +6,17 @@ const THEME_CLASSES = Object.values(THEMES).map((theme) => `fhql-theme-${theme}`
 const openApps = new Set();
 
 /**
+ * Unsaved choices from the open settings window, shown on open windows as a live preview.
+ * Keys are setting names (`theme`, `worldTheme`, `headingFont`, ...). Cleared when that window closes.
+ *
+ * @type {Record<string, string>}
+ */
+let preview = {};
+
+/** @param {string} key - A theme or font setting. @returns {string} Its previewed value, else the saved one. */
+const setting = (key) => preview[key] ?? game.settings.get(MODULE_ID, key);
+
+/**
  * The theme in effect for this client: their own choice, or the GM's world default when they chose
  * "Use world theme" (the default).
  *
@@ -14,9 +25,9 @@ const openApps = new Set();
 export function currentTheme()
 {
    const valid = (theme) => THEME_CLASSES.includes(`fhql-theme-${theme}`);
-   const own = game.settings.get(MODULE_ID, 'theme');
+   const own = setting('theme');
    if (valid(own)) { return own; }
-   const world = game.settings.get(MODULE_ID, 'worldTheme');
+   const world = setting('worldTheme');
    return valid(world) ? world : THEMES.auto;
 }
 
@@ -43,9 +54,9 @@ export function applyTheme(element)
  */
 export function currentFont(role)
 {
-   const own = game.settings.get(MODULE_ID, `${role}Font`);
+   const own = setting(`${role}Font`);
    if (own !== 'world') { return own; }
-   return game.settings.get(MODULE_ID, `world${role === 'heading' ? 'Heading' : 'Body'}Font`);
+   return setting(`world${role === 'heading' ? 'Heading' : 'Body'}Font`);
 }
 
 /**
@@ -75,4 +86,17 @@ export function untrackApp(app) { openApps.delete(app); }
 export function refreshOpenApps()
 {
    for (const app of openApps) { applyTheme(app.element); }
+}
+
+/**
+ * Previews unsaved theme and font choices on open windows and the Beacon, or ends the preview.
+ *
+ * @param {Record<string, string>|null} values - Setting name to chosen value, or null to show saved settings.
+ */
+export function previewTheme(values)
+{
+   preview = values ?? {};
+   refreshOpenApps();
+   const beacon = document.getElementById(`${MODULE_ID}-beacon`);
+   if (beacon) { applyTheme(beacon); }
 }

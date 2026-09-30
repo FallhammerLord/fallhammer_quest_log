@@ -4,12 +4,12 @@
  * windows for quick choices. See docs/SCOPE.md 7.4b.
  *
  * Each panel closes on Esc, on a click outside, or when its window closes, and returns focus to the
- * control that opened it. Only one is open per window.
+ * control that opened it. Only one is open per window. Activating the same control again closes it.
  */
 
 const escape = (value) => foundry.utils.escapeHTML(String(value ?? ''));
 
-/** @type {WeakMap<HTMLElement, Function>} Close function for each window's open panel. */
+/** @type {WeakMap<HTMLElement, { done: Function, anchor: unknown }>} Each window's open panel: its close function and opener. */
 const openPanels = new WeakMap();
 
 /**
@@ -27,7 +27,10 @@ function openPanel(app, anchor, html, wire, { label, role = 'dialog' })
 {
    const host = app instanceof HTMLElement ? app : app.element;
    const fixed = app instanceof HTMLElement;
-   openPanels.get(host)?.(null);
+   const open = openPanels.get(host);
+   open?.done(null);
+   // The same control again is a toggle: the open panel is closed and nothing reopens.
+   if (open && anchor instanceof HTMLElement && open.anchor === anchor) { return Promise.resolve(null); }
 
    const returnFocus = anchor instanceof HTMLElement ? anchor : document.activeElement;
    const panel = document.createElement('div');
@@ -52,14 +55,20 @@ function openPanel(app, anchor, html, wire, { label, role = 'dialog' })
          if (returnFocus?.isConnected) { returnFocus.focus(); }
          resolve(value);
       };
-      const onOutside = (event) => { if (!panel.contains(event.target)) { done(null); } };
+      // A press on the opener is left to its click, which closes the panel as a toggle.
+      const onOutside = (event) =>
+      {
+         if (panel.contains(event.target)) { return; }
+         if (anchor instanceof HTMLElement && anchor.contains(event.target)) { return; }
+         done(null);
+      };
 
       panel.addEventListener('keydown', (event) =>
       {
          if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); done(null); }
       });
       document.addEventListener('pointerdown', onOutside, true);
-      openPanels.set(host, done);
+      openPanels.set(host, { done, anchor });
       wire(panel, done);
       (panel.querySelector('[autofocus]') ?? panel.querySelector('button, input, select'))?.focus();
    });

@@ -4,6 +4,8 @@
  * Paths checked against the v14 community type definitions (build 14.366).
  */
 
+import { MODULE_ID } from './constants.js';
+
 /** ApplicationV2 base class, Handlebars mixin, and dialogs. */
 export const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 
@@ -79,6 +81,28 @@ export function playerRowElement(players)
 {
    return players?.querySelector('li.player, [data-user-id]') ?? null;
 }
+
+/**
+ * The settings window's form fields for some of this module's settings, keyed by setting name.
+ * Core names each field `<namespace>.<key>`.
+ *
+ * @param {HTMLElement} element - The settings window's root element.
+ * @param {string[]} keys - Setting names.
+ * @returns {Record<string, HTMLInputElement|HTMLSelectElement>} Fields present in the window.
+ */
+export function settingsFormFields(element, keys)
+{
+   const found = {};
+   for (const key of keys)
+   {
+      const field = element?.querySelector(`[name="${MODULE_ID}.${key}"]`);
+      if (field) { found[key] = field; }
+   }
+   return found;
+}
+
+/** Hook names for the core settings window opening and closing. */
+export const SETTINGS_WINDOW_HOOKS = { render: 'renderSettingsConfig', close: 'closeSettingsConfig' };
 
 /** Name of the scene control group our button joins. */
 export const SCENE_CONTROL_GROUP = 'tokens';

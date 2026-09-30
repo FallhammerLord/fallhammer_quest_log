@@ -10,6 +10,7 @@ import { QuestSheetApp } from './apps/QuestSheetApp.js';
 import { questPage, renameLegacyRootFolder } from './data/quests.js';
 import { registerEntryPoints } from './ui/entryPoints.js';
 import { refreshQuestBeacon } from './ui/QuestBeacon.js';
+import { registerSettingsPreview } from './ui/settingsPreview.js';
 import { registerRewardDrop, registerRewardQueries } from './data/rewards.js';
 import { registerLifecycleHooks } from './data/lifecycle.js';
 import { registerPlayerActionQueries } from './data/playerActions.js';
@@ -30,6 +31,7 @@ Hooks.once('init', () =>
    registerRewardDrop();
    registerLifecycleHooks();
    registerPlayerActionQueries();
+   registerSettingsPreview();
    game.modules.get(MODULE_ID).api = api;
 });
 

@@ -33,28 +33,43 @@
   --fhql-list-texture: linear-gradient(rgb(110 80 40 / 0.14), rgb(110 80 40 / 0.14)), url("../../../ui/parchment.jpg");
 }
 
-/* ---------- Tokens: Dark (neutral charcoal; Foundry's parchment as a faint grain) ---------- */
+/* ---------- Tokens: Dark (coffee and chocolate; faint art-deco fans) ---------- */
 .fhql-app.fhql-theme-dark,
 .fhql-app.fhql-theme-auto.theme-dark,
 body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
-  --fhql-surface: #1c1d20;
-  --fhql-surface-raised: #26282c;
-  --fhql-surface-sunken: #141518;
-  --fhql-ink: #e8e5de;
-  --fhql-ink-muted: #aaa69d;
-  --fhql-rule: #40434a;
-  --fhql-hover: rgb(255 255 255 / 0.06);
+  --fhql-surface: #1e1812;
+  --fhql-surface-raised: #2a221a;
+  --fhql-surface-sunken: #15110c;
+  --fhql-ink: #eadfc8;
+  --fhql-ink-muted: #b3a58a;
+  --fhql-rule: #4a3d2c;
+  --fhql-hover: rgb(255 200 120 / 0.08);
   --fhql-accent: #e0a054;
-  --fhql-accent-ink: #1c1d20;
+  --fhql-accent-ink: #1e1812;
   --fhql-status-hidden: #9a8f80;
   --fhql-status-available: #e0c070;
   --fhql-status-active: #7fb2e5;
   --fhql-status-completed: #8cc98c;
   --fhql-status-failed: #e38a7a;
-  /* A charcoal veil over the parchment: texture shows as grain with only a hint of tan. */
-  --fhql-texture: linear-gradient(rgb(28 29 32 / 0.8), rgb(28 29 32 / 0.8)), url("../../../ui/parchment.jpg");
+  /* Seigaiha-style fans: gold arcs, each fan filled with the surface so lower rows overlap upper ones. */
+  --fhql-deco-gold: rgb(224 160 84 / 0.075);
+  --fhql-deco-fan: var(--fhql-surface) 0 8px, var(--fhql-deco-gold) 8px 9px,
+    var(--fhql-surface) 9px 15px, var(--fhql-deco-gold) 15px 16px,
+    var(--fhql-surface) 16px 22px, var(--fhql-deco-gold) 22px 23px,
+    var(--fhql-surface) 23px 26.5px, var(--fhql-deco-gold) 26.5px 28px, transparent 28px;
+  --fhql-texture:
+    radial-gradient(circle at 0 56px, var(--fhql-deco-fan)),
+    radial-gradient(circle at 56px 56px, var(--fhql-deco-fan)),
+    radial-gradient(circle at 28px 28px, var(--fhql-deco-fan)),
+    radial-gradient(circle at 0 0, var(--fhql-deco-fan)),
+    radial-gradient(circle at 56px 0, var(--fhql-deco-fan));
+  --fhql-texture-size: 56px 56px;
   --fhql-texture-blend: normal;
-  --fhql-list-texture: linear-gradient(rgb(18 19 22 / 0.84), rgb(18 19 22 / 0.84)), url("../../../ui/parchment.jpg");
+  /* The quest list: deco pinstripes (a double line every 28px) over a faint diamond lattice. */
+  --fhql-list-texture:
+    repeating-linear-gradient(90deg, rgb(224 160 84 / 0.07) 0 1px, transparent 1px 4px, rgb(224 160 84 / 0.07) 4px 5px, transparent 5px 28px),
+    repeating-linear-gradient(60deg, rgb(224 160 84 / 0.03) 0 1px, transparent 1px 14px),
+    repeating-linear-gradient(-60deg, rgb(224 160 84 / 0.03) 0 1px, transparent 1px 14px);
 }
 
 /* ---------- Tokens: Sci-fi ---------- */
@@ -105,6 +120,7 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
   font-family: var(--fhql-font-body);
   background-color: var(--fhql-surface);
   background-image: var(--fhql-texture);
+  background-size: var(--fhql-texture-size, auto);
   background-blend-mode: var(--fhql-texture-blend);
 }
 
@@ -619,6 +635,7 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
   color: var(--fhql-ink);
   background: var(--fhql-surface);
   background-image: var(--fhql-texture);
+  background-size: var(--fhql-texture-size, auto);
   background-blend-mode: var(--fhql-texture-blend);
   border: 1px solid var(--fhql-rule);
   border-radius: var(--fhql-radius);
