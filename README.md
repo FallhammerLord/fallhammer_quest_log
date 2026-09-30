@@ -2,9 +2,19 @@
 
 A quest log for Foundry VTT v14 with light, dark, and sci-fi themes, and import from Forien's Quest Log.
 
-**Status:** early development (milestone 2, data model). Quests can be created and edited; the editor is basic until milestone 3.
+**Status:** feature-complete preview (0.3.0). Requires Foundry VTT v14. See [CHANGELOG.md](CHANGELOG.md).
 
 Scope, design, and decisions live in [`docs/SCOPE.md`](docs/SCOPE.md).
+
+## Install
+
+In Foundry: **Add-on Modules → Install Module**, paste this manifest URL, and install:
+
+```
+https://github.com/FallhammerLord/fallhammer_quest_log/releases/latest/download/module.json
+```
+
+This works once a GitHub release has been published (see Releasing below).
 
 ## Try it (development)
 
@@ -105,3 +115,9 @@ npm run layout     # renders templates at many widths, fails on text overflow
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+## Releasing
+
+1. Update `CHANGELOG.md`.
+2. On GitHub, draft a release with a tag like `v0.3.0` and publish it.
+3. The Release workflow runs the checks, stamps the version into `module.json`, and attaches `module.json` and `module.zip` to the release.

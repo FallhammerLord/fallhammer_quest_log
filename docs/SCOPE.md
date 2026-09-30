@@ -475,7 +475,7 @@ Test and document behavior with:
 7. **FQL import.** *Built 2026-09-29; tested on real FQL data by the user, 2026-09-29.*
 8. **Sharing.** Compendiums, Adventures, map pins.
 9. **Theme polish.** Dark and Sci-fi, contrast audit.
-10. **Docs and release prep.** Checked against section 10.
+10. **Docs and release prep.** Checked against section 10. *Release workflow, changelog, issue templates, and install docs added 2026-09-30; version 0.3.0. Screenshots and user guide still to do.*
 11. **v1.0 release.**
 
 ## 12. Decided
