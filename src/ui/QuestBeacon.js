@@ -5,6 +5,7 @@ import { questAccess, questPage } from '../data/quests.js';
 import { beaconChoice, beaconQuests, setBeaconChoice } from '../data/tracking.js';
 import { menuPopover } from './popover.js';
 import { questLogAvailable } from '../data/playerActions.js';
+import { playerOwned } from '../data/rewards.js';
 import { applyTheme } from '../theme.js';
 
 const WIDGET_ID = 'fhql-beacon';
@@ -140,7 +141,7 @@ function renderWidget({ entry, party }, marked)
          data-tooltip="${localize('FHQL.Beacon.Choose')}">${marked.length}<i class="fa-solid fa-chevron-up" inert></i></button>`
     : '';
    const label = game.i18n.format('FHQL.Beacon.Label', { name: entry.name });
-   const hasRewards = !access.gm && access.full && Object.values(system.rewards).some((r) =>
+   const hasRewards = !access.gm && access.full && !playerOwned(entry) && Object.values(system.rewards).some((r) =>
       (r.type === 'item' || r.type === 'actor') && r.uuid && !r.hidden && !r.locked
       && (r.claimLimit === 'perPlayer' ? !r.claims.some((c) => c.userId === game.user.id) : r.claims.length === 0));
    const gift = hasRewards

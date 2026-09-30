@@ -67,9 +67,10 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
    }
 
    /** @override */
-   showQuest(id)
+   showQuest(id, { edit = false } = {})
    {
       this.select(id);
+      if (edit) { this._editing = true; }
       this.render();
    }
 

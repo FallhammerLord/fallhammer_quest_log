@@ -220,12 +220,15 @@
         "Locked": "That reward isn't available to claim yet.",
         "AlreadyClaimed": "That reward has already been claimed.",
         "SourceMissing": "The original item or actor no longer exists.",
-        "NotOwner": "You don't own that character."
+        "NotOwner": "You don't own that character.",
+        "PlayerOwned": "A player owns this quest, so the GM hands out its rewards.",
+        "CompendiumActor": "Actor rewards must be world actors. Import the actor from its compendium first."
       },
       "GiveTo": "Give {reward} to",
       "ClaimFor": "Claim {reward} for",
       "RemoveItem": "Remove item",
-      "KeepItem": "Keep item"
+      "KeepItem": "Keep item",
+      "GMHandsOut": "The GM hands out this reward"
     },
     "Drop": {
       "Rejected": {

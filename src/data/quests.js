@@ -262,7 +262,7 @@ export async function setStatus(entry, status)
    if (status === 'active') { Object.assign(changes, { 'system.dates.started': now, 'system.dates.ended': null }); }
    if (status === 'completed' || status === 'failed') { changes['system.dates.ended'] = now; }
 
-   if (status === 'completed' && game.user.isGM && game.settings.get(MODULE_ID, 'autoUnlockRewards'))
+   if (status === 'completed' && page.canUserModify(game.user, 'update') && game.settings.get(MODULE_ID, 'autoUnlockRewards'))
    {
       for (const [id, reward] of Object.entries(page.system.rewards))
       {
@@ -376,6 +376,12 @@ function nextSort(collection)
 export async function addRewardFromDocument(entry, doc)
 {
    if (!REWARD_DOC_TYPES.includes(doc?.documentName)) { return false; }
+   // An actor reward hands the actor itself to a player, which can't be done to a compendium actor.
+   if (doc.documentName === 'Actor' && doc.pack)
+   {
+      ui.notifications.warn(game.i18n.localize('FHQL.Reward.Error.CompendiumActor'));
+      return true;
+   }
    const rewards = questPage(entry).system.rewards;
    await updateQuest(entry, {
       [`system.rewards.${foundry.utils.randomID()}`]: {

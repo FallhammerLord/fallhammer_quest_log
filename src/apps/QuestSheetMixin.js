@@ -4,7 +4,7 @@ import { isTracked, toggleTracked } from '../data/tracking.js';
 import { canAccept, canChangeStatusAsPlayer, canEditNotesViaGM, requestPlayerAction } from '../data/playerActions.js';
 import { MODULE_ID, STATUSES } from '../constants.js';
 import {
-   claimLabel, claimedItem, claimsExhausted, claimTargets, isClaimable, recipientOptions, requestClaim, undoClaim
+   claimLabel, claimedItem, claimsExhausted, claimTargets, isClaimable, playerOwned, recipientOptions, requestClaim, undoClaim
 } from '../data/rewards.js';
 import {
    addObjective, addRewardFromDocument, addTextReward, clearGiver, createSubquest, cycleObjective, deleteObjective,
@@ -228,8 +228,9 @@ export function QuestSheetMixin(Base)
        * Shows another quest. Subclasses override.
        *
        * @param {string} _id - Quest to show.
+       * @param {{ edit?: boolean }} [_options] - Open it in edit mode.
        */
-      showQuest(_id) {}
+      showQuest(_id, _options) {}
 
       /** @returns {JournalEntry|undefined} The quest shown. */
       get questEntry() { return getQuestEntry(this.questId); }
@@ -258,6 +259,7 @@ export function QuestSheetMixin(Base)
           .map((o) => ({ ...o, icon: OBJECTIVE_ICONS[o.state], stateLabel: localize(`FHQL.Objective.${o.state}`) })) : [];
 
          const userId = game.user.id;
+         const gmHandsOut = playerOwned(entry);
          const rewards = access.full ? Object.entries(system.rewards)
           .map(([id, r]) =>
           {
@@ -272,11 +274,12 @@ export function QuestSheetMixin(Base)
                 struck: exhaustedForAll || (!access.gm && mine && r.type === 'item'),
                 claimsList: r.claims.map((c, index) => ({ index, label: claimLabel(c) })),
                 perPlayer: r.claimLimit === 'perPlayer',
-                canClaim: !access.gm && claimable && !r.locked && !mine
+                gmHandsOut: !access.gm && claimable && gmHandsOut && !mine,
+                canClaim: !access.gm && claimable && !gmHandsOut && !r.locked && !mine
                  && (r.type === 'actor' || claimTargets(game.user).length > 0),
-                showLocked: !access.gm && claimable && r.locked,
+                showLocked: !access.gm && claimable && r.locked && !gmHandsOut,
                 canGive: access.gm && claimable && !exhaustedForAll,
-                draggable: claimable && r.type === 'item' && (access.gm ? !exhaustedForAll : (!r.locked && !mine)),
+                draggable: claimable && r.type === 'item' && (access.gm ? !exhaustedForAll : (!r.locked && !mine && !gmHandsOut)),
                 claimVerb: game.i18n.localize(r.type === 'actor' ? 'FHQL.Reward.Recruit' : 'FHQL.Reward.Claim')
              };
           })
@@ -647,9 +650,7 @@ export function QuestSheetMixin(Base)
          const entry = this.questEntry;
          if (!entry) { return; }
          const child = await createSubquest(entry);
-         this.showQuest(child.id);
-         this._editing = true;
-         this.render();
+         this.showQuest(child.id, { edit: true });
       }
 
 

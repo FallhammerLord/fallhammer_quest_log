@@ -219,6 +219,8 @@ Rewards that are Foundry documents can be claimed, not just read. Text rewards s
 
 **As built (2026-09-29):** Claim / Recruit for players (straight onto the assigned character, or a picker), Give for GMs (player and character picker), lock/unlock and eye toggles in the read view, per-reward "once / each player" in edit mode, strike-through and "Claimed by…" with GM Undo, "n of m claimed" on the heading, drag onto a character sheet claims through the same path (`dropActorSheetData`), chat card, Beacon gift icon, auto-unlock on Completed, and a setting for the access actor rewards grant. `locked` is kept rather than renamed to `claimable`.
 
+**Review fixes (2026-09-29):** requests naming a GM are refused (a player could otherwise pose as one and pass every check); players can't claim from quests a player owns, since an owner can edit the rewards (the GM uses Give); claims run one at a time on the GM client; owners completing a quest also auto-unlock its rewards; actor rewards must be world actors, not compendium ones.
+
 Known limit: the v14 query API doesn't tell the GM client which user sent a request, so a player could in principle claim on another player's behalf. The GM side still checks visibility, lock state, claim limits, and character ownership against the named player.
 
 **Data added to each reward:** `claimable` (replaces `locked`), `claimLimit` ('once' | 'perPlayer'), `claims` (list of { userId, actorUuid, itemUuid, at }).

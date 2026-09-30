@@ -133,6 +133,34 @@ export async function requestClaim(entry, rewardId, recipient)
 }
 
 /**
+ * @param {JournalEntry} entry - A quest entry.
+ * @returns {boolean} Whether any player owns the quest. A player owner can edit its rewards, so
+ *   players may not claim from it; the GM hands those rewards out with Give.
+ */
+export function playerOwned(entry)
+{
+   return Object.entries(entry.ownership).some(([id, level]) =>
+      level >= OWNER && (id === 'default' || !game.users.get(id)?.isGM));
+}
+
+/** Claims run one at a time on the GM client, so two claims can't both take a one-time reward. */
+let claimQueue = Promise.resolve();
+
+/**
+ * GM side of a claim, queued. See #claimNow.
+ *
+ * @param {object} data - Request.
+ * @param {{ force?: boolean }} [options] - Options.
+ * @returns {Promise<{ ok: boolean, message: string }>} Outcome.
+ */
+function performClaim(data, options = {})
+{
+   const run = claimQueue.then(() => claimNow(data, options));
+   claimQueue = run.catch(() => {});
+   return run;
+}
+
+/**
  * GM side of a claim. Validates, copies the item or grants ownership, records the claim, posts a
  * chat card.
  *
@@ -140,7 +168,7 @@ export async function requestClaim(entry, rewardId, recipient)
  * @param {{ force?: boolean }} [options] - `force` skips lock and hidden checks (GM giving directly).
  * @returns {Promise<{ ok: boolean, message: string }>} Outcome.
  */
-async function performClaim(data, { force = false } = {})
+async function claimNow(data, { force = false } = {})
 {
    const fail = (key) => ({ ok: false, message: game.i18n.localize(`FHQL.Reward.Error.${key}`) });
    if (!game.user.isGM) { return fail('NotGM'); }
@@ -150,13 +178,18 @@ async function performClaim(data, { force = false } = {})
    const reward = page?.system.rewards[data.rewardId];
    const user = game.users.get(data.userId);
    if (!entry || !reward || !user) { return fail('NotFound'); }
+   // A request naming a GM can only come from a player posing as one: GMs give rewards directly
+   // (force), and a GM owns every character, so the ownership check would pass for any target.
+   if (!force && user.isGM) { return fail('NotOwner'); }
    if (!isClaimable(reward)) { return fail('NotClaimable'); }
+   if (!force && playerOwned(entry)) { return fail('PlayerOwned'); }
    if (!force && (!questAccess(entry, user).full || reward.hidden || reward.locked)) { return fail('Locked'); }
    if (claimsExhausted(reward, user.id)) { return fail('AlreadyClaimed'); }
 
    const claim = { userId: user.id, actorUuid: '', itemUuid: '', prevLevel: null, at: Date.now() };
    const source = await fromUuid(reward.uuid);
    if (!source) { return fail('SourceMissing'); }
+   if (reward.type === 'actor' && source.pack) { return fail('CompendiumActor'); }
 
    if (reward.type === 'item')
    {

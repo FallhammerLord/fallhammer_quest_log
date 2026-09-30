@@ -100,8 +100,10 @@ async function performPlayerAction(data)
 {
    const refuse = (key) => ({ ok: false, message: game.i18n.localize(`FHQL.Player.Refused.${key}`) });
    if (!game.user.isGM) { return refuse('NotGM'); }
+   // Requests come from players and name their sender, which the query API can't verify. A request
+   // naming a GM is never genuine (GMs act directly), and would pass every permission check.
    const user = game.users.get(data.userId);
-   if (!user) { return refuse('NotAllowed'); }
+   if (!user || user.isGM) { return refuse('NotAllowed'); }
 
    if (data.action === 'create')
    {

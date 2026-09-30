@@ -4,6 +4,7 @@ import { applyTheme, trackApp, untrackApp } from '../theme.js';
 import { clampToMinSize } from './minSize.js';
 import { getQuestEntry } from '../data/quests.js';
 import { QuestSheetMixin } from './QuestSheetMixin.js';
+import { QuestLog } from './QuestLog.js';
 
 /** A quest sheet in its own window, for a second monitor or side-by-side reading. One per quest. */
 export class QuestSheetApp extends QuestSheetMixin(HandlebarsApp)
@@ -72,9 +73,15 @@ export class QuestSheetApp extends QuestSheetMixin(HandlebarsApp)
    get title() { return this.questEntry?.name ?? game.i18n.localize('FHQL.QuestLog.Title'); }
 
    /** Navigating from a pop-out opens the target quest in the Quest Log. */
-   showQuest(id)
+   showQuest(id, { edit = false } = {})
    {
-      game.modules.get('fhql').api.openQuestLog(id);
+      const api = game.modules.get('fhql').api;
+      if (!edit) { api.openQuestLog(id); return; }
+      const log = QuestLog.instance;
+      log.select(id);
+      log._editing = true;
+      api.openQuestLog();
+      if (log.rendered) { log.render(); }
    }
 
    /** @override */
