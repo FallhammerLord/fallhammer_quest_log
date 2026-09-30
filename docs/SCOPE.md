@@ -255,7 +255,8 @@ Known limit: the v14 query API doesn't tell the GM client which user sent a requ
 ### 6.3 Themes
 
 - **Light:** parchment feel, close to FQL.
-- **Dark:** neutral charcoal (retuned 2026-09-30 from a coffee tone), amber accent, Foundry's parchment texture kept as a faint grain under a 90% charcoal veil.
+- **Dark:** neutral charcoal (retuned 2026-09-30 from a coffee tone), amber accent, Foundry's parchment texture as grain under an 80% charcoal veil.
+- **Quest list textures** (2026-09-30): Light a darker aged parchment strip; Dark a deeper charcoal grain; Sci-fi an instrument-panel grid with scanlines.
 - **Sci-fi:** dark panels over a faint diamond-knurl texture with a soft sheen, chamfered corners whose borders run unbroken along the cut (2026-09-30), monospace headings. Changes shape as well as color.
 - **Fonts** (2026-09-30): not bundled. The GM picks heading and body fonts for the world from any font Foundry has (including uploads under Core's Additional Fonts); players can override per device. "Theme default" keeps each theme's own. The layout test runs a wide monospace font to confirm sheets adapt.
 - Chat cards follow Foundry's chat styling, by decision.

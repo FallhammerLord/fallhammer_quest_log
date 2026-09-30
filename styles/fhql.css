@@ -29,6 +29,8 @@
   --fhql-glow: none;
   --fhql-texture: url("../../../ui/parchment.jpg");
   --fhql-texture-blend: normal;
+  /* The quest list sits on a darker, aged strip of the same parchment. */
+  --fhql-list-texture: linear-gradient(rgb(110 80 40 / 0.14), rgb(110 80 40 / 0.14)), url("../../../ui/parchment.jpg");
 }
 
 /* ---------- Tokens: Dark (neutral charcoal; Foundry's parchment as a faint grain) ---------- */
@@ -49,9 +51,10 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
   --fhql-status-active: #7fb2e5;
   --fhql-status-completed: #8cc98c;
   --fhql-status-failed: #e38a7a;
-  /* A 90% charcoal veil over the parchment: texture survives as grain, its tan barely shows. */
-  --fhql-texture: linear-gradient(rgb(28 29 32 / 0.9), rgb(28 29 32 / 0.9)), url("../../../ui/parchment.jpg");
+  /* A charcoal veil over the parchment: texture shows as grain with only a hint of tan. */
+  --fhql-texture: linear-gradient(rgb(28 29 32 / 0.8), rgb(28 29 32 / 0.8)), url("../../../ui/parchment.jpg");
   --fhql-texture-blend: normal;
+  --fhql-list-texture: linear-gradient(rgb(18 19 22 / 0.84), rgb(18 19 22 / 0.84)), url("../../../ui/parchment.jpg");
 }
 
 /* ---------- Tokens: Sci-fi ---------- */
@@ -80,6 +83,11 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
     repeating-linear-gradient(45deg, rgb(52 228 255 / 0.045) 0 1px, transparent 1px 9px),
     repeating-linear-gradient(-45deg, rgb(52 228 255 / 0.045) 0 1px, transparent 1px 9px);
   --fhql-texture-blend: normal;
+  /* The quest list reads as an instrument panel: fine scanlines over a coarse grid. */
+  --fhql-list-texture:
+    repeating-linear-gradient(0deg, rgb(52 228 255 / 0.035) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgb(52 228 255 / 0.05) 0 1px, transparent 1px 24px),
+    repeating-linear-gradient(0deg, rgb(52 228 255 / 0.05) 0 1px, transparent 1px 24px);
 }
 
 /* ---------- Window ---------- */
@@ -158,7 +166,8 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
 .fhql-list {
   overflow-y: auto;
   padding: 0.5em;
-  background: var(--fhql-surface-sunken);
+  background-color: var(--fhql-surface-sunken);
+  background-image: var(--fhql-list-texture, none);
   border-inline-end: 1px solid var(--fhql-rule);
 }
 
