@@ -255,8 +255,10 @@ Known limit: the v14 query API doesn't tell the GM client which user sent a requ
 ### 6.3 Themes
 
 - **Light:** parchment feel, close to FQL.
-- **Dark:** candlelit parchment. Texture multiplied over a deep base, warm ink.
-- **Sci-fi:** flat dark panels, thin glowing rules, chamfered corners via `clip-path`, a monospace or technical font. Changes shape as well as color.
+- **Dark:** neutral charcoal (retuned 2026-09-30 from a coffee tone), amber accent, Foundry's parchment texture kept as a faint grain under a 90% charcoal veil.
+- **Sci-fi:** dark panels over a faint diamond-knurl texture with a soft sheen, chamfered corners whose borders run unbroken along the cut (2026-09-30), monospace headings. Changes shape as well as color.
+- **Fonts** (2026-09-30): not bundled. The GM picks heading and body fonts for the world from any font Foundry has (including uploads under Core's Additional Fonts); players can override per device. "Theme default" keeps each theme's own. The layout test runs a wide monospace font to confirm sheets adapt.
+- Chat cards follow Foundry's chat styling, by decision.
 
 ### 6.4 Accessibility rules
 
@@ -474,7 +476,7 @@ Test and document behavior with:
 6. **Player workflows.** GM relay, accept, create, reward dragging. *Built 2026-09-29: claiming, accept, propose, trusted status, shared player notes, player entry-point toggles, hide from players.*
 7. **FQL import.** *Built 2026-09-29; tested on real FQL data by the user, 2026-09-29.*
 8. **Sharing.** Compendiums, Adventures, map pins.
-9. **Theme polish.** Dark and Sci-fi, contrast audit.
+9. **Theme polish.** Dark and Sci-fi, contrast audit. *2026-09-30: Dark retuned, sci-fi texture and clean corners, font choice from Foundry's fonts, themed scrollbars and dropdowns. Still open: window title bar theming, extended contrast checks for buttons and states.*
 10. **Docs and release prep.** Checked against section 10. *Release workflow, changelog, issue templates, and install docs added 2026-09-30; version 0.3.0. Screenshots and user guide still to do.*
 11. **v1.0 release.**
 
@@ -492,7 +494,6 @@ Test and document behavior with:
 ## 13. Open decisions
 
 - Confirm the permission map (5.6).
-- Sci-fi fonts and whether to bundle them.
 - Whether the `QuestAPI` shim ships in v1.0 or later.
 - Whether quest entries show in the journal sidebar for players, or only through our UI.
 - Whether the Tracker ships in v1.0, given the Quest Beacon covers the glance use.

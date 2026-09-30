@@ -1,5 +1,6 @@
 import { MODULE_ID, THEMES } from './constants.js';
 import { refreshOpenApps } from './theme.js';
+import { availableFonts } from './compat.js';
 import { refreshQuestBeacon } from './ui/QuestBeacon.js';
 
 /** Registers module settings. Called on `init`. */
@@ -38,6 +39,46 @@ export function registerSettings()
       default: 'world',
       onChange: restyle
    });
+
+   // Font choices are filled on ready, once uploaded fonts are known. The same objects are kept, so
+   // the settings window lists them.
+   const worldFontChoices = { '': 'FHQL.Settings.Font.ThemeDefault' };
+   const ownFontChoices = { world: 'FHQL.Settings.Font.World', '': 'FHQL.Settings.Font.ThemeDefault' };
+   Hooks.once('ready', () =>
+   {
+      for (const [family, label] of Object.entries(availableFonts()))
+      {
+         worldFontChoices[family] = label;
+         ownFontChoices[family] = label;
+      }
+   });
+   for (const role of ['Heading', 'Body'])
+   {
+      game.settings.register(MODULE_ID, `world${role}Font`, {
+         name: `FHQL.Settings.Font.World${role}.Name`,
+         hint: 'FHQL.Settings.Font.WorldHint',
+         scope: 'world',
+         config: true,
+         type: String,
+         choices: worldFontChoices,
+         default: '',
+         onChange: restyle
+      });
+   }
+   for (const role of ['heading', 'body'])
+   {
+      game.settings.register(MODULE_ID, `${role}Font`, {
+         name: `FHQL.Settings.Font.Own${role === 'heading' ? 'Heading' : 'Body'}.Name`,
+         hint: 'FHQL.Settings.Font.OwnHint',
+         scope: 'client',
+         config: true,
+         type: String,
+         choices: ownFontChoices,
+         default: 'world',
+         onChange: restyle
+      });
+   }
+
 
    game.settings.register(MODULE_ID, 'showInProgress', {
       name: 'FHQL.Settings.ShowInProgress.Name',

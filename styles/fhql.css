@@ -19,8 +19,11 @@
   --fhql-status-active: #1f5f9e;
   --fhql-status-completed: #2e6b2e;
   --fhql-status-failed: #9b2020;
-  --fhql-font-body: var(--font-body, "Signika", sans-serif);
-  --fhql-font-heading: var(--font-body, "Signika", sans-serif);
+  /* Each theme sets the -theme fonts; a GM or player font choice overrides the plain tokens inline. */
+  --fhql-font-body-theme: var(--font-body, "Signika", sans-serif);
+  --fhql-font-heading-theme: var(--font-body, "Signika", sans-serif);
+  --fhql-font-body: var(--fhql-font-body-theme);
+  --fhql-font-heading: var(--fhql-font-heading-theme);
   --fhql-radius: 4px;
   --fhql-chamfer: 0px;
   --fhql-glow: none;
@@ -28,25 +31,27 @@
   --fhql-texture-blend: normal;
 }
 
-/* ---------- Tokens: Dark (candlelit parchment) ---------- */
+/* ---------- Tokens: Dark (neutral charcoal; Foundry's parchment as a faint grain) ---------- */
 .fhql-app.fhql-theme-dark,
 .fhql-app.fhql-theme-auto.theme-dark,
 body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
-  --fhql-surface: #1e1812;
-  --fhql-surface-raised: #2a221a;
-  --fhql-surface-sunken: #15110c;
-  --fhql-ink: #eadfc8;
-  --fhql-ink-muted: #b3a58a;
-  --fhql-rule: #4a3d2c;
-  --fhql-hover: rgb(255 200 120 / 0.08);
+  --fhql-surface: #1c1d20;
+  --fhql-surface-raised: #26282c;
+  --fhql-surface-sunken: #141518;
+  --fhql-ink: #e8e5de;
+  --fhql-ink-muted: #aaa69d;
+  --fhql-rule: #40434a;
+  --fhql-hover: rgb(255 255 255 / 0.06);
   --fhql-accent: #e0a054;
-  --fhql-accent-ink: #1e1812;
+  --fhql-accent-ink: #1c1d20;
   --fhql-status-hidden: #9a8f80;
   --fhql-status-available: #e0c070;
   --fhql-status-active: #7fb2e5;
   --fhql-status-completed: #8cc98c;
   --fhql-status-failed: #e38a7a;
-  --fhql-texture-blend: multiply;
+  /* A 90% charcoal veil over the parchment: texture survives as grain, its tan barely shows. */
+  --fhql-texture: linear-gradient(rgb(28 29 32 / 0.9), rgb(28 29 32 / 0.9)), url("../../../ui/parchment.jpg");
+  --fhql-texture-blend: normal;
 }
 
 /* ---------- Tokens: Sci-fi ---------- */
@@ -65,11 +70,16 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
   --fhql-status-active: #34e4ff;
   --fhql-status-completed: #5cf2a4;
   --fhql-status-failed: #ff5c7a;
-  --fhql-font-heading: ui-monospace, "Cascadia Mono", "Consolas", monospace;
+  --fhql-font-heading-theme: ui-monospace, "Cascadia Mono", "Consolas", monospace;
   --fhql-radius: 0px;
   --fhql-chamfer: 10px;
   --fhql-glow: 0 0 6px rgb(52 228 255 / 0.35);
-  --fhql-texture: none;
+  /* Diamond knurl: two faint crossing line grids, under a soft diagonal sheen. */
+  --fhql-texture:
+    linear-gradient(115deg, rgb(255 255 255 / 0.05) 0%, transparent 30%, transparent 70%, rgb(52 228 255 / 0.04) 100%),
+    repeating-linear-gradient(45deg, rgb(52 228 255 / 0.045) 0 1px, transparent 1px 9px),
+    repeating-linear-gradient(-45deg, rgb(52 228 255 / 0.045) 0 1px, transparent 1px 9px);
+  --fhql-texture-blend: normal;
 }
 
 /* ---------- Window ---------- */
@@ -915,3 +925,36 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
 .fhql-app .fhql-chip { min-height: 24px; min-width: 28px; justify-content: center; }
 .fhql-app .fhql-undo { min-width: 24px; min-height: 24px; display: inline-grid; place-items: center; }
 .fhql-app .fhql-icon-button { min-width: 24px; min-height: 24px; }
+
+/* ---------- Sci-fi: clean chamfered borders ----------
+   The card's own background is the border color, clipped to the chamfer; an inner layer 1px smaller
+   holds the surface. The border then runs unbroken along the diagonal cut. */
+.fhql-app.fhql-theme-scifi .fhql-card,
+.fhql-beacon.fhql-theme-scifi .fhql-beacon-panel {
+  --fhql-card-border: var(--fhql-rule);
+  position: relative;
+  isolation: isolate;
+  background: var(--fhql-card-border);
+  border-color: transparent;
+  box-shadow: none;
+}
+.fhql-app.fhql-theme-scifi .fhql-card::before,
+.fhql-beacon.fhql-theme-scifi .fhql-beacon-panel::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  background: var(--fhql-card-fill, var(--fhql-surface-raised));
+  clip-path: polygon(
+    calc(var(--fhql-chamfer) - 0.41px) 0, 100% 0,
+    100% calc(100% - var(--fhql-chamfer) + 0.41px), calc(100% - var(--fhql-chamfer) + 0.41px) 100%,
+    0 100%, 0 calc(var(--fhql-chamfer) - 0.41px)
+  );
+}
+.fhql-app.fhql-theme-scifi .fhql-gm-notes { --fhql-card-border: var(--fhql-gm); --fhql-card-fill: var(--fhql-surface-sunken); }
+.fhql-beacon.fhql-theme-scifi .fhql-beacon-panel { --fhql-card-fill: var(--fhql-surface); }
+.fhql-beacon.fhql-theme-scifi .fhql-beacon-panel:hover { --fhql-card-border: var(--fhql-accent); }
+
+/* ---------- Scrollbars and dropdown lists follow the theme ---------- */
+.fhql-app, .fhql-app * { scrollbar-color: var(--fhql-rule) transparent; }
+.fhql-app option { color: var(--fhql-ink); background: var(--fhql-surface-raised); }

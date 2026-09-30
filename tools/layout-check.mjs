@@ -25,25 +25,30 @@ const fa = `${root}node_modules/@fortawesome/fontawesome-free/css/all.min.css`;
 // Pop-out sheet widths from its minimum up, and Quest Log widths from its minimum up.
 const SHEET_WIDTHS = [340, 400, 480, 560, 700];
 const LOG_WIDTHS = [420, 540, 700, 900, 1040];
+// Each case runs in its theme; the wide-font cases stand in for a wide font a GM might upload.
+const WIDE_FONT = '"DejaVu Sans Mono", "Liberation Mono", monospace';
 const CASES = [
-   { name: 'gm-read', gm: true, editing: false },
-   { name: 'gm-edit', gm: true, editing: true },
-   { name: 'player', gm: false, editing: false }
+   { name: 'gm-read', gm: true, editing: false, theme: 'dark' },
+   { name: 'gm-edit', gm: true, editing: true, theme: 'dark' },
+   { name: 'player', gm: false, editing: false, theme: 'dark' },
+   { name: 'gm-read-scifi', gm: true, editing: false, theme: 'scifi' },
+   { name: 'gm-read-widefont', gm: true, editing: false, theme: 'light', font: WIDE_FONT },
+   { name: 'gm-edit-widefont', gm: true, editing: true, theme: 'light', font: WIDE_FONT }
 ];
 
-const frame = (kind, width, theme, body) => `<section class="application fhql-app fhql-theme-${theme} ${kind === 'sheet' ? 'fhql-quest-sheet' : 'fhql-quest-log'}"
-  style="width:${width}px;height:900px;display:flex;flex-direction:column;border:1px solid #000;margin:8px">
+const frame = (kind, width, theme, body, font) => `<section class="application fhql-app fhql-theme-${theme} ${kind === 'sheet' ? 'fhql-quest-sheet' : 'fhql-quest-log'}"
+  style="width:${width}px;height:900px;display:flex;flex-direction:column;border:1px solid #000;margin:8px;${font ? `--fhql-font-body:${font};--fhql-font-heading:${font};` : ''}">
   <header style="background:#111;color:#eee;padding:4px 8px;font:13px sans-serif">${kind} ${width}px</header>
   <div class="window-content" style="flex:1;min-height:0">${body}</div></section>`;
 
 const pages = [];
 for (const c of CASES)
 {
-   for (const width of SHEET_WIDTHS) { pages.push({ id: `sheet-${c.name}-${width}`, html: frame('sheet', width, 'dark', sheetT({ ...sheetContext(t, c), popout: true })) }); }
+   for (const width of SHEET_WIDTHS) { pages.push({ id: `sheet-${c.name}-${width}`, html: frame('sheet', width, c.theme, sheetT({ ...sheetContext(t, c), popout: true }), c.font) }); }
    for (const width of LOG_WIDTHS)
    {
       const ctx = { ...listContext(t, c.gm), ...sheetContext(t, c) };
-      pages.push({ id: `log-${c.name}-${width}`, html: frame('log', width, 'dark', listT(ctx) + sheetT(ctx)) });
+      pages.push({ id: `log-${c.name}-${width}`, html: frame('log', width, c.theme, listT(ctx) + sheetT(ctx), c.font) });
    }
 }
 

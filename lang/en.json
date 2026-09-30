@@ -166,6 +166,24 @@
       "playersEditNotes": {
         "Name": "Players can edit player notes",
         "Hint": "Any player who can read a quest can edit its Player notes, even without owning it. A GM must be connected."
+      },
+      "Font": {
+        "ThemeDefault": "Theme default",
+        "World": "Use world font",
+        "WorldHeading": {
+          "Name": "Quest Log heading font (world default)"
+        },
+        "WorldBody": {
+          "Name": "Quest Log body font (world default)"
+        },
+        "OwnHeading": {
+          "Name": "Quest Log heading font (just you)"
+        },
+        "OwnBody": {
+          "Name": "Quest Log body font (just you)"
+        },
+        "WorldHint": "Any font Foundry has, including ones uploaded under Core's Additional Fonts. Theme default uses each theme's own font.",
+        "OwnHint": "Use world font follows the GM's choice. Pick another to override it on this device only."
       }
     },
     "Keybindings": {

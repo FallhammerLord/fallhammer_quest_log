@@ -18,6 +18,17 @@ export const fields = foundry.data.fields;
 export const { JournalEntryPageHandlebarsSheet } = foundry.applications.sheets.journal;
 export const { DocumentSheetConfig, DocumentOwnershipConfig } = foundry.applications.apps;
 
+/**
+ * Fonts Foundry knows about, including ones uploaded through Core's Additional Fonts setting.
+ *
+ * @returns {Record<string, string>} Font family names mapped to labels.
+ */
+export function availableFonts()
+{
+   try { return foundry.applications.settings.menus.FontConfig.getAvailableFontChoices() ?? {}; }
+   catch { return {}; }
+}
+
 /** @returns {typeof foundry.applications.ux.TextEditor} The configured TextEditor class. */
 export function textEditor()
 {
