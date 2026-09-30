@@ -486,7 +486,7 @@ Test and document behavior with:
 - License: MIT.
 - In Progress: several quests allowed; the Beacon shows the first with a +N badge.
 - **In Progress is labeled "Focus"** (2026-09-29), shown as a star, to separate it from the Active status and from personal Track (bookmark). The data field stays `inProgress`.
-- Rich-text editors open ready to type in edit mode; unsaved editor text is saved on Done and on close. Edit mode shows Saving… / Saved.
+- Rich-text editors: opening them ready to type (the `open` attribute at render) broke editing in Foundry and was reverted 2026-09-30; they use Foundry's edit button again. Unsaved editor text is saved on Done and on close. Edit mode shows Saving… / Saved.
 - Give offers each player's assigned character only; claim mistakes are fixed with Undo.
 
 ## 13. Open decisions

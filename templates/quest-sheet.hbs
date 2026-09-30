@@ -121,7 +121,7 @@
       {{#if editing}}
       <section class="fhql-card fhql-area-description">
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.Description"}}</h3>
-        <prose-mirror name="description" data-field="description" toggled open value="{{description}}">{{{descriptionHTML}}}</prose-mirror>
+        <prose-mirror name="description" data-field="description" toggled value="{{description}}">{{{descriptionHTML}}}</prose-mirror>
       </section>
       {{else if descriptionHTML}}
       <section class="fhql-card fhql-area-description">
@@ -134,12 +134,12 @@
       {{#if editing}}
       <section class="fhql-card fhql-area-notes">
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.PlayerNotes"}}</h3>
-        <prose-mirror name="playerNotes" data-field="playerNotes" toggled open value="{{playerNotes}}">{{{playerNotesHTML}}}</prose-mirror>
+        <prose-mirror name="playerNotes" data-field="playerNotes" toggled value="{{playerNotes}}">{{{playerNotesHTML}}}</prose-mirror>
       </section>
       {{else if notesEditing}}
       <section class="fhql-card fhql-area-notes">
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.PlayerNotes"}}</h3>
-        <prose-mirror name="playerNotesViaGM" data-field="playerNotesViaGM" toggled open value="{{playerNotes}}">{{{playerNotesHTML}}}</prose-mirror>
+        <prose-mirror name="playerNotesViaGM" data-field="playerNotesViaGM" toggled value="{{playerNotes}}">{{{playerNotesHTML}}}</prose-mirror>
       </section>
       {{else if playerNotesHTML}}
       <section class="fhql-card fhql-area-notes">
@@ -335,7 +335,7 @@
         <span class="fhql-gm-tag">{{localize "FHQL.Quest.GMOnly"}}</span>
       </summary>
       {{#if editing}}
-      <prose-mirror name="gmNotes" data-field="gmNotes" toggled open value="{{gmNotes.raw}}">{{{gmNotes.html}}}</prose-mirror>
+      <prose-mirror name="gmNotes" data-field="gmNotes" toggled value="{{gmNotes.raw}}">{{{gmNotes.html}}}</prose-mirror>
       {{else if gmNotes.html}}
       <div class="fhql-prose">{{{gmNotes.html}}}</div>
       {{else}}
