@@ -393,10 +393,14 @@
         "NotItem": "Only items can be required.",
         "HasDeposits": "Undo this objective's deposits first."
       },
-      "ChooseSource": "{verb} {item} from another character",
       "YourCharacter": "Your character",
       "PlayerCharacter": "Player character",
-      "Shared": "Shared"
+      "Shared": "Shared",
+      "ConfirmTitle": "{verb}: {item}",
+      "From": "From",
+      "HowManyGive": "How many to hand over",
+      "HowManyShow": "How many to show",
+      "ConfirmNote": "Still needed: {need}. This stack: {have}."
     },
     "Notes": {
       "Done": "Done",

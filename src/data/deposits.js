@@ -1,4 +1,5 @@
-import { itemQuantity, itemQuantityUpdate, itemSourceUuids, postChat } from '../compat.js';
+import { postChat } from '../compat.js';
+import { itemQuantity, itemQuantityUpdate, itemSourceUuids } from './systemItems.js';
 import { registerRelay, relay } from './relay.js';
 import { MODULE_ID } from '../constants.js';
 import { addObjective, getQuestEntry, questAccess, questPage, updateQuest } from './quests.js';
@@ -161,11 +162,12 @@ export function defaultDepositChoice(choices)
  * @param {JournalEntry} entry - The quest entry.
  * @param {string} objectiveId - Objective ID.
  * @param {{ itemUuid: string, userId: string }} choice - The item, and the player it's deposited for.
+ * @param {number} [qty] - How many the player confirmed. The GM takes no more than this, the stack, or what's needed.
  * @returns {Promise<boolean>} Whether anything was deposited.
  */
-export async function requestDeposit(entry, objectiveId, choice)
+export async function requestDeposit(entry, objectiveId, choice, qty)
 {
-   const result = await relay(RELAY, { entryId: entry.id, objectiveId, itemUuid: choice.itemUuid, userId: choice.userId },
+   const result = await relay(RELAY, { entryId: entry.id, objectiveId, itemUuid: choice.itemUuid, userId: choice.userId, qty },
       { needGM: 'FHQL.Deposit.NeedGM', failed: 'FHQL.Deposit.Error.Failed' });
    return result.ok;
 }
@@ -207,7 +209,9 @@ async function depositNow(data, { force = false } = {})
    const have = itemCount(item);
    const need = stillNeeded(objective);
    if (need < 1) { return fail('Full', { item: requirement.name }); }
-   const take = Math.min(have, need);
+   // The confirmed amount caps the take; a missing or malformed amount means "as many as needed".
+   const wanted = Number.isInteger(data.qty) && data.qty > 0 ? data.qty : have;
+   const take = Math.min(have, need, wanted);
    if (take < 1) { return fail('NotOwner'); }
 
    let snapshot = null;

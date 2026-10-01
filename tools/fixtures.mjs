@@ -42,7 +42,7 @@ export function sheetContext(t, { gm = true, editing = false } = {})
          uuid: 'Item.cask', name: 'Sealed salt cask (Cinderford Warehouse Guild)', img: '', count: 12, mode: 'give',
          progress: '7/12', fill: '58%', met: false, modeLabel: t('Deposit.ModeGive'), modeOptions: [mode('give'), mode('show')]
       },
-      canDeposit: !editing, depositChoose: !gm, depositChooseLabel: 'Hand over from another character', depositVerb: t('Deposit.Give'), depositAria: t('Deposit.Give'), depositIcon: 'fa-hand-holding-hand',
+      canDeposit: !editing, depositVerb: t('Deposit.Give'), depositAria: t('Deposit.Give'), depositIcon: 'fa-hand-holding-hand',
       depositsList: [
          { index: 0, label: 'Player2 (Corvus AAI:2101 G5): 4', held: true, gm },
          { index: 1, label: 'Rinn (Kestrel of the Long Watch): 3', held: true, gm }

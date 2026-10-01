@@ -448,7 +448,7 @@ export function QuestSheetMixin(Base)
          const data = textEditor().getDragEventData(event);
          const doc = data?.uuid ? await fromUuid(data.uuid) : null;
          const objectiveId = zone.closest('[data-objective-id]')?.dataset.objectiveId;
-         if (depositing) { return depositDropped(entry, objectiveId, doc); }
+         if (depositing) { return depositDropped(this, zone, objectiveId, doc); }
 
          let accepted;
          switch (zone.dataset.drop)

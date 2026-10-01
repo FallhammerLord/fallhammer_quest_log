@@ -1,9 +1,8 @@
-import { confirmPopover, menuPopover } from '../../ui/popover.js';
+import { confirmPopover, openPanel } from '../../ui/popover.js';
 import {
    clearRequirement, defaultDepositChoice, depositCandidates, depositedTotal, depositLabel, hasRequirement, requestDeposit,
    stillNeeded, undoDeposit
 } from '../../data/deposits.js';
-import { claimTargets } from '../../data/rewards.js';
 import { addObjective, cycleObjective, deleteObjective, questPage, updateQuest } from '../../data/quests.js';
 import { objectiveFor } from './rows.js';
 
@@ -64,9 +63,6 @@ function requirementContext(objective, { open, gm, editing })
          }))
       },
       canDeposit: open && !editing && !objective.hidden && stillNeeded(objective) > 0,
-      // A player with more than one actor (a second character, a shared party inventory) can pick the source.
-      depositChoose: !gm && claimTargets(game.user).length > 1,
-      depositChooseLabel: game.i18n.format('FHQL.Deposit.ChooseSource', { verb, item: requirement.name }),
       depositVerb: verb,
       depositAria: game.i18n.format('FHQL.Deposit.ActionLabel', { verb, item: requirement.name }),
       depositIcon: give ? 'fa-hand-holding-hand' : 'fa-eye',
@@ -75,28 +71,117 @@ function requirementContext(objective, { open, gm, editing })
 }
 
 /**
- * Deposits an item dragged from a character sheet onto an objective.
+ * Asks which actor to take from and how many, before anything is handed over or shown. Opens as a
+ * child panel by the button (or the drop target). The source starts on the player's assigned
+ * character when it carries the item; the amount starts at what's still needed, capped by the stack.
  *
- * @param {JournalEntry} entry - The quest.
+ * @param {object} app - The quest sheet.
+ * @param {HTMLElement} anchor - Where the panel opens.
+ * @param {object} objective - Objective data.
+ * @param {object[]} choices - From depositCandidates.
+ * @param {object|null} preselect - The source to start on.
+ * @returns {Promise<{ choice: object, qty: number }|null>} The confirmed deposit, or null.
+ */
+function confirmDeposit(app, anchor, objective, choices, preselect)
+{
+   const t = (key, data) => (data ? game.i18n.format(key, data) : game.i18n.localize(key));
+   const escape = foundry.utils.escapeHTML;
+   const { requirement } = objective;
+   const give = requirement.mode === 'give';
+   const need = stillNeeded(objective);
+   const asGM = game.user.isGM;
+   const start = Math.max(0, choices.indexOf(preselect));
+   const hint = (c) => [
+      c.assigned ? t(asGM ? 'FHQL.Deposit.PlayerCharacter' : 'FHQL.Deposit.YourCharacter') : '',
+      c.shared ? t('FHQL.Deposit.Shared') : ''
+   ].filter(Boolean).join(', ');
+   const verb = t(give ? 'FHQL.Deposit.Give' : 'FHQL.Deposit.Show');
+   const html = `<form class="fhql-popover-form fhql-deposit-form">
+      <div class="fhql-popover-title">${escape(t('FHQL.Deposit.ConfirmTitle', { verb, item: requirement.name }))}</div>
+      <label class="fhql-field"><span>${escape(t('FHQL.Deposit.From'))}</span>
+        <select class="fhql-input" name="source">${choices.map((c, i) => `<option value="${i}" ${i === start ? 'selected' : ''}>${escape(c.label)}${hint(c) ? ` (${escape(hint(c))})` : ''}</option>`).join('')}</select></label>
+      <label class="fhql-field"><span>${escape(t(give ? 'FHQL.Deposit.HowManyGive' : 'FHQL.Deposit.HowManyShow'))}</span>
+        <input class="fhql-input fhql-count-input" type="number" name="qty" min="1" step="1"></label>
+      <p class="fhql-hint" data-deposit-note></p>
+      <div class="fhql-popover-buttons">
+        <button type="button" class="fhql-button" data-answer="cancel">${escape(t('FHQL.Popover.Cancel'))}</button>
+        <button type="submit" class="fhql-button fhql-primary">${escape(verb)}</button>
+      </div></form>`;
+
+   return openPanel(app, anchor, html, (panel, done) =>
+   {
+      const form = panel.querySelector('form');
+      const { source, qty } = form.elements;
+      const note = panel.querySelector('[data-deposit-note]');
+      // Each source caps the amount at its stack and at what's still needed.
+      const limit = () => Math.max(1, Math.min(choices[Number(source.value)].count, need));
+      const refresh = () =>
+      {
+         const max = limit();
+         qty.max = String(max);
+         qty.value = String(max);
+         note.textContent = t('FHQL.Deposit.ConfirmNote', { need, have: choices[Number(source.value)].count });
+      };
+      refresh();
+      source.addEventListener('change', refresh);
+      form.addEventListener('submit', (event) =>
+      {
+         event.preventDefault();
+         const amount = Math.min(limit(), Math.max(1, Math.floor(Number(qty.value)) || 1));
+         done({ choice: choices[Number(source.value)], qty: amount });
+      });
+      panel.addEventListener('click', (event) => { if (event.target.closest('[data-answer="cancel"]')) { done(null); } });
+      (choices.length > 1 ? source : qty).setAttribute('autofocus', '');
+   }, { label: t('FHQL.Deposit.ConfirmTitle', { verb, item: requirement.name }) });
+}
+
+/**
+ * Hand over or show: always confirms the source and amount first.
+ *
+ * @param {object} app - The quest sheet.
+ * @param {HTMLElement} anchor - Where the confirm panel opens.
+ * @param {string} objectiveId - Objective ID.
+ * @param {string} [itemUuid] - A dropped item to start on.
+ */
+async function startDeposit(app, anchor, objectiveId, itemUuid)
+{
+   const entry = app.questEntry;
+   const objective = questPage(entry)?.system.objectives[objectiveId];
+   if (!objective) { return; }
+   const { requirement } = objective;
+   const asGM = game.user.isGM;
+   const choices = depositCandidates(objective, asGM);
+   if (!choices.length)
+   {
+      ui.notifications.warn(game.i18n.format(asGM ? 'FHQL.Deposit.NoneAnywhere' : 'FHQL.Deposit.NoneCarried', { item: requirement.name }));
+      return;
+   }
+   const dropped = itemUuid ? choices.find((c) => c.itemUuid === itemUuid) : null;
+   if (itemUuid && !dropped)
+   {
+      ui.notifications.warn(game.i18n.format('FHQL.Deposit.Error.WrongItem', { item: requirement.name }));
+      return;
+   }
+   const confirmed = await confirmDeposit(app, anchor, objective, choices, dropped ?? (asGM ? null : defaultDepositChoice(choices)));
+   if (confirmed) { await requestDeposit(entry, objectiveId, confirmed.choice, confirmed.qty); }
+}
+
+/**
+ * An item dragged from a character sheet onto an objective: confirms, starting on that item.
+ *
+ * @param {object} app - The quest sheet.
+ * @param {HTMLElement} zone - The objective row it was dropped on.
  * @param {string} objectiveId - Objective ID.
  * @param {Document|null} doc - The dropped document.
  */
-export async function depositDropped(entry, objectiveId, doc)
+export async function depositDropped(app, zone, objectiveId, doc)
 {
-   const objective = questPage(entry)?.system.objectives[objectiveId];
-   if (!objective) { return; }
    if (doc?.documentName !== 'Item' || doc.parent?.documentName !== 'Actor')
    {
       ui.notifications.warn(game.i18n.localize('FHQL.Deposit.FromCharacter'));
       return;
    }
-   const choice = depositCandidates(objective, game.user.isGM).find((c) => c.itemUuid === doc.uuid);
-   if (!choice)
-   {
-      ui.notifications.warn(game.i18n.format('FHQL.Deposit.Error.WrongItem', { item: objective.requirement.name }));
-      return;
-   }
-   await requestDeposit(entry, objectiveId, choice);
+   await startDeposit(app, zone.querySelector('[data-action="depositItem"]') ?? zone, objectiveId, doc.uuid);
 }
 
 /* ---------- Actions (called with `this` as the quest sheet) ---------- */
@@ -146,49 +231,11 @@ async function onToggleObjectiveHidden(event, target)
    if (found) { await updateQuest(this.questEntry, { [`system.objectives.${found.id}.hidden`]: !found.objective.hidden }); }
 }
 
-/**
- * Hand over or show an item. A player's click takes it from their assigned character when that
- * character carries it, else from the only actor that does; otherwise, and always for the GM, a child
- * panel lists every actor carrying it.
- *
- * @param {Event} event - The click.
- * @param {HTMLElement} target - The button.
- * @param {boolean} [choose] - Always list the sources (the ▾ button).
- */
-async function onDepositItem(event, target, choose = false)
+/** Hand over or show: confirm the source and amount, then deposit. */
+async function onDepositItem(event, target)
 {
    const found = objectiveFor(this, target);
-   if (!found) { return; }
-   const { requirement } = found.objective;
-   const asGM = game.user.isGM;
-   const choices = depositCandidates(found.objective, asGM);
-   if (!choices.length)
-   {
-      ui.notifications.warn(game.i18n.format(asGM ? 'FHQL.Deposit.NoneAnywhere' : 'FHQL.Deposit.NoneCarried', { item: requirement.name }));
-      return;
-   }
-   let choice = !choose && !asGM ? defaultDepositChoice(choices) : null;
-   if (!choice && choices.length === 1 && !choose) { choice = choices[0]; }
-   if (!choice)
-   {
-      const hint = (c) => [
-         c.assigned ? game.i18n.localize(asGM ? 'FHQL.Deposit.PlayerCharacter' : 'FHQL.Deposit.YourCharacter') : '',
-         c.shared ? game.i18n.localize('FHQL.Deposit.Shared') : ''
-      ].filter(Boolean).join(' · ');
-      const picked = await menuPopover(this, target, {
-         title: game.i18n.format('FHQL.Deposit.Choose', { item: requirement.name }),
-         items: choices.map((c, i) => ({ value: String(i), label: c.label, icon: 'fa-solid fa-box', hint: hint(c) }))
-      });
-      if (picked === null) { return; }
-      choice = choices[Number(picked)];
-   }
-   await requestDeposit(this.questEntry, found.id, choice);
-}
-
-/** The ▾ beside Hand over: always choose which actor it comes from. */
-function onDepositItemFrom(event, target)
-{
-   return onDepositItem.call(this, event, target, true);
+   if (found) { await startDeposit(this, target, found.id); }
 }
 
 async function onUndoDeposit(event, target)
@@ -230,7 +277,6 @@ export const objectiveActions = {
    deleteObjective: onDeleteObjective,
    toggleObjectiveHidden: onToggleObjectiveHidden,
    depositItem: onDepositItem,
-   depositItemFrom: onDepositItemFrom,
    undoDeposit: onUndoDeposit,
    clearRequirement: onClearRequirement
 };

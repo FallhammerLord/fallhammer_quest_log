@@ -186,6 +186,16 @@ const r11 = await deposit('p2', cache);
 expect('Cypher quantity: hands over only the 3 needed', r11.ok && cache.system.basic.quantity === 2);
 expect('Cypher quantity: the record holds 3', quest.objective().deposits[0]?.qty === 3);
 
+// The amount the player confirms caps the take; asking for more than needed still takes only what's needed.
+quest = makeQuest({ uuid: 'Item.cache', name: 'Resource Cache', img: '', count: 3, mode: 'give' });
+const a6 = makeActor('vex', 'p1');
+const stack6 = makeItem(a6, 'i10', 'Resource Cache', 5);
+const query = (userId, item, qty) => globalThis.CONFIG.queries['fhql.deposit']({ entryId: 'q1', objectiveId: 'o1', itemUuid: item.uuid, userId, qty });
+const r13 = await query('p1', stack6, 2);
+expect('confirmed amount of 2 takes 2 and keeps 3', r13.ok && stack6.system.quantity === 3);
+const r14 = await query('p1', stack6, 99);
+expect('asking for 99 takes only the 1 still needed', r14.ok && stack6.system.quantity === 2);
+
 // The GM can hand over from an actor no player owns; it's recorded under the GM.
 quest = makeQuest({ uuid: 'Item.cache', name: 'Resource Cache', img: '', count: 2, mode: 'give' });
 const npc = makeActor('npc', 'nobody');

@@ -17,6 +17,7 @@ import { registerLifecycleHooks } from './data/lifecycle.js';
 import { registerPlayerActionQueries } from './data/playerActions.js';
 import { registerDepositQueries } from './data/deposits.js';
 import { releaseNotes, touchesNotesLock } from './data/notesLock.js';
+import { systemSupportSummary } from './data/systemItems.js';
 
 Hooks.once('init', () =>
 {
@@ -48,6 +49,7 @@ Hooks.on('userConnected', () =>
 
 Hooks.once('ready', () =>
 {
+   console.log(`${MODULE_ID} | ${systemSupportSummary()}`);
    // A notes lock left from a previous session (closed browser) is cleared.
    releaseNotes();
    refreshQuestBeacon();

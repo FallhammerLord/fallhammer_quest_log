@@ -401,7 +401,6 @@
   border-radius: var(--fhql-radius);
 }
 .fhql-app .fhql-requirement.is-met .fhql-requirement-progress { color: var(--fhql-status-completed); border-color: currentColor; }
-.fhql-app .fhql-deposit-from { margin-inline-start: -0.35em; padding-inline: 0.4em; }
 .fhql-app .fhql-requirement-edit { display: inline-flex; flex-wrap: wrap; gap: 0.35em; align-items: center; min-width: 0; max-width: 100%; }
 .fhql-app .fhql-requirement-edit .fhql-small-select { min-width: 0; max-width: 100%; }
 .fhql-app .fhql-requirement-edit .fhql-count-input { width: 4.5em; flex: none; }

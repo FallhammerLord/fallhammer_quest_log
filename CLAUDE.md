@@ -35,6 +35,7 @@ npm run deposits   # deposit rules with Foundry mocked: races, refusals, rollbac
 | `src/data/rewards.js` | reward claiming (via relay) |
 | `src/data/deposits.js` | objective item requirements; hand over / show (via relay) |
 | `src/data/playerActions.js` | accept / propose / shared notes (via relay), visibility gating |
+| `src/data/systemItems.js` | per game system: where item quantity lives (dnd5e, pf2e, daggerheart, cyphersystem), item source UUIDs |
 | `src/data/notesLock.js` | one-at-a-time player notes editing (User flags) |
 | `src/data/tracking.js` | personal Track and Beacon choice (User flags) |
 | `src/data/lifecycle.js` | duplicate/delete consistency hooks |
@@ -62,7 +63,7 @@ npm run deposits   # deposit rules with Foundry mocked: races, refusals, rollbac
 - **Player notes** are edited in place with a one-editor lock on User flags (`src/data/notesLock.js`), not in edit mode.
 - **Handlebars helpers:** don't rely on `eq`/`and`/`or`; compute booleans in JS. `lookup` is fine.
 - **GM relays** go through `src/data/relay.js` only (`registerRelay` / `relay`): one queue on the GM client for every request type, shared notifications, transport in `compat.js`. The handler isn't told who sent a request: re-check everything against the named user, and refuse requests naming a GM.
-- **Deposits:** the GM client takes only what is still needed, one deposit at a time, recording before taking and rolling back on failure. Keep `npm run deposits` passing; it fails if the relay queue is removed.
+- **Deposits never move without confirmation:** Hand over/Show and drops open the confirm panel (source, amount). The GM client takes only what is still needed, one deposit at a time, recording before taking and rolling back on failure. Keep `npm run deposits` passing; it fails if the relay queue is removed.
 - **Hidden quests:** hiding sets default and per-player ownership to None (saved in a flag, restored on reveal); `questAccess` also refuses Hidden quests to non-GMs.
 - **Sheet actions** are plain functions called with `this` as the window, grouped per feature in `src/apps/sheet/` and merged through `guardActions`. New feature: new file there, not more lines in the mixin.
 - **Quick choices** use `src/ui/popover.js` child panels, never Foundry dialogs. Separate windows only for Pop out, FQL import, and Foundry's ownership editor.
@@ -79,7 +80,7 @@ Storage survives disable/re-enable; editing and autosave; view/edit modes; quick
 
 - GM notes privacy: as a player, `game.journal.get('ID').pages.contents.map(p => p.name)` should not list "GM notes".
 - Claiming, Give, Undo; player workflow settings; font settings listing uploaded fonts; sci-fi knurl strength; list textures; Dark art-deco fans (CSS-only); live theme preview from Module Settings; Beacon menu toggles closed on second click; Gothic theme; Theme textures toggle (per player, all themes, live preview).
-- Item requirements and deposits: hand over, show only, drag from a character sheet, Undo with return, and two players depositing at once (needs two browsers as different players). Item matching across systems (dnd5e/pf2e quantity). Hand over takes from the assigned character in one click, ▾ picks another source (party inventory); GM hand over from an NPC; Cypher quantity (`system.basic.quantity`).
+- Item requirements and deposits: hand over, show only, drag from a character sheet, Undo with return, and two players depositing at once (needs two browsers as different players). Item matching across systems (dnd5e/pf2e quantity). Hand over always confirms source and amount in a panel (starts on the assigned character; party inventory selectable); GM hand over from an NPC; quantity in each of the user's systems: D&D 5e, Cypher, Daggerheart, PF2e. Startup console line names the detected system.
 - Player notes in place: Edit notes opens the editor in one click (auto-clicks the editor's pen; unverified), lock shown to a second user, GM Edit anyway, saved text stays visible after the editor's Save.
 
 ## Next up (see `docs/SCOPE.md` §11 milestones and §13 open decisions)

@@ -23,7 +23,7 @@ const openPanels = new WeakMap();
  * @param {{ label: string, role?: string }} options - Accessible label and ARIA role.
  * @returns {Promise<unknown>} The value passed to `done`, or null if dismissed.
  */
-function openPanel(app, anchor, html, wire, { label, role = 'dialog' })
+export function openPanel(app, anchor, html, wire, { label, role = 'dialog' })
 {
    const host = app instanceof HTMLElement ? app : app.element;
    const fixed = app instanceof HTMLElement;
