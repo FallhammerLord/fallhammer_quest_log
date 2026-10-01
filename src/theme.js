@@ -47,6 +47,7 @@ export function applyTheme(element)
    // Smooth panels at 0: textures and images off, the theme's small shapes stay.
    element.classList.toggle('fhql-no-texture', strength === 0);
    element.style.setProperty('--fhql-strength', String(strength));
+   element.classList.toggle('fhql-portrait-square', setting('portraitFrame') === 'square');
    applyOverlay(element);
    applyFonts(element);
    applyBanner(element);

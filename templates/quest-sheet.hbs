@@ -7,7 +7,7 @@
   {{! ---------- Header ---------- }}
   <header class="fhql-sheet-head">
     {{#if editing}}
-    <div class="fhql-portrait fhql-portrait-drop" data-drop="giver">
+    <div class="fhql-portrait fhql-portrait-drop{{#unless giver.img}} is-empty{{/unless}}" data-drop="giver" data-tooltip="{{localize 'FHQL.Quest.DropGiver'}}">
       {{#if giver.img}}<img src="{{giver.img}}" alt="">{{else}}<i class="fa-solid fa-user-plus" inert></i>{{/if}}
       <span class="fhql-portrait-hint">{{localize "FHQL.Quest.DropGiver"}}</span>
     </div>

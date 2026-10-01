@@ -13,6 +13,7 @@ First feature-complete preview. Requires Foundry VTT v14.
 - The quest header and list toolbar stay pinned; each quest panel scrolls on its own, with Objectives given room first. Narrow windows use one scroll with collapsible panels. Hide done on Objectives.
 - The Beacon opens and closes the Quest Log (and its quest windows), with a short rise-and-settle motion.
 - Gothic theme, after Bloodborne: soot, oxblood, tarnished brass and moonlight; quatrefoil tracery with iron spear finials, an iron-railing quest list, iron-framed panels with lancet marks, a cross divider and a red initial that stay when textures are off.
+- Quest giver portraits are round in every theme, or square by GM setting.
 - Cabaret theme: wine velvet, gilt and footlights; a sequined harlequin trellis, a velvet-curtain quest list, gilt frames.
 - Texture strength: a table slider set by the GM, with a per-player override (Smooth turns textures off). Theme images: header and lower washes per theme, D&D 5e's own when that system runs, or the GM's uploads. Ledger's lattice now runs across its panel headings and list toolbar.
 - New-change dots, objective glows, an optional chat card when a quest is completed or failed, remembered window size, / to search, sliding folders, and hover previews of quest links.

@@ -127,6 +127,12 @@
         "Ledger": "Ledger (matches Tidy 5e Sheets)",
         "World": "Use world theme"
       },
+      "PortraitFrame": {
+        "Name": "Quest giver portrait frame",
+        "Hint": "The shape of the quest giver's picture in every theme. Round suits portraits; square suits token art with its own frame.",
+        "Round": "Round",
+        "Square": "Square"
+      },
       "TextureStrength": {
         "World": {
           "Name": "Texture strength (table)",

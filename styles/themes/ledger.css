@@ -96,9 +96,8 @@
 .fhql-app.fhql-theme-ledger .fhql-heading { font-size: 1.9em; font-weight: normal; line-height: 1.05; }
 .fhql-app.fhql-theme-ledger .fhql-sheet-head .fhql-in-progress { color: var(--fhql-metal); }
 
-/* Portrait: a circle in a metal ring. */
+/* Portrait: a metal ring (round, or square when the GM picks square frames). */
 .fhql-app.fhql-theme-ledger .fhql-portrait {
-  border-radius: 50%;
   border: 3px solid var(--fhql-metal);
   box-shadow: 0 0 0 2px rgb(0 0 0 / 0.5), 0 2px 8px rgb(0 0 0 / 0.5);
 }

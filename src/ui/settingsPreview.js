@@ -2,7 +2,7 @@ import { settingsFormFields, SETTINGS_WINDOW_HOOKS } from '../compat.js';
 import { previewTheme } from '../theme.js';
 
 /** Settings that restyle our windows, and so preview live while the settings window is open. */
-const PREVIEW_KEYS = ['theme', 'worldTheme', 'worldTextureStrength', 'textureStrength', 'headingFont', 'bodyFont', 'worldHeadingFont', 'worldBodyFont'];
+const PREVIEW_KEYS = ['theme', 'worldTheme', 'worldTextureStrength', 'textureStrength', 'portraitFrame', 'headingFont', 'bodyFont', 'worldHeadingFont', 'worldBodyFont'];
 
 /**
  * Previews theme and font choices on open quest windows and the Beacon as soon as they change in

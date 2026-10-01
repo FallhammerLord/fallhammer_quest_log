@@ -275,6 +275,10 @@
 .fhql-app button.fhql-portrait { cursor: pointer; }
 .fhql-app button.fhql-portrait:hover { border-color: var(--fhql-accent); }
 .fhql-app .fhql-portrait-drop { border: 2px dashed var(--fhql-rule); }
+/* Portrait frame (GM setting): round by default, square on request. The empty drop slot in edit mode
+   stays square so its hint fits; with a picture in it, the hint moves to the tooltip. */
+.fhql-app:not(.fhql-portrait-square) .fhql-portrait:not(.is-empty) { border-radius: 50%; }
+.fhql-app:not(.fhql-portrait-square) .fhql-portrait-drop:not(.is-empty) .fhql-portrait-hint { display: none; }
 .fhql-app .fhql-portrait-hint {
   position: absolute;
   inset-inline: 0;

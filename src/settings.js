@@ -44,6 +44,17 @@ export function registerSettings()
       onChange: restyle
    });
 
+   game.settings.register(MODULE_ID, 'portraitFrame', {
+      name: 'FHQL.Settings.PortraitFrame.Name',
+      hint: 'FHQL.Settings.PortraitFrame.Hint',
+      scope: 'world',
+      config: true,
+      type: String,
+      choices: { round: 'FHQL.Settings.PortraitFrame.Round', square: 'FHQL.Settings.PortraitFrame.Square' },
+      default: 'round',
+      onChange: restyle
+   });
+
    // Texture strength: the GM sets the table's, each player may override it on their own device.
    // 0 means smooth panels; 50 shows each theme as designed.
    game.settings.register(MODULE_ID, 'worldTextureStrength', {
