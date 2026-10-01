@@ -381,6 +381,7 @@ export function QuestSheetMixin(Base)
             requirement: {
                ...requirement,
                progress: `${total}/${requirement.count}`,
+               fill: `${Math.min(100, Math.round((total / requirement.count) * 100))}%`,
                met: total >= requirement.count,
                modeLabel: localize(give ? 'FHQL.Deposit.ModeGive' : 'FHQL.Deposit.ModeShow'),
                modeOptions: ['give', 'show'].map((mode) => ({

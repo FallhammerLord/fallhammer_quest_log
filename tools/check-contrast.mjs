@@ -35,6 +35,11 @@ for (const [, name, body] of blocks)
    const pairs = inks.flatMap((ink) => SURFACES.map((surface) =>
       ({ ink, surface, ratio: contrast(tokens[ink], tokens[surface]) })));
    pairs.push({ ink: 'accent-ink', surface: 'accent', ratio: contrast(tokens['accent-ink'], tokens.accent) });
+   // Theme-only fills: banner bars and meters (Ledger).
+   for (const [ink, fill] of [['banner-ink', 'banner'], ['meter-ink', 'meter']])
+   {
+      if (tokens[ink] && tokens[fill]) { pairs.push({ ink, surface: fill, ratio: contrast(tokens[ink], tokens[fill]) }); }
+   }
 
    const bad = pairs.filter((p) => p.ratio < MIN);
    const worst = pairs.reduce((a, b) => (a.ratio < b.ratio ? a : b));

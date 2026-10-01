@@ -11,7 +11,8 @@ export function registerSettings()
       [THEMES.light]: 'FHQL.Settings.Theme.Light',
       [THEMES.dark]: 'FHQL.Settings.Theme.Dark',
       [THEMES.scifi]: 'FHQL.Settings.Theme.Scifi',
-      [THEMES.gothic]: 'FHQL.Settings.Theme.Gothic'
+      [THEMES.gothic]: 'FHQL.Settings.Theme.Gothic',
+      [THEMES.ledger]: 'FHQL.Settings.Theme.Ledger'
    };
    const restyle = () =>
    {

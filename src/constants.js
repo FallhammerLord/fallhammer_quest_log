@@ -13,7 +13,8 @@ export const THEMES = Object.freeze({
    light: 'light',
    dark: 'dark',
    scifi: 'scifi',
-   gothic: 'gothic'
+   gothic: 'gothic',
+   ledger: 'ledger'
 });
 
 /** Quest statuses, in display order. Each has an icon so status never relies on color alone. */

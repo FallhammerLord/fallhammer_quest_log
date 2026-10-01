@@ -4,7 +4,7 @@ Read this first in any new session. The full design and every decision live in `
 
 ## What this is
 
-A Foundry VTT **v14** quest log module (ID `fhql`, CSS prefix `fhql-`), built as a maintained replacement for Forien's Quest Log (FQL), with light, dark, sci-fi, and gothic themes and an FQL importer. Plain ES modules, no build step. Version 0.3.0. All work so far is on branch `claude/quirky-cray-tooyrk`, not yet merged or released.
+A Foundry VTT **v14** quest log module (ID `fhql`, CSS prefix `fhql-`), built as a maintained replacement for Forien's Quest Log (FQL), with light, dark, sci-fi, gothic, and ledger (Tidy-style) themes and an FQL importer. Plain ES modules, no build step. Version 0.3.0. All work so far is on branch `claude/quirky-cray-tooyrk`, not yet merged or released.
 
 ## Working with the user
 
@@ -66,7 +66,7 @@ Storage survives disable/re-enable; editing and autosave; view/edit modes; quick
 ## Waiting on the user
 
 - GM notes privacy: as a player, `game.journal.get('ID').pages.contents.map(p => p.name)` should not list "GM notes".
-- Claiming, Give, Undo; player workflow settings; font settings listing uploaded fonts; sci-fi knurl strength; list textures; Dark art-deco fans (CSS-only); live theme preview from Module Settings; Beacon menu toggles closed on second click; Gothic theme.
+- Claiming, Give, Undo; player workflow settings; font settings listing uploaded fonts; sci-fi knurl strength; list textures; Dark art-deco fans (CSS-only); live theme preview from Module Settings; Beacon menu toggles closed on second click; Gothic theme; Ledger theme, its title bar, and matching Tidy's colors.
 - Item requirements and deposits: hand over, show only, drag from a character sheet, Undo with return, and two players depositing at once (needs two browsers as different players). Item matching across systems (dnd5e/pf2e quantity).
 
 ## Next up (see `docs/SCOPE.md` §11 milestones and §13 open decisions)

@@ -40,7 +40,7 @@ export function sheetContext(t, { gm = true, editing = false } = {})
       id: 'o4', name: 'Bring sealed salt casks from the Cinderford Warehouse Guild', state: 'open', icon: OI.open, stateLabel: t('Objective.open'),
       requirement: {
          uuid: 'Item.cask', name: 'Sealed salt cask (Cinderford Warehouse Guild)', img: '', count: 12, mode: 'give',
-         progress: '7/12', met: false, modeLabel: t('Deposit.ModeGive'), modeOptions: [mode('give'), mode('show')]
+         progress: '7/12', fill: '58%', met: false, modeLabel: t('Deposit.ModeGive'), modeOptions: [mode('give'), mode('show')]
       },
       canDeposit: !editing, depositVerb: t('Deposit.Give'), depositAria: t('Deposit.Give'), depositIcon: 'fa-hand-holding-hand',
       depositsList: [

@@ -12,5 +12,5 @@ First feature-complete preview. Requires Foundry VTT v14.
 - Hidden quests hide from every player, including per-player access, restored on reveal.
 - Item requirements on objectives: players hand items over (or only show them) from their characters, by button or drag. Deposits take only what's still needed, so several players filling the last slots never lose items. GM Undo returns them.
 - Import from Forien's Quest Log, in place, with parent/subquest repair and a report.
-- Light, Dark (coffee with art-deco fans), Sci-fi, and Gothic themes; GM sets the world default, players can override. Theme and font choices preview live while Module Settings is open.
+- Light, Dark (coffee with art-deco fans), Sci-fi, Gothic, and Ledger themes (Ledger is styled after Tidy 5e Sheets and takes its colors when Tidy is active); GM sets the world default, players can override. Theme and font choices preview live while Module Settings is open.
 - Responsive down to set minimum window sizes; child panels for quick choices; keyboard and screen-reader support.

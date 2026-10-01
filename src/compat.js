@@ -141,6 +141,29 @@ export function itemQuantityUpdate(item, quantity)
    return { [typeof value === 'object' && value !== null ? `${QUANTITY_PATH}.value` : QUANTITY_PATH]: quantity };
 }
 
+/** Tidy 5e Sheets: its package ID and the world setting holding the GM's sheet colors. */
+const TIDY_ID = 'tidy5e-sheet';
+export const TIDY_THEME_SETTING = `${TIDY_ID}.worldThemeSettings`;
+
+/**
+ * The banner color Tidy 5e Sheets uses for this world, when Tidy is active: its header background
+ * color if set, else its accent color. Tidy keeps its CSS variables inside its own sheets, so this
+ * reads the stored setting instead (checked against Tidy's source, 2026-10). An internal setting:
+ * any failure means "no match", never an error.
+ *
+ * @returns {string|null} A CSS color, or null.
+ */
+export function tidyBannerColor()
+{
+   if (!game.modules.get(TIDY_ID)?.active) { return null; }
+   try
+   {
+      const settings = game.settings.get(TIDY_ID, 'worldThemeSettings');
+      return settings?.headerBackgroundColor || settings?.accentColor || null;
+   }
+   catch { return null; }
+}
+
 /** Name of the scene control group our button joins. */
 export const SCENE_CONTROL_GROUP = 'tokens';
 

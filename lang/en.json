@@ -110,6 +110,7 @@
         "Dark": "Dark",
         "Scifi": "Sci-fi",
         "Gothic": "Gothic",
+        "Ledger": "Ledger (matches Tidy 5e Sheets)",
         "World": "Use world theme"
       },
       "DefaultOwnership": {

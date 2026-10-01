@@ -1,5 +1,6 @@
 import { MODULE_ID, QUEST_TYPE } from './constants.js';
-import { DocumentSheetConfig } from './compat.js';
+import { DocumentSheetConfig, TIDY_THEME_SETTING } from './compat.js';
+import { refreshOpenApps } from './theme.js';
 import { registerSettings } from './settings.js';
 import { registerKeybindings } from './keybindings.js';
 import { api } from './api.js';
@@ -43,6 +44,14 @@ Hooks.once('ready', () =>
    renameLegacyRootFolder();
 });
 Hooks.on('renderPlayers', () => refreshQuestBeacon());
+
+/** The Ledger theme follows Tidy 5e Sheets' colors; restyle when the GM changes them. */
+Hooks.on('updateSetting', (setting) =>
+{
+   if (setting.key !== TIDY_THEME_SETTING) { return; }
+   refreshOpenApps();
+   refreshQuestBeacon();
+});
 
 /** Personal tracking lives on the user's own document; refresh when it changes. */
 Hooks.on('updateUser', (user, changes) =>

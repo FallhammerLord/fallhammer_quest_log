@@ -203,7 +203,7 @@
               <span class="fhql-requirement-item">
                 <span class="fhql-requirement-thumb">{{#if requirement.img}}<img src="{{requirement.img}}" alt="">{{else}}<i class="fa-solid fa-box" inert></i>{{/if}}</span>
                 <button type="button" class="fhql-link" data-action="openDocument" data-uuid="{{requirement.uuid}}">{{requirement.name}}</button>
-                <span class="fhql-requirement-progress" aria-label="{{localize 'FHQL.Deposit.Progress'}} {{requirement.progress}}">{{requirement.progress}}</span>
+                <span class="fhql-requirement-progress" style="--fhql-fill: {{requirement.fill}}" aria-label="{{localize 'FHQL.Deposit.Progress'}} {{requirement.progress}}">{{requirement.progress}}</span>
                 {{#unless ../editing}}{{#unless canDeposit}}<span class="fhql-muted">{{requirement.modeLabel}}</span>{{/unless}}{{/unless}}
               </span>
               {{#if canDeposit}}
