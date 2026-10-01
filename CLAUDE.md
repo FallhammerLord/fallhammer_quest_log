@@ -108,17 +108,20 @@ Storage survives disable/re-enable; editing and autosave; view/edit modes; quick
 - Comforts: new-change dots (list, Beacon); objective glow and count tick; Beacon glow on finish; outcome chat card (public or whispered); window size/place memory; / to search, Esc clears; sliding folders; hover previews of quest links. Scroll no longer jumps when ticking an objective. Sci-fi hex texture. Gothic as Yharnam (soot/oxblood/brass/moonlight palette, spear finials, iron railing list) and the old warm Gothic as the new Cabaret theme (gilt trellis with sequins, footlights, velvet curtain list, gilt frames); needs a world relaunch (new style file). Subquests (parentQuest rename): + Add and clicking a subquest open it beside the window it came from (one side slot per window: a second subquest replaces the first in place; nested ones open beside their parent; cascade when no room); unlink button (keep standalone or delete); drop a quest on Subquests or Objectives to make it a subquest; Hand over sits in the eye column; Set parent; nesting in the log. Beacon: switching quests moves an open log; clicking shows the Beacon's quest before closing. Gothic headings in bundled IM Fell English SC (declared from code only, `loadBundledFonts`, and registered in Foundry's font list via `registerFont`; no @font-face in CSS, where a second, broken declaration could win). Drop caps via `initial-letter` (top flush with the first line). Beacon menus float on the page (fixed position was thrown off by transformed ancestors). Theme heading fonts: Amiri (Light), Josefin Sans (Dark), Oxanium (Sci-fi), Limelight (Cabaret). Light and Dark shapes: bookbinder frames, ivy marks, fleuron (Light); gold deco brackets, sunburst fans, stepped diamond (Dark); both also on Follow Foundry. New light.css: relaunch (safety net loads it anyway). Cabaret loads even before a relaunch (console note). Comfort width snaps while resizing (log 560/830/1040, pop-out 420/580/760, within 20px; Shift resizes freely). Hand over as an icon button. Portrait frame setting (GM): round (default) or square, all themes; empty edit-mode drop slot stays square.
 - Player notes in place: Edit notes opens the editor in one click (auto-clicks the editor's pen; unverified), lock shown to a second user, GM Edit anyway, saved text stays visible after the editor's Save.
 
-## Next up (see `docs/SCOPE.md` §11 milestones and §13 open decisions)
+## Next up (backlog, 2026-10-01; see `docs/SCOPE.md` §11 and §13). Much will shake out in play.
 
-1. Theme polish leftovers: theme our windows' title bar (behind `compat.js`); extend the contrast check to buttons, hover/selected states, chips, panels, Beacon.
-2. Nested objectives (schema has `parent`; no UI) and reordering objectives/rewards.
-3. Quest links and hotbar macros opening our sheet directly (today they land on the journal page summary).
-4. Sharing: compendium/Adventure import keeping parent links (IDs change), map pins tested.
-5. Scale: index quests instead of scanning `game.journal` per render; time a 500-quest world.
-6. Docs: screenshots, user guide. Then merge to a `main` branch and publish a `v0.3.0` release (workflow in `.github/workflows/release.yml`).
+1. **Verify in play** (biggest risk): everything under "Waiting on the user", especially two-player cases (simultaneous deposits, Show players, notes lock) with a second browser as a player.
+2. **Release v0.3.0:** screenshots, a short user guide, then merge to `main` and publish (workflow in `.github/workflows/release.yml`).
+3. **Easter eggs** (test bed approved for a look; build if fun and easy): Gothic bell toll on the Beacon when a tracked quest's last objective is done, plus "A hunter is never alone." tooltip at 3+ tracked; Cabaret curtain call on the third completion in a session. Theme-only, rare, a GM setting to turn off, reduced-motion fade.
+4. **New themes:** Hope and Fear (Daggerheart: gold and violet), Noir (Blades in the Dark: high contrast, typewriter, blind-slat shadows). Biosynth and a Numenera-style theme are parked (asymmetry is hard; Numenera is proprietary).
+5. **Theme polish:** theme our windows' title bars (behind `compat.js`); extend the contrast check to buttons, hover/selected states, chips, panels, Beacon.
+6. **Objectives:** nested objectives (schema has `parent` on objectives; no UI) and drag-reordering of objectives and rewards.
+7. **Links and macros:** quest links and hotbar macros open our sheet directly (today they land on the journal page summary).
+8. **Sharing:** compendium/Adventure import keeping parent links (IDs change); map pins tested.
+9. **Scale:** index quests instead of scanning `game.journal` per render; time a 500-quest world. Open quest windows all re-render on any quest change; watch for stutter with many windows.
+10. **Code:** move the sheet's render context out of `QuestSheetMixin.js` (695 lines) into `src/apps/sheet/`; consider splitting `styles/fhql.css` (1,100 lines) by component; Handlebars partials for the repeated eye button and notes lock controls; a settings submenu for advanced settings; check whether notifications escape HTML.
+11. **Translations:** English only today.
 
 Quest image guidance (told to the user): shown full pane width, max 160px tall, cropped top and bottom only. Recommend 5:1, 2000×400, key content in the middle 60% of height. Per-quest banner tint declined (2026-10-01).
-
-Audit leftovers (not yet done): Handlebars partials for the repeated eye button and notes lock controls; a settings submenu for the advanced settings; check Foundry's CSS layer list before adopting `@layer`; check whether notifications escape HTML.
 
 Open decisions: drop the floating tracker (recommended; Beacon covers it); whether quest entries show in players' journal sidebar; sign-off on the permission map (§5.6); FQL macro API shim timing.
