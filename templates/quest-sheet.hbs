@@ -222,8 +222,8 @@
                 {{#unless ../editing}}{{#unless canDeposit}}<span class="fhql-muted">{{requirement.modeLabel}}</span>{{/unless}}{{/unless}}
               </span>
               {{#if canDeposit}}
-              <button type="button" class="fhql-button fhql-small fhql-primary" data-action="depositItem" aria-haspopup="dialog" aria-label="{{depositAria}}">
-                <i class="fa-solid {{depositIcon}}" inert></i><span class="fhql-label">{{depositVerb}}</span></button>
+              <button type="button" class="fhql-button fhql-small fhql-primary fhql-icon-only" data-action="depositItem" aria-haspopup="dialog" aria-label="{{depositAria}}" data-tooltip="{{depositAria}}">
+                <i class="fa-solid {{depositIcon}}" inert></i></button>
               {{/if}}
               {{#if ../editing}}
               <span class="fhql-requirement-edit">

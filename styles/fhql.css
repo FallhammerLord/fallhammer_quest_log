@@ -445,7 +445,9 @@
   color: var(--fhql-ink-muted);
 }
 .fhql-app .fhql-empty-note + .fhql-button { margin-inline-start: 0.4em; }
-.fhql-app .fhql-button.fhql-small { padding: 0.1em 0.5em; font-size: 0.85em; font-variant: normal; letter-spacing: 0; text-transform: none; }
+.fhql-app .fhql-button.fhql-small { min-height: 24px; padding: 0.1em 0.5em; font-size: 0.85em; font-variant: normal; letter-spacing: 0; text-transform: none; }
+/* Targets: at least 24px (WCAG 2.2 AA, 2.5.8); icon-only actions 28px, since they carry no text to aim at. */
+.fhql-app .fhql-button.fhql-icon-only { min-width: 28px; min-height: 28px; padding: 0; justify-content: center; }
 .fhql-app .fhql-add { margin-block-start: 0.5em; }
 
 .fhql-app .fhql-prose { line-height: 1.5; }
@@ -893,7 +895,7 @@
 .fhql-app .fhql-undo { border: 0; color: var(--fhql-ink-muted); }
 .fhql-app .fhql-reward-actions { display: flex; flex-wrap: wrap; gap: 0.25em; align-items: center; justify-content: flex-end; }
 .fhql-app .fhql-icon-button.is-on { color: var(--fhql-accent); }
-.fhql-app .fhql-small-select { width: auto; padding: 0.1em 0.3em; font-size: 0.82em; }
+.fhql-app .fhql-small-select { width: auto; min-height: 24px; padding: 0.1em 0.3em; font-size: 0.82em; }
 .fhql-app .fhql-grow-text { flex: 1; min-width: 0; }
 .fhql-app .fhql-eye { margin-inline-start: auto; opacity: 0.7; }
 .fhql-app .fhql-eye:hover, .fhql-app .fhql-eye[aria-pressed="true"] { opacity: 1; }

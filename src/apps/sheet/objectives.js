@@ -63,7 +63,6 @@ function requirementContext(objective, { open, gm, editing })
          }))
       },
       canDeposit: open && !editing && !objective.hidden && stillNeeded(objective) > 0,
-      depositVerb: verb,
       depositAria: game.i18n.format('FHQL.Deposit.ActionLabel', { verb, item: requirement.name }),
       depositIcon: give ? 'fa-hand-holding-hand' : 'fa-eye',
       depositsList: objective.deposits.map((d, index) => ({ index, label: depositLabel(d), held: !!d.item, gm }))
