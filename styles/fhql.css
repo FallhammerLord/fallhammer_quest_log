@@ -221,7 +221,8 @@
 .fhql-app .fhql-sheet-inner {
   --fhql-pad-x: 1em; --fhql-pad-top: 0.9em;
   display: grid; grid-template-rows: auto auto; gap: 0.8em;
-  padding: var(--fhql-pad-top) var(--fhql-pad-x) 1em;
+  /* No top padding here: the header carries it, so it starts at the sheet's top edge (see below). */
+  padding: 0 var(--fhql-pad-x) 1em;
 }
 /* The quest image, title, and buttons stay nailed at the top whenever the sheet itself scrolls
    (narrow windows, or a window too short for the panels' minimums). */
@@ -231,9 +232,11 @@
   z-index: 3;
   display: grid;
   gap: 0.8em;
-  /* Spans the sheet edge to edge, so its background covers what scrolls under it. */
+  /* Spans the sheet edge to edge and starts at its top edge, so its background covers what scrolls
+     under it and its texture tiles from the same corner as the sheet's: the two line up exactly,
+     scrolled or not. */
   margin-inline: calc(-1 * var(--fhql-pad-x));
-  padding-inline: var(--fhql-pad-x);
+  padding: var(--fhql-pad-top) var(--fhql-pad-x) 0;
   background-color: var(--fhql-surface);
   background-image: var(--fhql-veil), var(--fhql-overlay-top), var(--fhql-texture);
   background-size: 100% 100%, 100% 100%, var(--fhql-texture-size);
