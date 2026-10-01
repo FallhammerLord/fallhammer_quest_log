@@ -11,6 +11,8 @@ First feature-complete preview. Requires Foundry VTT v14.
 - Player workflows (GM settings): accept quests, propose quests, trusted status changes, shared player notes; hide the Quest Log from players; per-button toggles.
 - Hidden quests hide from every player, including per-player access, restored on reveal.
 - The quest header and list toolbar stay pinned; each quest panel scrolls on its own, with Objectives given room first. Narrow windows use one scroll with collapsible panels. Hide done on Objectives.
+- The Beacon opens and closes the Quest Log (and its quest windows), with a short rise-and-settle motion.
+- Show players: the GM opens a quest on players' screens, like Forien's Show.
 - Player notes are edited in place from the read view, one person at a time; others see who is editing.
 - Item requirements on objectives: players hand items over (or only show them) from their characters, by button or drag. Deposits take only what's still needed, so several players filling the last slots never lose items. GM Undo returns them.
 - Import from Forien's Quest Log, in place, with parent/subquest repair and a report.

@@ -230,6 +230,10 @@ Known limit: the v14 query API doesn't tell the GM client which user sent a requ
 - **Who receives:** Claim and Give always open a confirm panel. Players pick any actor they own (assigned character first; shared party inventory marked). The GM's Give lists every world actor: assigned characters first, then other player-owned actors, then the rest (NPCs, the GM's own); this replaces the earlier "assigned characters only" rule, which blocked party inventories and GM-run tests. A shared actor's claim is credited to its assigned player, else its first player owner; an actor no player owns, to the GM.
 - **Undo (GM):** "Take it back" removes the item from the character: the claimed amount from a larger (merged) stack, else the whole item. The item is found by the ID saved at claim time, else by the quest mark and name on that actor. If it can't be found (sold, used, renamed), Undo still clears the claim and says to remove anything left by hand. Claims now record the actor name and amount.
 
+### 5.13 Show to players (2026-10-01)
+
+Like Forien's Show: a GM button on the quest header opens the quest's window on players' screens. The GM picks "Everyone who can see it" or one connected player. The GM's client asks each player's client directly (`fhql.showQuest` query; no manifest change); the player's client opens the quest only if that player may see it, so showing never reveals anything. Players the GM can't reach are named. `src/ui/share.js`, `src/apps/sheet/share.js`.
+
 ### 5.11 Item requirements and deposits (2026-10-01)
 
 An objective can require an item: "Bring 3 wolf pelts". The requirement lives on the objective, so it shows on the sheet and the Beacon as progress (2/3) and ticks the objective done when filled.
@@ -401,6 +405,14 @@ The whole quest log never scrolls in normal use. Prototyped first (artifact "Que
 - **Edit mode:** rich-text editor toolbars stay pinned inside their scrolling panel.
 - **Hide done:** a per-player checkbox on Objectives hides completed objectives (read view only; edit mode shows all). The count still shows done/total.
 - **How:** CSS can't express "Objectives first", since flexbox shrinks by content size, so `src/apps/sheet/panels.js` measures after each render and whenever the window or a panel's contents change size (a ResizeObserver), and sets each panel's height. The layout test runs the same code on its pages, and has a long-quest case (65 objectives).
+
+### 7.4d Beacon toggle and window motion (2026-10-01)
+
+Prototyped first (artifact "Quest Log Comforts").
+
+- **Beacon toggle:** clicking the Beacon opens the Quest Log; if the log is minimized it comes back; if it's open, the log and every quest window close together.
+- **Motion:** windows open with a short rise and fade from about 96% (180ms), growing from the Beacon when it opened them, else from their center. They close with the reverse (140ms), the log settling toward the Beacon. Reduced motion gets a plain fade. Our close replaces Foundry's own close animation (`close({ animate: false })` after ours), so they never double up. `src/ui/motion.js`.
+- **Still to build from the prototype** (approved, no sound): new-change dots, completion moments (Beacon glow, count tick, chat card), window size memory, `/` to search, sliding folders, hover previews.
 
 ### 7.4b Child panels (2026-09-29)
 

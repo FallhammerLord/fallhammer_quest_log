@@ -383,6 +383,9 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
       this.#applyListFilters();
    }
 
+   /** The log settles back toward the Beacon when it closes. @override */
+   _closeToward() { return document.getElementById('fhql-beacon'); }
+
    /** @override */
    _onClose(options)
    {

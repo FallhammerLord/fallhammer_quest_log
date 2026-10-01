@@ -416,6 +416,15 @@
     },
     "Error": {
       "Action": "That didn't work. Check the console (F12) for details."
+    },
+    "Share": {
+      "Button": "Show players",
+      "Hint": "Open this quest on players' screens. Only players who can see the quest get it.",
+      "Title": "Show this quest to",
+      "Everyone": "Everyone who can see it ({count})",
+      "Shown": "Shown to {names}.",
+      "Missed": "Couldn't show it to {names}. They may have just disconnected.",
+      "NoOne": "No connected player can see this quest. Reveal it, or give them access, first."
     }
   }
 }

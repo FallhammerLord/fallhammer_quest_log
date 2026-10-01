@@ -102,6 +102,11 @@
               aria-pressed="{{#if tracked}}true{{else}}false{{/if}}" aria-label="{{localize 'FHQL.Quest.Track'}}"
               data-tooltip="{{#if tracked}}{{localize 'FHQL.Quest.UntrackHint'}}{{else}}{{localize 'FHQL.Quest.TrackHint'}}{{/if}}">
         <i class="{{#if tracked}}fa-solid{{else}}fa-regular{{/if}} fa-bookmark" inert></i><span class="fhql-label">{{localize "FHQL.Quest.Track"}}</span></button>
+      {{#if gm}}
+      <button type="button" class="fhql-button" data-action="showToPlayers" aria-haspopup="menu"
+              aria-label="{{localize 'FHQL.Share.Button'}}" data-tooltip="{{localize 'FHQL.Share.Hint'}}">
+        <i class="fa-solid fa-share-from-square" inert></i><span class="fhql-label">{{localize "FHQL.Share.Button"}}</span></button>
+      {{/if}}
       {{#if editable}}
       <button type="button" class="fhql-button fhql-push" data-action="editQuest" aria-label="{{localize 'FHQL.QuestLog.Edit'}}">
         <i class="fa-solid fa-pen" inert></i><span class="fhql-label">{{localize "FHQL.QuestLog.Edit"}}</span></button>

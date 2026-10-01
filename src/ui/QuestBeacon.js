@@ -1,6 +1,6 @@
 import { playerRowElement, playersElement } from '../compat.js';
 import { MODULE_ID } from '../constants.js';
-import { openQuestLog } from '../api.js';
+import { openQuestLog, toggleQuestLog } from '../api.js';
 import { questAccess, questPage } from '../data/quests.js';
 import { beaconChoice, beaconQuests, setBeaconChoice } from '../data/tracking.js';
 import { menuPopover } from './popover.js';
@@ -100,9 +100,10 @@ async function onBeaconClick(event, widget)
       }
       return;
    }
-   if (event.target.closest('[data-beacon-empty]')) { openQuestLog(); return; }
+   // The Beacon is the log's toggle: open (from here), bring back if minimized, or close with every quest window.
+   if (event.target.closest('[data-beacon-empty]')) { toggleQuestLog(null, widget); return; }
    const id = event.target.closest('[data-quest-id]')?.dataset.questId;
-   if (id) { openQuestLog(id); }
+   if (id) { toggleQuestLog(id, widget); }
 }
 
 /** @returns {string} The Beacon with nothing marked: a button that opens the Quest Log. */

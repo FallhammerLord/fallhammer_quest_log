@@ -14,6 +14,8 @@ import {
    notesActions, notesContext, openNotesIfAsked, rememberOpenNotes, savePlayerNotes, stopEditingNotes
 } from './sheet/notes.js';
 import { openQuestMenu, questMenuActions } from './sheet/questMenu.js';
+import { shareActions } from './sheet/share.js';
+import { animateClose, animateOpen } from '../ui/motion.js';
 import {
    applyCollapsed, capturePanelScroll, layoutPanels, onPanelHeadingClick, restorePanelScroll, watchPanels
 } from './sheet/panels.js';
@@ -63,7 +65,8 @@ export function QuestSheetMixin(Base)
             ...objectiveActions,
             ...rewardActions,
             ...notesActions,
-            ...questMenuActions
+            ...questMenuActions,
+            ...shareActions
          })
       };
 
@@ -87,6 +90,26 @@ export function QuestSheetMixin(Base)
 
       /** Panel scroll positions captured before a render, restored after it. */
       #pendingScroll = null;
+
+      /** The control that opened this window (the Beacon), so it grows from there. Cleared after use. */
+      _motionFrom = null;
+
+      /** @returns {HTMLElement|null} Where this window settles when it closes; null for its own center. */
+      _closeToward() { return null; }
+
+      /**
+       * Closes with our settle motion instead of Foundry's own, so the two never play together.
+       *
+       * @override
+       */
+      async close(options = {})
+      {
+         if (options.animate !== false && this.rendered && !this.minimized && this.element)
+         {
+            await animateClose(this.element, this._closeToward());
+         }
+         return super.close({ ...options, animate: false });
+      }
 
       /** Last save outcome shown in edit mode: '', 'saving', 'saved', or 'failed'. */
       #saveState = '';
@@ -371,6 +394,8 @@ export function QuestSheetMixin(Base)
       {
          super._onFirstRender(context, options);
          const el = this.element;
+         animateOpen(el, this._motionFrom);
+         this._motionFrom = null;
          el.addEventListener('change', (event) =>
          {
             if (event.target.matches?.('[data-hide-done]'))

@@ -11,10 +11,11 @@ import { systemSupportSummary } from './data/systemItems.js';
  * @param {string} [questId] - JournalEntry ID of a quest to select.
  * @returns {QuestLog|Promise<QuestLog>} The Quest Log.
  */
-export function openQuestLog(questId)
+export function openQuestLog(questId, { from = null } = {})
 {
    if (!questLogAvailable()) { return undefined; }
    const log = QuestLog.instance;
+   log._motionFrom = from;
    if (questId) { log.select(questId); }
    if (log.rendered)
    {
@@ -31,6 +32,22 @@ export function openQuestLog(questId)
  * @param {string} questId - JournalEntry ID.
  * @returns {QuestSheetApp|undefined} The window.
  */
+/**
+ * The Beacon's toggle: opens the Quest Log (growing from the Beacon), brings a minimized log back, or,
+ * when the log is open, closes it and every quest window with it.
+ *
+ * @param {string} [questId] - Quest to show when opening.
+ * @param {HTMLElement} [from] - The Beacon, so the log grows from it.
+ * @returns {Promise<unknown>|unknown} The log, or the closing.
+ */
+export function toggleQuestLog(questId, from = null)
+{
+   const log = QuestLog.instance;
+   if (log.rendered && log.minimized) { log.bringToFront(); return log.maximize(); }
+   if (log.rendered) { return Promise.all([log.close(), QuestSheetApp.closeAll()]); }
+   return openQuestLog(questId, { from });
+}
+
 export function openQuestSheet(questId)
 {
    if (!questLogAvailable()) { return undefined; }

@@ -32,6 +32,12 @@ export class QuestSheetApp extends QuestSheetMixin(HandlebarsApp)
       return app;
    }
 
+   /** Closes every open quest window (the Beacon toggle closes them with the log). */
+   static closeAll()
+   {
+      return Promise.all([...QuestSheetApp.#windows.values()].filter((app) => app.rendered).map((app) => app.close()));
+   }
+
    /**
     * Re-renders open quest windows after a quest changes; closes windows whose quest is gone or hidden.
     *

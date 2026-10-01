@@ -51,6 +51,8 @@ npm run deposits   # deposit and reward rules with Foundry mocked: races, refusa
 | `src/apps/QuestLog.js` | log window: folder tree, filters, search, right-click menu |
 | `src/apps/QuestSheetApp.js` | pop-out quest window |
 | `src/ui/QuestBeacon.js` | panel above the players list |
+| `src/ui/motion.js` | window open/close motion (from/to the Beacon), reduced-motion fade |
+| `src/ui/share.js` | Show to players: GM asks players' clients to open a quest (query) |
 | `src/ui/popover.js` | in-window child panels (menus, pickers, confirms) |
 | `styles/fhql.css` | Light tokens (default), then every component, tokens only |
 | `styles/themes/*.css` | one file per other theme: tokens, then its few theme-only rules; listed in `module.json` |
@@ -86,6 +88,8 @@ Storage survives disable/re-enable; editing and autosave; view/edit modes; quick
 - Item requirements and deposits: hand over, show only, drag from a character sheet, Undo with return, and two players depositing at once (needs two browsers as different players). Item matching across systems (dnd5e/pf2e quantity). Hand over always confirms source and amount in a panel (starts on the assigned character; party inventory selectable); GM hand over from an NPC; quantity in each of the user's systems: D&D 5e, Cypher, Daggerheart, PF2e. Startup console line names the detected system.
 - Rewards: Claim/Give confirm panel with any owned actor (party inventory); GM Give to any actor (NPCs credited to the GM); Undo "Take it back" (merged stacks reduced by the claimed amount; missing item still clears the claim).
 - Pinned header and list toolbar; panels sized by priority and scrolling on their own (wide); one scroll with collapsible panels and Show all (narrow); scroll kept after ticking an objective; Hide done; editor toolbar pinned in edit mode; very short window falls back to whole-sheet scroll.
+- Beacon toggle (open, restore if minimized, close log and quest windows) with rise/settle motion; no double animation with Foundry's close.
+- Show players: GM picks everyone or one player; their quest window opens (needs a second browser as a player).
 - Player notes in place: Edit notes opens the editor in one click (auto-clicks the editor's pen; unverified), lock shown to a second user, GM Edit anyway, saved text stays visible after the editor's Save.
 
 ## Next up (see `docs/SCOPE.md` §11 milestones and §13 open decisions)
@@ -98,6 +102,8 @@ Storage survives disable/re-enable; editing and autosave; view/edit modes; quick
 6. Docs: screenshots, user guide. Then merge to a `main` branch and publish a `v0.3.0` release (workflow in `.github/workflows/release.yml`).
 
 Quest image guidance (told to the user): shown full pane width, max 160px tall, cropped top and bottom only. Recommend 5:1, 2000×400, key content in the middle 60% of height. Per-quest banner tint declined (2026-10-01).
+
+Prototyped comforts still to build (approved, no sound): new-change dots, completion moments, window size memory, `/` search, sliding folders, hover previews.
 
 Audit leftovers (not yet done): Handlebars partials for the repeated eye button and notes lock controls; a settings submenu for the advanced settings; check Foundry's CSS layer list before adopting `@layer`; check whether notifications escape HTML.
 
