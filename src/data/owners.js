@@ -34,12 +34,13 @@ export function assignedToSomeone(actor)
 }
 
 /**
- * Actors that belong to players, assigned characters first.
+ * Every world actor, for the GM: assigned characters first, then other player-owned actors (a party
+ * inventory), then the rest (NPCs, the GM's own characters).
  *
  * @returns {Actor[]} Actors.
  */
-export function playerActors()
+export function actorsForGM()
 {
-   return game.actors.filter((a) => playerFor(a))
-    .sort((a, b) => Number(assignedToSomeone(b)) - Number(assignedToSomeone(a)));
+   const rank = (a) => (assignedToSomeone(a) ? 0 : playerFor(a) ? 1 : 2);
+   return [...game.actors].sort((a, b) => rank(a) - rank(b));
 }

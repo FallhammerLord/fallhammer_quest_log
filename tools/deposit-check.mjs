@@ -251,7 +251,8 @@ const npc2 = makeActor('npc2', 'nobody');
 users[1].character = hero;
 globalThis.game.actors = [npc2, partyBox, hero];
 const gmChoices = recipientOptions(quest.reward(), true);
-expect('GM can give to any player-owned actor, not just assigned characters', gmChoices.length === 2);
+expect('GM can give to any actor, including one no player owns', gmChoices.length === 3);
+expect('an actor no player owns is credited to the GM', gmChoices.find((c) => c.actorUuid === npc2.uuid)?.userId === 'gm');
 expect('GM list puts the assigned character first', gmChoices[0].actorUuid === hero.uuid);
 expect('the party actor is marked shared', gmChoices.find((c) => c.actorUuid === partyBox.uuid)?.shared === true);
 

@@ -4,7 +4,7 @@ import { registerRelay, relay } from './relay.js';
 import { MODULE_ID } from '../constants.js';
 import { addObjective, getQuestEntry, questAccess, questPage, updateQuest } from './quests.js';
 import { claimTargets } from './rewards.js';
-import { assignedToSomeone, playerFor, sharedActor } from './owners.js';
+import { actorsForGM, assignedToSomeone, playerFor, sharedActor } from './owners.js';
 
 /**
  * Item requirements on objectives, and players depositing items toward them. See docs/SCOPE.md 5.11.
@@ -97,9 +97,7 @@ export function depositCandidates(objective, asGM)
 {
    if (!hasRequirement(objective)) { return []; }
    const shown = new Set(objective.deposits.map((d) => d.itemUuid));
-   const actors = asGM
-    ? [...game.actors].sort((a, b) => (playerFor(a) ? 0 : 1) - (playerFor(b) ? 0 : 1))
-    : claimTargets(game.user);
+   const actors = asGM ? actorsForGM() : claimTargets(game.user);
    const choices = [];
    for (const actor of actors)
    {

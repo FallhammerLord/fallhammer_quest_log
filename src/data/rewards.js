@@ -1,7 +1,7 @@
 import { deleteKeyUpdate, postChat } from '../compat.js';
 import { registerRelay, relay } from './relay.js';
 import { itemQuantity, itemQuantityUpdate } from './systemItems.js';
-import { assignedToSomeone, playerActors, playerFor, sharedActor } from './owners.js';
+import { actorsForGM, assignedToSomeone, playerFor, sharedActor } from './owners.js';
 import { MODULE_ID } from '../constants.js';
 import { getQuestEntry, questAccess, questPage } from './quests.js';
 
@@ -75,8 +75,9 @@ export function claimLabel(claim)
  * Who can receive a reward, best choice first.
  *
  * Items go onto an actor: for a player, any actor they own (their assigned character first, then a
- * shared party inventory or a second character); for the GM giving it, any actor a player owns,
- * assigned characters first. Actor rewards (followers) go to a player.
+ * shared party inventory or a second character); for the GM giving it, any world actor, assigned
+ * characters first, then other player-owned actors, then the rest. A claim on an actor no player owns
+ * is recorded under the GM. Actor rewards (followers) go to a player.
  *
  * @param {object} reward - Reward data.
  * @param {boolean} asGM - Whether the GM is giving the reward.
@@ -90,16 +91,18 @@ export function recipientOptions(reward, asGM)
       return players.filter((u) => !claimsExhausted(reward, u.id))
        .map((u) => ({ userId: u.id, actorUuid: '', label: u.name, assigned: false, shared: false }));
    }
-   const actors = asGM ? playerActors() : claimTargets(game.user);
+   const actors = asGM ? actorsForGM() : claimTargets(game.user);
    const options = [];
    for (const actor of actors)
    {
-      const owner = asGM ? playerFor(actor) : game.user;
-      if (!owner || claimsExhausted(reward, owner.id)) { continue; }
+      if (actor.pack) { continue; }
+      const player = asGM ? playerFor(actor) : game.user;
+      const owner = player ?? game.user;
+      if (claimsExhausted(reward, owner.id)) { continue; }
       options.push({
          userId: owner.id,
          actorUuid: actor.uuid,
-         label: asGM ? `${actor.name} (${owner.name})` : actor.name,
+         label: asGM && player ? `${actor.name} (${player.name})` : actor.name,
          assigned: asGM ? assignedToSomeone(actor) : actor.id === game.user.character?.id,
          shared: sharedActor(actor)
       });
