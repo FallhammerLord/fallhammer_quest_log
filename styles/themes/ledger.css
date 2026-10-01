@@ -124,7 +124,7 @@
   background-color: var(--fhql-banner);
   background-image: var(--fhql-veil-banner), var(--fhql-banner-texture);
   background-size: 100% 100%, var(--fhql-banner-texture-size);
-  font-family: var(--fhql-font-body);
+  --fhql-heading-face: var(--fhql-font-body);
   font-weight: bold;
   font-variant: normal;
   letter-spacing: 0.01em;

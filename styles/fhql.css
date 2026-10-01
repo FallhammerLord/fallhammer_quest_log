@@ -103,7 +103,10 @@
   margin: 0;
   border: none;
   color: var(--fhql-ink);
-  font-family: var(--fhql-font-heading);
+  /* !important: Foundry's own h2/h3 rules outrank ours (seen in v14: theme and GM fonts never reached
+     headings, while the drop cap, which Foundry doesn't style, got them). A heading that should use
+     another face sets --fhql-heading-face instead (Ledger's section bars use the body font). */
+  font-family: var(--fhql-heading-face, var(--fhql-font-heading)) !important;
 }
 .fhql-app .fhql-heading { font-size: 1.4em; }
 .fhql-app .fhql-subheading {
