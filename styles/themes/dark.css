@@ -17,6 +17,7 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
   --fhql-hover: rgb(255 200 120 / 0.08);
   --fhql-accent: #e0a054;
   --fhql-accent-ink: #1e1812;
+  --fhql-danger-ink: #15110c;
   --fhql-status-hidden: #9a8f80;
   --fhql-status-available: #e0c070;
   --fhql-status-active: #7fb2e5;
@@ -45,7 +46,6 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
     repeating-linear-gradient(-60deg, rgb(224 160 84 / 0.06) 0 1px, transparent 1px 14px);
 }
 
-.fhql-app.fhql-theme-dark .fhql-button.fhql-danger-fill { color: var(--fhql-surface-sunken); }
 
 /* ---------- Shapes (art deco; kept with textures off). Also "Follow Foundry" while Foundry is dark. ---------- */
 .fhql-app:is(.fhql-theme-dark, :where(.fhql-theme-auto.theme-dark, body.theme-dark .fhql-theme-auto:not(.theme-light))) {

@@ -1,5 +1,5 @@
 import { MODULE_ID, MODULE_PATH, THEMES } from './constants.js';
-import { registerFont, tidyBannerColor } from './compat.js';
+import { registerFont, tidyBannerColor, windowHeader } from './compat.js';
 
 const THEME_CLASSES = Object.values(THEMES).map((theme) => `fhql-theme-${theme}`);
 
@@ -44,8 +44,12 @@ export function applyTheme(element)
    element.classList.remove(...THEME_CLASSES);
    element.classList.add(`fhql-theme-${currentTheme()}`);
    const strength = currentStrength();
-   // Smooth panels at 0: textures and images off, the theme's small shapes stay.
-   element.classList.toggle('fhql-no-texture', strength === 0);
+   const contrast = setting('contrastMode');
+   element.classList.toggle('fhql-hc-dark', contrast === 'dark');
+   element.classList.toggle('fhql-hc-light', contrast === 'light');
+   windowHeader(element)?.classList.add('fhql-titlebar');
+   // Smooth panels at 0, and always in high contrast: textures and images off, the theme's shapes stay.
+   element.classList.toggle('fhql-no-texture', strength === 0 || contrast === 'dark' || contrast === 'light');
    element.style.setProperty('--fhql-strength', String(strength));
    element.classList.toggle('fhql-portrait-square', setting('portraitFrame') === 'square');
    applyOverlay(element);

@@ -15,6 +15,7 @@
   --fhql-hover: rgb(243 194 103 / 0.1);
   --fhql-accent: #f3c267;
   --fhql-accent-ink: #18162e;
+  --fhql-danger-ink: #0d0c1e;
   --fhql-status-hidden: #a9a3c4;
   --fhql-status-available: #f3c267;
   --fhql-status-active: #9d95f2;
@@ -110,4 +111,3 @@
 /* Finished objectives tick in Hope gold (the icon and strike-through still say "done"). */
 .fhql-app.fhql-theme-hopefear .fhql-objectives li.is-done .fhql-state-icon { color: var(--fhql-hope); }
 
-.fhql-app.fhql-theme-hopefear .fhql-button.fhql-danger-fill { color: var(--fhql-surface-sunken); }

@@ -14,6 +14,7 @@
   --fhql-hover: rgb(0 229 255 / 0.08);
   --fhql-accent: #34e4ff;
   --fhql-accent-ink: #04161c;
+  --fhql-danger-ink: #070c10;
   --fhql-status-hidden: #7a909e;
   --fhql-status-available: #ffd166;
   --fhql-status-active: #34e4ff;
@@ -53,7 +54,6 @@
   color: var(--fhql-accent);
 }
 .fhql-app.fhql-theme-scifi .fhql-chip { border-radius: 0; }
-.fhql-app.fhql-theme-scifi .fhql-button.fhql-danger-fill { color: var(--fhql-surface-sunken); }
 
 /* ---------- Sci-fi: clean chamfered borders ----------
    The card's own background is the border color, clipped to the chamfer; an inner layer 1px smaller

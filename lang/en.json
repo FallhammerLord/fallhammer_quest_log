@@ -142,6 +142,13 @@
         "Ledger": "Ledger (matches Tidy 5e Sheets)",
         "World": "Use world theme"
       },
+      "Contrast": {
+        "Name": "High contrast (just you)",
+        "Hint": "Pure backgrounds, strong edges, larger focus rings, no textures, and status colors that stay distinct for colour-blind players. Works with any theme.",
+        "Off": "Off (use the theme's colors)",
+        "Dark": "High contrast, dark",
+        "Light": "High contrast, light"
+      },
       "EasterEggs": {
         "Name": "Theme easter eggs",
         "Hint": "Rare, purely visual moments in some themes (no sound, nothing to click). Turn off to keep every theme plain."

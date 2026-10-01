@@ -16,6 +16,7 @@
   --fhql-hover: rgb(170 40 60 / 0.14);
   --fhql-accent: #e2596a;
   --fhql-accent-ink: #11131e;
+  --fhql-danger-ink: #0a0b12;
   --fhql-status-hidden: #978d9e;
   --fhql-status-available: #d8b56c;
   --fhql-status-active: #8fa8ea;
@@ -130,7 +131,6 @@
 /* Finished objectives tick in gilt (the icon and strike-through still say "done"). */
 .fhql-app.fhql-theme-cabaret .fhql-objectives li.is-done .fhql-state-icon { color: var(--fhql-cabaret-gilt); }
 
-.fhql-app.fhql-theme-cabaret .fhql-button.fhql-danger-fill { color: var(--fhql-surface-sunken); }
 
 /* ---------- Easter egg: curtain call (src/ui/eggs.js) ---------- */
 /* Velvet drapes sweep in over the window, a gilt marquee lights with chasing bulbs, the drapes part.

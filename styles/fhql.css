@@ -16,6 +16,7 @@
   --fhql-hover: rgb(120 80 20 / 0.12);
   --fhql-accent: #7a2e1c;
   --fhql-accent-ink: #fff8ec;
+  --fhql-danger-ink: #ffffff;
   --fhql-status-hidden: #5f564d;
   --fhql-status-available: #6b4e0e;
   --fhql-status-active: #1f5f9e;
@@ -998,7 +999,7 @@
 .fhql-app .fhql-popover-form { display: grid; gap: 0.5em; padding: 0.3em; }
 .fhql-app .fhql-popover-buttons { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.35em; padding: 0 0.3em 0.2em; }
 .fhql-app .fhql-button.fhql-danger-fill {
-  color: #fff;
+  color: var(--fhql-danger-ink);
   background: var(--fhql-status-failed);
   border-color: var(--fhql-status-failed);
 }
@@ -1069,6 +1070,67 @@
   --fhql-overlay-top: none !important;
   --fhql-overlay-bottom: none !important;
 }
+
+/* ---------- High contrast (per player; overrides any theme) ----------
+   Pure surfaces, strong edges (3:1 or more), thicker focus rings, textures off (theme.js adds
+   .fhql-no-texture). Status colors follow the Okabe-Ito palette, which stays distinct for the common
+   kinds of colour blindness; statuses also always show an icon and a label. !important beats every
+   theme's token block, whatever its selector weight. Theme shapes keep their form. */
+
+/* ---------- Tokens: High contrast (dark) ---------- */
+.fhql-app.fhql-hc-dark {
+  --fhql-surface: #0a0a0a !important;
+  --fhql-surface-raised: #161616 !important;
+  --fhql-surface-sunken: #000000 !important;
+  --fhql-ink: #ffffff !important;
+  --fhql-ink-muted: #d4d4d4 !important;
+  --fhql-rule: #8c8c8c !important;
+  --fhql-hover: rgb(255 210 63 / 0.18) !important;
+  --fhql-accent: #ffd23f !important;
+  --fhql-accent-ink: #000000 !important;
+  --fhql-danger-ink: #000000 !important;
+  --fhql-status-hidden: #c4c4c4 !important;
+  --fhql-status-available: #e69f00 !important;
+  --fhql-status-active: #56b4e9 !important;
+  --fhql-status-completed: #2bc496 !important;
+  --fhql-status-failed: #ff8a4c !important;
+  --fhql-glow: none !important;
+}
+
+/* ---------- Tokens: High contrast (light) ---------- */
+.fhql-app.fhql-hc-light {
+  --fhql-surface: #ffffff !important;
+  --fhql-surface-raised: #f2f2f2 !important;
+  --fhql-surface-sunken: #e6e6e6 !important;
+  --fhql-ink: #000000 !important;
+  --fhql-ink-muted: #333333 !important;
+  --fhql-rule: #595959 !important;
+  --fhql-hover: rgb(0 71 171 / 0.12) !important;
+  --fhql-accent: #003d94 !important;
+  --fhql-accent-ink: #ffffff !important;
+  --fhql-danger-ink: #ffffff !important;
+  --fhql-status-hidden: #444444 !important;
+  --fhql-status-available: #5e3c00 !important;
+  --fhql-status-active: #004a80 !important;
+  --fhql-status-completed: #004f38 !important;
+  --fhql-status-failed: #7f2a00 !important;
+  --fhql-glow: none !important;
+}
+.fhql-app:is(.fhql-hc-dark, .fhql-hc-light) :is(.fhql-card, .fhql-input, .fhql-button, .fhql-row.is-selected) { border-color: var(--fhql-rule) !important; }
+.fhql-app:is(.fhql-hc-dark, .fhql-hc-light) :focus-visible { outline: 3px solid var(--fhql-accent) !important; outline-offset: 1px; }
+/* Theme-tinted ticks (gilt, brass) give way to the status color, which meets contrast. */
+.fhql-app:is(.fhql-hc-dark, .fhql-hc-light) .fhql-objectives li.is-done .fhql-state-icon { color: var(--fhql-status-completed) !important; }
+
+/* ---------- Window title bars (all themes) ---------- */
+/* theme.js marks our windows' header .fhql-titlebar (found through compat.js). */
+.fhql-app .fhql-titlebar {
+  color: var(--fhql-ink);
+  background: var(--fhql-surface-sunken);
+  border-block-end: 1px solid var(--fhql-rule);
+}
+.fhql-app .fhql-titlebar :is(h1, h2, h3) { color: inherit; font-family: var(--fhql-font-heading); letter-spacing: 0.03em; }
+.fhql-app .fhql-titlebar :is(button, a) { color: var(--fhql-ink-muted); }
+.fhql-app .fhql-titlebar :is(button, a):is(:hover, :focus-visible) { color: var(--fhql-accent); }
 
 /* ---------- "New" markers ---------- */
 .fhql-app .fhql-new-dot {

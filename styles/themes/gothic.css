@@ -20,6 +20,7 @@
   --fhql-hover: rgb(150 40 46 / 0.14);
   --fhql-accent: #d2625f;
   --fhql-accent-ink: #0e0f14;
+  --fhql-danger-ink: #09090d;
   --fhql-status-hidden: #9a93a0;
   --fhql-status-available: #b39c6e;
   --fhql-status-active: #93a3bd;
@@ -135,7 +136,6 @@
 /* Finished objectives tick in tarnished brass (the icon and strike-through still say "done"). */
 .fhql-app.fhql-theme-gothic .fhql-objectives li.is-done .fhql-state-icon { color: var(--fhql-gothic-brass); }
 
-.fhql-app.fhql-theme-gothic .fhql-button.fhql-danger-fill { color: var(--fhql-surface-sunken); }
 
 /* ---------- Easter egg: the bell tolls (src/ui/eggs.js) ---------- */
 /* An iron bell swings above the Beacon's corner and sends out three brass rings, then fades. */

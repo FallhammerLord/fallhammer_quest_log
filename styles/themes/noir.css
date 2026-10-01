@@ -15,6 +15,7 @@
   --fhql-hover: rgb(214 98 90 / 0.1);
   --fhql-accent: #d6625a;
   --fhql-accent-ink: #141518;
+  --fhql-danger-ink: #0c0d0f;
   --fhql-status-hidden: #a19e97;
   --fhql-status-available: #c9b27a;
   --fhql-status-active: #8fb3c9;
@@ -74,4 +75,3 @@
   letter-spacing: 0.12em;
 }
 
-.fhql-app.fhql-theme-noir .fhql-button.fhql-danger-fill { color: var(--fhql-surface-sunken); }

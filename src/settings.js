@@ -46,6 +46,17 @@ export function registerSettings()
       onChange: restyle
    });
 
+   game.settings.register(MODULE_ID, 'contrastMode', {
+      name: 'FHQL.Settings.Contrast.Name',
+      hint: 'FHQL.Settings.Contrast.Hint',
+      scope: 'client',
+      config: true,
+      type: String,
+      choices: { off: 'FHQL.Settings.Contrast.Off', dark: 'FHQL.Settings.Contrast.Dark', light: 'FHQL.Settings.Contrast.Light' },
+      default: 'off',
+      onChange: restyle
+   });
+
    game.settings.register(MODULE_ID, 'easterEggs', {
       name: 'FHQL.Settings.EasterEggs.Name',
       hint: 'FHQL.Settings.EasterEggs.Hint',

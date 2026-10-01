@@ -236,6 +236,15 @@ export function browseImage(current, onPick)
 }
 
 /**
+ * @param {HTMLElement} element - A window's root element.
+ * @returns {HTMLElement|null} Its title bar (ApplicationV2's header).
+ */
+export function windowHeader(element)
+{
+   return element?.querySelector(':scope > .window-header') ?? null;
+}
+
+/**
  * Adds a font to Foundry's font list (CONFIG.fontDefinitions), so Foundry loads it and lists it in
  * font pickers, including ours. Leaves a font Foundry already knows alone.
  *

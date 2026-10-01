@@ -41,6 +41,8 @@ const CASES = [
    { name: 'gm-read-hopefear', gm: true, editing: false, theme: 'hopefear' },
    { name: 'gm-edit-noir', gm: true, editing: true, theme: 'noir' },
    { name: 'gm-read-noir', gm: true, editing: false, theme: 'noir' },
+   { name: 'gm-read-hc-dark', gm: true, editing: false, theme: 'gothic fhql-hc-dark fhql-no-texture' },
+   { name: 'gm-edit-hc-light', gm: true, editing: true, theme: 'cabaret fhql-hc-light fhql-no-texture' },
    { name: 'gm-read-ledger', gm: true, editing: false, theme: 'ledger' },
    { name: 'player-ledger', gm: false, editing: false, theme: 'ledger' },
    // Theme textures off: the class follows the theme name into the window's class list.
