@@ -1,0 +1,116 @@
+/*
+ * Fallhammer Quest Log: Cabaret theme (wine velvet, gilt, footlights). Tokens, then rules only this theme needs.
+ * Loaded after styles/fhql.css (see module.json).
+ */
+
+/* ---------- Tokens: Cabaret ---------- */
+.fhql-app.fhql-theme-cabaret {
+  /* Cabaret (2026-10-01): the original warm Gothic, leaning into the stage. Midnight house, wine
+     velvet, gilt, rose red, candle and footlight. */
+  --fhql-surface: #11131e;
+  --fhql-surface-raised: #211523;
+  --fhql-surface-sunken: #0a0b12;
+  --fhql-ink: #e8e0d6;
+  --fhql-ink-muted: #ab9fae;
+  --fhql-rule: #3e3a46;
+  --fhql-hover: rgb(170 40 60 / 0.14);
+  --fhql-accent: #e2596a;
+  --fhql-accent-ink: #11131e;
+  --fhql-status-hidden: #978d9e;
+  --fhql-status-available: #d8b56c;
+  --fhql-status-active: #8fa8ea;
+  --fhql-status-completed: #8fc28f;
+  --fhql-status-failed: #f0907c;
+  --fhql-font-heading-theme: "Cinzel", "Trajan Pro", "Amiri", Georgia, serif;
+  --fhql-radius: 2px;
+  --fhql-glow: 0 0 10px rgb(200 120 60 / 0.18);
+  --fhql-cabaret-gilt: #d8b56c;
+  /* A gilt harlequin trellis with sequins at every crossing and a rose-red one in each diamond, warmed
+     by footlights glowing up from the bottom edge and a spotlight from above. */
+  --fhql-texture:
+    radial-gradient(ellipse at 50% -20%, rgb(255 220 170 / 0.1), transparent 55%),
+    radial-gradient(ellipse 120% 45% at 50% 110%, rgb(230 140 60 / 0.3), transparent 70%),
+    linear-gradient(rgb(70 20 45 / 0.4), rgb(70 20 45 / 0.4)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='36' viewBox='0 0 36 36'%3E%3Cpath d='M0 18L18 0L36 18L18 36Z' fill='none' stroke='rgb(216,181,108)' stroke-opacity='0.22' stroke-width='0.8'/%3E%3Cg fill='rgb(240,205,130)' fill-opacity='0.55'%3E%3Ccircle cx='18' cy='0' r='1.3'/%3E%3Ccircle cx='0' cy='18' r='1.3'/%3E%3Ccircle cx='36' cy='18' r='1.3'/%3E%3Ccircle cx='18' cy='36' r='1.3'/%3E%3C/g%3E%3Ccircle cx='18' cy='18' r='0.8' fill='rgb(226,89,106)' fill-opacity='0.5'/%3E%3C/svg%3E");
+  --fhql-texture-size: 100% 100%, 100% 100%, 100% 100%, 36px 36px;
+  --fhql-texture-position: 0 0, 0 0, 0 0, 0 0;
+  --fhql-texture-blend: normal;
+  --fhql-texture-full: 100;
+  /* The quest list: a velvet stage curtain, pleated, with a gilt fringe along the top. */
+  --fhql-list-texture:
+    linear-gradient(to bottom, rgb(216 181 108 / 0.5) 0 2px, transparent 2px 5px, rgb(216 181 108 / 0.18) 5px 6px, transparent 6px),
+    repeating-linear-gradient(90deg, rgb(0 0 0 / 0.5) 0, rgb(120 20 45 / 0.36) 9px, rgb(190 60 90 / 0.28) 13px, rgb(120 20 45 / 0.36) 17px, rgb(0 0 0 / 0.5) 26px);
+  /* Small shapes that stay when textures are off. */
+  --fhql-cabaret-diamond: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='13' viewBox='0 0 10 13'%3E%3Cpath d='M5 0L10 6.5L5 13L0 6.5Z' fill='rgb(216,181,108)'/%3E%3C/svg%3E");
+  --fhql-cabaret-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath d='M7 0L8.6 5.4L14 7L8.6 8.6L7 14L5.4 8.6L0 7L5.4 5.4Z' fill='rgb(216,181,108)'/%3E%3C/svg%3E");
+}
+.fhql-app.fhql-theme-cabaret .fhql-subheading { font-variant: small-caps; letter-spacing: 0.04em; }
+
+/* ---------- Shapes (kept with textures off) ---------- */
+/* Panels: a gilt double frame, a sequin at each top corner, and a soft candlelit inner glow. */
+.fhql-app.fhql-theme-cabaret .fhql-card {
+  position: relative;
+  border-color: rgb(216 181 108 / 0.55);
+  box-shadow: var(--fhql-glow), inset 0 0 0 2px var(--fhql-surface-raised), inset 0 0 0 3px rgb(216 181 108 / 0.22),
+    inset 0 0 20px rgb(120 30 60 / 0.35);
+}
+.fhql-app.fhql-theme-cabaret .fhql-card::before,
+.fhql-app.fhql-theme-cabaret .fhql-card::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff3cf, var(--fhql-cabaret-gilt) 55%, #7a5a22);
+  pointer-events: none;
+}
+.fhql-app.fhql-theme-cabaret .fhql-card::before { left: 4px; }
+.fhql-app.fhql-theme-cabaret .fhql-card::after { right: 4px; }
+
+/* Panel headings: a small gilt diamond before the name, a gilt hairline under it. */
+.fhql-app.fhql-theme-cabaret .fhql-card > .fhql-subheading {
+  padding-inline-start: 16px;
+  background: var(--fhql-cabaret-diamond) no-repeat left center / 10px 13px;
+}
+.fhql-app.fhql-theme-cabaret .fhql-card:not(.fhql-compact) > .fhql-subheading {
+  padding-block-end: 0.25em;
+  border-block-end: 1px solid rgb(216 181 108 / 0.3);
+}
+
+/* Under the quest header: gilt lines with a four-point star between, like a marquee card. */
+.fhql-app.fhql-theme-cabaret .fhql-sheet-head {
+  border-block-end: 0;
+  padding-block-end: calc(0.8em + 14px);
+  background:
+    var(--fhql-cabaret-star) no-repeat center bottom / 14px 14px,
+    linear-gradient(rgb(216 181 108 / 0.5), rgb(216 181 108 / 0.5)) no-repeat left bottom 6px / calc(50% - 14px) 1px,
+    linear-gradient(rgb(216 181 108 / 0.5), rgb(216 181 108 / 0.5)) no-repeat right bottom 6px / calc(50% - 14px) 1px;
+}
+
+/* Status badge: a filled tag with a round proscenium-arch top. */
+.fhql-app.fhql-theme-cabaret .fhql-status-badge {
+  padding: 0.25em 0.85em 0.05em;
+  color: var(--fhql-surface);
+  background: var(--fhql-status);
+  border: 0;
+  border-radius: 1em 1em 2px 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.8em;
+}
+
+/* Description: a gilt drop capital, like a playbill. */
+.fhql-app.fhql-theme-cabaret .fhql-area-description .fhql-prose > p:first-child::first-letter {
+  float: left;
+  margin: 0.05em 0.12em 0 0;
+  color: var(--fhql-cabaret-gilt);
+  font-family: var(--fhql-font-heading);
+  font-size: 2.3em;
+  line-height: 0.9;
+}
+
+/* Finished objectives tick in gilt (the icon and strike-through still say "done"). */
+.fhql-app.fhql-theme-cabaret .fhql-objectives li.is-done .fhql-state-icon { color: var(--fhql-cabaret-gilt); }
+
+.fhql-app.fhql-theme-cabaret .fhql-button.fhql-danger-fill { color: var(--fhql-surface-sunken); }

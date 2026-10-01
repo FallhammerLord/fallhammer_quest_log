@@ -14,6 +14,7 @@ export const THEMES = Object.freeze({
    dark: 'dark',
    scifi: 'scifi',
    gothic: 'gothic',
+   cabaret: 'cabaret',
    ledger: 'ledger'
 });
 

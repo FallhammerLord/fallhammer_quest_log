@@ -4,7 +4,7 @@ Read this first in any new session. The full design and every decision live in `
 
 ## What this is
 
-A Foundry VTT **v14** quest log module (ID `fhql`, CSS prefix `fhql-`), built as a maintained replacement for Forien's Quest Log (FQL), with light, dark, sci-fi, gothic, and ledger (Tidy-style) themes and an FQL importer. Plain ES modules, no build step. Version 0.3.0. All work so far is on branch `claude/quirky-cray-tooyrk`, not yet merged or released.
+A Foundry VTT **v14** quest log module (ID `fhql`, CSS prefix `fhql-`), built as a maintained replacement for Forien's Quest Log (FQL), with light, dark, sci-fi, gothic (Bloodborne-style), cabaret, and ledger (Tidy-style) themes and an FQL importer. Plain ES modules, no build step. Version 0.3.0. All work so far is on branch `claude/quirky-cray-tooyrk`, not yet merged or released.
 
 ## Working with the user
 
@@ -98,7 +98,7 @@ Storage survives disable/re-enable; editing and autosave; view/edit modes; quick
 - Pinned header and list toolbar; panels sized by priority and scrolling on their own (wide); one scroll with collapsible panels and Show all (narrow); scroll kept after ticking an objective; Hide done; editor toolbar pinned in edit mode; very short window falls back to whole-sheet scroll.
 - Beacon toggle (open, restore if minimized, close log and quest windows) with rise/settle motion; no double animation with Foundry's close.
 - Show players: GM picks everyone or one player; their quest window opens (needs a second browser as a player).
-- Comforts: new-change dots (list, Beacon); objective glow and count tick; Beacon glow on finish; outcome chat card (public or whispered); window size/place memory; / to search, Esc clears; sliding folders; hover previews of quest links. Scroll no longer jumps when ticking an objective. Sci-fi hex texture. Gothic rework: fleur-de-lis between quatrefoils, blind-arcade list, iron double frames with studs, lancet heading marks and status tag, cross divider, red initial, gilt ticks (all but the patterns stay with textures off).
+- Comforts: new-change dots (list, Beacon); objective glow and count tick; Beacon glow on finish; outcome chat card (public or whispered); window size/place memory; / to search, Esc clears; sliding folders; hover previews of quest links. Scroll no longer jumps when ticking an objective. Sci-fi hex texture. Gothic as Yharnam (soot/oxblood/brass/moonlight palette, spear finials, iron railing list) and the old warm Gothic as the new Cabaret theme (gilt trellis with sequins, footlights, velvet curtain list, gilt frames); needs a world relaunch (new style file).
 - Player notes in place: Edit notes opens the editor in one click (auto-clicks the editor's pen; unverified), lock shown to a second user, GM Edit anyway, saved text stays visible after the editor's Save.
 
 ## Next up (see `docs/SCOPE.md` §11 milestones and §13 open decisions)

@@ -1,52 +1,54 @@
 /*
- * Fallhammer Quest Log: Gothic theme. Tokens, then rules only this theme needs.
+ * Fallhammer Quest Log: Gothic theme (Yharnam: malevolent decadence). Tokens, then rules only this theme needs.
  * Loaded after styles/fhql.css (see module.json).
  */
 
-/* ---------- Tokens: Gothic (midnight blue, wine velvet, dark iron, blood red) ---------- */
+/* ---------- Tokens: Gothic (soot, cold stone, oxblood, tarnished brass, moonlight) ---------- */
 .fhql-app.fhql-theme-gothic {
-  --fhql-surface: #11131e;
-  --fhql-surface-raised: #211523;
-  --fhql-surface-sunken: #0a0b12;
-  --fhql-ink: #e8e0d6;
-  --fhql-ink-muted: #ab9fae;
-  --fhql-rule: #3e3a46;
-  --fhql-hover: rgb(170 40 60 / 0.14);
-  --fhql-accent: #e2596a;
-  --fhql-accent-ink: #11131e;
-  --fhql-status-hidden: #978d9e;
-  --fhql-status-available: #d8b56c;
-  --fhql-status-active: #8fa8ea;
-  --fhql-status-completed: #8fc28f;
-  --fhql-status-failed: #f0907c;
+  /* Yharnam (2026-10-01): soot, cold stone, oxblood, tarnished brass, bone ink, moonlight. Cold and
+     desaturated; blood is the only warm note. The old warm wine-and-gilt look is now Cabaret. */
+  --fhql-surface: #0e0f14;
+  --fhql-surface-raised: #18171d;
+  --fhql-surface-sunken: #09090d;
+  --fhql-ink: #d8d0c2;
+  --fhql-ink-muted: #9a93a0;
+  --fhql-rule: #34333b;
+  --fhql-hover: rgb(150 40 46 / 0.14);
+  --fhql-accent: #d2625f;
+  --fhql-accent-ink: #0e0f14;
+  --fhql-status-hidden: #9a93a0;
+  --fhql-status-available: #b39c6e;
+  --fhql-status-active: #93a3bd;
+  --fhql-status-completed: #8fb08a;
+  --fhql-status-failed: #e08a7a;
   --fhql-font-heading-theme: "Cinzel", "Trajan Pro", "Amiri", Georgia, serif;
   --fhql-radius: 2px;
-  --fhql-glow: 0 0 8px rgb(140 20 40 / 0.3);
-  --fhql-gothic-iron: #57525f;
-  --fhql-gothic-gilt: #d8b56c;
-  /* Iron quatrefoil tracery over wine velvet, with a gilt fleur-de-lis powdered in the gaps
-     (as on Pugin's Gothic Revival papers and tiles), then a sheen and a midnight shadow. */
-  --fhql-gothic-ring: transparent 0 9px, rgb(160 55 78 / 0.34) 9px 10px, transparent 10px;
-  --fhql-gothic-fleur: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg transform='translate(19 18)' fill='none' stroke='rgb(200,164,106)' stroke-opacity='0.4' stroke-width='0.9'%3E%3Cpath d='M5 0C6.4 2.3 6.8 4.1 5 6.4C3.2 4.1 3.6 2.3 5 0Z'/%3E%3Cpath d='M5 6.4C7 4.7 9.6 5 9.8 7.1C10 8.8 7.9 9.2 7.1 8M5 6.4C3 4.7 0.4 5 0.2 7.1C0 8.8 2.1 9.2 2.9 8'/%3E%3Cpath d='M2.4 9H7.6M5 9V12'/%3E%3C/g%3E%3C/svg%3E");
+  --fhql-glow: 0 0 8px rgb(0 0 0 / 0.5);
+  --fhql-gothic-iron: #55545d;
+  --fhql-gothic-brass: #b39c6e;
+  /* Oxblood quatrefoil tracery with iron spear finials between (cemetery railings), under a faint
+     moonlit haze from above and soot rising from below. */
+  --fhql-gothic-ring: transparent 0 9px, rgb(150 40 46 / 0.4) 9px 10px, transparent 10px;
+  --fhql-gothic-finial: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg fill='rgb(110,108,120)' fill-opacity='0.5'%3E%3Cpath d='M24 17L26.2 21.5L24.8 21.5L24.8 30L23.2 30L23.2 21.5L21.8 21.5Z'/%3E%3Crect x='21.6' y='27' width='4.8' height='1.2'/%3E%3C/g%3E%3C/svg%3E");
   --fhql-texture:
+    radial-gradient(ellipse at 80% -15%, rgb(147 163 189 / 0.12), transparent 60%),
+    linear-gradient(to top, rgb(0 0 0 / 0.6), transparent 55%),
     radial-gradient(circle at 24px 14px, var(--fhql-gothic-ring)),
     radial-gradient(circle at 24px 34px, var(--fhql-gothic-ring)),
     radial-gradient(circle at 14px 24px, var(--fhql-gothic-ring)),
     radial-gradient(circle at 34px 24px, var(--fhql-gothic-ring)),
-    var(--fhql-gothic-fleur),
-    radial-gradient(ellipse at 20% 0%, rgb(110 30 70 / 0.44), transparent 60%),
-    linear-gradient(to bottom, transparent 40%, rgb(5 6 14 / 0.7));
-  --fhql-texture-size: 48px 48px, 48px 48px, 48px 48px, 48px 48px, 48px 48px, 100% 100%, 100% 100%;
-  --fhql-texture-position: 0 0, 0 0, 0 0, 0 0, 24px 24px, 0 0, 0 0;
+    var(--fhql-gothic-finial);
+  --fhql-texture-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px, 48px 48px, 48px 48px, 48px 48px;
+  --fhql-texture-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 24px 24px;
   --fhql-texture-blend: normal;
   --fhql-texture-full: 100;
-  /* The quest list: a blind arcade (rows of blank arches, as on cathedral walls) fading into midnight. */
+  /* The quest list: a spear-topped iron railing, blackened with soot from below. */
   --fhql-list-texture:
-    linear-gradient(to bottom, rgb(60 20 40 / 0.36), transparent 50%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='48' viewBox='0 0 24 48'%3E%3Cpath d='M2 48V22Q2 6 12 1Q22 6 22 22V48' fill='none' stroke='rgb(110,100,120)' stroke-opacity='0.32' stroke-width='1'/%3E%3C/svg%3E");
+    linear-gradient(to top, rgb(0 0 0 / 0.7), transparent 55%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='64' viewBox='0 0 18 64'%3E%3Cg fill='rgb(110,108,120)' fill-opacity='0.34'%3E%3Cpath d='M9 4L11 10L9.7 10V64H8.3V10L7 10Z'/%3E%3Crect x='0' y='20' width='18' height='1'/%3E%3Crect x='0' y='58' width='18' height='1'/%3E%3C/g%3E%3C/svg%3E");
   /* Small shapes that stay when textures are off. */
-  --fhql-gothic-lancet: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='13' viewBox='0 0 9 13'%3E%3Cpath d='M0 13V6Q0 2 4.5 0Q9 2 9 6V13Z' fill='rgb(226,89,106)'/%3E%3C/svg%3E");
-  --fhql-gothic-cross: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath d='M7 7L4 1H10ZM7 7L13 4V10ZM7 7L10 13H4ZM7 7L1 10V4Z' fill='rgb(226,89,106)'/%3E%3C/svg%3E");
+  --fhql-gothic-lancet: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='13' viewBox='0 0 9 13'%3E%3Cpath d='M0 13V6Q0 2 4.5 0Q9 2 9 6V13Z' fill='rgb(155,42,48)'/%3E%3C/svg%3E");
+  --fhql-gothic-cross: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath d='M7 7L4 1H10ZM7 7L13 4V10ZM7 7L10 13H4ZM7 7L1 10V4Z' fill='rgb(155,42,48)'/%3E%3C/svg%3E");
 }
 .fhql-app.fhql-theme-gothic .fhql-subheading { font-variant: small-caps; letter-spacing: 0.04em; }
 
@@ -115,7 +117,7 @@
   line-height: 0.9;
 }
 
-/* Finished objectives tick in old gold, like an illuminated page (the icon and strike-through still say "done"). */
-.fhql-app.fhql-theme-gothic .fhql-objectives li.is-done .fhql-state-icon { color: var(--fhql-gothic-gilt); }
+/* Finished objectives tick in tarnished brass (the icon and strike-through still say "done"). */
+.fhql-app.fhql-theme-gothic .fhql-objectives li.is-done .fhql-state-icon { color: var(--fhql-gothic-brass); }
 
 .fhql-app.fhql-theme-gothic .fhql-button.fhql-danger-fill { color: var(--fhql-surface-sunken); }

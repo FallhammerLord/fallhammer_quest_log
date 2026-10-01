@@ -3,7 +3,7 @@ import { MODULE_ID, MODULE_PATH, THEMES } from '../constants.js';
 import { applyTheme, defaultOverlay, trackApp, untrackApp } from '../theme.js';
 
 /** Themes with their own images (Follow Foundry uses Light's or Dark's). */
-const IMAGE_THEMES = ['light', 'dark', 'scifi', 'gothic', 'ledger'];
+const IMAGE_THEMES = ['light', 'dark', 'scifi', 'gothic', 'cabaret', 'ledger'];
 
 /**
  * GM window, from Module Settings: overlay images per theme. Each theme has a top wash (stretched over

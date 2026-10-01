@@ -21,6 +21,7 @@
     "styles/themes/dark.css",
     "styles/themes/scifi.css",
     "styles/themes/gothic.css",
+    "styles/themes/cabaret.css",
     "styles/themes/ledger.css"
   ],
   "languages": [

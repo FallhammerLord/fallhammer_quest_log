@@ -13,6 +13,7 @@ export function registerSettings()
       [THEMES.dark]: 'FHQL.Settings.Theme.Dark',
       [THEMES.scifi]: 'FHQL.Settings.Theme.Scifi',
       [THEMES.gothic]: 'FHQL.Settings.Theme.Gothic',
+      [THEMES.cabaret]: 'FHQL.Settings.Theme.Cabaret',
       [THEMES.ledger]: 'FHQL.Settings.Theme.Ledger'
    };
    const restyle = () =>

@@ -36,6 +36,7 @@ const CASES = [
    { name: 'player', gm: false, editing: false, theme: 'dark' },
    { name: 'gm-read-scifi', gm: true, editing: false, theme: 'scifi' },
    { name: 'gm-edit-gothic', gm: true, editing: true, theme: 'gothic' },
+   { name: 'gm-read-cabaret', gm: true, editing: false, theme: 'cabaret' },
    { name: 'gm-read-ledger', gm: true, editing: false, theme: 'ledger' },
    { name: 'player-ledger', gm: false, editing: false, theme: 'ledger' },
    // Theme textures off: the class follows the theme name into the window's class list.
