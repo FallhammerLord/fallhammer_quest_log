@@ -1,0 +1,77 @@
+/*
+ * Fallhammer Quest Log: Noir theme, for Blades in the Dark and other dark-city games: graphite, lamp
+ * light through blinds, rain, dark blood, a typed case file. Tokens, then rules only this theme needs.
+ * Loaded after styles/fhql.css (see module.json).
+ */
+
+/* ---------- Tokens: Noir (graphite, lamplight, dark blood) ---------- */
+.fhql-app.fhql-theme-noir {
+  --fhql-surface: #141518;
+  --fhql-surface-raised: #1d1e22;
+  --fhql-surface-sunken: #0c0d0f;
+  --fhql-ink: #e4e1da;
+  --fhql-ink-muted: #a19e97;
+  --fhql-rule: #3a3b40;
+  --fhql-hover: rgb(214 98 90 / 0.1);
+  --fhql-accent: #d6625a;
+  --fhql-accent-ink: #141518;
+  --fhql-status-hidden: #a19e97;
+  --fhql-status-available: #c9b27a;
+  --fhql-status-active: #8fb3c9;
+  --fhql-status-completed: #93b98a;
+  --fhql-status-failed: #e0867c;
+  --fhql-font-heading-theme: "Courier Prime", "Courier New", ui-monospace, monospace;
+  --fhql-radius: 0px;
+  --fhql-glow: 0 2px 10px rgb(0 0 0 / 0.55);
+  --fhql-noir-blood: #8e2a26;
+  /* Lamp light falling through venetian blinds from the upper right, film grain, the room's corners
+     sinking into shadow. */
+  --fhql-texture:
+    radial-gradient(ellipse at 50% 50%, transparent 55%, rgb(0 0 0 / 0.55)),
+    radial-gradient(ellipse at 90% -10%, rgb(255 228 190 / 0.12), transparent 55%),
+    repeating-linear-gradient(-14deg, transparent 0 30px, rgb(255 236 210 / 0.08) 30px 46px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  --fhql-texture-size: 100% 100%, 100% 100%, auto, 160px 160px;
+  --fhql-texture-position: 0 0, 0 0, 0 0, 0 0;
+  --fhql-texture-blend: normal;
+  --fhql-texture-full: 100;
+  /* The quest list: rain running down the window. */
+  --fhql-list-texture:
+    linear-gradient(to bottom, rgb(0 0 0 / 0.45), transparent 40%),
+    repeating-linear-gradient(97deg, transparent 0 13px, rgb(170 190 210 / 0.12) 13px 14px, transparent 14px 29px, rgb(170 190 210 / 0.07) 29px 30px);
+}
+
+/* ---------- Shapes (a typed case file; kept with textures off) ---------- */
+/* Panels: square graphite folders with a blood-red stamp along the top edge. */
+.fhql-app.fhql-theme-noir .fhql-card {
+  border-color: var(--fhql-rule);
+  border-block-start: 2px solid var(--fhql-noir-blood);
+  box-shadow: var(--fhql-glow), inset 0 0 22px rgb(0 0 0 / 0.35);
+}
+
+/* Headings: typed capitals, spaced out, over a perforated rule. */
+.fhql-app.fhql-theme-noir .fhql-subheading { text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.95em; }
+.fhql-app.fhql-theme-noir .fhql-card:not(.fhql-compact) > .fhql-subheading {
+  padding-block-end: 0.3em;
+  border-block-end: 1px dashed var(--fhql-rule);
+}
+.fhql-app.fhql-theme-noir .fhql-heading { letter-spacing: 0.02em; }
+
+/* Under the quest header: a perforated tear line. */
+.fhql-app.fhql-theme-noir .fhql-sheet-head { border-block-end: 2px dashed var(--fhql-rule); }
+
+/* Status badge: a rubber stamp, inked in the status color and set down a little crooked. */
+.fhql-app.fhql-theme-noir .fhql-status-badge {
+  padding: 0.05em 0.6em;
+  color: var(--fhql-status);
+  background: transparent;
+  border: 2px solid var(--fhql-status);
+  border-radius: 2px;
+  rotate: -3deg;
+  font-family: var(--fhql-font-heading);
+  font-size: 0.8em;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.fhql-app.fhql-theme-noir .fhql-button.fhql-danger-fill { color: var(--fhql-surface-sunken); }

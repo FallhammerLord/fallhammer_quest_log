@@ -23,6 +23,8 @@
     "styles/themes/scifi.css",
     "styles/themes/gothic.css",
     "styles/themes/cabaret.css",
+    "styles/themes/hopefear.css",
+    "styles/themes/noir.css",
     "styles/themes/ledger.css"
   ],
   "languages": [

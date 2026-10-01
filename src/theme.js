@@ -234,7 +234,7 @@ export function previewTheme(values)
 }
 
 /** Theme style files, as listed in module.json `styles`. */
-const THEME_FILES = ['light', 'dark', 'scifi', 'gothic', 'cabaret', 'ledger'];
+const THEME_FILES = ['light', 'dark', 'scifi', 'gothic', 'cabaret', 'hopefear', 'noir', 'ledger'];
 
 /**
  * Foundry reads module.json's style list only when a world launches, so a theme added by an update
@@ -259,7 +259,9 @@ const BUNDLED_FONTS = [
    { family: 'IM Fell English SC', url: `${MODULE_PATH}/styles/fonts/im-fell-english-sc/IMFellEnglishSC-Regular.woff2` },
    { family: 'Josefin Sans', url: `${MODULE_PATH}/styles/fonts/josefin-sans/JosefinSans-SemiBold.woff2`, weight: '400 700' },
    { family: 'Oxanium', url: `${MODULE_PATH}/styles/fonts/oxanium/Oxanium-SemiBold.woff2`, weight: '400 700' },
-   { family: 'Limelight', url: `${MODULE_PATH}/styles/fonts/limelight/Limelight-Regular.woff2` }
+   { family: 'Limelight', url: `${MODULE_PATH}/styles/fonts/limelight/Limelight-Regular.woff2` },
+   { family: 'Cinzel', url: `${MODULE_PATH}/styles/fonts/cinzel/Cinzel-SemiBold.woff2`, weight: '400 700' },
+   { family: 'Courier Prime', url: `${MODULE_PATH}/styles/fonts/courier-prime/CourierPrime-Bold.woff2`, weight: '400 700' }
 ];
 
 /**

@@ -1,0 +1,113 @@
+/*
+ * Fallhammer Quest Log: Hope and Fear theme, after the Daggerheart system's styling (deep indigo,
+ * Hope gold, Fear violet, Cinzel). Tokens, then rules only this theme needs.
+ * Loaded after styles/fhql.css (see module.json).
+ */
+
+/* ---------- Tokens: Hope and Fear (indigo night, Hope gold, Fear violet) ---------- */
+.fhql-app.fhql-theme-hopefear {
+  --fhql-surface: #141329;
+  --fhql-surface-raised: #1f1c3a;
+  --fhql-surface-sunken: #0d0c1e;
+  --fhql-ink: #ece6d8;
+  --fhql-ink-muted: #a9a3c4;
+  --fhql-rule: #3a355e;
+  --fhql-hover: rgb(243 194 103 / 0.1);
+  --fhql-accent: #f3c267;
+  --fhql-accent-ink: #18162e;
+  --fhql-status-hidden: #a9a3c4;
+  --fhql-status-available: #f3c267;
+  --fhql-status-active: #9d95f2;
+  --fhql-status-completed: #8fca8f;
+  --fhql-status-failed: #f08f80;
+  --fhql-font-heading-theme: "Cinzel", "Trajan Pro", "Amiri", Georgia, serif;
+  --fhql-radius: 3px;
+  --fhql-glow: 0 0 10px rgb(10 8 30 / 0.6);
+  --fhql-hope: #f3c267;
+  --fhql-fear: #9d95f2;
+  /* The duality dice: a faint gold d12 and violet d12 in every tile, under Hope's glow from the top
+     corner and Fear's from the bottom. */
+  --fhql-texture:
+    radial-gradient(ellipse at 0% 0%, rgb(243 194 103 / 0.16), transparent 55%),
+    radial-gradient(ellipse at 100% 100%, rgb(110 90 230 / 0.22), transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M16.0 8.0 L23.6 13.5 L20.7 22.5 L11.3 22.5 L8.4 13.5Z M16.0 19.6 L12.6 17.1 L13.9 13.1 L18.1 13.1 L19.4 17.1Z M16.0 19.6L11.3 22.5M12.6 17.1L8.4 13.5M13.9 13.1L16.0 8.0M18.1 13.1L23.6 13.5M19.4 17.1L20.7 22.5' fill='none' stroke='rgb(243,194,103)' stroke-opacity='0.34' stroke-width='0.8' stroke-linejoin='round'/%3E%3Cpath d='M48.0 40.0 L55.6 45.5 L52.7 54.5 L43.3 54.5 L40.4 45.5Z M48.0 51.6 L44.6 49.1 L45.9 45.1 L50.1 45.1 L51.4 49.1Z M48.0 51.6L43.3 54.5M44.6 49.1L40.4 45.5M45.9 45.1L48.0 40.0M50.1 45.1L55.6 45.5M51.4 49.1L52.7 54.5' fill='none' stroke='rgb(157,149,242)' stroke-opacity='0.4' stroke-width='0.8' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --fhql-texture-size: 100% 100%, 100% 100%, 64px 64px;
+  --fhql-texture-position: 0 0, 0 0, 0 0;
+  --fhql-texture-blend: normal;
+  --fhql-texture-full: 100;
+  /* The quest list: a night sky between Hope above and Fear below. */
+  --fhql-list-texture:
+    linear-gradient(to bottom, rgb(243 194 103 / 0.12), transparent 35%, transparent 65%, rgb(110 90 230 / 0.18)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='58' viewBox='0 0 44 58'%3E%3Cg fill='rgb(236,230,216)'%3E%3Ccircle cx='7' cy='9' r='0.7' fill-opacity='0.5'/%3E%3Ccircle cx='31' cy='22' r='0.5' fill-opacity='0.4'/%3E%3Ccircle cx='18' cy='44' r='0.8' fill-opacity='0.45'/%3E%3Ccircle cx='39' cy='51' r='0.4' fill-opacity='0.35'/%3E%3C/g%3E%3C/svg%3E");
+  /* Small shapes that stay when textures are off. */
+  --fhql-hopefear-split: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M6 0.5L11.5 6L6 11.5Z' fill='rgb(157,149,242)'/%3E%3Cpath d='M6 0.5L0.5 6L6 11.5Z' fill='rgb(243,194,103)'/%3E%3C/svg%3E");
+}
+.fhql-app.fhql-theme-hopefear .fhql-subheading { letter-spacing: 0.04em; }
+
+/* ---------- Shapes (kept with textures off) ---------- */
+/* Panels: a gold card trim with a fine inner line, and a split Hope/Fear gem on the top edge. */
+.fhql-app.fhql-theme-hopefear .fhql-card {
+  position: relative;
+  border-color: rgb(243 194 103 / 0.45);
+  box-shadow: var(--fhql-glow), inset 0 0 0 2px var(--fhql-surface-raised), inset 0 0 0 3px rgb(243 194 103 / 0.16),
+    inset 0 0 18px rgb(10 8 30 / 0.45);
+}
+.fhql-app.fhql-theme-hopefear .fhql-card::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -5px;
+  width: 9px;
+  height: 9px;
+  translate: -50% 0;
+  rotate: 45deg;
+  background: linear-gradient(45deg, var(--fhql-hope) 50%, var(--fhql-fear) 50%);
+  box-shadow: 0 0 0 2px var(--fhql-surface);
+  pointer-events: none;
+}
+
+/* Panel headings: a split gem before the name, a gold hairline under it. */
+.fhql-app.fhql-theme-hopefear .fhql-card > .fhql-subheading {
+  padding-inline-start: 17px;
+  background: var(--fhql-hopefear-split) no-repeat left center / 12px 12px;
+}
+.fhql-app.fhql-theme-hopefear .fhql-card:not(.fhql-compact) > .fhql-subheading {
+  padding-block-end: 0.25em;
+  border-block-end: 1px solid rgb(243 194 103 / 0.25);
+}
+
+/* Under the quest header: Hope's line, the split gem, Fear's line. */
+.fhql-app.fhql-theme-hopefear .fhql-sheet-head {
+  border-block-end: 0;
+  padding-block-end: calc(0.8em + 12px);
+  background: var(--fhql-hopefear-split) no-repeat center bottom / 12px 12px,
+    linear-gradient(var(--fhql-hope), var(--fhql-hope)) no-repeat left bottom 5px / calc(50% - 12px) 1px,
+    linear-gradient(var(--fhql-fear), var(--fhql-fear)) no-repeat right bottom 5px / calc(50% - 12px) 1px;
+}
+
+/* Status badge: a swallowtail banner, filled with the status color. */
+.fhql-app.fhql-theme-hopefear .fhql-status-badge {
+  padding: 0.1em 0.9em;
+  color: var(--fhql-surface);
+  background: var(--fhql-status);
+  border: 0;
+  border-radius: 0;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 0.45em) 50%, 100% 100%, 0 100%, 0.45em 50%);
+  font-size: 0.82em;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Description: a gold Cinzel drop capital, two lines deep. */
+.fhql-app.fhql-theme-hopefear .fhql-area-description .fhql-prose > p:first-child::first-letter {
+  color: var(--fhql-hope);
+  font-family: var(--fhql-font-heading);
+  font-weight: 600;
+  initial-letter: 2;
+  margin-inline-end: 0.12em;
+}
+
+/* Finished objectives tick in Hope gold (the icon and strike-through still say "done"). */
+.fhql-app.fhql-theme-hopefear .fhql-objectives li.is-done .fhql-state-icon { color: var(--fhql-hope); }
+
+.fhql-app.fhql-theme-hopefear .fhql-button.fhql-danger-fill { color: var(--fhql-surface-sunken); }
