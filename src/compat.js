@@ -164,6 +164,50 @@ export function tidyBannerColor()
    catch { return null; }
 }
 
+/* ---------- GM relay transport (v13+ query API) ---------- */
+
+/**
+ * Registers a handler that other clients can call on this client with `User#query`.
+ *
+ * @param {string} name - Full query name, e.g. `fhql.deposit`.
+ * @param {(data: object) => Promise<object>} handler - Runs on the receiving client.
+ */
+export function registerQuery(name, handler)
+{
+   CONFIG.queries[name] = handler;
+}
+
+/** @returns {User|null} The active GM who answers relayed requests, if one is connected. */
+export function activeGM()
+{
+   return game.users.activeGM ?? null;
+}
+
+/**
+ * Asks a user's client to run a registered query, and waits for its answer.
+ *
+ * @param {User} user - Who runs it (the active GM).
+ * @param {string} name - Full query name.
+ * @param {object} data - Request data.
+ * @returns {Promise<object>} The handler's result. Rejects on timeout or error.
+ */
+export function queryUser(user, name, data)
+{
+   return user.query(name, data, { timeout: 15000 });
+}
+
+/**
+ * Posts a chat message as the Quest Log.
+ *
+ * @param {string} alias - Speaker name.
+ * @param {string} content - Message HTML (escape any user text first).
+ * @returns {Promise<ChatMessage>} The message.
+ */
+export function postChat(alias, content)
+{
+   return ChatMessage.implementation.create({ speaker: { alias }, content });
+}
+
 /** Name of the scene control group our button joins. */
 export const SCENE_CONTROL_GROUP = 'tokens';
 

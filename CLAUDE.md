@@ -15,7 +15,7 @@ A Foundry VTT **v14** quest log module (ID `fhql`, CSS prefix `fhql-`), built as
 ## Commands
 
 ```sh
-npm run check      # lint + module load + contrast. Run before every push.
+npm run check      # lint + load + contrast + deposits. Run before every push; CI runs it on push too.
 npm run layout     # renders templates at 60 widths/themes/modes, fails on overflow
                    # set CHROMIUM_PATH (here: /opt/pw-browsers/chromium)
 npm run load       # loads every module file with Foundry mocked; catches bad imports
@@ -31,9 +31,10 @@ npm run deposits   # deposit rules with Foundry mocked: races, refusals, rollbac
 | `src/compat.js` | **only** place for version-sensitive Foundry APIs |
 | `src/data/QuestData.js` | `fhql.quest` JournalEntryPage TypeDataModel |
 | `src/data/quests.js` | quest CRUD, access rules, folders, hide/reveal ownership |
-| `src/data/rewards.js` | reward claiming (GM-relayed query) |
-| `src/data/deposits.js` | objective item requirements; hand over / show (GM-relayed, queued) |
-| `src/data/playerActions.js` | accept / propose / shared notes (GM-relayed query), visibility gating |
+| `src/data/relay.js` | GM relay: register, send, one shared queue, notifications |
+| `src/data/rewards.js` | reward claiming (via relay) |
+| `src/data/deposits.js` | objective item requirements; hand over / show (via relay) |
+| `src/data/playerActions.js` | accept / propose / shared notes (via relay), visibility gating |
 | `src/data/notesLock.js` | one-at-a-time player notes editing (User flags) |
 | `src/data/tracking.js` | personal Track and Beacon choice (User flags) |
 | `src/data/lifecycle.js` | duplicate/delete consistency hooks |
@@ -54,8 +55,8 @@ npm run deposits   # deposit rules with Foundry mocked: races, refusals, rollbac
 - **Rich-text editors:** use `<prose-mirror toggled>` without `open`. Adding `open` at render broke editing. Unsaved editor text is flushed on Done, on close, and on switching quests via `_flushEdits`. Only *open* editors count as unsaved (a just-saved toggled editor can still report dirty).
 - **Player notes** are edited in place with a one-editor lock on User flags (`src/data/notesLock.js`), not in edit mode.
 - **Handlebars helpers:** don't rely on `eq`/`and`/`or`; compute booleans in JS. `lookup` is fine.
-- **GM relays** (`CONFIG.queries`): the handler isn't told who sent a request. Re-check everything against the named user, and refuse requests naming a GM.
-- **Deposits:** the GM client takes only what is still needed, one deposit at a time, recording before taking and rolling back on failure. Keep `npm run deposits` passing; it fails if the queue is removed.
+- **GM relays** go through `src/data/relay.js` only (`registerRelay` / `relay`): one queue on the GM client for every request type, shared notifications, transport in `compat.js`. The handler isn't told who sent a request: re-check everything against the named user, and refuse requests naming a GM.
+- **Deposits:** the GM client takes only what is still needed, one deposit at a time, recording before taking and rolling back on failure. Keep `npm run deposits` passing; it fails if the relay queue is removed.
 - **Hidden quests:** hiding sets default and per-player ownership to None (saved in a flag, restored on reveal); `questAccess` also refuses Hidden quests to non-GMs.
 - **Quick choices** use `src/ui/popover.js` child panels, never Foundry dialogs. Separate windows only for Pop out, FQL import, and Foundry's ownership editor.
 - **Colors** only through `--fhql-*` tokens; a theme changes colors and small shapes, never layout.

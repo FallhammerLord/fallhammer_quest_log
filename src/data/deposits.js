@@ -1,4 +1,5 @@
-import { itemQuantity, itemQuantityUpdate, itemSourceUuids } from '../compat.js';
+import { itemQuantity, itemQuantityUpdate, itemSourceUuids, postChat } from '../compat.js';
+import { registerRelay, relay } from './relay.js';
 import { MODULE_ID } from '../constants.js';
 import { addObjective, getQuestEntry, questAccess, questPage, updateQuest } from './quests.js';
 import { claimTargets } from './rewards.js';
@@ -7,21 +8,21 @@ import { claimTargets } from './rewards.js';
  * Item requirements on objectives, and players depositing items toward them. See docs/SCOPE.md 5.11.
  *
  * An objective can require an item and a count. Players hand items over (they leave the character)
- * or only show them (they stay). Deposits run on the GM's client through
- * `CONFIG.queries['fhql.deposit']`, one at a time, and each takes only what is still needed at that
- * moment, so two players filling the last slot together never lose the difference.
+ * or only show them (they stay). Deposits run on the GM's client through the relay
+ * (`fhql.deposit`), one at a time, and each takes only what is still needed at that moment, so two
+ * players filling the last slot together never lose the difference.
  *
  * As with claims, the GM side isn't told who sent a request and re-checks everything against the
  * named user.
  */
 
-const QUERY = `${MODULE_ID}.deposit`;
+const RELAY = 'deposit';
 const { OWNER } = CONST.DOCUMENT_OWNERSHIP_LEVELS;
 
 /** Registers the GM-side deposit handler. Called on `init`. */
 export function registerDepositQueries()
 {
-   CONFIG.queries[QUERY] = (data) => performDeposit(data);
+   registerRelay(RELAY, depositNow);
 }
 
 /* ---------- Reading requirements ---------- */
@@ -133,49 +134,13 @@ export function depositCandidates(objective, asGM)
  */
 export async function requestDeposit(entry, objectiveId, choice)
 {
-   const data = { entryId: entry.id, objectiveId, itemUuid: choice.itemUuid, userId: choice.userId };
-   let result;
-   if (game.user.isGM) { result = await performDeposit(data, { force: true }); }
-   else
-   {
-      const gm = game.users.activeGM;
-      if (!gm)
-      {
-         ui.notifications.warn(game.i18n.localize('FHQL.Deposit.NeedGM'));
-         return false;
-      }
-      try { result = await gm.query(QUERY, data, { timeout: 15000 }); }
-      catch (err)
-      {
-         console.error(`${MODULE_ID} | Deposit request failed`, err);
-         result = { ok: false, message: game.i18n.localize('FHQL.Deposit.Error.Failed') };
-      }
-   }
-
-   if (result?.ok) { ui.notifications.info(result.message); }
-   else { ui.notifications.warn(result?.message ?? game.i18n.localize('FHQL.Deposit.Error.Failed')); }
-   return !!result?.ok;
-}
-
-/** Deposits run one at a time on the GM client, so each one sees the count the last one left. */
-let depositQueue = Promise.resolve();
-
-/**
- * GM side of a deposit, queued. See #depositNow.
- *
- * @param {object} data - Request.
- * @param {{ force?: boolean }} [options] - Options.
- * @returns {Promise<{ ok: boolean, message: string }>} Outcome.
- */
-function performDeposit(data, options = {})
-{
-   const run = depositQueue.then(() => depositNow(data, options));
-   depositQueue = run.catch(() => {});
-   return run;
+   const result = await relay(RELAY, { entryId: entry.id, objectiveId, itemUuid: choice.itemUuid, userId: choice.userId },
+      { needGM: 'FHQL.Deposit.NeedGM', failed: 'FHQL.Deposit.Error.Failed' });
+   return result.ok;
 }
 
 /**
- * GM side of a deposit. Validates against live data, records the deposit, then takes the item.
+ * GM side of a deposit, run through the relay queue. Validates against live data, records the deposit, then takes the item.
  * Takes only what is still needed; refuses when nothing is. If taking the item fails, the record is
  * rolled back, so an item is never lost to a half-finished step.
  *
@@ -250,14 +215,11 @@ async function depositNow(data, { force = false } = {})
 
    const who = `${user.name} (${actor.name})`;
    const escape = foundry.utils.escapeHTML;
-   await ChatMessage.implementation.create({
-      speaker: { alias: game.i18n.localize('FHQL.QuestLog.Title') },
-      content: `<div class="fhql-chat-claim">
+   await postChat(game.i18n.localize('FHQL.QuestLog.Title'), `<div class="fhql-chat-claim">
          ${requirement.img ? `<img src="${escape(requirement.img)}" alt="" width="36" height="36">` : ''}
          <p>${game.i18n.format(`FHQL.Deposit.Chat.${requirement.mode}`, {
             who: escape(who), qty: take, item: escape(item.name), quest: escape(entry.name)
-         })}</p></div>`
-   });
+         })}</p></div>`);
 
    const kept = give ? have - take : 0;
    const key = give ? (kept > 0 ? 'GaveKept' : 'Gave') : 'Shown';

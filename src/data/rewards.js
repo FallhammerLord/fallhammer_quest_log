@@ -1,4 +1,5 @@
-import { deleteKeyUpdate } from '../compat.js';
+import { deleteKeyUpdate, postChat } from '../compat.js';
+import { registerRelay, relay } from './relay.js';
 import { MODULE_ID } from '../constants.js';
 import { getQuestEntry, questAccess, questPage } from './quests.js';
 
@@ -7,19 +8,19 @@ import { getQuestEntry, questAccess, questPage } from './quests.js';
  *
  * Item rewards are copied onto the claimer's character and marked claimed. Actor rewards (followers,
  * mounts) give the claiming player ownership. Players can't always read the source documents, so
- * claims run on the GM's client through `CONFIG.queries['fhql.claimReward']`.
+ * claims run on the GM's client through the relay (`fhql.claimReward`), one at a time.
  *
- * The query API doesn't tell the GM client who sent a request, so the GM side re-checks everything
+ * The relay doesn't tell the GM client who sent a request, so the GM side re-checks everything
  * against the named user: quest visible, reward unlocked and unclaimed, character owned.
  */
 
-const QUERY = `${MODULE_ID}.claimReward`;
+const RELAY = 'claimReward';
 const { OWNER } = CONST.DOCUMENT_OWNERSHIP_LEVELS;
 
 /** Registers the GM-side claim handler. Called on `init`. */
 export function registerRewardQueries()
 {
-   CONFIG.queries[QUERY] = (data) => performClaim(data);
+   registerRelay(RELAY, claimNow);
 }
 
 /**
@@ -108,28 +109,9 @@ export function recipientOptions(reward, asGM)
  */
 export async function requestClaim(entry, rewardId, recipient)
 {
-   const data = { entryId: entry.id, rewardId, ...recipient };
-   let result;
-   if (game.user.isGM) { result = await performClaim(data, { force: true }); }
-   else
-   {
-      const gm = game.users.activeGM;
-      if (!gm)
-      {
-         ui.notifications.warn(game.i18n.localize('FHQL.Reward.NeedGM'));
-         return false;
-      }
-      try { result = await gm.query(QUERY, data, { timeout: 15000 }); }
-      catch (err)
-      {
-         console.error(`${MODULE_ID} | Claim request failed`, err);
-         result = { ok: false, message: game.i18n.localize('FHQL.Reward.Failed') };
-      }
-   }
-
-   if (result?.ok) { ui.notifications.info(result.message); }
-   else { ui.notifications.warn(result?.message ?? game.i18n.localize('FHQL.Reward.Failed')); }
-   return !!result?.ok;
+   const result = await relay(RELAY, { entryId: entry.id, rewardId, ...recipient },
+      { needGM: 'FHQL.Reward.NeedGM', failed: 'FHQL.Reward.Failed' });
+   return result.ok;
 }
 
 /**
@@ -143,25 +125,8 @@ export function playerOwned(entry)
       level >= OWNER && (id === 'default' || !game.users.get(id)?.isGM));
 }
 
-/** Claims run one at a time on the GM client, so two claims can't both take a one-time reward. */
-let claimQueue = Promise.resolve();
-
 /**
- * GM side of a claim, queued. See #claimNow.
- *
- * @param {object} data - Request.
- * @param {{ force?: boolean }} [options] - Options.
- * @returns {Promise<{ ok: boolean, message: string }>} Outcome.
- */
-function performClaim(data, options = {})
-{
-   const run = claimQueue.then(() => claimNow(data, options));
-   claimQueue = run.catch(() => {});
-   return run;
-}
-
-/**
- * GM side of a claim. Validates, copies the item or grants ownership, records the claim, posts a
+ * GM side of a claim, run through the relay queue so two claims can't both take a one-time reward. Validates, copies the item or grants ownership, records the claim, posts a
  * chat card.
  *
  * @param {{ entryId: string, rewardId: string, userId: string, actorUuid: string }} data - Request.
@@ -211,14 +176,11 @@ async function claimNow(data, { force = false } = {})
    await page.update({ [`system.rewards.${data.rewardId}.claims`]: [...reward.claims, claim] });
 
    const who = claimLabel(claim);
-   await ChatMessage.implementation.create({
-      speaker: { alias: game.i18n.localize('FHQL.QuestLog.Title') },
-      content: `<div class="fhql-chat-claim">
+   await postChat(game.i18n.localize('FHQL.QuestLog.Title'), `<div class="fhql-chat-claim">
          ${reward.img ? `<img src="${foundry.utils.escapeHTML(reward.img)}" alt="" width="36" height="36">` : ''}
          <p>${game.i18n.format('FHQL.Reward.ChatClaimed', {
             who: foundry.utils.escapeHTML(who), reward: foundry.utils.escapeHTML(reward.name), quest: foundry.utils.escapeHTML(entry.name)
-         })}</p></div>`
-   });
+         })}</p></div>`);
 
    return { ok: true, message: game.i18n.format('FHQL.Reward.Claimed', { reward: reward.name, who }) };
 }

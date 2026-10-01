@@ -1,3 +1,4 @@
+import { activeGM } from '../compat.js';
 import { MODULE_ID, QUEST_TYPE } from '../constants.js';
 import { questPage, updateQuest } from './quests.js';
 
@@ -42,7 +43,7 @@ export function registerLifecycleHooks()
       if (game.user.getFlag(MODULE_ID, 'beaconQuest') === entry.id) { game.user.unsetFlag(MODULE_ID, 'beaconQuest'); }
 
       // One GM client releases the deleted quest's subquests, as the Quest Log's delete does.
-      if (!game.users.activeGM?.isSelf) { return; }
+      if (!activeGM()?.isSelf) { return; }
       for (const child of game.journal.filter((e) => questPage(e)?.system.parent === entry.id))
       {
          updateQuest(child, { 'system.parent': '' });
