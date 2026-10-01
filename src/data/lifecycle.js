@@ -7,14 +7,15 @@ import { questPage, updateQuest } from './quests.js';
  */
 export function registerLifecycleHooks()
 {
-   // A copied quest (Duplicate, compendium import) starts fresh: no claims, no import link. Claims
+   // A copied quest (Duplicate, compendium import) starts fresh: no claims, deposits, or import link. Claims
    // name users and characters that the copy never gave anything to.
    Hooks.on('preCreateJournalEntry', (entry) =>
    {
       const pages = entry.pages.filter((page) => page.type === QUEST_TYPE);
       if (!pages.length) { return; }
       const hasCopiedState = pages.some((page) => page.system.source.fqlId
-       || Object.values(page.system.rewards).some((r) => r.claims.length));
+       || Object.values(page.system.rewards).some((r) => r.claims.length)
+       || Object.values(page.system.objectives).some((o) => o.deposits?.length));
       if (!hasCopiedState) { return; }
 
       entry.updateSource({
@@ -24,6 +25,8 @@ export function registerLifecycleHooks()
             if (page.type !== QUEST_TYPE) { return data; }
             data.system.source = { fqlId: '' };
             for (const reward of Object.values(data.system.rewards ?? {})) { reward.claims = []; }
+            // Deposits hold items handed over in the original; a copy would let Undo return them twice.
+            for (const objective of Object.values(data.system.objectives ?? {})) { objective.deposits = []; }
             return data;
          })
       });

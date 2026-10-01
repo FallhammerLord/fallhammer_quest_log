@@ -104,6 +104,43 @@ export function settingsFormFields(element, keys)
 /** Hook names for the core settings window opening and closing. */
 export const SETTINGS_WINDOW_HOOKS = { render: 'renderSettingsConfig', close: 'closeSettingsConfig' };
 
+/**
+ * Documents an item was copied from: its compendium source, the world item it was duplicated from,
+ * and the legacy core source flag. Used to match deposits to a required item.
+ *
+ * @param {Item} item - An item.
+ * @returns {string[]} UUIDs, possibly empty.
+ */
+export function itemSourceUuids(item)
+{
+   return [item?._stats?.compendiumSource, item?._stats?.duplicateSource, item?.flags?.core?.sourceId].filter(Boolean);
+}
+
+/** Data path of an item's stack size, in systems that have one (dnd5e, pf2e, and many others). */
+const QUANTITY_PATH = 'system.quantity';
+
+/**
+ * @param {Item|object} item - An item, or item data.
+ * @returns {number|null} Its stack size, or null when the system doesn't track quantity.
+ */
+export function itemQuantity(item)
+{
+   const value = foundry.utils.getProperty(item, QUANTITY_PATH);
+   const number = typeof value === 'object' && value !== null ? value.value : value;
+   return Number.isFinite(number) ? number : null;
+}
+
+/**
+ * @param {Item|object} item - An item, or item data.
+ * @param {number} quantity - New stack size.
+ * @returns {object} Update data setting it, matching the system's shape.
+ */
+export function itemQuantityUpdate(item, quantity)
+{
+   const value = foundry.utils.getProperty(item, QUANTITY_PATH);
+   return { [typeof value === 'object' && value !== null ? `${QUANTITY_PATH}.value` : QUANTITY_PATH]: quantity };
+}
+
 /** Name of the scene control group our button joins. */
 export const SCENE_CONTROL_GROUP = 'tokens';
 

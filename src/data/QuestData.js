@@ -1,5 +1,5 @@
 import { TypeDataModel, fields } from '../compat.js';
-import { OBJECTIVE_STATES, REWARD_TYPES, STATUSES } from '../constants.js';
+import { DEPOSIT_MODES, OBJECTIVE_STATES, REWARD_TYPES, STATUSES } from '../constants.js';
 
 /**
  * System data for the `fhql.quest` journal page subtype. See docs/SCOPE.md section 4.1.
@@ -12,7 +12,7 @@ export class QuestData extends TypeDataModel
 {
    static defineSchema()
    {
-      const { ArrayField, BooleanField, HTMLField, IntegerSortField, NumberField, SchemaField, StringField,
+      const { ArrayField, BooleanField, HTMLField, IntegerSortField, NumberField, ObjectField, SchemaField, StringField,
        TypedObjectField } = fields;
 
       const text = () => new StringField({ required: true, blank: true, initial: '' });
@@ -33,7 +33,25 @@ export class QuestData extends TypeDataModel
             state: new StringField({ required: true, blank: false, choices: OBJECTIVE_STATES, initial: 'open' }),
             hidden: new BooleanField({ initial: false }),
             parent: text(),
-            sort: new IntegerSortField()
+            sort: new IntegerSortField(),
+            /** An item players must hand over or show. No `uuid` means no requirement. See SCOPE 5.11. */
+            requirement: new SchemaField({
+               uuid: text(),
+               name: text(),
+               img: text(),
+               count: new NumberField({ required: true, nullable: false, integer: true, min: 1, initial: 1 }),
+               mode: new StringField({ required: true, blank: false, choices: DEPOSIT_MODES, initial: 'give' })
+            }),
+            /** What players have handed over or shown. `item` keeps a handed-over item's data so Undo can return it. */
+            deposits: new ArrayField(new SchemaField({
+               userId: text(),
+               actorUuid: text(),
+               actorName: text(),
+               itemUuid: text(),
+               qty: new NumberField({ required: true, nullable: false, integer: true, min: 1, initial: 1 }),
+               at: timestamp(),
+               item: new ObjectField({ required: false, nullable: true, initial: null })
+            }))
          })),
 
          rewards: new TypedObjectField(new SchemaField({

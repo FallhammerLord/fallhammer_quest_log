@@ -252,7 +252,8 @@
     "Drop": {
       "Rejected": {
         "giver": "Quest givers can be actors, items, or journal entries.",
-        "rewards": "Rewards can be items or actors."
+        "rewards": "Rewards can be items or actors.",
+        "objectives": "Only items can be dropped here."
       },
       "CannotOpen": "You don't have permission to open that."
     },
@@ -356,6 +357,48 @@
         "NotGM": "Only a GM can do that.",
         "NotAllowed": "That isn't allowed in this world.",
         "NotFound": "That quest no longer exists."
+      }
+    },
+    "Deposit": {
+      "Give": "Hand over",
+      "Show": "Show",
+      "ActionLabel": "{verb}: {item}",
+      "ModeGive": "Hand over",
+      "ModeShow": "Show only",
+      "ModeLabel": "Players hand the item over, or only show it",
+      "Count": "How many are needed",
+      "Progress": "Deposited",
+      "Clear": "Remove item requirement",
+      "DropHint": "Drop an item on an objective to require it, or here to add an objective for it.",
+      "Choose": "Which {item}?",
+      "NoneCarried": "None of your characters carry {item}.",
+      "NoneAnywhere": "No player character carries {item}.",
+      "FromCharacter": "Drag the item from a character's sheet.",
+      "NeedGM": "A GM must be online to take deposits.",
+      "Gave": "Handed over {qty} × {item}.",
+      "GaveKept": "Handed over {qty} × {item}; you kept {kept}.",
+      "Shown": "Showed {item}.",
+      "Chat": {
+        "give": "{who} handed over {qty} × {item} for {quest}.",
+        "show": "{who} showed {item} for {quest}."
+      },
+      "Undo": "Undo this deposit",
+      "UndoQuestion": "Return {qty} × {item} to {actor}?",
+      "Return": "Return it",
+      "Keep": "Keep it with the quest",
+      "DeleteQuestion": "This objective holds {qty} × {item} handed over by players. Deleting it means they can't be returned. Delete anyway?",
+      "Error": {
+        "NotGM": "Only a GM can take deposits.",
+        "NotFound": "That objective or item no longer exists.",
+        "NotOwner": "That item isn't on a character you own.",
+        "Closed": "This objective isn't taking deposits.",
+        "WrongItem": "That isn't {item}.",
+        "AlreadyShown": "{item} has already been shown.",
+        "Full": "Already filled; nothing taken.",
+        "Failed": "The deposit didn't go through; nothing was taken.",
+        "ActorGone": "{actor} no longer exists, so the item can't be returned.",
+        "NotItem": "Only items can be required.",
+        "HasDeposits": "Undo this objective's deposits first."
       }
     }
   }

@@ -20,6 +20,7 @@ npm run layout     # renders templates at 60 widths/themes/modes, fails on overf
                    # set CHROMIUM_PATH (here: /opt/pw-browsers/chromium)
 npm run load       # loads every module file with Foundry mocked; catches bad imports
 npm run contrast   # WCAG AA check of theme tokens
+npm run deposits   # deposit rules with Foundry mocked: races, refusals, rollback, Undo
 ```
 
 ## Map
@@ -31,6 +32,7 @@ npm run contrast   # WCAG AA check of theme tokens
 | `src/data/QuestData.js` | `fhql.quest` JournalEntryPage TypeDataModel |
 | `src/data/quests.js` | quest CRUD, access rules, folders, hide/reveal ownership |
 | `src/data/rewards.js` | reward claiming (GM-relayed query) |
+| `src/data/deposits.js` | objective item requirements; hand over / show (GM-relayed, queued) |
 | `src/data/playerActions.js` | accept / propose / shared notes (GM-relayed query), visibility gating |
 | `src/data/tracking.js` | personal Track and Beacon choice (User flags) |
 | `src/data/lifecycle.js` | duplicate/delete consistency hooks |
@@ -51,6 +53,7 @@ npm run contrast   # WCAG AA check of theme tokens
 - **Rich-text editors:** use `<prose-mirror toggled>` without `open`. Adding `open` at render broke editing. Unsaved editor text is flushed on Done and on close via `_flushEdits`.
 - **Handlebars helpers:** don't rely on `eq`/`and`/`or`; compute booleans in JS. `lookup` is fine.
 - **GM relays** (`CONFIG.queries`): the handler isn't told who sent a request. Re-check everything against the named user, and refuse requests naming a GM.
+- **Deposits:** the GM client takes only what is still needed, one deposit at a time, recording before taking and rolling back on failure. Keep `npm run deposits` passing; it fails if the queue is removed.
 - **Hidden quests:** hiding sets default and per-player ownership to None (saved in a flag, restored on reveal); `questAccess` also refuses Hidden quests to non-GMs.
 - **Quick choices** use `src/ui/popover.js` child panels, never Foundry dialogs. Separate windows only for Pop out, FQL import, and Foundry's ownership editor.
 - **Colors** only through `--fhql-*` tokens; a theme changes colors and small shapes, never layout.
@@ -64,6 +67,7 @@ Storage survives disable/re-enable; editing and autosave; view/edit modes; quick
 
 - GM notes privacy: as a player, `game.journal.get('ID').pages.contents.map(p => p.name)` should not list "GM notes".
 - Claiming, Give, Undo; player workflow settings; font settings listing uploaded fonts; sci-fi knurl strength; list textures; Dark art-deco fans (CSS-only); live theme preview from Module Settings; Beacon menu toggles closed on second click; Gothic theme.
+- Item requirements and deposits: hand over, show only, drag from a character sheet, Undo with return, and two players depositing at once (needs two browsers as different players). Item matching across systems (dnd5e/pf2e quantity).
 
 ## Next up (see `docs/SCOPE.md` §11 milestones and §13 open decisions)
 

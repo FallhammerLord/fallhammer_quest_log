@@ -7,6 +7,7 @@ import { menuPopover } from './popover.js';
 import { questLogAvailable } from '../data/playerActions.js';
 import { playerOwned } from '../data/rewards.js';
 import { applyTheme } from '../theme.js';
+import { depositedTotal, hasRequirement } from '../data/deposits.js';
 
 const WIDGET_ID = 'fhql-beacon';
 
@@ -153,7 +154,7 @@ function renderWidget({ entry, party }, marked)
    const list = objectives.length ? `<ol class="fhql-beacon-objectives" aria-label="${localize('FHQL.Quest.Objectives')}">
       ${objectives.map((o) => `<li class="is-${o.state}">
         <i class="fhql-state-icon ${OBJECTIVE_ICONS[o.state]}" aria-label="${localize(`FHQL.Objective.State.${o.state}`)}"></i>
-        <span>${escape(o.name)}</span>
+        <span>${escape(o.name)}${hasRequirement(o) ? ` <span class="fhql-beacon-progress">${depositedTotal(o)}/${o.requirement.count}</span>` : ''}</span>
         ${o.hidden ? `<i class="fa-solid fa-eye-slash fhql-muted" aria-label="${localize('FHQL.Objective.Hidden')}"></i>` : ''}
       </li>`).join('')}
     </ol>` : '';

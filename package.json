@@ -6,7 +6,8 @@
   "scripts": {
     "lint": "eslint src tools",
     "contrast": "node tools/check-contrast.mjs",
-    "check": "npm run lint && npm run load && npm run contrast",
+    "check": "npm run lint && npm run load && npm run contrast && npm run deposits",
+    "deposits": "node tools/deposit-check.mjs",
     "layout": "node tools/layout-check.mjs",
     "load": "node tools/load-check.mjs"
   },

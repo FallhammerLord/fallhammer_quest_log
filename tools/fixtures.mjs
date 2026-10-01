@@ -34,6 +34,21 @@ export function sheetContext(t, { gm = true, editing = false } = {})
       ['Keepallsixwagonsintactwithoutanysinglebreakinthistext', 'failed'], ['Deliver the salt to Highmere', 'open']
    ].map(([name, state, hidden], i) => ({ id: `o${i}`, name, state, hidden, icon: OI[state], stateLabel: t(`Objective.${state}`) }));
 
+   // An item requirement, part filled, with deposits from two players (see QuestSheet.#requirementContext).
+   const mode = (m) => ({ value: m, selected: m === 'give', label: t(m === 'give' ? 'Deposit.ModeGive' : 'Deposit.ModeShow') });
+   objectives.push({
+      id: 'o4', name: 'Bring sealed salt casks from the Cinderford Warehouse Guild', state: 'open', icon: OI.open, stateLabel: t('Objective.open'),
+      requirement: {
+         uuid: 'Item.cask', name: 'Sealed salt cask (Cinderford Warehouse Guild)', img: '', count: 12, mode: 'give',
+         progress: '7/12', met: false, modeLabel: t('Deposit.ModeGive'), modeOptions: [mode('give'), mode('show')]
+      },
+      canDeposit: !editing, depositVerb: t('Deposit.Give'), depositAria: t('Deposit.Give'), depositIcon: 'fa-hand-holding-hand',
+      depositsList: [
+         { index: 0, label: 'Player2 (Corvus AAI:2101 G5): 4', held: true, gm },
+         { index: 1, label: 'Rinn (Kestrel of the Long Watch): 3', held: true, gm }
+      ]
+   });
+
    const reward = (id, over) => ({
       id, type: 'item', icon: 'fa-solid fa-gem', linked: true, uuid: `Item.${id}`, claimable: true, locked: false,
       claims: [], claimsList: [], claimVerb: t('Reward.Claim'), ...over

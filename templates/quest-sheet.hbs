@@ -169,7 +169,8 @@
           <span class="fhql-count">{{doneCount}}/{{objectives.length}}</span></h3>
         <ul class="fhql-objectives">
           {{#each objectives}}
-          <li class="is-{{state}}" data-objective-id="{{id}}">
+          <li class="is-{{state}} {{#if requirement}}has-requirement{{/if}}" data-objective-id="{{id}}"
+              {{#if ../editing}}data-drop="requirement"{{else if canDeposit}}data-deposit{{/if}}>
             {{#if ../editable}}
             <button type="button" class="fhql-icon-button" data-action="cycleObjective" data-tooltip="{{stateLabel}}"
                     aria-label="{{stateLabel}}"><i class="fhql-state-icon {{icon}}" inert></i></button>
@@ -197,12 +198,50 @@
               <i class="fa-solid {{#if hidden}}fa-eye-slash{{else}}fa-eye{{/if}}" inert></i></button>
             {{/if}}
             {{/if}}
+            {{#if requirement}}
+            <div class="fhql-requirement {{#if requirement.met}}is-met{{/if}}">
+              <span class="fhql-requirement-item">
+                <span class="fhql-requirement-thumb">{{#if requirement.img}}<img src="{{requirement.img}}" alt="">{{else}}<i class="fa-solid fa-box" inert></i>{{/if}}</span>
+                <button type="button" class="fhql-link" data-action="openDocument" data-uuid="{{requirement.uuid}}">{{requirement.name}}</button>
+                <span class="fhql-requirement-progress" aria-label="{{localize 'FHQL.Deposit.Progress'}} {{requirement.progress}}">{{requirement.progress}}</span>
+                {{#unless ../editing}}{{#unless canDeposit}}<span class="fhql-muted">{{requirement.modeLabel}}</span>{{/unless}}{{/unless}}
+              </span>
+              {{#if canDeposit}}
+              <button type="button" class="fhql-button fhql-small fhql-primary" data-action="depositItem" aria-label="{{depositAria}}">
+                <i class="fa-solid {{depositIcon}}" inert></i><span class="fhql-label">{{depositVerb}}</span></button>
+              {{/if}}
+              {{#if ../editing}}
+              <span class="fhql-requirement-edit">
+                <input type="number" min="1" step="1" class="fhql-input fhql-count-input" data-field="objective.count" value="{{requirement.count}}"
+                       aria-label="{{localize 'FHQL.Deposit.Count'}}" data-tooltip="{{localize 'FHQL.Deposit.Count'}}">
+                <select class="fhql-input fhql-small-select" data-field="objective.mode" aria-label="{{localize 'FHQL.Deposit.ModeLabel'}}">
+                  {{#each requirement.modeOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+                </select>
+                <button type="button" class="fhql-icon-button" data-action="clearRequirement"
+                        data-tooltip="{{localize 'FHQL.Deposit.Clear'}}" aria-label="{{localize 'FHQL.Deposit.Clear'}}"><i class="fa-solid fa-xmark" inert></i></button>
+              </span>
+              {{/if}}
+              {{#if depositsList.length}}
+              <span class="fhql-deposits">
+                {{#each depositsList}}
+                <span class="fhql-claim"><i class="fa-solid fa-check" inert></i> {{label}}
+                  {{#if gm}}<button type="button" class="fhql-link fhql-undo" data-action="undoDeposit" data-deposit-index="{{index}}"
+                    data-tooltip="{{localize 'FHQL.Deposit.Undo'}}" aria-label="{{localize 'FHQL.Deposit.Undo'}}"><i class="fa-solid fa-rotate-left" inert></i></button>{{/if}}
+                </span>
+                {{/each}}
+              </span>
+              {{/if}}
+            </div>
+            {{/if}}
           </li>
           {{/each}}
         </ul>
         {{#if editing}}
-        <button type="button" class="fhql-button fhql-add" data-action="addObjective">
-          <i class="fa-solid fa-plus" inert></i> {{localize "FHQL.Objective.Add"}}</button>
+        <div class="fhql-objectives-drop" data-drop="objectives">
+          <button type="button" class="fhql-button fhql-add" data-action="addObjective">
+            <i class="fa-solid fa-plus" inert></i> {{localize "FHQL.Objective.Add"}}</button>
+          <p class="fhql-hint">{{localize "FHQL.Deposit.DropHint"}}</p>
+        </div>
         {{/if}}
       </section>
       {{else if editable}}

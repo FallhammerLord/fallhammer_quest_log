@@ -14,6 +14,7 @@ import { registerSettingsPreview } from './ui/settingsPreview.js';
 import { registerRewardDrop, registerRewardQueries } from './data/rewards.js';
 import { registerLifecycleHooks } from './data/lifecycle.js';
 import { registerPlayerActionQueries } from './data/playerActions.js';
+import { registerDepositQueries } from './data/deposits.js';
 
 Hooks.once('init', () =>
 {
@@ -31,6 +32,7 @@ Hooks.once('init', () =>
    registerRewardDrop();
    registerLifecycleHooks();
    registerPlayerActionQueries();
+   registerDepositQueries();
    registerSettingsPreview();
    game.modules.get(MODULE_ID).api = api;
 });

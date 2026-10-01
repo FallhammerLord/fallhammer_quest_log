@@ -28,5 +28,8 @@ export const STATUSES = Object.freeze({
 /** Objective states, cycled in this order. */
 export const OBJECTIVE_STATES = Object.freeze(['open', 'done', 'failed']);
 
+/** Objective item requirements: the item is handed over, or only shown and kept. */
+export const DEPOSIT_MODES = Object.freeze(['give', 'show']);
+
 /** Reward kinds. */
 export const REWARD_TYPES = Object.freeze(['item', 'actor', 'text']);

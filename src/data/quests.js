@@ -282,13 +282,17 @@ export async function setStatus(entry, status)
  *
  * @param {JournalEntry} entry - The quest entry.
  * @param {string} [name] - Objective text.
+ * @param {object} [extra] - Other objective fields, such as an item requirement.
+ * @returns {Promise<string>} The new objective's ID.
  */
-export async function addObjective(entry, name = '')
+export async function addObjective(entry, name = '', extra = {})
 {
    const page = questPage(entry);
    const sorts = Object.values(page.system.objectives).map((o) => o.sort);
    const sort = (sorts.length ? Math.max(...sorts) : 0) + CONST.SORT_INTEGER_DENSITY;
-   await page.update({ [`system.objectives.${foundry.utils.randomID()}`]: { name, sort } });
+   const id = foundry.utils.randomID();
+   await page.update({ [`system.objectives.${id}`]: { ...extra, name, sort } });
+   return id;
 }
 
 /**
