@@ -234,3 +234,19 @@ export function browseImage(current, onPick)
    const Picker = foundry.applications.apps.FilePicker.implementation;
    new Picker({ type: 'image', current: current || '', callback: onPick }).render(true);
 }
+
+/**
+ * Adds a font to Foundry's font list (CONFIG.fontDefinitions), so Foundry loads it and lists it in
+ * font pickers, including ours. Leaves a font Foundry already knows alone.
+ *
+ * @param {string} family - Font family name.
+ * @param {string} url - Font file path, relative to Foundry's root.
+ * @returns {boolean} Whether it was added.
+ */
+export function registerFont(family, url)
+{
+   CONFIG.fontDefinitions ??= {};
+   if (CONFIG.fontDefinitions[family]) { return false; }
+   CONFIG.fontDefinitions[family] = { editor: true, fonts: [{ urls: [url] }] };
+   return true;
+}

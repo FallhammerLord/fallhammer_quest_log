@@ -3,15 +3,9 @@
  * Loaded after styles/fhql.css (see module.json).
  */
 
-/* IM Fell English SC (Igino Marini, after the 17th-century Fell types), SIL Open Font License 1.1;
-   licence in styles/fonts/im-fell-english-sc/OFL.txt. Latin subset. Used for Gothic headings. */
-@font-face {
-  font-family: "IM Fell English SC";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("../fonts/im-fell-english-sc/IMFellEnglishSC-Regular.woff2") format("woff2");
-}
+/* Headings use IM Fell English SC (bundled; registered in src/theme.js, licence in
+   styles/fonts/im-fell-english-sc/OFL.txt). Declared from code only: a second declaration here, with
+   a stylesheet-relative path, could win and fail to load. */
 
 /* ---------- Tokens: Gothic (soot, cold stone, oxblood, tarnished brass, moonlight) ---------- */
 .fhql-app.fhql-theme-gothic {

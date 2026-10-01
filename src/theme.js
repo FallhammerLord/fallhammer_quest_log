@@ -1,5 +1,5 @@
 import { MODULE_ID, MODULE_PATH, THEMES } from './constants.js';
-import { tidyBannerColor } from './compat.js';
+import { registerFont, tidyBannerColor } from './compat.js';
 
 const THEME_CLASSES = Object.values(THEMES).map((theme) => `fhql-theme-${theme}`);
 
@@ -260,14 +260,15 @@ const BUNDLED_FONTS = [
 ];
 
 /**
- * Registers the module's own fonts from code, so they load however Foundry includes the stylesheets
- * (a url() inside a stylesheet resolves against wherever that sheet is served from). Runs on init.
+ * Registers the module's own fonts: with Foundry (so they appear in font pickers, ours included), and
+ * directly with the browser, so they load however Foundry serves the stylesheets. Runs on init.
  */
 export function loadBundledFonts()
 {
-   if (typeof FontFace === 'undefined' || !document.fonts) { return; }
    for (const { family, url } of BUNDLED_FONTS)
    {
+      registerFont(family, url);
+      if (typeof FontFace === 'undefined' || !document.fonts) { continue; }
       const face = new FontFace(family, `url("${url}")`, { display: 'swap' });
       document.fonts.add(face);
       face.load().catch((error) => console.warn(`${MODULE_ID} | Could not load the font ${family} from ${url}.`, error));

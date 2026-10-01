@@ -99,7 +99,8 @@
       "Remove": "Remove from this quest",
       "RemoveConfirm": "Remove <strong>{name}</strong> from this quest? Keep it as its own quest, or delete it.",
       "MakeStandalone": "Keep as its own quest",
-      "DeleteQuest": "Delete quest"
+      "DeleteQuest": "Delete quest",
+      "CannotNest": "That quest can't go under this one: it is this quest, or this quest is already below it."
     },
     "TextureImages": {
       "MenuName": "Theme images",

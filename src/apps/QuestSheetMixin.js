@@ -4,8 +4,8 @@ import { addRequirementObjective, setRequirement } from '../data/deposits.js';
 import { canAccept, canChangeStatusAsPlayer, canEditNotesViaGM, requestPlayerAction } from '../data/playerActions.js';
 import { MODULE_ID, STATUSES } from '../constants.js';
 import {
-   addRewardFromDocument, clearGiver, getQuestEntry, gmNotesPage, questAccess, questPage, renameQuest,
-   setGiverFromDocument, setGmNotes, setStatus, subquests, updateQuest
+   addRewardFromDocument, clearGiver, getQuestEntry, gmNotesPage, parentCandidates, questAccess, questPage,
+   renameQuest, setGiverFromDocument, setGmNotes, setParent, setStatus, subquests, updateQuest
 } from '../data/quests.js';
 import { editorUnsaved, guardActions } from './sheet/rows.js';
 import { depositDropped, flashChangedObjectives, objectiveActions, objectivesContext } from './sheet/objectives.js';
@@ -567,6 +567,16 @@ export function QuestSheetMixin(Base)
          const doc = data?.uuid ? await fromUuid(data.uuid) : null;
          const objectiveId = zone.closest('[data-objective-id]')?.dataset.objectiveId;
          if (depositing) { return depositDropped(this, zone, objectiveId, doc); }
+
+         // A quest dropped on Subquests or Objectives becomes a subquest (GM).
+         if (questPage(doc) && ['subquests', 'objectives', 'requirement'].includes(zone.dataset.drop))
+         {
+            if (!game.user.isGM) { return; }
+            const refused = doc.id === entry.id || !parentCandidates(doc).some((e) => e.id === entry.id);
+            if (refused) { ui.notifications.warn(game.i18n.localize('FHQL.Subquest.CannotNest')); return; }
+            await setParent(doc, entry.id);
+            return;
+         }
 
          let accepted;
          switch (zone.dataset.drop)

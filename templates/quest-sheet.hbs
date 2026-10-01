@@ -269,7 +269,7 @@
 
       {{! ---------- Subquests ---------- }}
       {{#if subquests.length}}
-      <section class="fhql-card fhql-area-subquests" data-panel="subquests">
+      <section class="fhql-card fhql-area-subquests" data-panel="subquests" {{#if gm}}data-drop="subquests"{{/if}}>
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.Subquests"}}
           <span class="fhql-count">{{subquests.length}}</span>
           {{#if gm}}<button type="button" class="fhql-button fhql-small" data-action="addSubquest" aria-label="{{localize 'FHQL.Quest.AddSubquestLabel'}}" data-tooltip="{{localize 'FHQL.Quest.AddSubquestLabel'}}"><i class="fa-solid fa-plus" inert></i><span class="fhql-label">{{localize "FHQL.Quest.AddSubquest"}}</span></button>{{/if}}
@@ -291,7 +291,7 @@
         </div>
       </section>
       {{else if gm}}
-      <section class="fhql-card fhql-compact fhql-area-subquests">
+      <section class="fhql-card fhql-compact fhql-area-subquests" data-drop="subquests">
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.Subquests"}}<span class="fhql-empty-note">{{localize "FHQL.Section.None"}}</span>
           <button type="button" class="fhql-button fhql-small" data-action="addSubquest" aria-label="{{localize 'FHQL.Quest.AddSubquestLabel'}}" data-tooltip="{{localize 'FHQL.Quest.AddSubquestLabel'}}"><i class="fa-solid fa-plus" inert></i><span class="fhql-label">{{localize "FHQL.Quest.AddSubquest"}}</span></button></h3>
       </section>

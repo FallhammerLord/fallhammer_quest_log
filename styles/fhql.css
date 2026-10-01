@@ -494,6 +494,9 @@
   text-decoration: none;
 }
 .fhql-app .fhql-requirement-item { display: inline-flex; gap: 0.35em; align-items: center; min-width: 0; flex-wrap: wrap; }
+/* Hand over / Show sits at the row's end, in the same column as the objective's eye button above it. */
+.fhql-app .fhql-requirement > [data-action="depositItem"] { margin-inline-start: auto; }
+.fhql-app .fhql-objectives .fhql-eye { min-width: 28px; }
 .fhql-app .fhql-requirement-thumb {
   flex: none;
   width: 20px;
