@@ -173,6 +173,11 @@ export function watchPanels(app)
    const sheet = app.element.querySelector('.fhql-sheet');
    if (sheet) { observer.observe(sheet); }
    for (const el of app.element.querySelectorAll('.fhql-panel-body > *')) { observer.observe(el); }
+   // The header and GM notes take height from the panels when they grow: a font loading late, a long
+   // title wrapping, GM notes opened. Without these the last panel was cut off until a resize.
+   for (const el of app.element.querySelectorAll('.fhql-sheet-top, .fhql-gm-notes')) { observer.observe(el); }
+   // Fonts that finish loading after the first layout change every height at once.
+   document.fonts?.ready?.then(() => layoutPanels(app.element));
 }
 
 /* ---------- Narrow layout: collapsible panels ---------- */
