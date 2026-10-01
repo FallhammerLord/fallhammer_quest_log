@@ -399,6 +399,9 @@
       "LockedBy": "{name} is editing",
       "TakeOver": "Edit anyway",
       "TakeOverHint": "Take over the notes. Anything they haven't saved may be overwritten."
+    },
+    "Error": {
+      "Action": "That didn't work. Check the console (F12) for details."
     }
   }
 }

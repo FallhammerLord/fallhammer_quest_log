@@ -11,7 +11,8 @@ import {
    questSubfolders, visibleQuests
 } from '../data/quests.js';
 import { QuestSheetMixin } from './QuestSheetMixin.js';
-import { releaseNotes } from '../data/notesLock.js';
+import { stopEditingNotes } from './sheet/notes.js';
+import { guardActions } from './sheet/rows.js';
 
 /** The Quest Log window: quest list plus a quest sheet in the detail pane. Singleton. */
 export class QuestLog extends QuestSheetMixin(HandlebarsApp)
@@ -31,7 +32,7 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
          resizable: true
       },
       position: { width: 1040, height: 680 },
-      actions: {
+      actions: guardActions({
          selectQuest: QuestLog.#onSelectQuest,
          createQuest: QuestLog.#onCreateQuest,
          createSamples: QuestLog.#onCreateSamples,
@@ -39,7 +40,7 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
          toggleFolder: QuestLog.#onToggleFolder,
          toggleStatusFilter: QuestLog.#onToggleStatusFilter,
          openFqlImport: QuestLog.#onOpenFqlImport
-      }
+      })
    };
 
    static PARTS = {
@@ -66,7 +67,7 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
       if (id !== this.#selectedId)
       {
          this._editing = false;
-         if (this._notesEditing) { this._notesEditing = false; releaseNotes(); }
+         stopEditingNotes(this);
       }
       this.#selectedId = id;
    }

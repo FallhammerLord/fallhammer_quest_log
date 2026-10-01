@@ -39,7 +39,12 @@ npm run deposits   # deposit rules with Foundry mocked: races, refusals, rollbac
 | `src/data/tracking.js` | personal Track and Beacon choice (User flags) |
 | `src/data/lifecycle.js` | duplicate/delete consistency hooks |
 | `src/import/fql.js` | FQL import (in place, parent repair, report) |
-| `src/apps/QuestSheetMixin.js` | shared quest sheet: context, actions, edits, focus/save safety |
+| `src/apps/QuestSheetMixin.js` | shared quest sheet core: render context, edit mode, field saves, drops, focus/save safety |
+| `src/apps/sheet/objectives.js` | sheet feature: objectives, requirements, deposits (context + actions) |
+| `src/apps/sheet/rewards.js` | sheet feature: rewards and claiming (context + actions) |
+| `src/apps/sheet/notes.js` | sheet feature: player notes in place (context + actions) |
+| `src/apps/sheet/questMenu.js` | sheet feature: GM quest menu (pop out, access, move, parent, delete) |
+| `src/apps/sheet/rows.js` | row lookups, `editorUnsaved`, `guardActions` (actions show a notice on failure) |
 | `src/apps/QuestLog.js` | log window: folder tree, filters, search, right-click menu |
 | `src/apps/QuestSheetApp.js` | pop-out quest window |
 | `src/ui/QuestBeacon.js` | panel above the players list |
@@ -58,6 +63,7 @@ npm run deposits   # deposit rules with Foundry mocked: races, refusals, rollbac
 - **GM relays** go through `src/data/relay.js` only (`registerRelay` / `relay`): one queue on the GM client for every request type, shared notifications, transport in `compat.js`. The handler isn't told who sent a request: re-check everything against the named user, and refuse requests naming a GM.
 - **Deposits:** the GM client takes only what is still needed, one deposit at a time, recording before taking and rolling back on failure. Keep `npm run deposits` passing; it fails if the relay queue is removed.
 - **Hidden quests:** hiding sets default and per-player ownership to None (saved in a flag, restored on reveal); `questAccess` also refuses Hidden quests to non-GMs.
+- **Sheet actions** are plain functions called with `this` as the window, grouped per feature in `src/apps/sheet/` and merged through `guardActions`. New feature: new file there, not more lines in the mixin.
 - **Quick choices** use `src/ui/popover.js` child panels, never Foundry dialogs. Separate windows only for Pop out, FQL import, and Foundry's ownership editor.
 - **Colors** only through `--fhql-*` tokens; a theme changes colors and small shapes, never layout.
 - **Offline tests can't load Foundry's CSS.** Visual checks here are approximations; the user's screenshots are the truth.

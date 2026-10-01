@@ -1,28 +1,22 @@
-import { DocumentOwnershipConfig, textEditor } from '../compat.js';
-import { confirmPopover, menuPopover } from '../ui/popover.js';
+import { textEditor } from '../compat.js';
 import { isTracked, toggleTracked } from '../data/tracking.js';
-import { claimNotes, holdsNotes, notesEditor, releaseNotes } from '../data/notesLock.js';
-import {
-   addRequirementObjective, clearRequirement, depositCandidates, depositedTotal, depositLabel, hasRequirement, requestDeposit,
-   setRequirement, stillNeeded, undoDeposit
-} from '../data/deposits.js';
+import { addRequirementObjective, setRequirement } from '../data/deposits.js';
 import { canAccept, canChangeStatusAsPlayer, canEditNotesViaGM, requestPlayerAction } from '../data/playerActions.js';
 import { MODULE_ID, STATUSES } from '../constants.js';
 import {
-   claimLabel, claimedItem, claimsExhausted, claimTargets, isClaimable, playerOwned, recipientOptions, requestClaim, undoClaim
-} from '../data/rewards.js';
-import {
-   addObjective, addRewardFromDocument, addTextReward, clearGiver, createSubquest, cycleObjective, deleteObjective,
-   deleteQuest, deleteReward, getQuestEntry, gmNotesPage, moveQuestToFolder, parentCandidates, questAccess, questPage,
-   questRootFolder, questSubfolders, renameQuest, setGiverFromDocument, setGmNotes, setParent, setStatus, subquests,
-   updateQuest
+   addRewardFromDocument, clearGiver, createSubquest, getQuestEntry, gmNotesPage, questAccess, questPage, renameQuest,
+   setGiverFromDocument, setGmNotes, setStatus, subquests, updateQuest
 } from '../data/quests.js';
+import { editorUnsaved, guardActions } from './sheet/rows.js';
+import { depositDropped, objectiveActions, objectivesContext } from './sheet/objectives.js';
+import { rewardActions, rewardsContext } from './sheet/rewards.js';
+import {
+   notesActions, notesContext, openNotesIfAsked, rememberOpenNotes, savePlayerNotes, stopEditingNotes
+} from './sheet/notes.js';
+import { openQuestMenu, questMenuActions } from './sheet/questMenu.js';
 
 /** Update option marking a text edit made from this window, so it re-renders lightly and keeps focus. */
 export const QUIET = { fhqlQuiet: true };
-
-const OBJECTIVE_ICONS = { open: 'fa-regular fa-square', done: 'fa-solid fa-square-check', failed: 'fa-solid fa-square-xmark' };
-const REWARD_ICONS = { item: 'fa-solid fa-gem', actor: 'fa-solid fa-user', text: 'fa-solid fa-coins' };
 
 /** One-click status changes in the read view, by current status. */
 const STATUS_ACTIONS = {
@@ -47,35 +41,23 @@ export function QuestSheetMixin(Base)
    return class QuestSheet extends Base
    {
       static DEFAULT_OPTIONS = {
-         actions: {
+         // Every action is guarded: a failure shows a notice instead of failing silently.
+         actions: guardActions({
             editQuest: QuestSheet.#onEditQuest,
             finishEditing: QuestSheet.#onFinishEditing,
             setQuestStatus: QuestSheet.#onSetQuestStatus,
             toggleInProgress: QuestSheet.#onToggleInProgress,
             toggleTracked: QuestSheet.#onToggleTracked,
             acceptQuest: QuestSheet.#onAcceptQuest,
-            editNotes: QuestSheet.#onEditNotes,
-            finishNotes: QuestSheet.#onFinishNotes,
-            addObjective: QuestSheet.#onAddObjective,
-            cycleObjective: QuestSheet.#onCycleObjective,
-            deleteObjective: QuestSheet.#onDeleteObjective,
-            addTextReward: QuestSheet.#onAddTextReward,
-            claimReward: QuestSheet.#onClaimReward,
-            giveReward: QuestSheet.#onGiveReward,
-            undoClaim: QuestSheet.#onUndoClaim,
-            toggleRewardLock: QuestSheet.#onToggleRewardLock,
-            toggleRewardHidden: QuestSheet.#onToggleRewardHidden,
-            toggleObjectiveHidden: QuestSheet.#onToggleObjectiveHidden,
-            depositItem: QuestSheet.#onDepositItem,
-            undoDeposit: QuestSheet.#onUndoDeposit,
-            clearRequirement: QuestSheet.#onClearRequirement,
-            deleteReward: QuestSheet.#onDeleteReward,
             openDocument: QuestSheet.#onOpenDocument,
             clearGiver: QuestSheet.#onClearGiver,
             showQuest: QuestSheet.#onShowQuest,
             addSubquest: QuestSheet.#onAddSubquest,
-            questMenu: QuestSheet.#onQuestMenu
-         }
+            ...objectiveActions,
+            ...rewardActions,
+            ...notesActions,
+            ...questMenuActions
+         })
       };
 
       /** Whether the shown quest is in edit mode. Edits save as each field changes; Done returns to view. */
@@ -88,7 +70,7 @@ export function QuestSheetMixin(Base)
       _notesEditing = false;
 
       /** Open the notes editor after the next render, saving a second click. */
-      #openNotesEditor = false;
+      _openNotesEditor = false;
 
       /** Last save outcome shown in edit mode: '', 'saving', 'saved', or 'failed'. */
       #saveState = '';
@@ -137,8 +119,7 @@ export function QuestSheetMixin(Base)
       {
          await super._preRender(context, options);
          this.#pendingFocus = this.#captureFocus();
-         // An open notes editor (nothing typed yet) reopens after an unrelated re-render.
-         if (this._notesEditing && this.element?.querySelector('prose-mirror[name="playerNotes"]')?.open) { this.#openNotesEditor = true; }
+         rememberOpenNotes(this);
       }
 
       /** @override */
@@ -147,20 +128,14 @@ export function QuestSheetMixin(Base)
          super._onRender(context, options);
          this.#restoreFocus(this.#pendingFocus);
          this.#pendingFocus = null;
-         if (this.#openNotesEditor)
-         {
-            this.#openNotesEditor = false;
-            const editor = this.element?.querySelector('prose-mirror[name="playerNotes"]');
-            // Same as the player clicking the editor's own pen; the `open` attribute at render breaks editing.
-            if (editor && !editor.open) { requestAnimationFrame(() => editor.querySelector(':scope > button')?.click()); }
-         }
+         openNotesIfAsked(this);
       }
 
       /** @override */
       async _preClose(options)
       {
          await this._flushEdits();
-         if (this._notesEditing && this.questEntry) { this._notesEditing = false; await releaseNotes(this.questEntry); }
+         if (this.questEntry) { await stopEditingNotes(this, this.questEntry); }
          return super._preClose(options);
       }
 
@@ -179,26 +154,14 @@ export function QuestSheetMixin(Base)
          // Saving an editor fires its change event, which the change listener turns into an update.
          for (const editor of this.element?.querySelectorAll('prose-mirror') ?? [])
          {
-            if (QuestSheet.#unsaved(editor)) { editor.save(); }
+            if (editorUnsaved(editor)) { editor.save(); }
          }
-      }
-
-      /**
-       * Only an open editor can hold unsaved text. A toggled editor that was just saved can still
-       * report dirty; counting it blocked the re-render, so the saved text vanished until Done.
-       *
-       * @param {HTMLElement} editor - A prose-mirror element.
-       * @returns {boolean} Whether it holds unsaved changes.
-       */
-      static #unsaved(editor)
-      {
-         return editor.open !== false && !!editor.isDirty?.();
       }
 
       /** @returns {boolean} Whether a rich-text editor here holds unsaved changes. */
       _hasUnsavedEditor()
       {
-         return [...(this.element?.querySelectorAll('prose-mirror') ?? [])].some((editor) => QuestSheet.#unsaved(editor));
+         return [...(this.element?.querySelectorAll('prose-mirror') ?? [])].some((editor) => editorUnsaved(editor));
       }
 
       /**
@@ -287,46 +250,8 @@ export function QuestSheetMixin(Base)
          const notesViaGM = canEditNotesViaGM(entry);
          const enrich = (html) => textEditor().enrichHTML(html ?? '', { secrets: access.editable, relativeTo: page });
          const localize = (key) => game.i18n.localize(key);
-
-         const open = !['completed', 'failed'].includes(system.status);
-         const objectives = access.full ? system.objectiveList
-          .filter((o) => access.gm || !o.hidden)
-          .map((o) => ({
-             ...o,
-             icon: OBJECTIVE_ICONS[o.state],
-             stateLabel: localize(`FHQL.Objective.${o.state}`),
-             ...QuestSheet.#requirementContext(o, { open, gm: access.gm, editing })
-          })) : [];
-
-         const userId = game.user.id;
-         const gmHandsOut = playerOwned(entry);
-         const rewards = access.full ? Object.entries(system.rewards)
-          .map(([id, r]) =>
-          {
-             const claimable = isClaimable(r);
-             const exhaustedForAll = claimable && r.claimLimit === 'once' && r.claims.length > 0;
-             const mine = claimable && claimsExhausted(r, userId);
-             return {
-                id, ...r,
-                icon: REWARD_ICONS[r.type] ?? REWARD_ICONS.text,
-                linked: !!r.uuid,
-                claimable,
-                struck: exhaustedForAll || (!access.gm && mine && r.type === 'item'),
-                claimsList: r.claims.map((c, index) => ({ index, label: claimLabel(c) })),
-                perPlayer: r.claimLimit === 'perPlayer',
-                gmHandsOut: !access.gm && claimable && gmHandsOut && !mine,
-                canClaim: !access.gm && claimable && !gmHandsOut && !r.locked && !mine
-                 && (r.type === 'actor' || claimTargets(game.user).length > 0),
-                showLocked: !access.gm && claimable && r.locked && !gmHandsOut,
-                canGive: access.gm && claimable && !exhaustedForAll,
-                draggable: claimable && r.type === 'item' && (access.gm ? !exhaustedForAll : (!r.locked && !mine && !gmHandsOut)),
-                claimVerb: game.i18n.localize(r.type === 'actor' ? 'FHQL.Reward.Recruit' : 'FHQL.Reward.Claim')
-             };
-          })
-          .filter((r) => access.gm || !r.hidden)
-          .sort((a, b) => a.sort - b.sort) : [];
-         const claimableRewards = rewards.filter((r) => r.claimable);
-         const claimedCount = claimableRewards.filter((r) => r.claims.length > 0).length;
+         const objectives = objectivesContext(system, access, editing);
+         const { rewards, rewardSummary } = rewardsContext(entry, system, access);
 
          const parentEntry = getQuestEntry(system.parent);
          const parent = parentEntry && questAccess(parentEntry).visible ? { id: parentEntry.id, name: parentEntry.name } : null;
@@ -358,7 +283,7 @@ export function QuestSheetMixin(Base)
              })) : [],
             canSetStatus: access.gm || trusted,
             canAccept: canAccept(entry),
-            ...this.#notesContext(entry, access, notesViaGM),
+            ...notesContext(this, entry, access, notesViaGM),
             inProgress: system.inProgress,
             tracked: isTracked(entry),
             saveStateLabel: editing ? this.#saveStateLabel() : '',
@@ -371,8 +296,7 @@ export function QuestSheetMixin(Base)
             objectives,
             doneCount: objectives.filter((o) => o.state === 'done').length,
             rewards,
-            rewardSummary: claimableRewards.length
-             ? game.i18n.format('FHQL.Reward.Summary', { claimed: claimedCount, total: claimableRewards.length }) : '',
+            rewardSummary,
             subquests: children,
             showHiddenNotice: access.gm && system.status === 'hidden',
             showObjectives: objectives.length > 0 || editing,
@@ -385,63 +309,6 @@ export function QuestSheetMixin(Base)
                html: await enrich(gmNotesRaw),
                open: editing || game.settings.get(MODULE_ID, 'gmNotesOpen')
             } : null
-         };
-      }
-
-      /**
-       * Render data for player notes: who may edit them, and who is editing now.
-       *
-       * @param {JournalEntry} entry - The quest.
-       * @param {object} access - From questAccess.
-       * @param {boolean} viaGM - The player edits through the GM.
-       * @returns {object} Fields merged into the sheet context.
-       */
-      #notesContext(entry, access, viaGM)
-      {
-         const canEditNotes = access.editable || viaGM;
-         const notesEditing = canEditNotes && this._notesEditing && holdsNotes(entry);
-         const holder = notesEditing ? null : notesEditor(entry);
-         return {
-            canEditNotes,
-            notesEditing,
-            notesLockedBy: holder ? game.i18n.format('FHQL.Notes.LockedBy', { name: holder.name }) : '',
-            notesTakeOver: !!holder && access.gm,
-            notesCanStart: canEditNotes && !holder
-         };
-      }
-
-      /**
-       * Render data for an objective's item requirement and deposits.
-       *
-       * @param {object} objective - Objective data.
-       * @param {{ open: boolean, gm: boolean, editing: boolean }} state - Quest open, viewer is GM, edit mode.
-       * @returns {object} Fields merged into the objective's context.
-       */
-      static #requirementContext(objective, { open, gm, editing })
-      {
-         if (!hasRequirement(objective)) { return { requirement: null }; }
-         const localize = (key) => game.i18n.localize(key);
-         const { requirement } = objective;
-         const total = depositedTotal(objective);
-         const give = requirement.mode === 'give';
-         const verb = localize(give ? 'FHQL.Deposit.Give' : 'FHQL.Deposit.Show');
-         return {
-            requirement: {
-               ...requirement,
-               progress: `${total}/${requirement.count}`,
-               fill: `${Math.min(100, Math.round((total / requirement.count) * 100))}%`,
-               met: total >= requirement.count,
-               modeLabel: localize(give ? 'FHQL.Deposit.ModeGive' : 'FHQL.Deposit.ModeShow'),
-               modeOptions: ['give', 'show'].map((mode) => ({
-                  value: mode, selected: mode === requirement.mode,
-                  label: localize(mode === 'give' ? 'FHQL.Deposit.ModeGive' : 'FHQL.Deposit.ModeShow')
-               }))
-            },
-            canDeposit: open && !editing && !objective.hidden && stillNeeded(objective) > 0,
-            depositVerb: verb,
-            depositAria: game.i18n.format('FHQL.Deposit.ActionLabel', { verb, item: requirement.name }),
-            depositIcon: give ? 'fa-hand-holding-hand' : 'fa-eye',
-            depositsList: objective.deposits.map((d, index) => ({ index, label: depositLabel(d), held: !!d.item, gm }))
          };
       }
 
@@ -534,19 +401,7 @@ export function QuestSheetMixin(Base)
             case 'giver.name': return updateQuest(entry, { 'system.giver.name': value }, QUIET);
             case 'image': return updateQuest(entry, { 'system.image': value });
             case 'description': return updateQuest(entry, { 'system.description': value });
-            case 'playerNotes':
-            {
-               if (questAccess(entry).editable) { await updateQuest(entry, { 'system.playerNotes': value }); }
-               else
-               {
-                  const result = await requestPlayerAction({ action: 'playerNotes', entryId: entry.id, html: value });
-                  if (!result.ok) { throw new Error('Player notes refused'); }
-               }
-               this._notesEditing = false;
-               await releaseNotes(entry);
-               this.render();
-               return;
-            }
+            case 'playerNotes': return savePlayerNotes(this, entry, value);
             case 'gmNotes': return setGmNotes(entry, value);
             case 'objective.name': return updateQuest(entry, { [`system.objectives.${objectiveId}.name`]: value }, QUIET);
             case 'objective.hidden': return updateQuest(entry, { [`system.objectives.${objectiveId}.hidden`]: value });
@@ -593,7 +448,7 @@ export function QuestSheetMixin(Base)
          const data = textEditor().getDragEventData(event);
          const doc = data?.uuid ? await fromUuid(data.uuid) : null;
          const objectiveId = zone.closest('[data-objective-id]')?.dataset.objectiveId;
-         if (depositing) { return this.#depositDropped(entry, objectiveId, doc); }
+         if (depositing) { return depositDropped(entry, objectiveId, doc); }
 
          let accepted;
          switch (zone.dataset.drop)
@@ -610,31 +465,6 @@ export function QuestSheetMixin(Base)
          }
 
          if (!accepted) { ui.notifications.warn(game.i18n.localize(`FHQL.Drop.Rejected.${zone.dataset.drop}`)); }
-      }
-
-      /**
-       * Deposits an item dragged from a character sheet onto an objective.
-       *
-       * @param {JournalEntry} entry - The quest.
-       * @param {string} objectiveId - Objective ID.
-       * @param {Document|null} doc - The dropped document.
-       */
-      async #depositDropped(entry, objectiveId, doc)
-      {
-         const objective = questPage(entry)?.system.objectives[objectiveId];
-         if (!objective) { return; }
-         if (doc?.documentName !== 'Item' || doc.parent?.documentName !== 'Actor')
-         {
-            ui.notifications.warn(game.i18n.localize('FHQL.Deposit.FromCharacter'));
-            return;
-         }
-         const choice = depositCandidates(objective, game.user.isGM).find((c) => c.itemUuid === doc.uuid);
-         if (!choice)
-         {
-            ui.notifications.warn(game.i18n.format('FHQL.Deposit.Error.WrongItem', { item: objective.requirement.name }));
-            return;
-         }
-         await requestDeposit(entry, objectiveId, choice);
       }
 
       /** @this {QuestSheet} */
@@ -671,28 +501,6 @@ export function QuestSheetMixin(Base)
          this._announce(game.i18n.localize(on ? 'FHQL.Announce.FocusOn' : 'FHQL.Announce.FocusOff'));
       }
 
-
-      /** @this {QuestSheet} */
-      static async #onAddObjective()
-      {
-         if (this.questEntry) { await addObjective(this.questEntry); }
-      }
-
-      /** @this {QuestSheet} */
-      static async #onCycleObjective(event, target)
-      {
-         const id = target.closest('[data-objective-id]')?.dataset.objectiveId;
-         if (!this.questEntry || !id) { return; }
-         await cycleObjective(this.questEntry, id);
-         const objective = questPage(this.questEntry)?.system.objectives[id];
-         if (objective)
-         {
-            this._announce(game.i18n.format('FHQL.Announce.Objective', {
-               objective: objective.name, state: game.i18n.localize(`FHQL.Objective.State.${objective.state}`)
-            }));
-         }
-      }
-
       /** @this {QuestSheet} */
       static async #onAcceptQuest()
       {
@@ -705,43 +513,6 @@ export function QuestSheetMixin(Base)
          }
       }
 
-      /**
-       * Starts editing player notes in place. Claims them first, so only one person edits at a time;
-       * the GM can take over from someone who walked away.
-       *
-       * @this {QuestSheet}
-       */
-      static async #onEditNotes(event, target)
-      {
-         const entry = this.questEntry;
-         if (!entry) { return; }
-         const holder = await claimNotes(entry, { force: 'force' in target.dataset && game.user.isGM });
-         if (holder)
-         {
-            ui.notifications.warn(game.i18n.format('FHQL.Notes.LockedBy', { name: holder.name }));
-            this.render();
-            return;
-         }
-         this._notesEditing = true;
-         this.#openNotesEditor = true;
-         this.render();
-      }
-
-      /**
-       * Finishes editing player notes: saves unsaved text (which releases them), or just releases.
-       *
-       * @this {QuestSheet}
-       */
-      static async #onFinishNotes()
-      {
-         const entry = this.questEntry;
-         const editor = this.element?.querySelector('prose-mirror[name="playerNotes"]');
-         if (editor && QuestSheet.#unsaved(editor)) { editor.save(); return; }
-         this._notesEditing = false;
-         if (entry) { await releaseNotes(entry); }
-         this.render();
-      }
-
       /** @this {QuestSheet} */
       static async #onToggleTracked()
       {
@@ -749,149 +520,6 @@ export function QuestSheetMixin(Base)
          const on = !isTracked(this.questEntry);
          await toggleTracked(this.questEntry);
          this._announce(game.i18n.localize(on ? 'FHQL.Announce.TrackOn' : 'FHQL.Announce.TrackOff'));
-      }
-
-      /** @this {QuestSheet} */
-      static async #onDeleteObjective(event, target)
-      {
-         const found = this.#objectiveFor(target);
-         if (!found) { return; }
-         // Handed-over items live only in the deposit records; deleting them loses the way to return them.
-         const held = found.objective.deposits.filter((d) => d.item).reduce((sum, d) => sum + d.qty, 0);
-         if (held)
-         {
-            const ok = await confirmPopover(this, target, {
-               message: `<p>${game.i18n.format('FHQL.Deposit.DeleteQuestion', {
-                  qty: held, item: foundry.utils.escapeHTML(found.objective.requirement.name)
-               })}</p>`,
-               yes: game.i18n.localize('FHQL.Objective.Delete'),
-               danger: true
-            });
-            if (!ok) { return; }
-         }
-         await deleteObjective(this.questEntry, found.id);
-      }
-
-      /** @this {QuestSheet} */
-      static async #onAddTextReward()
-      {
-         if (this.questEntry) { await addTextReward(this.questEntry); }
-      }
-
-      /** @this {QuestSheet} */
-      static async #onDeleteReward(event, target)
-      {
-         const id = target.closest('[data-reward-id]')?.dataset.rewardId;
-         if (this.questEntry && id) { await deleteReward(this.questEntry, id); }
-      }
-
-      /** @returns {object|undefined} Reward data for the row containing `target`. */
-      #rewardFor(target)
-      {
-         const id = target.closest('[data-reward-id]')?.dataset.rewardId;
-         const reward = id ? questPage(this.questEntry)?.system.rewards[id] : undefined;
-         return reward ? { id, reward } : undefined;
-      }
-
-
-
-
-      /** @this {QuestSheet} */
-      static async #onToggleRewardLock(event, target)
-      {
-         const found = this.#rewardFor(target);
-         if (found) { await updateQuest(this.questEntry, { [`system.rewards.${found.id}.locked`]: !found.reward.locked }); }
-      }
-
-      /** @this {QuestSheet} */
-      static async #onToggleRewardHidden(event, target)
-      {
-         const found = this.#rewardFor(target);
-         if (found) { await updateQuest(this.questEntry, { [`system.rewards.${found.id}.hidden`]: !found.reward.hidden }); }
-      }
-
-      /** @this {QuestSheet} */
-      static async #onToggleObjectiveHidden(event, target)
-      {
-         const id = target.closest('[data-objective-id]')?.dataset.objectiveId;
-         const objective = id ? questPage(this.questEntry)?.system.objectives[id] : undefined;
-         if (objective) { await updateQuest(this.questEntry, { [`system.objectives.${id}.hidden`]: !objective.hidden }); }
-      }
-
-      /** @returns {{ id: string, objective: object }|undefined} The objective in the row containing `target`. */
-      #objectiveFor(target)
-      {
-         const id = target.closest('[data-objective-id]')?.dataset.objectiveId;
-         const objective = id ? questPage(this.questEntry)?.system.objectives[id] : undefined;
-         return objective ? { id, objective } : undefined;
-      }
-
-      /**
-       * Hand over or show an item: pick which of your characters' matching items, in a child panel.
-       * A single match skips the choice. The GM picks from every player's characters.
-       *
-       * @this {QuestSheet}
-       */
-      static async #onDepositItem(event, target)
-      {
-         const found = this.#objectiveFor(target);
-         if (!found) { return; }
-         const { requirement } = found.objective;
-         const asGM = game.user.isGM;
-         const choices = depositCandidates(found.objective, asGM);
-         if (!choices.length)
-         {
-            ui.notifications.warn(game.i18n.format(asGM ? 'FHQL.Deposit.NoneAnywhere' : 'FHQL.Deposit.NoneCarried', { item: requirement.name }));
-            return;
-         }
-         let choice = choices[0];
-         if (asGM || choices.length > 1)
-         {
-            const picked = await menuPopover(this, target, {
-               title: game.i18n.format('FHQL.Deposit.Choose', { item: requirement.name }),
-               items: choices.map((c, i) => ({
-                  value: String(i), label: c.label, icon: 'fa-solid fa-box',
-                  hint: c.assigned && !asGM ? game.i18n.localize('FHQL.Reward.Assigned') : ''
-               }))
-            });
-            if (picked === null) { return; }
-            choice = choices[Number(picked)];
-         }
-         await requestDeposit(this.questEntry, found.id, choice);
-      }
-
-      /** @this {QuestSheet} */
-      static async #onUndoDeposit(event, target)
-      {
-         const found = this.#objectiveFor(target);
-         if (!found) { return; }
-         const index = Number(target.dataset.depositIndex);
-         const deposit = found.objective.deposits[index];
-         if (!deposit) { return; }
-         let returnItem = false;
-         if (deposit.item)
-         {
-            const answer = await confirmPopover(this, target, {
-               message: `<p>${game.i18n.format('FHQL.Deposit.UndoQuestion', {
-                  qty: deposit.qty, item: foundry.utils.escapeHTML(found.objective.requirement.name),
-                  actor: foundry.utils.escapeHTML(deposit.actorName)
-               })}</p>`,
-               yes: game.i18n.localize('FHQL.Deposit.Return'),
-               no: game.i18n.localize('FHQL.Deposit.Keep')
-            });
-            if (answer === null) { return; }
-            returnItem = answer;
-         }
-         await undoDeposit(this.questEntry, found.id, index, { returnItem });
-      }
-
-      /** @this {QuestSheet} */
-      static async #onClearRequirement(event, target)
-      {
-         const found = this.#objectiveFor(target);
-         if (!found) { return; }
-         const error = await clearRequirement(this.questEntry, found.id);
-         if (error) { ui.notifications.warn(game.i18n.localize(`FHQL.Deposit.Error.${error}`)); }
       }
 
       /** Opens a linked giver or reward document's sheet, if the viewer may see it. */
@@ -927,164 +555,15 @@ export function QuestSheetMixin(Base)
          this.showQuest(child.id, { edit: true });
       }
 
-
-
-
-      /* ---------- Quest menu (⋮ button and right-click on list rows) ---------- */
-
       /**
-       * @param {JournalEntry} entry - The quest the menu acts on.
-       * @returns {object[]} Menu items. GM only.
-       */
-      _questMenuItems(entry)
-      {
-         const t = (key) => game.i18n.localize(key);
-         return [
-            ...(this.options.questId === entry.id ? [] : [{ value: 'popOut', label: t('FHQL.Menu.PopOut'), icon: 'fa-solid fa-up-right-from-square' }]),
-            { value: 'access', label: t('FHQL.Menu.Access'), icon: 'fa-solid fa-user-lock' },
-            { value: 'move', label: t('FHQL.Menu.Move'), icon: 'fa-solid fa-folder-open' },
-            { value: 'parent', label: t('FHQL.Menu.Parent'), icon: 'fa-solid fa-diagram-project' },
-            { value: 'delete', label: t('FHQL.Menu.Delete'), icon: 'fa-solid fa-trash', danger: true }
-         ];
-      }
-
-      /**
-       * Opens the quest menu for a quest and runs the chosen action.
+       * Opens the quest menu (⋮, or right-click on a Quest Log row).
        *
        * @param {JournalEntry} entry - The quest.
        * @param {HTMLElement|{ x: number, y: number }} anchor - Where to open the menu.
        */
-      async _openQuestMenu(entry, anchor)
+      _openQuestMenu(entry, anchor)
       {
-         if (!entry || !game.user.isGM) { return; }
-         const choice = await menuPopover(this, anchor, { items: this._questMenuItems(entry) });
-         const control = anchor instanceof HTMLElement ? anchor : null;
-         switch (choice)
-         {
-            case 'popOut': return game.modules.get(MODULE_ID).api.openQuestSheet(entry.id);
-            case 'access': return new DocumentOwnershipConfig({ document: entry }).render({ force: true });
-            case 'move': return this.#chooseFolder(entry, control ?? anchor);
-            case 'parent': return this.#chooseParent(entry, control ?? anchor);
-            case 'delete': return this.#confirmDelete(entry, control ?? anchor);
-         }
+         return openQuestMenu(this, entry, anchor);
       }
-
-      /** @this {QuestSheet} */
-      static #onQuestMenu(event, target)
-      {
-         this._openQuestMenu(this.questEntry, target);
-      }
-
-      /** Picks a folder in the quest tree and moves the quest there. */
-      async #chooseFolder(entry, anchor)
-      {
-         const root = questRootFolder();
-         const current = entry.folder?.id === root?.id ? '' : entry.folder?.id ?? '';
-         const path = (folder) => [...folder.ancestors.filter((a) => a.id !== root?.id).reverse(), folder].map((f) => f.name).join(' / ');
-         const items = [
-            { value: '', label: game.i18n.localize('FHQL.Folders.TopLevel'), current: current === '' },
-            ...questSubfolders().map((f) => ({ value: f.id, label: path(f), current: f.id === current }))
-             .sort((a, b) => a.label.localeCompare(b.label))
-         ];
-         const choice = await menuPopover(this, anchor, { title: game.i18n.localize('FHQL.Folders.MoveTo'), items });
-         if (choice !== null) { await moveQuestToFolder(entry, choice); }
-      }
-
-      /** Picks a parent quest (or none). Quests below this one are left out to prevent loops. */
-      async #chooseParent(entry, anchor)
-      {
-         const current = questPage(entry).system.parent;
-         const items = [
-            { value: '', label: game.i18n.localize('FHQL.Quest.NoParent'), current: !current },
-            ...parentCandidates(entry).map((e) => ({ value: e.id, label: e.name, current: e.id === current }))
-         ];
-         const choice = await menuPopover(this, anchor, { title: game.i18n.localize('FHQL.Quest.SetParent'), items });
-         if (choice !== null) { await setParent(entry, choice); }
-      }
-
-      /** Confirms, then deletes the quest. */
-      async #confirmDelete(entry, anchor)
-      {
-         const ok = await confirmPopover(this, anchor, {
-            message: `<p>${game.i18n.format('FHQL.Quest.DeleteConfirm', { name: foundry.utils.escapeHTML(entry.name) })}</p>`,
-            yes: game.i18n.localize('FHQL.Menu.Delete'),
-            danger: true
-         });
-         if (!ok) { return; }
-         if (entry.id === this.questId) { this._editing = false; }
-         await deleteQuest(entry);
-      }
-
-      /* ---------- Claiming ---------- */
-
-      /**
-       * Chooses a recipient in a child panel. A player with an assigned character skips the choice.
-       *
-       * @param {object} reward - Reward data.
-       * @param {boolean} asGM - Whether the GM is giving it.
-       * @param {HTMLElement} anchor - The Claim or Give button.
-       * @returns {Promise<object|null>} The chosen recipient.
-       */
-      async #chooseRecipient(reward, asGM, anchor)
-      {
-         const options = recipientOptions(reward, asGM);
-         if (!options.length)
-         {
-            ui.notifications.warn(game.i18n.localize(asGM ? 'FHQL.Reward.NoRecipients' : 'FHQL.Reward.NoCharacter'));
-            return null;
-         }
-         if (!asGM && (options.length === 1 || options[0].assigned)) { return options[0]; }
-         const choice = await menuPopover(this, anchor, {
-            title: game.i18n.format(asGM ? 'FHQL.Reward.GiveTo' : 'FHQL.Reward.ClaimFor', { reward: reward.name }),
-            items: options.map((o, i) => ({
-               value: String(i), label: o.label, icon: reward.type === 'actor' ? 'fa-solid fa-user' : 'fa-solid fa-user-shield',
-               hint: o.assigned && !asGM ? game.i18n.localize('FHQL.Reward.Assigned') : ''
-            }))
-         });
-         return choice === null ? null : options[Number(choice)];
-      }
-
-      /** @this {QuestSheet} */
-      static async #onClaimReward(event, target)
-      {
-         const found = this.#rewardFor(target);
-         if (!found) { return; }
-         const recipient = await this.#chooseRecipient(found.reward, false, target);
-         if (recipient) { await requestClaim(this.questEntry, found.id, recipient); }
-      }
-
-      /** @this {QuestSheet} */
-      static async #onGiveReward(event, target)
-      {
-         const found = this.#rewardFor(target);
-         if (!found) { return; }
-         const recipient = await this.#chooseRecipient(found.reward, true, target);
-         if (recipient) { await requestClaim(this.questEntry, found.id, recipient); }
-      }
-
-      /** @this {QuestSheet} */
-      static async #onUndoClaim(event, target)
-      {
-         const found = this.#rewardFor(target);
-         if (!found) { return; }
-         const index = Number(target.dataset.claimIndex);
-         const item = found.reward.type === 'item' ? await claimedItem(this.questEntry, found.id, index) : null;
-         let removeItem = false;
-         if (item)
-         {
-            const answer = await confirmPopover(this, target, {
-               message: `<p>${game.i18n.format('FHQL.Reward.UndoItem', {
-                  item: foundry.utils.escapeHTML(item.name), actor: foundry.utils.escapeHTML(item.parent?.name ?? '')
-               })}</p>`,
-               yes: game.i18n.localize('FHQL.Reward.RemoveItem'),
-               no: game.i18n.localize('FHQL.Reward.KeepItem'),
-               danger: true
-            });
-            if (answer === null) { return; }
-            removeItem = answer;
-         }
-         await undoClaim(this.questEntry, found.id, index, { removeItem });
-      }
-
    };
 }
