@@ -76,6 +76,7 @@ Storage survives disable/re-enable; editing and autosave; view/edit modes; quick
 
 ## Waiting on the user
 
+- Smoke test after the audit refactor (relay, sheet split, CSS split; no intended behavior change): claim and Give, a deposit and its Undo, accept quest as player, Edit notes, quest menu (move, parent, delete), each theme renders, Beacon.
 - GM notes privacy: as a player, `game.journal.get('ID').pages.contents.map(p => p.name)` should not list "GM notes".
 - Claiming, Give, Undo; player workflow settings; font settings listing uploaded fonts; sci-fi knurl strength; list textures; Dark art-deco fans (CSS-only); live theme preview from Module Settings; Beacon menu toggles closed on second click; Gothic theme; Theme textures toggle (per player, all themes, live preview).
 - Item requirements and deposits: hand over, show only, drag from a character sheet, Undo with return, and two players depositing at once (needs two browsers as different players). Item matching across systems (dnd5e/pf2e quantity).
@@ -91,5 +92,7 @@ Storage survives disable/re-enable; editing and autosave; view/edit modes; quick
 6. Docs: screenshots, user guide. Then merge to a `main` branch and publish a `v0.3.0` release (workflow in `.github/workflows/release.yml`).
 
 Quest image guidance (told to the user): shown full pane width, max 160px tall, cropped top and bottom only. Recommend 5:1, 2000×400, key content in the middle 60% of height. Per-quest banner tint declined (2026-10-01).
+
+Audit leftovers (not yet done): Handlebars partials for the repeated eye button and notes lock controls; a settings submenu for the advanced settings; check Foundry's CSS layer list before adopting `@layer`; check whether notifications escape HTML.
 
 Open decisions: drop the floating tracker (recommended; Beacon covers it); whether quest entries show in players' journal sidebar; sign-off on the permission map (§5.6); FQL macro API shim timing.
