@@ -8,7 +8,7 @@ A quest log module for Foundry VTT that:
 
 - covers the core of Forien's Quest Log (FQL),
 - imports existing FQL quests,
-- ships light, dark, and sci-fi themes as first-class features,
+- ships light, dark, sci-fi, and gothic themes as first-class features,
 - survives Foundry major versions with small patches instead of rewrites.
 
 ### Why not fork FQL
@@ -20,7 +20,7 @@ A quest log module for Foundry VTT that:
 ## 2. Goals
 
 1. **Feature parity for the core loop.** GMs create, reveal, and resolve quests. Players read, track, and (when allowed) edit them.
-2. **Themes built in.** Light, Dark, Sci-fi. Each passes contrast checks.
+2. **Themes built in.** Light, Dark, Sci-fi, Gothic. Each passes contrast checks.
 3. **FQL migration.** One-click import of FQL quests with nothing lost.
 4. **Longevity.** Only public Foundry APIs. Version-specific code lives in one place.
 5. **Readability.** Legible fonts by default, status never shown by color alone.
@@ -72,8 +72,8 @@ A quest log module for Foundry VTT that:
 - Drop a quest onto a scene to create a map pin that opens it
 
 **Themes**
-- Light, Dark, Sci-fi
-- Per-client setting: Follow Foundry / Light / Dark / Sci-fi
+- Light, Dark, Sci-fi, Gothic
+- Per-client setting: Follow Foundry / Light / Dark / Sci-fi / Gothic
 
 **Migration**
 - Detect journal entries with `flags['forien-quest-log'].json`
@@ -256,6 +256,8 @@ Known limit: the v14 query API doesn't tell the GM client which user sent a requ
 
 - **Light:** parchment feel, close to FQL.
 - **Dark:** neutral charcoal (retuned 2026-09-30 from a coffee tone), amber accent, Foundry's parchment texture as grain under an 80% charcoal veil.
+- **Dark** (2026-09-30, revised): back to coffee and chocolate, with faint gold art-deco fans on the sheet and deco pinstripes on the list, all CSS.
+- **Gothic** (2026-10-01): midnight-blue surfaces, wine-velvet cards, dark-iron rules, blood-red accent, serif headings (Cinzel or Amiri if present, else Georgia). Iron quatrefoil tracery with a velvet sheen; the list has wrought-iron bars. Colors and texture only, no layout change.
 - **Quest list textures** (2026-09-30): Light a darker aged parchment strip; Dark a deeper charcoal grain; Sci-fi an instrument-panel grid with scanlines.
 - **Sci-fi:** dark panels over a faint diamond-knurl texture with a soft sheen, chamfered corners whose borders run unbroken along the cut (2026-09-30), monospace headings. Changes shape as well as color.
 - **Fonts** (2026-09-30): not bundled. The GM picks heading and body fonts for the world from any font Foundry has (including uploads under Core's Additional Fonts); players can override per device. "Theme default" keeps each theme's own. The layout test runs a wide monospace font to confirm sheets adapt.

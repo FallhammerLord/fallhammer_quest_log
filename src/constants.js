@@ -12,7 +12,8 @@ export const THEMES = Object.freeze({
    auto: 'auto',
    light: 'light',
    dark: 'dark',
-   scifi: 'scifi'
+   scifi: 'scifi',
+   gothic: 'gothic'
 });
 
 /** Quest statuses, in display order. Each has an icon so status never relies on color alone. */

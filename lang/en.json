@@ -109,6 +109,7 @@
         "Light": "Light",
         "Dark": "Dark",
         "Scifi": "Sci-fi",
+        "Gothic": "Gothic",
         "World": "Use world theme"
       },
       "DefaultOwnership": {

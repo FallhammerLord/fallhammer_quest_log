@@ -105,6 +105,42 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
     repeating-linear-gradient(0deg, rgb(52 228 255 / 0.05) 0 1px, transparent 1px 24px);
 }
 
+/* ---------- Tokens: Gothic (midnight blue, wine velvet, dark iron, blood red) ---------- */
+.fhql-app.fhql-theme-gothic {
+  --fhql-surface: #11131e;
+  --fhql-surface-raised: #211523;
+  --fhql-surface-sunken: #0a0b12;
+  --fhql-ink: #e8e0d6;
+  --fhql-ink-muted: #ab9fae;
+  --fhql-rule: #3e3a46;
+  --fhql-hover: rgb(170 40 60 / 0.14);
+  --fhql-accent: #e2596a;
+  --fhql-accent-ink: #11131e;
+  --fhql-status-hidden: #978d9e;
+  --fhql-status-available: #d8b56c;
+  --fhql-status-active: #8fa8ea;
+  --fhql-status-completed: #8fc28f;
+  --fhql-status-failed: #f0907c;
+  --fhql-font-heading-theme: "Cinzel", "Trajan Pro", "Amiri", Georgia, serif;
+  --fhql-radius: 2px;
+  --fhql-glow: 0 0 8px rgb(140 20 40 / 0.3);
+  /* Iron quatrefoil tracery over wine velvet: four rings per tile, then a sheen and a midnight shadow. */
+  --fhql-gothic-ring: transparent 0 9px, rgb(150 50 70 / 0.11) 9px 10px, transparent 10px;
+  --fhql-texture:
+    radial-gradient(circle at 24px 14px, var(--fhql-gothic-ring)),
+    radial-gradient(circle at 24px 34px, var(--fhql-gothic-ring)),
+    radial-gradient(circle at 14px 24px, var(--fhql-gothic-ring)),
+    radial-gradient(circle at 34px 24px, var(--fhql-gothic-ring)),
+    radial-gradient(ellipse at 20% 0%, rgb(110 30 70 / 0.22), transparent 60%),
+    linear-gradient(to bottom, transparent 40%, rgb(5 6 14 / 0.35));
+  --fhql-texture-size: 48px 48px, 48px 48px, 48px 48px, 48px 48px, 100% 100%, 100% 100%;
+  --fhql-texture-blend: normal;
+  /* The quest list: wrought-iron bars fading into midnight. */
+  --fhql-list-texture:
+    linear-gradient(to bottom, rgb(60 20 40 / 0.18), transparent 50%),
+    repeating-linear-gradient(90deg, rgb(110 100 120 / 0.08) 0 2px, transparent 2px 22px);
+}
+
 /* ---------- Window ---------- */
 .fhql-app.application {
   container-type: inline-size;
@@ -394,6 +430,7 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
 .fhql-app .fhql-subheading { display: flex; align-items: baseline; gap: 0.5em; margin: 0 0 0.5em; }
 .fhql-app.fhql-theme-light .fhql-subheading,
 .fhql-app.fhql-theme-dark .fhql-subheading,
+.fhql-app.fhql-theme-gothic .fhql-subheading,
 .fhql-app.fhql-theme-auto .fhql-subheading { font-variant: small-caps; letter-spacing: 0.04em; }
 .fhql-app.fhql-theme-scifi .fhql-subheading {
   font-size: 0.85em;
@@ -901,6 +938,7 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
   border-color: var(--fhql-status-failed);
 }
 .fhql-app.fhql-theme-dark .fhql-button.fhql-danger-fill,
+.fhql-app.fhql-theme-gothic .fhql-button.fhql-danger-fill,
 .fhql-app.fhql-theme-scifi .fhql-button.fhql-danger-fill { color: var(--fhql-surface-sunken); }
 
 /* ---------- Beacon: header row, switcher, empty state ---------- */
