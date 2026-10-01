@@ -215,13 +215,13 @@
       "PerPlayerNote": "One per player",
       "ClaimedBy": "Claimed by",
       "Undo": "Undo this claim",
-      "UndoItem": "Undo this claim. Also remove <strong>{item}</strong> from {actor}?",
+      "UndoItem": "Undo this claim. Take <strong>{item}</strong> back from {actor}?",
       "LimitLabel": "How many can claim it",
       "LimitOnce": "Once",
       "LimitPerPlayer": "Each player",
       "Summary": "{claimed} of {total} claimed",
       "UnknownPlayer": "Unknown player",
-      "NoRecipients": "No players can receive this reward. Items go to a player's assigned character; assign one in the player's User Configuration.",
+      "NoRecipients": "No player owns a character to receive this. Give a player ownership of an actor, or assign them a character.",
       "NoCharacter": "You don't own a character to receive this.",
       "NeedGM": "A GM must be connected to hand out rewards.",
       "Failed": "The reward couldn't be claimed.",
@@ -238,11 +238,14 @@
         "PlayerOwned": "A player owns this quest, so the GM hands out its rewards.",
         "CompendiumActor": "Actor rewards must be world actors. Import the actor from its compendium first."
       },
-      "GiveTo": "Give {reward} to",
-      "ClaimFor": "Claim {reward} for",
-      "RemoveItem": "Remove item",
-      "KeepItem": "Keep item",
-      "GMHandsOut": "The GM hands out this reward"
+      "GMHandsOut": "The GM hands out this reward",
+      "UndoItemMissing": "<strong>{item}</strong> can't be found on {actor} (it may have been sold, used, or renamed). Undo the claim anyway? Remove the item by hand if it's still there.",
+      "TakeBack": "Take it back",
+      "LeaveIt": "Leave it with them",
+      "UndoAnyway": "Undo claim",
+      "TookBack": "{item} taken back.",
+      "ToActor": "To",
+      "ToPlayer": "To player"
     },
     "Drop": {
       "Rejected": {

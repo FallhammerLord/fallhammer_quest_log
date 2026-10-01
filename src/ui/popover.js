@@ -232,3 +232,38 @@ export function inputPopover(app, anchor, { label, value = '', ok })
       panel.addEventListener('click', (event) => { if (event.target.closest('[data-answer="cancel"]')) { done(null); } });
    }, { label });
 }
+
+/**
+ * Pick one option from a list and confirm it: a labelled dropdown and a confirming button. Used when
+ * a choice must be confirmed even when there is only one option (who receives a reward).
+ *
+ * @param {object} app - Owning window.
+ * @param {HTMLElement} anchor - The control that asked.
+ * @param {object} options - Panel options.
+ * @param {string} options.title - Heading.
+ * @param {string} options.label - Dropdown label.
+ * @param {string[]} options.choices - Option labels.
+ * @param {number} [options.start] - Index selected at first.
+ * @param {string} options.ok - Confirming button label.
+ * @returns {Promise<number|null>} The chosen index, or null if cancelled.
+ */
+export function choicePanel(app, anchor, { title, label, choices, start = 0, ok })
+{
+   const cancel = game.i18n.localize('FHQL.Popover.Cancel');
+   const html = `<form class="fhql-popover-form">
+       <div class="fhql-popover-title">${escape(title)}</div>
+       <label class="fhql-field"><span>${escape(label)}</span>
+         <select class="fhql-input" name="choice" autofocus>${choices.map((c, i) =>
+            `<option value="${i}" ${i === start ? 'selected' : ''}>${escape(c)}</option>`).join('')}</select></label>
+       <div class="fhql-popover-buttons">
+         <button type="button" class="fhql-button" data-answer="cancel">${escape(cancel)}</button>
+         <button type="submit" class="fhql-button fhql-primary">${escape(ok)}</button>
+       </div></form>`;
+
+   return openPanel(app, anchor, html, (panel, done) =>
+   {
+      const form = panel.querySelector('form');
+      form.addEventListener('submit', (event) => { event.preventDefault(); done(Number(form.elements.choice.value)); });
+      panel.addEventListener('click', (event) => { if (event.target.closest('[data-answer="cancel"]')) { done(null); } });
+   }, { label: title });
+}

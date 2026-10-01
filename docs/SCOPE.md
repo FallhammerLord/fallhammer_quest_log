@@ -225,6 +225,11 @@ Known limit: the v14 query API doesn't tell the GM client which user sent a requ
 
 **Data added to each reward:** `claimable` (replaces `locked`), `claimLimit` ('once' | 'perPlayer'), `claims` (list of { userId, actorUuid, itemUuid, at }).
 
+### 5.10b Reward recipients and Undo (2026-10-01)
+
+- **Who receives:** Claim and Give always open a confirm panel. Players pick any actor they own (assigned character first; shared party inventory marked). The GM's Give lists every actor a player owns, assigned characters first; this replaces the earlier "assigned characters only" rule, which blocked party inventories. A shared actor's claim is credited to its assigned player, else its first player owner.
+- **Undo (GM):** "Take it back" removes the item from the character: the claimed amount from a larger (merged) stack, else the whole item. The item is found by the ID saved at claim time, else by the quest mark and name on that actor. If it can't be found (sold, used, renamed), Undo still clears the claim and says to remove anything left by hand. Claims now record the actor name and amount.
+
 ### 5.11 Item requirements and deposits (2026-10-01)
 
 An objective can require an item: "Bring 3 wolf pelts". The requirement lives on the objective, so it shows on the sheet and the Beacon as progress (2/3) and ticks the objective done when filled.

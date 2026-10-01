@@ -20,7 +20,7 @@ npm run layout     # renders templates at 60 widths/themes/modes, fails on overf
                    # set CHROMIUM_PATH (here: /opt/pw-browsers/chromium)
 npm run load       # loads every module file with Foundry mocked; catches bad imports
 npm run contrast   # WCAG AA check of theme tokens
-npm run deposits   # deposit rules with Foundry mocked: races, refusals, rollback, Undo
+npm run deposits   # deposit and reward rules with Foundry mocked: races, refusals, rollback, recipients, Undo
 ```
 
 ## Map
@@ -36,6 +36,7 @@ npm run deposits   # deposit rules with Foundry mocked: races, refusals, rollbac
 | `src/data/deposits.js` | objective item requirements; hand over / show (via relay) |
 | `src/data/playerActions.js` | accept / propose / shared notes (via relay), visibility gating |
 | `src/data/systemItems.js` | per game system: where item quantity lives (dnd5e, pf2e, daggerheart, cyphersystem), item source UUIDs |
+| `src/data/owners.js` | which player an actor belongs to (assigned, else owner), shared actors, player actors |
 | `src/data/notesLock.js` | one-at-a-time player notes editing (User flags) |
 | `src/data/tracking.js` | personal Track and Beacon choice (User flags) |
 | `src/data/lifecycle.js` | duplicate/delete consistency hooks |
@@ -81,6 +82,7 @@ Storage survives disable/re-enable; editing and autosave; view/edit modes; quick
 - GM notes privacy: as a player, `game.journal.get('ID').pages.contents.map(p => p.name)` should not list "GM notes".
 - Claiming, Give, Undo; player workflow settings; font settings listing uploaded fonts; sci-fi knurl strength; list textures; Dark art-deco fans (CSS-only); live theme preview from Module Settings; Beacon menu toggles closed on second click; Gothic theme; Theme textures toggle (per player, all themes, live preview).
 - Item requirements and deposits: hand over, show only, drag from a character sheet, Undo with return, and two players depositing at once (needs two browsers as different players). Item matching across systems (dnd5e/pf2e quantity). Hand over always confirms source and amount in a panel (starts on the assigned character; party inventory selectable); GM hand over from an NPC; quantity in each of the user's systems: D&D 5e, Cypher, Daggerheart, PF2e. Startup console line names the detected system.
+- Rewards: Claim/Give confirm panel with any owned actor (party inventory); GM Give to non-assigned owned actors; Undo "Take it back" (merged stacks reduced by the claimed amount; missing item still clears the claim).
 - Player notes in place: Edit notes opens the editor in one click (auto-clicks the editor's pen; unverified), lock shown to a second user, GM Edit anyway, saved text stays visible after the editor's Save.
 
 ## Next up (see `docs/SCOPE.md` §11 milestones and §13 open decisions)

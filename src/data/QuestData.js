@@ -68,6 +68,10 @@ export class QuestData extends TypeDataModel
                userId: text(),
                actorUuid: text(),
                itemUuid: text(),
+               /** Actor name at claim time, so a label survives the actor being renamed or deleted. */
+               actorName: text(),
+               /** Stack size handed over, so Undo can take back exactly that from a merged stack. */
+               qty: new NumberField({ required: true, nullable: true, integer: true, initial: null }),
                prevLevel: new NumberField({ required: true, nullable: true, integer: true, initial: null }),
                at: timestamp()
             })),

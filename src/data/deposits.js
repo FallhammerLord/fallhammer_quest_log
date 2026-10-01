@@ -4,6 +4,7 @@ import { registerRelay, relay } from './relay.js';
 import { MODULE_ID } from '../constants.js';
 import { addObjective, getQuestEntry, questAccess, questPage, updateQuest } from './quests.js';
 import { claimTargets } from './rewards.js';
+import { assignedToSomeone, playerFor, sharedActor } from './owners.js';
 
 /**
  * Item requirements on objectives, and players depositing items toward them. See docs/SCOPE.md 5.11.
@@ -81,25 +82,6 @@ export function itemMatches(item, requirement)
 }
 
 /**
- * @param {Actor} actor - A character.
- * @returns {User|undefined} The player it belongs to: whose assigned character it is, else a player owner.
- */
-function playerFor(actor)
-{
-   const players = game.users.filter((u) => !u.isGM);
-   return players.find((u) => u.character?.id === actor.id) ?? players.find((u) => actor.testUserPermission(u, OWNER));
-}
-
-/**
- * @param {Actor} actor - A character.
- * @returns {boolean} Whether more than one player owns it, like a party inventory actor.
- */
-function sharedActor(actor)
-{
-   return game.users.filter((u) => !u.isGM && actor.testUserPermission(u, OWNER)).length > 1;
-}
-
-/**
  * Items that could be deposited toward an objective, best source first.
  *
  * Players see items on actors they own: their assigned character first, then the rest (a shared
@@ -134,7 +116,7 @@ export function depositCandidates(objective, asGM)
             actorId: actor.id,
             label: `${actor.name}: ${item.name}${count > 1 ? ` ×${count}` : ''}`,
             count,
-            assigned: asGM ? game.users.some((u) => !u.isGM && u.character?.id === actor.id) : actor.id === game.user.character?.id,
+            assigned: asGM ? assignedToSomeone(actor) : actor.id === game.user.character?.id,
             shared: sharedActor(actor)
          });
       }

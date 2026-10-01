@@ -1,5 +1,7 @@
 import { deleteKeyUpdate, postChat } from '../compat.js';
 import { registerRelay, relay } from './relay.js';
+import { itemQuantity, itemQuantityUpdate } from './systemItems.js';
+import { assignedToSomeone, playerActors, playerFor, sharedActor } from './owners.js';
 import { MODULE_ID } from '../constants.js';
 import { getQuestEntry, questAccess, questPage } from './quests.js';
 
@@ -65,36 +67,42 @@ export function claimsExhausted(reward, userId)
 export function claimLabel(claim)
 {
    const user = game.users.get(claim.userId)?.name ?? game.i18n.localize('FHQL.Reward.UnknownPlayer');
-   const actor = claim.actorUuid ? fromUuidSync(claim.actorUuid, { strict: false })?.name : null;
+   const actor = claim.actorUuid ? (fromUuidSync(claim.actorUuid, { strict: false })?.name ?? claim.actorName) : '';
    return actor ? `${user} (${actor})` : user;
 }
 
 /**
- * Who can receive a reward. GMs choose from each player's assigned character; players choose among
- * the characters they own, assigned first.
+ * Who can receive a reward, best choice first.
+ *
+ * Items go onto an actor: for a player, any actor they own (their assigned character first, then a
+ * shared party inventory or a second character); for the GM giving it, any actor a player owns,
+ * assigned characters first. Actor rewards (followers) go to a player.
  *
  * @param {object} reward - Reward data.
  * @param {boolean} asGM - Whether the GM is giving the reward.
- * @returns {{ userId: string, actorUuid: string, label: string, assigned: boolean }[]} Choices.
+ * @returns {{ userId: string, actorUuid: string, label: string, assigned: boolean, shared: boolean }[]} Choices.
  */
 export function recipientOptions(reward, asGM)
 {
-   const players = asGM ? game.users.filter((u) => !u.isGM) : [game.user];
-   const options = [];
-   for (const user of players)
+   if (reward.type === 'actor')
    {
-      if (claimsExhausted(reward, user.id)) { continue; }
-      if (reward.type === 'actor') { options.push({ userId: user.id, actorUuid: '', label: user.name, assigned: false }); continue; }
-      const targets = asGM ? (user.character ? [user.character] : []) : claimTargets(user);
-      for (const actor of targets)
-      {
-         options.push({
-            userId: user.id,
-            actorUuid: actor.uuid,
-            label: asGM ? `${user.name}: ${actor.name}` : actor.name,
-            assigned: actor.id === user.character?.id
-         });
-      }
+      const players = asGM ? game.users.filter((u) => !u.isGM) : [game.user];
+      return players.filter((u) => !claimsExhausted(reward, u.id))
+       .map((u) => ({ userId: u.id, actorUuid: '', label: u.name, assigned: false, shared: false }));
+   }
+   const actors = asGM ? playerActors() : claimTargets(game.user);
+   const options = [];
+   for (const actor of actors)
+   {
+      const owner = asGM ? playerFor(actor) : game.user;
+      if (!owner || claimsExhausted(reward, owner.id)) { continue; }
+      options.push({
+         userId: owner.id,
+         actorUuid: actor.uuid,
+         label: asGM ? `${actor.name} (${owner.name})` : actor.name,
+         assigned: asGM ? assignedToSomeone(actor) : actor.id === game.user.character?.id,
+         shared: sharedActor(actor)
+      });
    }
    return options;
 }
@@ -151,7 +159,7 @@ async function claimNow(data, { force = false } = {})
    if (!force && (!questAccess(entry, user).full || reward.hidden || reward.locked)) { return fail('Locked'); }
    if (claimsExhausted(reward, user.id)) { return fail('AlreadyClaimed'); }
 
-   const claim = { userId: user.id, actorUuid: '', itemUuid: '', prevLevel: null, at: Date.now() };
+   const claim = { userId: user.id, actorUuid: '', actorName: '', itemUuid: '', qty: null, prevLevel: null, at: Date.now() };
    const source = await fromUuid(reward.uuid);
    if (!source) { return fail('SourceMissing'); }
    if (reward.type === 'actor' && source.pack) { return fail('CompendiumActor'); }
@@ -165,7 +173,9 @@ async function claimNow(data, { force = false } = {})
       foundry.utils.setProperty(itemData, `flags.${MODULE_ID}.fromQuest`, entry.id);
       const [created] = await actor.createEmbeddedDocuments('Item', [itemData]);
       claim.actorUuid = actor.uuid;
+      claim.actorName = actor.name;
       claim.itemUuid = created?.uuid ?? '';
+      claim.qty = itemQuantity(itemData);
    }
    else
    {
@@ -186,35 +196,57 @@ async function claimNow(data, { force = false } = {})
 }
 
 /**
- * @param {JournalEntry} entry - The quest entry.
- * @param {string} rewardId - Reward ID.
- * @param {number} index - Index into the reward's claims.
- * @returns {Promise<Item|null>} The item a claim copied onto a character, if it still exists.
- */
-export async function claimedItem(entry, rewardId, index)
-{
-   const claim = questPage(entry)?.system.rewards[rewardId]?.claims[index];
-   return claim?.itemUuid ? (await fromUuid(claim.itemUuid)) ?? null : null;
-}
-
-/**
- * Undoes one claim. GM only. Restores a follower's previous ownership; removes the copied item only
- * when asked to.
+ * Finds the item a claim put on a character: by the ID recorded at claim time, else (when a sheet
+ * merged or re-created it) by the quest mark and name on that character.
  *
  * @param {JournalEntry} entry - The quest entry.
  * @param {string} rewardId - Reward ID.
  * @param {number} index - Index into the reward's claims.
- * @param {{ removeItem?: boolean }} [options] - Whether to also delete the copied item.
+ * @returns {Promise<Item|null>} The item, if it can be found.
  */
-export async function undoClaim(entry, rewardId, index, { removeItem = false } = {})
+export async function claimedItem(entry, rewardId, index)
 {
-   if (!game.user.isGM) { return; }
+   const reward = questPage(entry)?.system.rewards[rewardId];
+   const claim = reward?.claims[index];
+   if (!claim) { return null; }
+   const exact = claim.itemUuid ? await fromUuid(claim.itemUuid) : null;
+   if (exact) { return exact; }
+   const actor = claim.actorUuid ? await fromUuid(claim.actorUuid) : null;
+   return actor?.items.find((i) => i.getFlag(MODULE_ID, 'fromQuest') === entry.id && i.name === reward.name)
+    ?? actor?.items.find((i) => i.name === reward.name)
+    ?? null;
+}
+
+/**
+ * Undoes one claim. GM only. Restores a follower's previous ownership. For an item, can take it back
+ * off the character: the claimed amount from a larger stack, else the whole item.
+ *
+ * @param {JournalEntry} entry - The quest entry.
+ * @param {string} rewardId - Reward ID.
+ * @param {number} index - Index into the reward's claims.
+ * @param {{ takeBack?: boolean }} [options] - Whether to take the item back off the character.
+ * @returns {Promise<{ undone: boolean, tookBack: boolean }>} What happened.
+ */
+export async function undoClaim(entry, rewardId, index, { takeBack = false } = {})
+{
+   if (!game.user.isGM) { return { undone: false, tookBack: false }; }
    const page = questPage(entry);
    const reward = page?.system.rewards[rewardId];
    const claim = reward?.claims[index];
-   if (!claim) { return; }
+   if (!claim) { return { undone: false, tookBack: false }; }
 
-   if (reward.type === 'item' && removeItem) { await (await claimedItem(entry, rewardId, index))?.delete(); }
+   let tookBack = false;
+   if (reward.type === 'item' && takeBack)
+   {
+      const item = await claimedItem(entry, rewardId, index);
+      if (item)
+      {
+         const have = itemQuantity(item);
+         if (have !== null && claim.qty && have > claim.qty) { await item.update(itemQuantityUpdate(item, have - claim.qty)); }
+         else { await item.delete(); }
+         tookBack = true;
+      }
+   }
    else if (reward.type === 'actor')
    {
       const actor = await fromUuid(reward.uuid);
@@ -228,6 +260,7 @@ export async function undoClaim(entry, rewardId, index, { removeItem = false } =
 
    const claims = reward.claims.filter((c, i) => i !== index);
    await page.update({ [`system.rewards.${rewardId}.claims`]: claims });
+   return { undone: true, tookBack };
 }
 
 /**
@@ -242,9 +275,7 @@ export function registerRewardDrop()
       if (!marker) { return; }
       const entry = getQuestEntry(marker.entryId);
       if (!entry) { return false; }
-      const userId = game.user.isGM
-       ? (game.users.find((u) => !u.isGM && actor.testUserPermission(u, OWNER))?.id ?? game.user.id)
-       : game.user.id;
+      const userId = game.user.isGM ? (playerFor(actor)?.id ?? game.user.id) : game.user.id;
       requestClaim(entry, marker.rewardId, { userId, actorUuid: actor.uuid });
       return false;
    });

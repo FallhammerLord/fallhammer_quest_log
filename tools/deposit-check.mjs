@@ -1,7 +1,8 @@
 /**
  * Checks the deposit rules in src/data/deposits.js with Foundry mocked: two players racing for the
  * last slots never lose items, a full objective takes nothing, a failed take rolls back, and Undo
- * returns items. Document updates resolve after a delay, as they do over the network.
+ * returns items. Also rewards: who can receive one, Give, and Undo taking items back (merged stacks,
+ * missing items). Document updates resolve after a delay, as they do over the network.
  * Usage: npm run deposits
  */
 const tick = () => new Promise((resolve) => { setTimeout(resolve, 5); });
@@ -30,6 +31,7 @@ globalThis.ui = { notifications: { info() {}, warn() {} } };
 
 const registry = new Map();
 globalThis.fromUuid = async (uuid) => registry.get(uuid) ?? null;
+globalThis.fromUuidSync = (uuid) => registry.get(uuid) ?? null;
 
 const users = [
    { id: 'gm', name: 'GM', isGM: true },
@@ -42,6 +44,8 @@ users.forEach((u) => { u.character = null; });
 class Collection extends Map
 {
    [Symbol.iterator]() { return this.values(); }
+   find(fn) { return [...this.values()].find(fn); }
+   filter(fn) { return [...this.values()].filter(fn); }
 }
 
 function makeActor(id, ownerId)
@@ -49,11 +53,16 @@ function makeActor(id, ownerId)
    const items = new Collection();
    const actor = {
       documentName: 'Actor', id, uuid: `Actor.${id}`, name: id, pack: null, items,
-      testUserPermission: (user) => user.isGM || user.id === ownerId,
+      testUserPermission: (user) => user.isGM || [].concat(ownerId).includes(user.id),
       createEmbeddedDocuments: async (type, list) =>
       {
          await tick();
-         return list.map((data) => makeItem(actor, `new${items.size}`, data.name, getProperty(data, 'system.quantity')));
+         return list.map((data) =>
+         {
+            const made = makeItem(actor, `new${items.size}`, data.name, getProperty(data, 'system.quantity'));
+            made.flags = data.flags ?? {};
+            return made;
+         });
       }
    };
    registry.set(actor.uuid, actor);
@@ -74,7 +83,8 @@ function makeItem(actor, id, name, quantity, { failUpdate = false, cypher = fals
          if (failUpdate) { throw new Error('update refused'); }
          for (const [k, v] of Object.entries(changes)) { setProperty(item, k, v); }
       },
-      delete: async () => { await tick(); actor.items.delete(id); registry.delete(item.uuid); }
+      delete: async () => { await tick(); actor.items.delete(id); registry.delete(item.uuid); },
+      getFlag: (scope, key) => item.flags?.[scope]?.[key]
    };
    actor.items.set(id, item);
    registry.set(item.uuid, item);
@@ -219,5 +229,50 @@ users[1].character = null;
 const unassigned = depositCandidates(quest.objective(), false);
 expect('with no assigned character and two sources, the player chooses', defaultDepositChoice(unassigned) === null);
 globalThis.game.user = users[0];
+
+/* ---------- Rewards: recipients, claims, Undo ---------- */
+const { registerRewardQueries, recipientOptions, requestClaim, undoClaim } = await import(new URL('../src/data/rewards.js', import.meta.url));
+registerRewardQueries();
+registry.set('Item.potion', { documentName: 'Item', uuid: 'Item.potion', name: 'Potion', toObject: () => ({ _id: 'src', name: 'Potion', system: { quantity: 3 } }) });
+function makeRewardQuest()
+{
+   const page = {
+      type: 'fhql.quest',
+      system: { status: 'active', objectives: {}, rewards: { r1: { type: 'item', uuid: 'Item.potion', name: 'Potion', hidden: false, locked: false, claimLimit: 'once', claims: [] } } },
+      update: async (changes) => { await tick(); for (const [k, v] of Object.entries(changes)) { setProperty(page, k, deepClone(v)); } }
+   };
+   const entry = { id: 'q1', name: 'Potions', pages: [page], ownership: {}, testUserPermission: () => true, canUserModify: () => false };
+   return { entry, page, reward: () => page.system.rewards.r1 };
+}
+quest = makeRewardQuest();
+const hero = makeActor('hero', 'p1');
+const partyBox = makeActor('partybox', ['p1', 'p2']);
+const npc2 = makeActor('npc2', 'nobody');
+users[1].character = hero;
+globalThis.game.actors = [npc2, partyBox, hero];
+const gmChoices = recipientOptions(quest.reward(), true);
+expect('GM can give to any player-owned actor, not just assigned characters', gmChoices.length === 2);
+expect('GM list puts the assigned character first', gmChoices[0].actorUuid === hero.uuid);
+expect('the party actor is marked shared', gmChoices.find((c) => c.actorUuid === partyBox.uuid)?.shared === true);
+
+const okGive = await requestClaim(quest.entry, 'r1', { userId: 'p1', actorUuid: partyBox.uuid });
+const given = [...partyBox.items.values()][0];
+expect('GM gives the reward to the party actor', okGive && given?.name === 'Potion' && quest.reward().claims.length === 1);
+expect('the claim records the amount given', quest.reward().claims[0].qty === 3);
+
+// The sheet merged the potions into an existing stack of 5: Undo takes back only the 3 given.
+registry.delete(given.uuid);
+partyBox.items.delete(given.id);
+const merged = makeItem(partyBox, 'merged', 'Potion', 8);
+merged.flags = { fhql: { fromQuest: 'q1' } };
+const undone = await undoClaim(quest.entry, 'r1', 0, { takeBack: true });
+expect('Undo finds a merged stack and takes back only 3', undone.tookBack && merged.system.quantity === 5 && quest.reward().claims.length === 0);
+
+// An item that's gone: Undo still clears the claim, and reports nothing taken back.
+await requestClaim(quest.entry, 'r1', { userId: 'p1', actorUuid: hero.uuid });
+for (const it of [...hero.items.values()]) { await it.delete(); }
+const gone = await undoClaim(quest.entry, 'r1', 0, { takeBack: true });
+expect('Undo of a missing item clears the claim without taking anything', gone.undone && !gone.tookBack && quest.reward().claims.length === 0);
+users[1].character = null;
 
 process.exit(failures ? 1 : 0);

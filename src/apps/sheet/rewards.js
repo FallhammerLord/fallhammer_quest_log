@@ -1,4 +1,4 @@
-import { confirmPopover, menuPopover } from '../../ui/popover.js';
+import { choicePanel, confirmPopover } from '../../ui/popover.js';
 import {
    claimLabel, claimedItem, claimsExhausted, claimTargets, isClaimable, playerOwned, recipientOptions, requestClaim, undoClaim
 } from '../../data/rewards.js';
@@ -59,7 +59,8 @@ export function rewardsContext(entry, system, access)
 }
 
 /**
- * Chooses a recipient in a child panel. A player with an assigned character skips the choice.
+ * Confirms who receives a reward, in a child panel, even when there is only one choice. Starts on
+ * the player's assigned character (or, for the GM, the first player character).
  *
  * @param {object} app - The quest sheet.
  * @param {object} reward - Reward data.
@@ -75,15 +76,20 @@ async function chooseRecipient(app, reward, asGM, anchor)
       ui.notifications.warn(game.i18n.localize(asGM ? 'FHQL.Reward.NoRecipients' : 'FHQL.Reward.NoCharacter'));
       return null;
    }
-   if (!asGM && (options.length === 1 || options[0].assigned)) { return options[0]; }
-   const choice = await menuPopover(app, anchor, {
-      title: game.i18n.format(asGM ? 'FHQL.Reward.GiveTo' : 'FHQL.Reward.ClaimFor', { reward: reward.name }),
-      items: options.map((o, i) => ({
-         value: String(i), label: o.label, icon: reward.type === 'actor' ? 'fa-solid fa-user' : 'fa-solid fa-user-shield',
-         hint: o.assigned && !asGM ? game.i18n.localize('FHQL.Reward.Assigned') : ''
-      }))
+   const t = (key) => game.i18n.localize(key);
+   const hint = (o) => [
+      o.assigned ? t(asGM ? 'FHQL.Deposit.PlayerCharacter' : 'FHQL.Deposit.YourCharacter') : '',
+      o.shared ? t('FHQL.Deposit.Shared') : ''
+   ].filter(Boolean).join(', ');
+   const verb = t(asGM ? 'FHQL.Reward.Give' : (reward.type === 'actor' ? 'FHQL.Reward.Recruit' : 'FHQL.Reward.Claim'));
+   const index = await choicePanel(app, anchor, {
+      title: `${verb}: ${reward.name}`,
+      label: t(reward.type === 'actor' ? 'FHQL.Reward.ToPlayer' : 'FHQL.Reward.ToActor'),
+      choices: options.map((o) => (hint(o) ? `${o.label} (${hint(o)})` : o.label)),
+      start: Math.max(0, options.findIndex((o) => o.assigned)),
+      ok: verb
    });
-   return choice === null ? null : options[Number(choice)];
+   return index === null ? null : options[index];
 }
 
 /* ---------- Actions (called with `this` as the quest sheet) ---------- */
@@ -127,27 +133,36 @@ async function onGiveReward(event, target)
    if (recipient) { await requestClaim(this.questEntry, found.id, recipient); }
 }
 
+/**
+ * Undoes a claim (GM). For an item reward, offers to take the item back off the character: the
+ * claimed amount from a larger stack, or the whole item.
+ */
 async function onUndoClaim(event, target)
 {
    const found = rewardFor(this, target);
    if (!found) { return; }
    const index = Number(target.dataset.claimIndex);
-   const item = found.reward.type === 'item' ? await claimedItem(this.questEntry, found.id, index) : null;
-   let removeItem = false;
-   if (item)
+   const claim = found.reward.claims[index];
+   if (!claim) { return; }
+   let takeBack = false;
+   if (found.reward.type === 'item')
    {
+      const item = await claimedItem(this.questEntry, found.id, index);
+      const escape = foundry.utils.escapeHTML;
+      const message = item
+       ? game.i18n.format('FHQL.Reward.UndoItem', { item: escape(item.name), actor: escape(item.parent?.name ?? claim.actorName) })
+       : game.i18n.format('FHQL.Reward.UndoItemMissing', { item: escape(found.reward.name), actor: escape(claim.actorName || claimLabel(claim)) });
       const answer = await confirmPopover(this, target, {
-         message: `<p>${game.i18n.format('FHQL.Reward.UndoItem', {
-            item: foundry.utils.escapeHTML(item.name), actor: foundry.utils.escapeHTML(item.parent?.name ?? '')
-         })}</p>`,
-         yes: game.i18n.localize('FHQL.Reward.RemoveItem'),
-         no: game.i18n.localize('FHQL.Reward.KeepItem'),
-         danger: true
+         message: `<p>${message}</p>`,
+         yes: game.i18n.localize(item ? 'FHQL.Reward.TakeBack' : 'FHQL.Reward.UndoAnyway'),
+         no: item ? game.i18n.localize('FHQL.Reward.LeaveIt') : undefined,
+         danger: !!item
       });
-      if (answer === null) { return; }
-      removeItem = answer;
+      if (answer === null || (!item && !answer)) { return; }
+      takeBack = !!item && answer;
    }
-   await undoClaim(this.questEntry, found.id, index, { removeItem });
+   const result = await undoClaim(this.questEntry, found.id, index, { takeBack });
+   if (result.tookBack) { ui.notifications.info(game.i18n.format('FHQL.Reward.TookBack', { item: found.reward.name })); }
 }
 
 /** Reward and claim actions, merged into the quest sheet's actions. */
