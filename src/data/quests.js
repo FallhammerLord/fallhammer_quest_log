@@ -1,4 +1,4 @@
-import { deleteKeyUpdate } from '../compat.js';
+import { deleteKeyUpdate, postChat } from '../compat.js';
 import { MODULE_ID, OBJECTIVE_STATES, QUEST_TYPE, STATUSES } from '../constants.js';
 
 const { NONE, LIMITED, OBSERVER } = CONST.DOCUMENT_OWNERSHIP_LEVELS;
@@ -272,9 +272,33 @@ export async function setStatus(entry, status)
 
    await page.update(changes);
 
-   if (!game.user.isGM) { return; }
-   if (status === 'hidden' && !wasHidden) { await entry.update(hideOwnershipUpdate(entry)); }
-   else if (status !== 'hidden' && wasHidden) { await entry.update(revealOwnershipUpdate(entry)); }
+   if (game.user.isGM)
+   {
+      if (status === 'hidden' && !wasHidden) { await entry.update(hideOwnershipUpdate(entry)); }
+      else if (status !== 'hidden' && wasHidden) { await entry.update(revealOwnershipUpdate(entry)); }
+   }
+   if (status === 'completed' || status === 'failed') { await announceOutcome(entry, status); }
+}
+
+/**
+ * Posts "Quest complete" or "Quest failed" to chat, if the GM's setting allows, for the players who can
+ * see the quest: public when all of them can, whispered to them (and GMs) otherwise, nothing when none
+ * can. The quest name is a link, so hovering it previews the quest.
+ *
+ * @param {JournalEntry} entry - The quest.
+ * @param {'completed'|'failed'} status - The outcome.
+ */
+async function announceOutcome(entry, status)
+{
+   if (!game.settings.get(MODULE_ID, 'announceOutcomes')) { return; }
+   const players = game.users.filter((u) => !u.isGM);
+   const seeing = players.filter((u) => questAccess(entry, u).visible);
+   if (!seeing.length) { return; }
+   const whisper = seeing.length === players.length ? [] : [...seeing, ...game.users.filter((u) => u.isGM)].map((u) => u.id);
+   const icon = status === 'completed' ? 'fa-circle-check' : 'fa-circle-xmark';
+   await postChat(game.i18n.localize('FHQL.QuestLog.Title'), `<div class="fhql-chat-claim fhql-chat-outcome">
+      <p><i class="fa-solid ${icon}" inert></i> <strong>${game.i18n.localize(`FHQL.Announce.Outcome.${status}`)}</strong>
+      @UUID[${entry.uuid}]{${foundry.utils.escapeHTML(entry.name)}}</p></div>`, { whisper });
 }
 
 /**

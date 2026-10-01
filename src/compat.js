@@ -164,11 +164,12 @@ export function queryUser(user, name, data)
  *
  * @param {string} alias - Speaker name.
  * @param {string} content - Message HTML (escape any user text first).
+ * @param {{ whisper?: string[] }} [options] - User IDs to whisper to; empty for everyone.
  * @returns {Promise<ChatMessage>} The message.
  */
-export function postChat(alias, content)
+export function postChat(alias, content, { whisper = [] } = {})
 {
-   return ChatMessage.implementation.create({ speaker: { alias }, content });
+   return ChatMessage.implementation.create({ speaker: { alias }, content, whisper });
 }
 
 /**

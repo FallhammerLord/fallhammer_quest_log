@@ -8,7 +8,7 @@ import {
    setGiverFromDocument, setGmNotes, setStatus, subquests, updateQuest
 } from '../data/quests.js';
 import { editorUnsaved, guardActions } from './sheet/rows.js';
-import { depositDropped, objectiveActions, objectivesContext } from './sheet/objectives.js';
+import { depositDropped, flashChangedObjectives, objectiveActions, objectivesContext } from './sheet/objectives.js';
 import { rewardActions, rewardsContext } from './sheet/rewards.js';
 import {
    notesActions, notesContext, openNotesIfAsked, rememberOpenNotes, savePlayerNotes, stopEditingNotes
@@ -176,6 +176,7 @@ export function QuestSheetMixin(Base)
          this.#restoreFocus(this.#pendingFocus);
          this.#pendingFocus = null;
          openNotesIfAsked(this);
+         flashChangedObjectives(this);
          // A quest on screen counts as seen (clears its "new" dot).
          if (!this.minimized) { markSeen(this.questEntry); }
       }

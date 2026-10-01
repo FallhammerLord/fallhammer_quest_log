@@ -1016,3 +1016,19 @@
   height: 11px;
   box-shadow: 0 0 0 2px var(--fhql-surface);
 }
+
+/* ---------- Completion moments ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .fhql-app .fhql-objectives > li.is-flash,
+  .fhql-beacon .fhql-beacon-objectives > li.is-flash { animation: fhql-flash 1.4s ease-out; }
+  .fhql-beacon .fhql-beacon-panel.is-celebrate { animation: fhql-celebrate 1.6s ease-out; }
+  .fhql-app .fhql-tick { display: inline-block; animation: fhql-tick 380ms cubic-bezier(.2, .7, .2, 1); }
+}
+@keyframes fhql-flash {
+  from { background-color: color-mix(in srgb, var(--fhql-accent) 40%, transparent); box-shadow: 0 0 0 1px var(--fhql-accent); }
+  to { background-color: transparent; box-shadow: 0 0 0 1px transparent; }
+}
+@keyframes fhql-celebrate {
+  from { box-shadow: 0 0 0 2px var(--fhql-accent), 0 0 18px color-mix(in srgb, var(--fhql-accent) 55%, transparent); }
+}
+@keyframes fhql-tick { from { transform: translateY(-70%); opacity: 0; } }

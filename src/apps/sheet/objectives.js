@@ -184,6 +184,29 @@ export async function depositDropped(app, zone, objectiveId, doc)
    await startDeposit(app, zone.querySelector('[data-action="depositItem"]') ?? zone, objectiveId, doc.uuid);
 }
 
+/**
+ * Completion moments on the sheet: objectives whose state or deposit count changed since this window
+ * last drew the same quest glow once. The first draw of a quest never glows.
+ *
+ * @param {object} app - The quest sheet.
+ */
+export function flashChangedObjectives(app)
+{
+   const rows = [...(app.element?.querySelectorAll('.fhql-objectives > li[data-objective-id]') ?? [])];
+   const keys = new Map(rows.map((li) => [li.dataset.objectiveId,
+      `${[...li.classList].find((c) => c.startsWith('is-') && c !== 'is-flash' && c !== 'has-requirement') ?? ''}|${li.querySelector('.fhql-requirement-progress')?.textContent ?? ''}`]));
+   const memory = app._objectiveMemory;
+   if (memory?.questId === app.questId)
+   {
+      for (const li of rows)
+      {
+         const before = memory.keys.get(li.dataset.objectiveId);
+         if (before !== undefined && before !== keys.get(li.dataset.objectiveId)) { li.classList.add('is-flash'); }
+      }
+   }
+   app._objectiveMemory = { questId: app.questId, keys };
+}
+
 /* ---------- Actions (called with `this` as the quest sheet) ---------- */
 
 async function onAddObjective()

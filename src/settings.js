@@ -166,6 +166,15 @@ export function registerSettings()
       default: { statuses: [], collapsed: [] }
    });
 
+   game.settings.register(MODULE_ID, 'announceOutcomes', {
+      name: 'FHQL.Settings.AnnounceOutcomes.Name',
+      hint: 'FHQL.Settings.AnnounceOutcomes.Hint',
+      scope: 'world',
+      config: true,
+      type: Boolean,
+      default: true
+   });
+
    game.settings.register(MODULE_ID, 'hideDoneObjectives', {
       scope: 'client',
       config: false,

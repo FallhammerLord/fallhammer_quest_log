@@ -188,6 +188,10 @@
         },
         "WorldHint": "Any font Foundry has, including ones uploaded under Core's Additional Fonts. Theme default uses each theme's own font.",
         "OwnHint": "Use world font follows the GM's choice. Pick another to override it on this device only."
+      },
+      "AnnounceOutcomes": {
+        "Name": "Post quest outcomes to chat",
+        "Hint": "When a quest is completed or failed, post it to chat for the players who can see it."
       }
     },
     "Keybindings": {
@@ -340,7 +344,11 @@
       "FocusOn": "Now the party focus",
       "FocusOff": "No longer the party focus",
       "TrackOn": "Tracking this quest",
-      "TrackOff": "Stopped tracking this quest"
+      "TrackOff": "Stopped tracking this quest",
+      "Outcome": {
+        "completed": "Quest complete:",
+        "failed": "Quest failed:"
+      }
     },
     "Player": {
       "NeedGM": "A GM must be connected for that.",

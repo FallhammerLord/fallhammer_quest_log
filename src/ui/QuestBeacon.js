@@ -125,6 +125,12 @@ function renderEmpty()
  * @param {object[]} marked - Every marked quest, for the switcher.
  * @returns {string} Beacon HTML.
  */
+/**
+ * What the Beacon showed last time, so a changed objective (ticked, failed, a deposit) can glow once.
+ * Keyed by objective: state and deposit progress.
+ */
+let lastShown = { entryId: null, keys: new Map(), status: null };
+
 function renderWidget({ entry, party }, marked)
 {
    const system = questPage(entry).system;
@@ -153,17 +159,29 @@ function renderWidget({ entry, party }, marked)
     ? `<i class="fa-solid fa-star fhql-in-progress" data-tooltip="${localize('FHQL.Beacon.Party')}" aria-label="${localize('FHQL.Beacon.Party')}"></i>`
     : `<i class="fa-solid fa-bookmark fhql-in-progress" data-tooltip="${localize('FHQL.Beacon.Tracked')}" aria-label="${localize('FHQL.Beacon.Tracked')}"></i>`;
 
+   // Completion moments: a row whose state or deposit count changed since the last draw glows once,
+   // and a count that rose ticks up. The first draw of a quest never glows.
+   const same = lastShown.entryId === entry.id;
+   const keys = new Map();
+   const flash = (o) =>
+   {
+      const key = `${o.state}|${hasRequirement(o) ? depositedTotal(o) : ''}`;
+      keys.set(o.id, key);
+      return same && lastShown.keys.has(o.id) && lastShown.keys.get(o.id) !== key;
+   };
+   const celebrate = same && lastShown.status !== system.status && ['completed', 'failed'].includes(system.status);
    const list = objectives.length ? `<ol class="fhql-beacon-objectives" aria-label="${localize('FHQL.Quest.Objectives')}">
-      ${objectives.map((o) => `<li class="is-${o.state}">
+      ${objectives.map((o) => `<li class="is-${o.state} ${flash(o) ? 'is-flash' : ''}">
         <i class="fhql-state-icon ${OBJECTIVE_ICONS[o.state]}" aria-label="${localize(`FHQL.Objective.State.${o.state}`)}"></i>
-        <span>${escape(o.name)}${hasRequirement(o) ? ` <span class="fhql-beacon-progress">${depositedTotal(o)}/${o.requirement.count}</span>` : ''}</span>
+        <span>${escape(o.name)}${hasRequirement(o) ? ` <span class="fhql-beacon-progress"><span class="${same && lastShown.keys.get(o.id) && lastShown.keys.get(o.id) !== keys.get(o.id) ? 'fhql-tick' : ''}">${depositedTotal(o)}</span>/${o.requirement.count}</span>` : ''}</span>
         ${o.hidden ? `<i class="fa-solid fa-eye-slash fhql-muted" aria-label="${localize('FHQL.Objective.Hidden')}"></i>` : ''}
       </li>`).join('')}
     </ol>` : '';
 
    const dot = isUnseen(entry)
     ? `<span class="fhql-new-dot" data-tooltip="${localize('FHQL.Seen.New')}" aria-label="${localize('FHQL.Seen.New')}"></span>` : '';
-   return `<div class="fhql-beacon-panel" data-quest-id="${entry.id}">${dot}
+   lastShown = { entryId: entry.id, keys, status: system.status };
+   return `<div class="fhql-beacon-panel ${celebrate ? 'is-celebrate' : ''}" data-quest-id="${entry.id}">${dot}
       <div class="fhql-beacon-headrow">
         <button type="button" class="fhql-beacon-head" aria-label="${escape(label)}">
           ${markIcon}
