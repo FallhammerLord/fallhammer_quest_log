@@ -1,0 +1,46 @@
+/*
+ * Fallhammer Quest Log: Dark theme. Tokens, then rules only this theme needs.
+ * Loaded after styles/fhql.css (see module.json).
+ */
+
+/* ---------- Tokens: Dark (coffee and chocolate; faint art-deco fans) ---------- */
+.fhql-app.fhql-theme-dark,
+.fhql-app.fhql-theme-auto.theme-dark,
+body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
+  --fhql-surface: #1e1812;
+  --fhql-surface-raised: #2a221a;
+  --fhql-surface-sunken: #15110c;
+  --fhql-ink: #eadfc8;
+  --fhql-ink-muted: #b3a58a;
+  --fhql-rule: #4a3d2c;
+  --fhql-hover: rgb(255 200 120 / 0.08);
+  --fhql-accent: #e0a054;
+  --fhql-accent-ink: #1e1812;
+  --fhql-status-hidden: #9a8f80;
+  --fhql-status-available: #e0c070;
+  --fhql-status-active: #7fb2e5;
+  --fhql-status-completed: #8cc98c;
+  --fhql-status-failed: #e38a7a;
+  /* Seigaiha-style fans: gold arcs, each fan filled with the surface so lower rows overlap upper ones. */
+  --fhql-deco-gold: rgb(224 160 84 / 0.075);
+  --fhql-deco-fan: var(--fhql-surface) 0 8px, var(--fhql-deco-gold) 8px 9px,
+    var(--fhql-surface) 9px 15px, var(--fhql-deco-gold) 15px 16px,
+    var(--fhql-surface) 16px 22px, var(--fhql-deco-gold) 22px 23px,
+    var(--fhql-surface) 23px 26.5px, var(--fhql-deco-gold) 26.5px 28px, transparent 28px;
+  --fhql-texture:
+    radial-gradient(circle at 0 56px, var(--fhql-deco-fan)),
+    radial-gradient(circle at 56px 56px, var(--fhql-deco-fan)),
+    radial-gradient(circle at 28px 28px, var(--fhql-deco-fan)),
+    radial-gradient(circle at 0 0, var(--fhql-deco-fan)),
+    radial-gradient(circle at 56px 0, var(--fhql-deco-fan));
+  --fhql-texture-size: 56px 56px;
+  --fhql-texture-blend: normal;
+  /* The quest list: deco pinstripes (a double line every 28px) over a faint diamond lattice. */
+  --fhql-list-texture:
+    repeating-linear-gradient(90deg, rgb(224 160 84 / 0.07) 0 1px, transparent 1px 4px, rgb(224 160 84 / 0.07) 4px 5px, transparent 5px 28px),
+    repeating-linear-gradient(60deg, rgb(224 160 84 / 0.03) 0 1px, transparent 1px 14px),
+    repeating-linear-gradient(-60deg, rgb(224 160 84 / 0.03) 0 1px, transparent 1px 14px);
+}
+.fhql-app.fhql-theme-dark .fhql-subheading { font-variant: small-caps; letter-spacing: 0.04em; }
+
+.fhql-app.fhql-theme-dark .fhql-button.fhql-danger-fill { color: var(--fhql-surface-sunken); }

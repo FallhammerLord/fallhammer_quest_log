@@ -17,7 +17,11 @@
     "src/main.js"
   ],
   "styles": [
-    "styles/fhql.css"
+    "styles/fhql.css",
+    "styles/themes/dark.css",
+    "styles/themes/scifi.css",
+    "styles/themes/gothic.css",
+    "styles/themes/ledger.css"
   ],
   "languages": [
     {

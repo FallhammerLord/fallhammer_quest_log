@@ -1,13 +1,14 @@
 /**
  * Checks every text token against every surface token, in every theme, for WCAG AA contrast (4.5:1).
- * Reads styles/fhql.css. Exits non-zero on any failure. Usage: npm run contrast
+ * Reads every stylesheet module.json loads (base first). Exits non-zero on any failure. Usage: npm run contrast
  */
 import { readFileSync } from 'node:fs';
 
 const MIN = 4.5;
 const SURFACES = ['surface', 'surface-raised', 'surface-sunken'];
 
-const css = readFileSync(new URL('../styles/fhql.css', import.meta.url), 'utf8');
+const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
+const css = JSON.parse(read('module.json')).styles.map(read).join('\n');
 const blocks = [...css.matchAll(/\/\* -+ Tokens: ([^*]+?) -+ \*\/\n[^{]*\{([^}]*)\}/g)];
 
 const parse = (body) => Object.fromEntries(

@@ -1,6 +1,8 @@
 /*
  * Fallhammer Quest Log styles.
- * Themes set tokens only. Components below use tokens only, never raw colors. See docs/SCOPE.md section 6.
+ * This file: Light tokens (also the default), then every component, using tokens only.
+ * Each other theme lives in styles/themes/: its tokens, then its few theme-only rules (shapes, small-caps).
+ * module.json loads this file first, then the themes. See docs/SCOPE.md section 6.
  */
 
 /* ---------- Tokens: Light (also the default) ---------- */
@@ -31,152 +33,6 @@
   --fhql-texture-blend: normal;
   /* The quest list sits on a darker, aged strip of the same parchment. */
   --fhql-list-texture: linear-gradient(rgb(110 80 40 / 0.14), rgb(110 80 40 / 0.14)), url("../../../ui/parchment.jpg");
-}
-
-/* ---------- Tokens: Dark (coffee and chocolate; faint art-deco fans) ---------- */
-.fhql-app.fhql-theme-dark,
-.fhql-app.fhql-theme-auto.theme-dark,
-body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
-  --fhql-surface: #1e1812;
-  --fhql-surface-raised: #2a221a;
-  --fhql-surface-sunken: #15110c;
-  --fhql-ink: #eadfc8;
-  --fhql-ink-muted: #b3a58a;
-  --fhql-rule: #4a3d2c;
-  --fhql-hover: rgb(255 200 120 / 0.08);
-  --fhql-accent: #e0a054;
-  --fhql-accent-ink: #1e1812;
-  --fhql-status-hidden: #9a8f80;
-  --fhql-status-available: #e0c070;
-  --fhql-status-active: #7fb2e5;
-  --fhql-status-completed: #8cc98c;
-  --fhql-status-failed: #e38a7a;
-  /* Seigaiha-style fans: gold arcs, each fan filled with the surface so lower rows overlap upper ones. */
-  --fhql-deco-gold: rgb(224 160 84 / 0.075);
-  --fhql-deco-fan: var(--fhql-surface) 0 8px, var(--fhql-deco-gold) 8px 9px,
-    var(--fhql-surface) 9px 15px, var(--fhql-deco-gold) 15px 16px,
-    var(--fhql-surface) 16px 22px, var(--fhql-deco-gold) 22px 23px,
-    var(--fhql-surface) 23px 26.5px, var(--fhql-deco-gold) 26.5px 28px, transparent 28px;
-  --fhql-texture:
-    radial-gradient(circle at 0 56px, var(--fhql-deco-fan)),
-    radial-gradient(circle at 56px 56px, var(--fhql-deco-fan)),
-    radial-gradient(circle at 28px 28px, var(--fhql-deco-fan)),
-    radial-gradient(circle at 0 0, var(--fhql-deco-fan)),
-    radial-gradient(circle at 56px 0, var(--fhql-deco-fan));
-  --fhql-texture-size: 56px 56px;
-  --fhql-texture-blend: normal;
-  /* The quest list: deco pinstripes (a double line every 28px) over a faint diamond lattice. */
-  --fhql-list-texture:
-    repeating-linear-gradient(90deg, rgb(224 160 84 / 0.07) 0 1px, transparent 1px 4px, rgb(224 160 84 / 0.07) 4px 5px, transparent 5px 28px),
-    repeating-linear-gradient(60deg, rgb(224 160 84 / 0.03) 0 1px, transparent 1px 14px),
-    repeating-linear-gradient(-60deg, rgb(224 160 84 / 0.03) 0 1px, transparent 1px 14px);
-}
-
-/* ---------- Tokens: Sci-fi ---------- */
-.fhql-app.fhql-theme-scifi {
-  --fhql-surface: #0b1218;
-  --fhql-surface-raised: #111c25;
-  --fhql-surface-sunken: #070c10;
-  --fhql-ink: #d6f1ff;
-  --fhql-ink-muted: #86a9bb;
-  --fhql-rule: #1f4a5e;
-  --fhql-hover: rgb(0 229 255 / 0.08);
-  --fhql-accent: #34e4ff;
-  --fhql-accent-ink: #04161c;
-  --fhql-status-hidden: #7a909e;
-  --fhql-status-available: #ffd166;
-  --fhql-status-active: #34e4ff;
-  --fhql-status-completed: #5cf2a4;
-  --fhql-status-failed: #ff5c7a;
-  --fhql-font-heading-theme: ui-monospace, "Cascadia Mono", "Consolas", monospace;
-  --fhql-radius: 0px;
-  --fhql-chamfer: 10px;
-  --fhql-glow: 0 0 6px rgb(52 228 255 / 0.35);
-  /* Diamond knurl: two faint crossing line grids, under a soft diagonal sheen. */
-  --fhql-texture:
-    linear-gradient(115deg, rgb(255 255 255 / 0.05) 0%, transparent 30%, transparent 70%, rgb(52 228 255 / 0.04) 100%),
-    repeating-linear-gradient(45deg, rgb(52 228 255 / 0.045) 0 1px, transparent 1px 9px),
-    repeating-linear-gradient(-45deg, rgb(52 228 255 / 0.045) 0 1px, transparent 1px 9px);
-  --fhql-texture-blend: normal;
-  /* The quest list reads as an instrument panel: fine scanlines over a coarse grid. */
-  --fhql-list-texture:
-    repeating-linear-gradient(0deg, rgb(52 228 255 / 0.035) 0 1px, transparent 1px 3px),
-    repeating-linear-gradient(90deg, rgb(52 228 255 / 0.05) 0 1px, transparent 1px 24px),
-    repeating-linear-gradient(0deg, rgb(52 228 255 / 0.05) 0 1px, transparent 1px 24px);
-}
-
-/* ---------- Tokens: Gothic (midnight blue, wine velvet, dark iron, blood red) ---------- */
-.fhql-app.fhql-theme-gothic {
-  --fhql-surface: #11131e;
-  --fhql-surface-raised: #211523;
-  --fhql-surface-sunken: #0a0b12;
-  --fhql-ink: #e8e0d6;
-  --fhql-ink-muted: #ab9fae;
-  --fhql-rule: #3e3a46;
-  --fhql-hover: rgb(170 40 60 / 0.14);
-  --fhql-accent: #e2596a;
-  --fhql-accent-ink: #11131e;
-  --fhql-status-hidden: #978d9e;
-  --fhql-status-available: #d8b56c;
-  --fhql-status-active: #8fa8ea;
-  --fhql-status-completed: #8fc28f;
-  --fhql-status-failed: #f0907c;
-  --fhql-font-heading-theme: "Cinzel", "Trajan Pro", "Amiri", Georgia, serif;
-  --fhql-radius: 2px;
-  --fhql-glow: 0 0 8px rgb(140 20 40 / 0.3);
-  /* Iron quatrefoil tracery over wine velvet: four rings per tile, then a sheen and a midnight shadow. */
-  --fhql-gothic-ring: transparent 0 9px, rgb(150 50 70 / 0.11) 9px 10px, transparent 10px;
-  --fhql-texture:
-    radial-gradient(circle at 24px 14px, var(--fhql-gothic-ring)),
-    radial-gradient(circle at 24px 34px, var(--fhql-gothic-ring)),
-    radial-gradient(circle at 14px 24px, var(--fhql-gothic-ring)),
-    radial-gradient(circle at 34px 24px, var(--fhql-gothic-ring)),
-    radial-gradient(ellipse at 20% 0%, rgb(110 30 70 / 0.22), transparent 60%),
-    linear-gradient(to bottom, transparent 40%, rgb(5 6 14 / 0.35));
-  --fhql-texture-size: 48px 48px, 48px 48px, 48px 48px, 48px 48px, 100% 100%, 100% 100%;
-  --fhql-texture-blend: normal;
-  /* The quest list: wrought-iron bars fading into midnight. */
-  --fhql-list-texture:
-    linear-gradient(to bottom, rgb(60 20 40 / 0.18), transparent 50%),
-    repeating-linear-gradient(90deg, rgb(110 100 120 / 0.08) 0 2px, transparent 2px 22px);
-}
-
-/* ---------- Tokens: Ledger (charcoal sheet under a crimson banner; matches Tidy 5e Sheets when active) ---------- */
-.fhql-app.fhql-theme-ledger {
-  --fhql-surface: #1d1e23;
-  --fhql-surface-raised: #2a2c32;
-  --fhql-surface-sunken: #16171b;
-  --fhql-ink: #f1ede8;
-  --fhql-ink-muted: #b5afa8;
-  --fhql-rule: #3b3e46;
-  --fhql-hover: rgb(255 255 255 / 0.06);
-  --fhql-accent: #d9ae5f;
-  --fhql-accent-ink: #1d1e23;
-  --fhql-status-hidden: #9a9590;
-  --fhql-status-available: #e0c070;
-  --fhql-status-active: #7fb2e5;
-  --fhql-status-completed: #8cc98c;
-  --fhql-status-failed: #ee8f80;
-  /* The banner: header band, section bars, folder rows, title bar. Tidy's colors override these inline. */
-  --fhql-banner: #741b2b;
-  --fhql-banner-ink: #f8f4f1;
-  --fhql-metal: #b8954f;
-  --fhql-meter: #2f6b3a;
-  --fhql-meter-ink: #f8f4f1;
-  --fhql-font-heading-theme: "Modesto Condensed", "Palatino Linotype", serif;
-  --fhql-font-body-theme: "Roboto Condensed", var(--font-body, "Signika"), sans-serif;
-  --fhql-radius: 4px;
-  --fhql-glow: 0 0 9px rgb(0 0 0 / 0.55);
-  --fhql-texture: none;
-  --fhql-list-texture: none;
-  /* A soft damask-like lattice with a sheen, laid over whatever banner color is in use. */
-  --fhql-banner-texture:
-    radial-gradient(ellipse at 12% 0%, rgb(255 255 255 / 0.12), transparent 55%),
-    radial-gradient(ellipse at 100% 120%, rgb(0 0 0 / 0.35), transparent 60%),
-    repeating-linear-gradient(60deg, rgb(255 255 255 / 0.045) 0 1px, transparent 1px 12px),
-    repeating-linear-gradient(-60deg, rgb(255 255 255 / 0.045) 0 1px, transparent 1px 12px),
-    radial-gradient(circle at 50% 50%, rgb(0 0 0 / 0.12) 0 3px, transparent 4px);
-  --fhql-banner-texture-size: auto, auto, auto, auto, 24px 14px;
 }
 
 /* ---------- Window ---------- */
@@ -335,7 +191,6 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
   padding-block-end: 0.8em;
   border-block-end: 3px double var(--fhql-rule);
 }
-.fhql-app.fhql-theme-scifi .fhql-sheet-head { border-block-end: 1px solid var(--fhql-rule); }
 
 .fhql-app .fhql-portrait {
   grid-area: portrait;
@@ -411,13 +266,6 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
   font-size: 0.9em;
   font-weight: 600;
 }
-.fhql-app.fhql-theme-scifi .fhql-status-badge {
-  border-radius: 0;
-  font-family: var(--fhql-font-heading);
-  font-size: 0.8em;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
 
 .fhql-app .fhql-link {
   display: inline;
@@ -467,15 +315,7 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
 /* Section headings */
 .fhql-app .fhql-subheading { display: flex; align-items: baseline; gap: 0.5em; margin: 0 0 0.5em; }
 .fhql-app.fhql-theme-light .fhql-subheading,
-.fhql-app.fhql-theme-dark .fhql-subheading,
-.fhql-app.fhql-theme-gothic .fhql-subheading,
 .fhql-app.fhql-theme-auto .fhql-subheading { font-variant: small-caps; letter-spacing: 0.04em; }
-.fhql-app.fhql-theme-scifi .fhql-subheading {
-  font-size: 0.85em;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--fhql-accent);
-}
 .fhql-app .fhql-count {
   margin-inline-start: auto;
   font-variant: normal;
@@ -719,7 +559,6 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
 .fhql-app .fhql-check { display: inline-flex; align-items: center; gap: 0.35em; cursor: pointer; }
 .fhql-app .fhql-check input { margin: 0; accent-color: var(--fhql-accent); }
 
-
 .fhql-app .fhql-in-progress { color: var(--fhql-accent); }
 .fhql-app .fhql-empty { display: grid; gap: 0.5em; justify-items: start; }
 .fhql-app .fhql-notice {
@@ -838,7 +677,6 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
   border-radius: 999px;
   cursor: pointer;
 }
-.fhql-app.fhql-theme-scifi .fhql-chip { border-radius: 0; }
 .fhql-app .fhql-chip .fhql-status-icon { color: var(--fhql-status); }
 .fhql-app .fhql-chip.is-on { color: var(--fhql-ink); border-color: var(--fhql-status); background: var(--fhql-surface-raised); }
 .fhql-app .fhql-chip:focus-visible { outline: 2px solid var(--fhql-accent); outline-offset: 1px; }
@@ -1019,10 +857,6 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
   background: var(--fhql-status-failed);
   border-color: var(--fhql-status-failed);
 }
-.fhql-app.fhql-theme-dark .fhql-button.fhql-danger-fill,
-.fhql-app.fhql-theme-gothic .fhql-button.fhql-danger-fill,
-.fhql-app.fhql-theme-ledger .fhql-button.fhql-danger-fill,
-.fhql-app.fhql-theme-scifi .fhql-button.fhql-danger-fill { color: var(--fhql-surface-sunken); }
 
 /* ---------- Beacon: header row, switcher, empty state ---------- */
 .fhql-beacon { position: relative; }
@@ -1073,161 +907,9 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
 .fhql-app .fhql-undo { min-width: 24px; min-height: 24px; display: inline-grid; place-items: center; }
 .fhql-app .fhql-icon-button { min-width: 24px; min-height: 24px; }
 
-/* ---------- Sci-fi: clean chamfered borders ----------
-   The card's own background is the border color, clipped to the chamfer; an inner layer 1px smaller
-   holds the surface. The border then runs unbroken along the diagonal cut. */
-.fhql-app.fhql-theme-scifi .fhql-card,
-.fhql-beacon.fhql-theme-scifi .fhql-beacon-panel {
-  --fhql-card-border: var(--fhql-rule);
-  position: relative;
-  isolation: isolate;
-  background: var(--fhql-card-border);
-  border-color: transparent;
-  box-shadow: none;
-}
-.fhql-app.fhql-theme-scifi .fhql-card::before,
-.fhql-beacon.fhql-theme-scifi .fhql-beacon-panel::before {
-  content: '';
-  position: absolute;
-  inset: 1px;
-  z-index: -1;
-  background: var(--fhql-card-fill, var(--fhql-surface-raised));
-  clip-path: polygon(
-    calc(var(--fhql-chamfer) - 0.41px) 0, 100% 0,
-    100% calc(100% - var(--fhql-chamfer) + 0.41px), calc(100% - var(--fhql-chamfer) + 0.41px) 100%,
-    0 100%, 0 calc(var(--fhql-chamfer) - 0.41px)
-  );
-}
-.fhql-app.fhql-theme-scifi .fhql-gm-notes { --fhql-card-border: var(--fhql-gm); --fhql-card-fill: var(--fhql-surface-sunken); }
-.fhql-beacon.fhql-theme-scifi .fhql-beacon-panel { --fhql-card-fill: var(--fhql-surface); }
-.fhql-beacon.fhql-theme-scifi .fhql-beacon-panel:hover { --fhql-card-border: var(--fhql-accent); }
-
 /* ---------- Scrollbars and dropdown lists follow the theme ---------- */
 .fhql-app, .fhql-app * { scrollbar-color: var(--fhql-rule) transparent; }
 .fhql-app option { color: var(--fhql-ink); background: var(--fhql-surface-raised); }
-
-/* ---------- Ledger theme: banner header, section bars, striped rows ---------- */
-/* Shapes and colors only; every rule below restyles an element the other themes already have. */
-.fhql-app.fhql-theme-ledger .window-header {
-  color: var(--fhql-banner-ink);
-  background: var(--fhql-banner);
-  border-block-end: 0;
-}
-.fhql-app.fhql-theme-ledger .window-header :is(button, a, .window-title) { color: var(--fhql-banner-ink); }
-
-/* Header band: bleeds to the sheet edges; the quest image, if any, sits flush on top of it. */
-.fhql-app.fhql-theme-ledger .fhql-banner {
-  width: calc(100% + 2 * var(--fhql-pad-x));
-  max-width: none;
-  margin: calc(-1 * var(--fhql-pad-top)) calc(-1 * var(--fhql-pad-x)) 0;
-  border: 0;
-  border-radius: 0;
-}
-.fhql-app.fhql-theme-ledger .fhql-sheet-head:not(:has(.fhql-sheet-fields)) {
-  margin-inline: calc(-1 * var(--fhql-pad-x));
-  padding: 0.8em var(--fhql-pad-x) 0.7em;
-  color: var(--fhql-banner-ink);
-  background-color: var(--fhql-banner);
-  background-image: var(--fhql-banner-texture);
-  background-size: var(--fhql-banner-texture-size);
-  border-block-end: 2px solid var(--fhql-metal);
-  box-shadow: 0 4px 10px rgb(0 0 0 / 0.4);
-}
-.fhql-app.fhql-theme-ledger .fhql-sheet-inner > .fhql-sheet-head:first-child:not(:has(.fhql-sheet-fields)) {
-  margin-block-start: calc(-1 * var(--fhql-pad-top));
-}
-.fhql-app.fhql-theme-ledger .fhql-banner + .fhql-sheet-head:not(:has(.fhql-sheet-fields)) { margin-block-start: -0.8em; }
-.fhql-app.fhql-theme-ledger .fhql-sheet-head:has(.fhql-sheet-fields) { border-block-end: 2px solid var(--fhql-banner); }
-.fhql-app.fhql-theme-ledger .fhql-sheet-head:not(:has(.fhql-sheet-fields)) :is(.fhql-heading, .fhql-sheet-meta, .fhql-link, .fhql-icon-button) {
-  color: var(--fhql-banner-ink);
-}
-.fhql-app.fhql-theme-ledger .fhql-sheet-head:not(:has(.fhql-sheet-fields)) .fhql-sheet-meta { opacity: 0.92; }
-.fhql-app.fhql-theme-ledger .fhql-sheet-head:not(:has(.fhql-sheet-fields)) .fhql-link { text-decoration-color: currentColor; }
-.fhql-app.fhql-theme-ledger .fhql-sheet-head:not(:has(.fhql-sheet-fields)) .fhql-button {
-  color: var(--fhql-banner-ink);
-  background: rgb(0 0 0 / 0.28);
-  border-color: rgb(255 255 255 / 0.18);
-}
-.fhql-app.fhql-theme-ledger .fhql-sheet-head:not(:has(.fhql-sheet-fields)) .fhql-button:hover { background: rgb(0 0 0 / 0.42); }
-.fhql-app.fhql-theme-ledger .fhql-sheet-head:not(:has(.fhql-sheet-fields)) .fhql-button.is-on {
-  color: var(--fhql-accent-ink);
-  background: var(--fhql-accent);
-  border-color: var(--fhql-accent);
-}
-.fhql-app.fhql-theme-ledger .fhql-sheet-head:not(:has(.fhql-sheet-fields)) .fhql-button.is-on i { color: inherit; }
-.fhql-app.fhql-theme-ledger .fhql-heading { font-size: 1.9em; font-weight: normal; line-height: 1.05; }
-.fhql-app.fhql-theme-ledger .fhql-sheet-head .fhql-in-progress { color: var(--fhql-metal); }
-
-/* Portrait: a circle in a metal ring. */
-.fhql-app.fhql-theme-ledger .fhql-portrait {
-  border-radius: 50%;
-  border: 3px solid var(--fhql-metal);
-  box-shadow: 0 0 0 2px rgb(0 0 0 / 0.5), 0 2px 8px rgb(0 0 0 / 0.5);
-}
-.fhql-app.fhql-theme-ledger .fhql-portrait-drop { border-style: dashed; }
-
-/* Status badge: a filled, pointed tag. */
-.fhql-app.fhql-theme-ledger .fhql-status-badge {
-  padding: 0.1em 0.85em;
-  color: var(--fhql-surface);
-  background: var(--fhql-status);
-  border: 0;
-  border-radius: 0;
-  clip-path: polygon(0.5em 0, calc(100% - 0.5em) 0, 100% 50%, calc(100% - 0.5em) 100%, 0.5em 100%, 0 50%);
-}
-
-/* Section cards: no border, a solid banner bar for the heading, rows like a ledger. */
-.fhql-app.fhql-theme-ledger .fhql-card { border-color: transparent; overflow: hidden; }
-.fhql-app.fhql-theme-ledger .fhql-card:has(> .fhql-subheading) { padding-block-start: 0; }
-.fhql-app.fhql-theme-ledger .fhql-card > .fhql-subheading {
-  margin: 0 -0.8em 0.45em;
-  padding: 0.3em 0.8em;
-  align-items: center;
-  color: var(--fhql-banner-ink);
-  background: var(--fhql-banner);
-  font-family: var(--fhql-font-body);
-  font-weight: bold;
-  font-variant: normal;
-  letter-spacing: 0.01em;
-}
-.fhql-app.fhql-theme-ledger .fhql-card.fhql-compact { padding-block-end: 0; }
-.fhql-app.fhql-theme-ledger .fhql-card.fhql-compact > .fhql-subheading { margin-block-end: 0; }
-.fhql-app.fhql-theme-ledger .fhql-card > .fhql-subheading :is(.fhql-count, .fhql-empty-note) { color: var(--fhql-banner-ink); opacity: 0.85; }
-.fhql-app.fhql-theme-ledger .fhql-card > .fhql-subheading .fhql-button {
-  color: var(--fhql-banner-ink);
-  background: rgb(0 0 0 / 0.28);
-  border-color: rgb(255 255 255 / 0.18);
-}
-.fhql-app.fhql-theme-ledger :is(.fhql-objectives > li, .fhql-rows > li, .fhql-reward) {
-  padding: 0.2em 0.35em;
-  border-block-end: 1px solid rgb(255 255 255 / 0.06);
-  border-radius: 2px;
-}
-.fhql-app.fhql-theme-ledger :is(.fhql-objectives > li, .fhql-rows > li, .fhql-reward):nth-child(even) { background: rgb(255 255 255 / 0.035); }
-
-/* Amounts as filled meters, like hit points. */
-.fhql-app.fhql-theme-ledger .fhql-requirement-progress {
-  min-width: 4.5em;
-  text-align: center;
-  color: var(--fhql-meter-ink);
-  background: linear-gradient(to right, var(--fhql-meter) var(--fhql-fill, 0%), var(--fhql-surface-sunken) var(--fhql-fill, 0%));
-  border-color: var(--fhql-meter);
-}
-.fhql-app.fhql-theme-ledger .fhql-requirement.is-met .fhql-requirement-progress { color: var(--fhql-meter-ink); border-color: var(--fhql-meter); }
-
-/* Quest list: folders as banner bars. */
-.fhql-app.fhql-theme-ledger .fhql-folder {
-  color: var(--fhql-banner-ink);
-  background: var(--fhql-banner);
-  border: 0;
-  border-radius: var(--fhql-radius);
-}
-.fhql-app.fhql-theme-ledger .fhql-folder:hover { background: var(--fhql-banner); filter: brightness(1.15); }
-.fhql-app.fhql-theme-ledger .fhql-folder :is(.fhql-folder-chevron, .fhql-row-status) { color: var(--fhql-banner-ink); }
-.fhql-app.fhql-theme-ledger .fhql-folder:focus-visible { outline-color: var(--fhql-banner-ink); }
-
-/* Beacon: a banner stripe across the top. */
-.fhql-beacon.fhql-theme-ledger .fhql-beacon-panel { border-block-start: 3px solid var(--fhql-banner); }
 
 /* ---------- Smooth panels (per-player "Theme textures" off) ---------- */
 /* !important beats every theme's token block, whatever its selector weight. Colors stay. */

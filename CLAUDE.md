@@ -49,7 +49,8 @@ npm run deposits   # deposit rules with Foundry mocked: races, refusals, rollbac
 | `src/apps/QuestSheetApp.js` | pop-out quest window |
 | `src/ui/QuestBeacon.js` | panel above the players list |
 | `src/ui/popover.js` | in-window child panels (menus, pickers, confirms) |
-| `styles/fhql.css` | tokens per theme, then components using tokens only |
+| `styles/fhql.css` | Light tokens (default), then every component, tokens only |
+| `styles/themes/*.css` | one file per other theme: tokens, then its few theme-only rules; listed in `module.json` |
 | `tools/` | layout, load, and contrast checks; test fixtures |
 
 ## Rules that are easy to break
@@ -65,7 +66,8 @@ npm run deposits   # deposit rules with Foundry mocked: races, refusals, rollbac
 - **Hidden quests:** hiding sets default and per-player ownership to None (saved in a flag, restored on reveal); `questAccess` also refuses Hidden quests to non-GMs.
 - **Sheet actions** are plain functions called with `this` as the window, grouped per feature in `src/apps/sheet/` and merged through `guardActions`. New feature: new file there, not more lines in the mixin.
 - **Quick choices** use `src/ui/popover.js` child panels, never Foundry dialogs. Separate windows only for Pop out, FQL import, and Foundry's ownership editor.
-- **Colors** only through `--fhql-*` tokens; a theme changes colors and small shapes, never layout.
+- **Colors** only through `--fhql-*` tokens; a theme changes colors and small shapes, never layout. A new theme is a new file in `styles/themes/` plus its entry in `module.json` `styles` (the tools read that list).
+- **Selector lists** can hold commas inside `:is()`/`:has()`; any script that splits CSS must split on top-level commas only (a naive split once broke every Ledger rule; caught by a computed-style diff).
 - **Offline tests can't load Foundry's CSS.** Visual checks here are approximations; the user's screenshots are the truth.
 
 ## Verified in Foundry by the user

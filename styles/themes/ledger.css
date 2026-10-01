@@ -1,0 +1,166 @@
+/*
+ * Fallhammer Quest Log: Ledger theme. Tokens, then rules only this theme needs.
+ * Loaded after styles/fhql.css (see module.json).
+ */
+
+/* ---------- Tokens: Ledger (charcoal sheet under a crimson banner; matches Tidy 5e Sheets when active) ---------- */
+.fhql-app.fhql-theme-ledger {
+  --fhql-surface: #1d1e23;
+  --fhql-surface-raised: #2a2c32;
+  --fhql-surface-sunken: #16171b;
+  --fhql-ink: #f1ede8;
+  --fhql-ink-muted: #b5afa8;
+  --fhql-rule: #3b3e46;
+  --fhql-hover: rgb(255 255 255 / 0.06);
+  --fhql-accent: #d9ae5f;
+  --fhql-accent-ink: #1d1e23;
+  --fhql-status-hidden: #9a9590;
+  --fhql-status-available: #e0c070;
+  --fhql-status-active: #7fb2e5;
+  --fhql-status-completed: #8cc98c;
+  --fhql-status-failed: #ee8f80;
+  /* The banner: header band, section bars, folder rows, title bar. Tidy's colors override these inline. */
+  --fhql-banner: #741b2b;
+  --fhql-banner-ink: #f8f4f1;
+  --fhql-metal: #b8954f;
+  --fhql-meter: #2f6b3a;
+  --fhql-meter-ink: #f8f4f1;
+  --fhql-font-heading-theme: "Modesto Condensed", "Palatino Linotype", serif;
+  --fhql-font-body-theme: "Roboto Condensed", var(--font-body, "Signika"), sans-serif;
+  --fhql-radius: 4px;
+  --fhql-glow: 0 0 9px rgb(0 0 0 / 0.55);
+  --fhql-texture: none;
+  --fhql-list-texture: none;
+  /* A soft damask-like lattice with a sheen, laid over whatever banner color is in use. */
+  --fhql-banner-texture:
+    radial-gradient(ellipse at 12% 0%, rgb(255 255 255 / 0.12), transparent 55%),
+    radial-gradient(ellipse at 100% 120%, rgb(0 0 0 / 0.35), transparent 60%),
+    repeating-linear-gradient(60deg, rgb(255 255 255 / 0.045) 0 1px, transparent 1px 12px),
+    repeating-linear-gradient(-60deg, rgb(255 255 255 / 0.045) 0 1px, transparent 1px 12px),
+    radial-gradient(circle at 50% 50%, rgb(0 0 0 / 0.12) 0 3px, transparent 4px);
+  --fhql-banner-texture-size: auto, auto, auto, auto, 24px 14px;
+}
+.fhql-app.fhql-theme-ledger .fhql-button.fhql-danger-fill { color: var(--fhql-surface-sunken); }
+
+/* ---------- Ledger theme: banner header, section bars, striped rows ---------- */
+/* Shapes and colors only; every rule below restyles an element the other themes already have. */
+.fhql-app.fhql-theme-ledger .window-header {
+  color: var(--fhql-banner-ink);
+  background: var(--fhql-banner);
+  border-block-end: 0;
+}
+.fhql-app.fhql-theme-ledger .window-header :is(button, a, .window-title) { color: var(--fhql-banner-ink); }
+
+/* Header band: bleeds to the sheet edges; the quest image, if any, sits flush on top of it. */
+.fhql-app.fhql-theme-ledger .fhql-banner {
+  width: calc(100% + 2 * var(--fhql-pad-x));
+  max-width: none;
+  margin: calc(-1 * var(--fhql-pad-top)) calc(-1 * var(--fhql-pad-x)) 0;
+  border: 0;
+  border-radius: 0;
+}
+.fhql-app.fhql-theme-ledger .fhql-sheet-head:not(:has(.fhql-sheet-fields)) {
+  margin-inline: calc(-1 * var(--fhql-pad-x));
+  padding: 0.8em var(--fhql-pad-x) 0.7em;
+  color: var(--fhql-banner-ink);
+  background-color: var(--fhql-banner);
+  background-image: var(--fhql-banner-texture);
+  background-size: var(--fhql-banner-texture-size);
+  border-block-end: 2px solid var(--fhql-metal);
+  box-shadow: 0 4px 10px rgb(0 0 0 / 0.4);
+}
+.fhql-app.fhql-theme-ledger .fhql-sheet-inner > .fhql-sheet-head:first-child:not(:has(.fhql-sheet-fields)) {
+  margin-block-start: calc(-1 * var(--fhql-pad-top));
+}
+.fhql-app.fhql-theme-ledger .fhql-banner + .fhql-sheet-head:not(:has(.fhql-sheet-fields)) { margin-block-start: -0.8em; }
+.fhql-app.fhql-theme-ledger .fhql-sheet-head:has(.fhql-sheet-fields) { border-block-end: 2px solid var(--fhql-banner); }
+.fhql-app.fhql-theme-ledger .fhql-sheet-head:not(:has(.fhql-sheet-fields)) :is(.fhql-heading, .fhql-sheet-meta, .fhql-link, .fhql-icon-button) {
+  color: var(--fhql-banner-ink);
+}
+.fhql-app.fhql-theme-ledger .fhql-sheet-head:not(:has(.fhql-sheet-fields)) .fhql-sheet-meta { opacity: 0.92; }
+.fhql-app.fhql-theme-ledger .fhql-sheet-head:not(:has(.fhql-sheet-fields)) .fhql-link { text-decoration-color: currentColor; }
+.fhql-app.fhql-theme-ledger .fhql-sheet-head:not(:has(.fhql-sheet-fields)) .fhql-button {
+  color: var(--fhql-banner-ink);
+  background: rgb(0 0 0 / 0.28);
+  border-color: rgb(255 255 255 / 0.18);
+}
+.fhql-app.fhql-theme-ledger .fhql-sheet-head:not(:has(.fhql-sheet-fields)) .fhql-button:hover { background: rgb(0 0 0 / 0.42); }
+.fhql-app.fhql-theme-ledger .fhql-sheet-head:not(:has(.fhql-sheet-fields)) .fhql-button.is-on {
+  color: var(--fhql-accent-ink);
+  background: var(--fhql-accent);
+  border-color: var(--fhql-accent);
+}
+.fhql-app.fhql-theme-ledger .fhql-sheet-head:not(:has(.fhql-sheet-fields)) .fhql-button.is-on i { color: inherit; }
+.fhql-app.fhql-theme-ledger .fhql-heading { font-size: 1.9em; font-weight: normal; line-height: 1.05; }
+.fhql-app.fhql-theme-ledger .fhql-sheet-head .fhql-in-progress { color: var(--fhql-metal); }
+
+/* Portrait: a circle in a metal ring. */
+.fhql-app.fhql-theme-ledger .fhql-portrait {
+  border-radius: 50%;
+  border: 3px solid var(--fhql-metal);
+  box-shadow: 0 0 0 2px rgb(0 0 0 / 0.5), 0 2px 8px rgb(0 0 0 / 0.5);
+}
+.fhql-app.fhql-theme-ledger .fhql-portrait-drop { border-style: dashed; }
+
+/* Status badge: a filled, pointed tag. */
+.fhql-app.fhql-theme-ledger .fhql-status-badge {
+  padding: 0.1em 0.85em;
+  color: var(--fhql-surface);
+  background: var(--fhql-status);
+  border: 0;
+  border-radius: 0;
+  clip-path: polygon(0.5em 0, calc(100% - 0.5em) 0, 100% 50%, calc(100% - 0.5em) 100%, 0.5em 100%, 0 50%);
+}
+
+/* Section cards: no border, a solid banner bar for the heading, rows like a ledger. */
+.fhql-app.fhql-theme-ledger .fhql-card { border-color: transparent; overflow: hidden; }
+.fhql-app.fhql-theme-ledger .fhql-card:has(> .fhql-subheading) { padding-block-start: 0; }
+.fhql-app.fhql-theme-ledger .fhql-card > .fhql-subheading {
+  margin: 0 -0.8em 0.45em;
+  padding: 0.3em 0.8em;
+  align-items: center;
+  color: var(--fhql-banner-ink);
+  background: var(--fhql-banner);
+  font-family: var(--fhql-font-body);
+  font-weight: bold;
+  font-variant: normal;
+  letter-spacing: 0.01em;
+}
+.fhql-app.fhql-theme-ledger .fhql-card.fhql-compact { padding-block-end: 0; }
+.fhql-app.fhql-theme-ledger .fhql-card.fhql-compact > .fhql-subheading { margin-block-end: 0; }
+.fhql-app.fhql-theme-ledger .fhql-card > .fhql-subheading :is(.fhql-count, .fhql-empty-note) { color: var(--fhql-banner-ink); opacity: 0.85; }
+.fhql-app.fhql-theme-ledger .fhql-card > .fhql-subheading .fhql-button {
+  color: var(--fhql-banner-ink);
+  background: rgb(0 0 0 / 0.28);
+  border-color: rgb(255 255 255 / 0.18);
+}
+.fhql-app.fhql-theme-ledger :is(.fhql-objectives > li, .fhql-rows > li, .fhql-reward) {
+  padding: 0.2em 0.35em;
+  border-block-end: 1px solid rgb(255 255 255 / 0.06);
+  border-radius: 2px;
+}
+.fhql-app.fhql-theme-ledger :is(.fhql-objectives > li, .fhql-rows > li, .fhql-reward):nth-child(even) { background: rgb(255 255 255 / 0.035); }
+
+/* Amounts as filled meters, like hit points. */
+.fhql-app.fhql-theme-ledger .fhql-requirement-progress {
+  min-width: 4.5em;
+  text-align: center;
+  color: var(--fhql-meter-ink);
+  background: linear-gradient(to right, var(--fhql-meter) var(--fhql-fill, 0%), var(--fhql-surface-sunken) var(--fhql-fill, 0%));
+  border-color: var(--fhql-meter);
+}
+.fhql-app.fhql-theme-ledger .fhql-requirement.is-met .fhql-requirement-progress { color: var(--fhql-meter-ink); border-color: var(--fhql-meter); }
+
+/* Quest list: folders as banner bars. */
+.fhql-app.fhql-theme-ledger .fhql-folder {
+  color: var(--fhql-banner-ink);
+  background: var(--fhql-banner);
+  border: 0;
+  border-radius: var(--fhql-radius);
+}
+.fhql-app.fhql-theme-ledger .fhql-folder:hover { background: var(--fhql-banner); filter: brightness(1.15); }
+.fhql-app.fhql-theme-ledger .fhql-folder :is(.fhql-folder-chevron, .fhql-row-status) { color: var(--fhql-banner-ink); }
+.fhql-app.fhql-theme-ledger .fhql-folder:focus-visible { outline-color: var(--fhql-banner-ink); }
+
+/* Beacon: a banner stripe across the top. */
+.fhql-beacon.fhql-theme-ledger .fhql-beacon-panel { border-block-start: 3px solid var(--fhql-banner); }

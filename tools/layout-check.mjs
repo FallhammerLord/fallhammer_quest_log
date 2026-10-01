@@ -19,7 +19,10 @@ Handlebars.registerHelper('localize', (key) => t(key));
 const tpl = (name) => Handlebars.compile(readFileSync(`${root}templates/${name}.hbs`, 'utf8'));
 const listT = tpl('quest-log-list');
 const sheetT = tpl('quest-sheet');
-const css = readFileSync(`${root}styles/fhql.css`, 'utf8').replace('url("../../../ui/parchment.jpg")', 'none');
+// Every stylesheet module.json loads, in its order. Foundry's parchment image isn't available offline.
+const css = JSON.parse(readFileSync(`${root}module.json`, 'utf8')).styles
+ .map((path) => readFileSync(`${root}${path}`, 'utf8')).join('\n')
+ .replaceAll('url("../../../ui/parchment.jpg")', 'none');
 const fa = `${root}node_modules/@fortawesome/fontawesome-free/css/all.min.css`;
 
 // Pop-out sheet widths from its minimum up, and Quest Log widths from its minimum up.

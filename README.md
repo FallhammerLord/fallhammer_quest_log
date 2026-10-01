@@ -115,7 +115,8 @@ npm run layout     # renders templates at many widths, fails on text overflow
 | `src/theme.js` | Applies theme classes to open windows |
 | `src/apps/` | ApplicationV2 windows |
 | `templates/` | Handlebars templates |
-| `styles/fhql.css` | Theme tokens and component styles |
+| `styles/fhql.css` | Light tokens and every component style |
+| `styles/themes/` | One stylesheet per other theme |
 | `lang/en.json` | English strings |
 | `tools/` | Dev scripts |
 
