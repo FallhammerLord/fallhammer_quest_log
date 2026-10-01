@@ -90,22 +90,37 @@ function playerFor(actor)
 }
 
 /**
- * Items that could be deposited toward an objective. Players see items on characters they own; the
- * GM sees items on any player's character.
+ * @param {Actor} actor - A character.
+ * @returns {boolean} Whether more than one player owns it, like a party inventory actor.
+ */
+function sharedActor(actor)
+{
+   return game.users.filter((u) => !u.isGM && actor.testUserPermission(u, OWNER)).length > 1;
+}
+
+/**
+ * Items that could be deposited toward an objective, best source first.
+ *
+ * Players see items on actors they own: their assigned character first, then the rest (a shared
+ * party inventory, a second character). The GM sees items on any world actor, player characters
+ * first; a deposit from an actor no player owns is recorded under the GM.
  *
  * @param {object} objective - Objective data.
- * @param {boolean} asGM - Whether the GM is depositing for a player.
- * @returns {{ itemUuid: string, userId: string, label: string, count: number, assigned: boolean }[]} Choices.
+ * @param {boolean} asGM - Whether the GM is depositing.
+ * @returns {{ itemUuid: string, userId: string, actorId: string, label: string, count: number,
+ *   assigned: boolean, shared: boolean }[]} Choices.
  */
 export function depositCandidates(objective, asGM)
 {
    if (!hasRequirement(objective)) { return []; }
    const shown = new Set(objective.deposits.map((d) => d.itemUuid));
-   const actors = asGM ? game.actors.filter((a) => playerFor(a)) : claimTargets(game.user);
+   const actors = asGM
+    ? [...game.actors].sort((a, b) => (playerFor(a) ? 0 : 1) - (playerFor(b) ? 0 : 1))
+    : claimTargets(game.user);
    const choices = [];
    for (const actor of actors)
    {
-      const userId = asGM ? playerFor(actor).id : game.user.id;
+      const owner = asGM ? playerFor(actor) : game.user;
       for (const item of actor.items)
       {
          if (!itemMatches(item, objective.requirement)) { continue; }
@@ -113,13 +128,29 @@ export function depositCandidates(objective, asGM)
          const count = itemCount(item);
          if (count < 1) { continue; }
          choices.push({
-            itemUuid: item.uuid, userId, count,
+            itemUuid: item.uuid,
+            userId: owner?.id ?? game.user.id,
+            actorId: actor.id,
             label: `${actor.name}: ${item.name}${count > 1 ? ` ×${count}` : ''}`,
-            assigned: actor.id === game.user.character?.id
+            count,
+            assigned: asGM ? game.users.some((u) => !u.isGM && u.character?.id === actor.id) : actor.id === game.user.character?.id,
+            shared: sharedActor(actor)
          });
       }
    }
    return choices;
+}
+
+/**
+ * The source a one-click Hand over uses for a player: their assigned character if it carries the
+ * item, else the only actor that does. Null when the player must choose.
+ *
+ * @param {object[]} choices - From depositCandidates, for a player.
+ * @returns {object|null} The choice.
+ */
+export function defaultDepositChoice(choices)
+{
+   return choices.find((c) => c.assigned) ?? (choices.length === 1 ? choices[0] : null);
 }
 
 /* ---------- Depositing ---------- */

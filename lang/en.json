@@ -365,7 +365,7 @@
       "DropHint": "Drop an item on an objective to require it, or here to add an objective for it.",
       "Choose": "Which {item}?",
       "NoneCarried": "None of your characters carry {item}.",
-      "NoneAnywhere": "No player character carries {item}.",
+      "NoneAnywhere": "No character carries {item}.",
       "FromCharacter": "Drag the item from a character's sheet.",
       "NeedGM": "A GM must be online to take deposits.",
       "Gave": "Handed over {qty} × {item}.",
@@ -392,7 +392,11 @@
         "ActorGone": "{actor} no longer exists, so the item can't be returned.",
         "NotItem": "Only items can be required.",
         "HasDeposits": "Undo this objective's deposits first."
-      }
+      },
+      "ChooseSource": "{verb} {item} from another character",
+      "YourCharacter": "Your character",
+      "PlayerCharacter": "Player character",
+      "Shared": "Shared"
     },
     "Notes": {
       "Done": "Done",

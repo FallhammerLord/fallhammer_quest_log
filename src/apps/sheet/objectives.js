@@ -1,7 +1,9 @@
 import { confirmPopover, menuPopover } from '../../ui/popover.js';
 import {
-   clearRequirement, depositCandidates, depositedTotal, depositLabel, hasRequirement, requestDeposit, stillNeeded, undoDeposit
+   clearRequirement, defaultDepositChoice, depositCandidates, depositedTotal, depositLabel, hasRequirement, requestDeposit,
+   stillNeeded, undoDeposit
 } from '../../data/deposits.js';
+import { claimTargets } from '../../data/rewards.js';
 import { addObjective, cycleObjective, deleteObjective, questPage, updateQuest } from '../../data/quests.js';
 import { objectiveFor } from './rows.js';
 
@@ -62,6 +64,9 @@ function requirementContext(objective, { open, gm, editing })
          }))
       },
       canDeposit: open && !editing && !objective.hidden && stillNeeded(objective) > 0,
+      // A player with more than one actor (a second character, a shared party inventory) can pick the source.
+      depositChoose: !gm && claimTargets(game.user).length > 1,
+      depositChooseLabel: game.i18n.format('FHQL.Deposit.ChooseSource', { verb, item: requirement.name }),
       depositVerb: verb,
       depositAria: game.i18n.format('FHQL.Deposit.ActionLabel', { verb, item: requirement.name }),
       depositIcon: give ? 'fa-hand-holding-hand' : 'fa-eye',
@@ -142,10 +147,15 @@ async function onToggleObjectiveHidden(event, target)
 }
 
 /**
- * Hand over or show an item: pick which of your characters' matching items, in a child panel. A
- * single match skips the choice. The GM picks from every player's characters.
+ * Hand over or show an item. A player's click takes it from their assigned character when that
+ * character carries it, else from the only actor that does; otherwise, and always for the GM, a child
+ * panel lists every actor carrying it.
+ *
+ * @param {Event} event - The click.
+ * @param {HTMLElement} target - The button.
+ * @param {boolean} [choose] - Always list the sources (the ▾ button).
  */
-async function onDepositItem(event, target)
+async function onDepositItem(event, target, choose = false)
 {
    const found = objectiveFor(this, target);
    if (!found) { return; }
@@ -157,20 +167,28 @@ async function onDepositItem(event, target)
       ui.notifications.warn(game.i18n.format(asGM ? 'FHQL.Deposit.NoneAnywhere' : 'FHQL.Deposit.NoneCarried', { item: requirement.name }));
       return;
    }
-   let choice = choices[0];
-   if (asGM || choices.length > 1)
+   let choice = !choose && !asGM ? defaultDepositChoice(choices) : null;
+   if (!choice && choices.length === 1 && !choose) { choice = choices[0]; }
+   if (!choice)
    {
+      const hint = (c) => [
+         c.assigned ? game.i18n.localize(asGM ? 'FHQL.Deposit.PlayerCharacter' : 'FHQL.Deposit.YourCharacter') : '',
+         c.shared ? game.i18n.localize('FHQL.Deposit.Shared') : ''
+      ].filter(Boolean).join(' · ');
       const picked = await menuPopover(this, target, {
          title: game.i18n.format('FHQL.Deposit.Choose', { item: requirement.name }),
-         items: choices.map((c, i) => ({
-            value: String(i), label: c.label, icon: 'fa-solid fa-box',
-            hint: c.assigned && !asGM ? game.i18n.localize('FHQL.Reward.Assigned') : ''
-         }))
+         items: choices.map((c, i) => ({ value: String(i), label: c.label, icon: 'fa-solid fa-box', hint: hint(c) }))
       });
       if (picked === null) { return; }
       choice = choices[Number(picked)];
    }
    await requestDeposit(this.questEntry, found.id, choice);
+}
+
+/** The ▾ beside Hand over: always choose which actor it comes from. */
+function onDepositItemFrom(event, target)
+{
+   return onDepositItem.call(this, event, target, true);
 }
 
 async function onUndoDeposit(event, target)
@@ -212,6 +230,7 @@ export const objectiveActions = {
    deleteObjective: onDeleteObjective,
    toggleObjectiveHidden: onToggleObjectiveHidden,
    depositItem: onDepositItem,
+   depositItemFrom: onDepositItemFrom,
    undoDeposit: onUndoDeposit,
    clearRequirement: onClearRequirement
 };

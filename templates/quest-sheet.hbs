@@ -209,6 +209,8 @@
               {{#if canDeposit}}
               <button type="button" class="fhql-button fhql-small fhql-primary" data-action="depositItem" aria-label="{{depositAria}}">
                 <i class="fa-solid {{depositIcon}}" inert></i><span class="fhql-label">{{depositVerb}}</span></button>
+              {{#if depositChoose}}<button type="button" class="fhql-button fhql-small fhql-deposit-from" data-action="depositItemFrom"
+                aria-haspopup="menu" aria-label="{{depositChooseLabel}}" data-tooltip="{{depositChooseLabel}}"><i class="fa-solid fa-caret-down" inert></i></button>{{/if}}
               {{/if}}
               {{#if ../editing}}
               <span class="fhql-requirement-edit">

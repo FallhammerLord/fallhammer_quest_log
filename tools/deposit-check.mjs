@@ -38,9 +38,15 @@ const users = [
 ];
 users.forEach((u) => { u.character = null; });
 
+/** Like Foundry's Collection: a Map that iterates its values. */
+class Collection extends Map
+{
+   [Symbol.iterator]() { return this.values(); }
+}
+
 function makeActor(id, ownerId)
 {
-   const items = new Map();
+   const items = new Collection();
    const actor = {
       documentName: 'Actor', id, uuid: `Actor.${id}`, name: id, pack: null, items,
       testUserPermission: (user) => user.isGM || user.id === ownerId,
@@ -54,12 +60,14 @@ function makeActor(id, ownerId)
    return actor;
 }
 
-function makeItem(actor, id, name, quantity, { failUpdate = false } = {})
+function makeItem(actor, id, name, quantity, { failUpdate = false, cypher = false } = {})
 {
+   // Cypher System keeps quantity at system.basic.quantity; most systems at system.quantity.
+   const system = cypher ? { basic: { quantity } } : { quantity };
    const item = {
       documentName: 'Item', id, uuid: `${actor.uuid}.Item.${id}`, name, parent: actor, _stats: {}, flags: {},
-      system: { quantity },
-      toObject: () => ({ _id: id, name, system: { quantity: item.system.quantity } }),
+      system,
+      toObject: () => ({ _id: id, name, system: structuredClone(item.system) }),
       update: async (changes) =>
       {
          await tick();
@@ -97,7 +105,7 @@ globalThis.game = {
    actors: []
 };
 
-const { registerDepositQueries, undoDeposit } = await import(new URL('../src/data/deposits.js', import.meta.url));
+const { registerDepositQueries, requestDeposit, undoDeposit, depositCandidates, defaultDepositChoice } = await import(new URL('../src/data/deposits.js', import.meta.url));
 registerDepositQueries();
 const deposit = (userId, item) => globalThis.CONFIG.queries['fhql.deposit']({ entryId: 'q1', objectiveId: 'o1', itemUuid: item.uuid, userId });
 
@@ -169,5 +177,37 @@ quest = makeQuest({ ...pelt });
 quest.page.system.status = 'completed';
 const r10 = await deposit('p2', s2);
 expect('a completed quest refuses deposits', !r10.ok && s2.system.quantity === 5);
+
+// Cypher System quantity: a stack of 5 against 3 needed hands over 3 and keeps 2.
+quest = makeQuest({ uuid: 'Item.cache', name: 'Resource Cache', img: '', count: 3, mode: 'give' });
+const a5 = makeActor('tiberius', 'p2');
+const cache = makeItem(a5, 'i6', 'Resource Cache', 5, { cypher: true });
+const r11 = await deposit('p2', cache);
+expect('Cypher quantity: hands over only the 3 needed', r11.ok && cache.system.basic.quantity === 2);
+expect('Cypher quantity: the record holds 3', quest.objective().deposits[0]?.qty === 3);
+
+// The GM can hand over from an actor no player owns; it's recorded under the GM.
+quest = makeQuest({ uuid: 'Item.cache', name: 'Resource Cache', img: '', count: 2, mode: 'give' });
+const npc = makeActor('npc', 'nobody');
+const npcCache = makeItem(npc, 'i7', 'Resource Cache', 4, { cypher: true });
+const ok12 = await requestDeposit(quest.entry, 'o1', { itemUuid: npcCache.uuid, userId: 'gm' });
+expect('GM hands over from an unowned actor', ok12 && npcCache.system.basic.quantity === 2);
+
+// A player's one-click source: their assigned character, else the only actor carrying it.
+quest = makeQuest({ uuid: 'Item.cache', name: 'Resource Cache', img: '', count: 9, mode: 'give' });
+const pc = makeActor('kestrel2', 'p1');
+const party = makeActor('party', 'p1');
+makeItem(pc, 'i8', 'Resource Cache', 1);
+makeItem(party, 'i9', 'Resource Cache', 6);
+users[1].character = pc;
+globalThis.game.user = users[1];
+globalThis.game.actors = [pc, party];
+const choices = depositCandidates(quest.objective(), false);
+expect('player sees both their character and the party actor', choices.length === 2);
+expect('one click takes from the assigned character', defaultDepositChoice(choices)?.actorId === 'kestrel2');
+users[1].character = null;
+const unassigned = depositCandidates(quest.objective(), false);
+expect('with no assigned character and two sources, the player chooses', defaultDepositChoice(unassigned) === null);
+globalThis.game.user = users[0];
 
 process.exit(failures ? 1 : 0);

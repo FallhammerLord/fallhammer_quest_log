@@ -116,8 +116,26 @@ export function itemSourceUuids(item)
    return [item?._stats?.compendiumSource, item?._stats?.duplicateSource, item?.flags?.core?.sourceId].filter(Boolean);
 }
 
-/** Data path of an item's stack size, in systems that have one (dnd5e, pf2e, and many others). */
-const QUANTITY_PATH = 'system.quantity';
+/**
+ * Where systems keep an item's stack size: `system.quantity` (dnd5e, pf2e, many others; pf2e-style
+ * `{ value }` objects too) and `system.basic.quantity` (Cypher System, checked in its template.json).
+ */
+const QUANTITY_PATHS = ['system.quantity', 'system.basic.quantity'];
+
+/**
+ * @param {Item|object} item - An item, or item data.
+ * @returns {{ path: string, value: number }|null} Where its stack size is, or null if untracked.
+ */
+function quantityField(item)
+{
+   for (const path of QUANTITY_PATHS)
+   {
+      const raw = foundry.utils.getProperty(item, path);
+      if (Number.isFinite(raw)) { return { path, value: raw }; }
+      if (Number.isFinite(raw?.value)) { return { path: `${path}.value`, value: raw.value }; }
+   }
+   return null;
+}
 
 /**
  * @param {Item|object} item - An item, or item data.
@@ -125,20 +143,17 @@ const QUANTITY_PATH = 'system.quantity';
  */
 export function itemQuantity(item)
 {
-   const value = foundry.utils.getProperty(item, QUANTITY_PATH);
-   const number = typeof value === 'object' && value !== null ? value.value : value;
-   return Number.isFinite(number) ? number : null;
+   return quantityField(item)?.value ?? null;
 }
 
 /**
  * @param {Item|object} item - An item, or item data.
  * @param {number} quantity - New stack size.
- * @returns {object} Update data setting it, matching the system's shape.
+ * @returns {object} Update data setting it, at the system's own path.
  */
 export function itemQuantityUpdate(item, quantity)
 {
-   const value = foundry.utils.getProperty(item, QUANTITY_PATH);
-   return { [typeof value === 'object' && value !== null ? `${QUANTITY_PATH}.value` : QUANTITY_PATH]: quantity };
+   return { [quantityField(item)?.path ?? QUANTITY_PATHS[0]]: quantity };
 }
 
 /** Tidy 5e Sheets: its package ID and the world setting holding the GM's sheet colors. */
