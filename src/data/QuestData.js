@@ -10,6 +10,18 @@ import { DEPOSIT_MODES, OBJECTIVE_STATES, REWARD_TYPES, STATUSES } from '../cons
  */
 export class QuestData extends TypeDataModel
 {
+   /**
+    * Carries data saved before 0.3.0's rename: the parent quest was stored as `parent`.
+    *
+    * @param {object} source - Stored data.
+    * @returns {object} Migrated data.
+    */
+   static migrateData(source)
+   {
+      if (typeof source.parent === 'string' && !source.parentQuest) { source.parentQuest = source.parent; }
+      return super.migrateData(source);
+   }
+
    static defineSchema()
    {
       const { ArrayField, BooleanField, HTMLField, IntegerSortField, NumberField, ObjectField, SchemaField, StringField,
@@ -78,8 +90,12 @@ export class QuestData extends TypeDataModel
             sort: new IntegerSortField()
          })),
 
-         /** JournalEntry ID of the parent quest. Subquests are derived from this, never stored twice. */
-         parent: text(),
+         /**
+          * JournalEntry ID of the parent quest. Subquests are derived from this, never stored twice.
+          * Not named `parent`: every Foundry data model already has `parent` (its owning document), which
+          * hid this field, so subquests never linked (found 2026-10-01). Old data migrates below.
+          */
+         parentQuest: text(),
 
          dates: new SchemaField({ created: timestamp(), started: timestamp(), ended: timestamp() }),
 

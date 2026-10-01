@@ -1,6 +1,6 @@
 import { MODULE_ID, QUEST_TYPE } from './constants.js';
 import { DocumentSheetConfig, TIDY_THEME_SETTING } from './compat.js';
-import { refreshOpenApps } from './theme.js';
+import { ensureThemeStyles, refreshOpenApps } from './theme.js';
 import { migrateTextureSetting, registerSettings } from './settings.js';
 import { registerKeybindings } from './keybindings.js';
 import { api } from './api.js';
@@ -54,6 +54,7 @@ Hooks.on('userConnected', () =>
 Hooks.once('ready', () =>
 {
    console.log(`${MODULE_ID} | ${systemSupportSummary()}`);
+   ensureThemeStyles();
    // A notes lock left from a previous session (closed browser) is cleared.
    releaseNotes();
    startSeenTracking();

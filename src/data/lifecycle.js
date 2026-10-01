@@ -44,9 +44,9 @@ export function registerLifecycleHooks()
 
       // One GM client releases the deleted quest's subquests, as the Quest Log's delete does.
       if (!activeGM()?.isSelf) { return; }
-      for (const child of game.journal.filter((e) => questPage(e)?.system.parent === entry.id))
+      for (const child of game.journal.filter((e) => questPage(e)?.system.parentQuest === entry.id))
       {
-         updateQuest(child, { 'system.parent': '' });
+         updateQuest(child, { 'system.parentQuest': '' });
       }
    });
 }

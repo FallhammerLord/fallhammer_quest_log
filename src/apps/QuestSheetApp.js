@@ -16,9 +16,12 @@ export class QuestSheetApp extends QuestSheetMixin(HandlebarsApp)
     * Opens (or focuses) the window for a quest.
     *
     * @param {string} questId - JournalEntry ID.
+    * @param {object} [options]
+    * @param {boolean} [options.edit] - Open in edit mode.
+    * @param {object} [options.beside] - A window to open next to (right if there is room, else left).
     * @returns {QuestSheetApp|undefined} The window.
     */
-   static open(questId)
+   static open(questId, { edit = false, beside = null } = {})
    {
       if (!getQuestEntry(questId)) { return undefined; }
       let app = QuestSheetApp.#windows.get(questId);
@@ -27,8 +30,13 @@ export class QuestSheetApp extends QuestSheetMixin(HandlebarsApp)
          app = new QuestSheetApp({ id: `fhql-quest-${questId}`, questId });
          QuestSheetApp.#windows.set(questId, app);
       }
-      if (app.rendered) { app.bringToFront(); }
-      else { app.render({ force: true }); }
+      if (edit) { app._editing = true; }
+      if (app.rendered) { app.bringToFront(); if (edit) { app.render(); } }
+      else
+      {
+         const shown = app.render({ force: true });
+         if (beside?.rendered) { Promise.resolve(shown).then(() => placeBeside(app, beside)); }
+      }
       return app;
    }
 
@@ -132,3 +140,32 @@ export class QuestSheetApp extends QuestSheetMixin(HandlebarsApp)
       QuestSheetApp.#windows.delete(this.questId);
    }
 }
+
+/** Gap between side-by-side windows, in pixels. */
+const GAP = 8;
+
+/**
+ * Places a window beside another, for side-by-side reading: to the right if it fits there at a
+ * comfortable width, else to the left, else where it opened. Same top and height as the other window.
+ *
+ * @param {QuestSheetApp} app - The window to place.
+ * @param {object} other - The window to sit beside.
+ */
+function placeBeside(app, other)
+{
+   const near = other.position;
+   const room = globalThis.innerWidth ?? 0;
+   const want = Math.max(QuestSheetApp.MIN_SIZE.width, app.position.width);
+   const comfortable = QuestSheetApp.SNAP_WIDTHS[0];
+   const right = room - (near.left + near.width + GAP) - GAP;
+   const left = near.left - GAP - GAP;
+   const top = near.top;
+   const height = near.height;
+   if (right >= comfortable) { app.setPosition({ left: near.left + near.width + GAP, top, width: Math.min(want, right), height }); }
+   else if (left >= comfortable)
+   {
+      const width = Math.min(want, left);
+      app.setPosition({ left: near.left - GAP - width, top, width, height });
+   }
+}
+

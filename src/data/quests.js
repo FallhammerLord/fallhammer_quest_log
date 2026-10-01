@@ -354,9 +354,9 @@ export async function deleteObjective(entry, id)
  */
 export async function deleteQuest(entry)
 {
-   for (const child of game.journal.filter((e) => questPage(e)?.system.parent === entry.id))
+   for (const child of game.journal.filter((e) => questPage(e)?.system.parentQuest === entry.id))
    {
-      await updateQuest(child, { 'system.parent': '' });
+      await updateQuest(child, { 'system.parentQuest': '' });
    }
    await entry.delete();
 }
@@ -484,7 +484,7 @@ export async function setGmNotes(entry, html)
  */
 export function subquests(entry, user = game.user)
 {
-   return visibleQuests(user).filter((e) => questPage(e).system.parent === entry.id);
+   return visibleQuests(user).filter((e) => questPage(e).system.parentQuest === entry.id);
 }
 
 /**
@@ -498,7 +498,7 @@ function descendantIds(entry)
    {
       for (const e of game.journal)
       {
-         if (questPage(e)?.system.parent === id && !ids.has(e.id)) { ids.add(e.id); walk(e.id); }
+         if (questPage(e)?.system.parentQuest === id && !ids.has(e.id)) { ids.add(e.id); walk(e.id); }
       }
    };
    walk(entry.id);
@@ -524,7 +524,7 @@ export function parentCandidates(entry)
 export async function setParent(entry, parentId)
 {
    if (parentId && !parentCandidates(entry).some((e) => e.id === parentId)) { return; }
-   await updateQuest(entry, { 'system.parent': parentId ?? '' });
+   await updateQuest(entry, { 'system.parentQuest': parentId ?? '' });
    // A subquest joins its parent's folder, so the Quest Log shows it under the parent.
    const parent = parentId ? game.journal.get(parentId) : null;
    if (parent?.folder && parent.folder.id !== entry.folder?.id) { await moveQuestToFolder(entry, parent.folder.id); }
@@ -538,7 +538,7 @@ export async function setParent(entry, parentId)
  */
 export async function createSubquest(parent)
 {
-   return createQuest({ system: { parent: parent.id, status: 'hidden' }, folder: parent.folder?.id });
+   return createQuest({ system: { parentQuest: parent.id, status: 'hidden' }, folder: parent.folder?.id });
 }
 
 /** Sample quests covering every status, for testing layout and themes. */

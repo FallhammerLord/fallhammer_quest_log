@@ -1,6 +1,6 @@
 import { playerRowElement, playersElement } from '../compat.js';
 import { MODULE_ID } from '../constants.js';
-import { openQuestLog, toggleQuestLog } from '../api.js';
+import { openQuestLog, showInOpenLog, toggleQuestLog } from '../api.js';
 import { questAccess, questPage } from '../data/quests.js';
 import { beaconChoice, beaconQuests, setBeaconChoice } from '../data/tracking.js';
 import { menuPopover } from './popover.js';
@@ -98,6 +98,8 @@ async function onBeaconClick(event, widget)
       {
          await setBeaconChoice(choice);
          refreshQuestBeacon();
+         // An open Quest Log follows the Beacon to its new quest.
+         showInOpenLog(choice);
       }
       return;
    }

@@ -232,3 +232,24 @@ export function previewTheme(values)
    const beacon = document.getElementById(`${MODULE_ID}-beacon`);
    if (beacon) { applyTheme(beacon); }
 }
+
+/** Theme style files, as listed in module.json `styles`. */
+const THEME_FILES = ['dark', 'scifi', 'gothic', 'cabaret', 'ledger'];
+
+/**
+ * Foundry reads module.json's style list only when a world launches, so a theme added by an update
+ * stays unstyled (looking like Light) until a relaunch. Loads any missing theme file now and says so.
+ * Runs on ready.
+ */
+export function ensureThemeStyles()
+{
+   const missing = THEME_FILES.filter((name) => !document.querySelector(`link[href*="${MODULE_PATH}/styles/themes/${name}.css"]`));
+   for (const name of missing)
+   {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = `${MODULE_PATH}/styles/themes/${name}.css`;
+      document.head.append(link);
+   }
+   if (missing.length) { console.warn(`${MODULE_ID} | Loaded theme styles Foundry had not (${missing.join(', ')}). Relaunch the world to load them normally.`); }
+}

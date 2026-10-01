@@ -1,5 +1,6 @@
 /**
- * Checks quest family rules in src/data/quests.js with Foundry mocked: a subquest is created in its
+ * Checks quest family rules in src/data/quests.js with Foundry mocked (including `system.parent` being
+ * the owning page, as on every Foundry data model): a subquest is created in its
  * parent's folder, setting a parent moves the quest there, and moving a quest moves its subquests.
  * Usage: npm run quests
  */
@@ -23,7 +24,7 @@ const setProperty = (obj, path, value) =>
 globalThis.foundry = {
    applications: { api: { ApplicationV2: class {}, HandlebarsApplicationMixin: (B) => B, DialogV2: class {} },
       sheets: { journal: { JournalEntryPageHandlebarsSheet: class {} } }, apps: {}, ux: {} },
-   abstract: { TypeDataModel: class {} },
+   abstract: { TypeDataModel: class { static migrateData(source) { return source; } } },
    data: { fields: {} },
    utils: { getProperty, setProperty, deepClone: structuredClone, randomID: () => Math.random().toString(36).slice(2, 10) }
 };
@@ -50,7 +51,9 @@ function makeEntry({ name, folder, pages })
 {
    const id = `q${nextId++}`;
    const page = { type: QUEST_TYPE, system: structuredClone(pages[0].system) };
-   page.system.parent ??= '';
+   page.system.parentQuest ??= '';
+   // As in Foundry: every data model's `parent` is its owning document, so a field by that name is hidden.
+   Object.defineProperty(page.system, 'parent', { value: page, writable: false, enumerable: false });
    page.update = async (changes) => { for (const [k, v] of Object.entries(changes)) { setProperty(page, k, v); } };
    const entry = {
       id, name, pages: [page],
@@ -90,14 +93,14 @@ const parent = await quests.createQuest({ name: 'Parent', folder: act1.id });
 check(parent.folder?.id === act1.id, 'a quest can be created in a folder');
 
 const child = await quests.createSubquest(parent);
-check(quests.questPage(child).system.parent === parent.id, 'a new subquest names its parent');
+check(quests.questPage(child).system.parentQuest === parent.id, 'a new subquest names its parent');
 check(child.folder?.id === act1.id, "a new subquest is created in its parent's folder");
 check(quests.subquests(parent).some((e) => e.id === child.id), "the subquest lists under its parent");
 
 const loose = await quests.createQuest({ name: 'Loose' });
 check(loose.folder?.id === root.id, 'a plain new quest goes to the top level');
 await quests.setParent(loose, parent.id);
-check(quests.questPage(loose).system.parent === parent.id, 'setting a parent records it');
+check(quests.questPage(loose).system.parentQuest === parent.id, 'setting a parent records it');
 check(loose.folder?.id === act1.id, "setting a parent moves the quest into the parent's folder");
 
 const grandchild = await quests.createSubquest(child);
@@ -105,7 +108,14 @@ await quests.moveQuestToFolder(parent, act2.id);
 check([parent, child, loose, grandchild].every((e) => e.folder?.id === act2.id), 'moving a quest moves all its subquests with it');
 
 await quests.setParent(parent, grandchild.id);
-check(quests.questPage(parent).system.parent === '', 'a parent below the quest is refused (no loops)');
+check(quests.questPage(parent).system.parentQuest === '', 'a parent below the quest is refused (no loops)');
+
+// Data saved before the rename (stored as `parent`) is carried over on load.
+const { QuestData } = await import('../src/data/QuestData.js');
+{
+   const migrated = QuestData.migrateData({ parent: 'abc' });
+   check(migrated.parentQuest === 'abc', 'old saved parent links migrate to parentQuest');
+}
 
 if (failures) { console.log(`${failures} failed`); process.exit(1); }
 console.log('Quest family rules hold.');

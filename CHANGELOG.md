@@ -13,6 +13,9 @@ First feature-complete preview. Requires Foundry VTT v14.
 - The quest header and list toolbar stay pinned; each quest panel scrolls on its own, with Objectives given room first. Narrow windows use one scroll with collapsible panels. Hide done on Objectives.
 - The Beacon opens and closes the Quest Log (and its quest windows), with a short rise-and-settle motion.
 - Gothic theme, after Bloodborne: soot, oxblood, tarnished brass and moonlight; quatrefoil tracery with iron spear finials, an iron-railing quest list, iron-framed panels with lancet marks, a cross divider and a red initial that stay when textures are off.
+- Subquests work: a new subquest opens beside its parent, ready to edit, and the log nests it under its parent (the parent link was hidden by a Foundry name clash; saved links carry over).
+- The Beacon leads the Quest Log: switching quests moves an open log, and clicking shows the Beacon's quest before closing.
+- Gothic headings use IM Fell English SC (bundled, SIL Open Font License).
 - Resizing settles on comfortable widths when you drag near them (hold Shift to resize freely).
 - Quest giver portraits are round in every theme, or square by GM setting.
 - Cabaret theme: wine velvet, gilt and footlights; a sequined harlequin trellis, a velvet-curtain quest list, gilt frames.

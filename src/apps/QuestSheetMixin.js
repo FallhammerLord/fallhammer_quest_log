@@ -353,7 +353,7 @@ export function QuestSheetMixin(Base)
          const objectivesCapped = !editing && !this._showAllObjectives && objectives.length > OBJECTIVE_CAP;
          const { rewards, rewardSummary } = rewardsContext(entry, system, access);
 
-         const parentEntry = getQuestEntry(system.parent);
+         const parentEntry = getQuestEntry(system.parentQuest);
          const parent = parentEntry && questAccess(parentEntry).visible ? { id: parentEntry.id, name: parentEntry.name } : null;
 
          const children = subquests(entry).map((child) =>
@@ -669,7 +669,9 @@ export function QuestSheetMixin(Base)
          const entry = this.questEntry;
          if (!entry) { return; }
          const child = await createSubquest(entry);
-         this.showQuest(child.id, { edit: true });
+         // The new subquest opens in its own window beside this one, ready to edit, so parent and
+         // subquest can be read side by side.
+         game.modules.get(MODULE_ID).api.openQuestSheet(child.id, { edit: true, beside: this });
       }
 
       /** @this {QuestSheet} */

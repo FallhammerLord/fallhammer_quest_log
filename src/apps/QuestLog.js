@@ -172,10 +172,10 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
       {
          const seen = new Set();
          let top = entry;
-         while (byId.has(questPage(top).system.parent) && !seen.has(top.id))
+         while (byId.has(questPage(top).system.parentQuest) && !seen.has(top.id))
          {
             seen.add(top.id);
-            top = byId.get(questPage(top).system.parent);
+            top = byId.get(questPage(top).system.parentQuest);
          }
          return top;
       };
@@ -238,7 +238,7 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
       const roots = [];
       for (const entry of entries)
       {
-         const parent = questPage(entry).system.parent;
+         const parent = questPage(entry).system.parentQuest;
          if (parent && ids.has(parent)) { childrenOf.set(parent, [...(childrenOf.get(parent) ?? []), entry]); }
          else { roots.push(entry); }
       }

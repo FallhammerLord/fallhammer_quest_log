@@ -27,12 +27,6 @@ export function openQuestLog(questId, { from = null } = {})
 }
 
 /**
- * Opens a quest in its own window.
- *
- * @param {string} questId - JournalEntry ID.
- * @returns {QuestSheetApp|undefined} The window.
- */
-/**
  * The Beacon's toggle: opens the Quest Log (growing from the Beacon), brings a minimized log back, or,
  * when the log is open, closes it and every quest window with it.
  *
@@ -43,9 +37,24 @@ export function openQuestLog(questId, { from = null } = {})
 export function toggleQuestLog(questId, from = null)
 {
    const log = QuestLog.instance;
-   if (log.rendered && log.minimized) { log.bringToFront(); return log.maximize(); }
+   if (log.rendered && log.minimized) { log.bringToFront(); if (questId) { showInOpenLog(questId); } return log.maximize(); }
+   // Showing another quest: go to the Beacon's quest first; a second click closes.
+   if (log.rendered && questId && log.questId !== questId) { return openQuestLog(questId); }
    if (log.rendered) { return Promise.all([log.close(), QuestSheetApp.closeAll()]); }
    return openQuestLog(questId, { from });
+}
+
+/**
+ * Moves an open Quest Log to a quest (the Beacon's switcher). Does nothing when the log is closed.
+ *
+ * @param {string} questId - JournalEntry ID.
+ */
+export function showInOpenLog(questId)
+{
+   const log = QuestLog.instance;
+   if (!log.rendered || log.questId === questId) { return; }
+   log.select(questId);
+   log.render();
 }
 
 /**
@@ -64,10 +73,17 @@ export function focusQuestSearch()
    return true;
 }
 
-export function openQuestSheet(questId)
+/**
+ * Opens a quest in its own window.
+ *
+ * @param {string} questId - JournalEntry ID.
+ * @param {object} [options] - See QuestSheetApp.open.
+ * @returns {QuestSheetApp|undefined} The window.
+ */
+export function openQuestSheet(questId, options = {})
 {
    if (!questLogAvailable()) { return undefined; }
-   return QuestSheetApp.open(questId);
+   return QuestSheetApp.open(questId, options);
 }
 
 /**

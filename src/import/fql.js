@@ -160,7 +160,7 @@ function convert(entry, fql, parent, primary, report)
       playerNotes: fql.playernotes ?? '',
       objectives,
       rewards,
-      parent,
+      parentQuest: parent,
       dates: {
          created: typeof fql.date?.create === 'number' ? fql.date.create : null,
          started: typeof fql.date?.start === 'number' ? fql.date.start : null,

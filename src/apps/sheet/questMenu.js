@@ -67,7 +67,7 @@ async function chooseFolder(app, entry, anchor)
 /** Picks a parent quest (or none). Quests below this one are left out to prevent loops. */
 async function chooseParent(app, entry, anchor)
 {
-   const current = questPage(entry).system.parent;
+   const current = questPage(entry).system.parentQuest;
    const items = [
       { value: '', label: game.i18n.localize('FHQL.Quest.NoParent'), current: !current },
       ...parentCandidates(entry).map((e) => ({ value: e.id, label: e.name, current: e.id === current }))
