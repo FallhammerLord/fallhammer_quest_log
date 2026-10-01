@@ -128,9 +128,12 @@ export function layoutPanels(root)
    sheet.style.setProperty('--fhql-banner-h', `${banner}px`);
    if (!body) { return; }
 
+   // Measuring briefly gives each panel its full height, which leaves nothing to scroll and resets its
+   // scroll to the top. Keep every position across the measure-and-size pass.
+   const keep = capturePanelScroll(root);
    body.style.minHeight = '';
    const cards = [...body.querySelectorAll('.fhql-col > .fhql-card')];
-   if (isNarrow(root)) { for (const card of cards) { card.style.flexBasis = ''; } return; }
+   if (isNarrow(root)) { for (const card of cards) { card.style.flexBasis = ''; } restorePanelScroll(root, keep); return; }
 
    const cols = [...body.querySelectorAll(':scope > .fhql-col')];
    const plan = cols.map((col, i) =>
@@ -145,6 +148,7 @@ export function layoutPanels(root)
    // Last resort: the minimums don't fit, so the body grows and the sheet scrolls.
    if (needed + SLACK > room) { body.style.minHeight = `${body.offsetHeight + (needed + SLACK - room)}px`; }
    for (const p of plan) { share(p.items, p.col.clientHeight - gaps(p) - SLACK, p.mode); }
+   restorePanelScroll(root, keep);
 }
 
 /**
