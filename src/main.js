@@ -13,6 +13,7 @@ import { registerEntryPoints } from './ui/entryPoints.js';
 import { refreshQuestBeacon } from './ui/QuestBeacon.js';
 import { registerSettingsPreview } from './ui/settingsPreview.js';
 import { registerShareQuery } from './ui/share.js';
+import { registerQuestPreview } from './ui/questPreview.js';
 import { registerRewardDrop, registerRewardQueries } from './data/rewards.js';
 import { registerLifecycleHooks } from './data/lifecycle.js';
 import { registerPlayerActionQueries } from './data/playerActions.js';
@@ -56,6 +57,7 @@ Hooks.once('ready', () =>
    // A notes lock left from a previous session (closed browser) is cleared.
    releaseNotes();
    startSeenTracking();
+   registerQuestPreview();
    refreshQuestBeacon();
    renameLegacyRootFolder();
 });

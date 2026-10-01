@@ -412,7 +412,17 @@ Prototyped first (artifact "Quest Log Comforts").
 
 - **Beacon toggle:** clicking the Beacon opens the Quest Log; if the log is minimized it comes back; if it's open, the log and every quest window close together.
 - **Motion:** windows open with a short rise and fade from about 96% (180ms), growing from the Beacon when it opened them, else from their center. They close with the reverse (140ms), the log settling toward the Beacon. Reduced motion gets a plain fade. Our close replaces Foundry's own close animation (`close({ animate: false })` after ours), so they never double up. `src/ui/motion.js`.
-- **Still to build from the prototype** (approved, no sound): new-change dots, completion moments (Beacon glow, count tick, chat card), window size memory, `/` to search, sliding folders, hover previews.
+- The rest of the prototype is built too (7.4e).
+
+### 7.4e Comforts (2026-10-01)
+
+- **New-change dots:** a dot on quests (list rows, Beacon) that changed since this user last saw them. Seen times are the quest's own server timestamps, kept per user in `flags.fhql.seen` (never the local clock, so no clock-skew loops); first use counts everything as seen. Showing a quest clears its dot. Seen-only updates redraw just the list and Beacon. `src/data/seen.js`.
+- **Completion moments:** an objective whose state or deposit count changed glows once on the Beacon and the sheet; a rising count ticks up; a quest finishing makes the Beacon glow. Optional world setting (on): completing or failing a quest posts it to chat with a quest link, public if every player can see the quest, whispered to those who can (and GMs) if not, nothing if none can.
+- **Window memory:** the Quest Log remembers each player's size and place, pop-outs their size, in a client setting.
+- **Keys:** `/` (rebindable) jumps to the log's search while it's open. Esc in a search box with text clears it; Foundry's own Esc then leaves the box, then closes the window.
+- **Sliding folders:** folder contents slide open and shut (180ms); safe against fast repeat clicks.
+- **Hover previews:** hovering a quest link anywhere (chat, journals) shows image, name, status, progress, and next objective in Foundry's own tooltip, for quests the viewer may see. `src/ui/questPreview.js`.
+- All motion respects reduced motion. No sound (declined).
 
 ### 7.4b Child panels (2026-09-29)
 

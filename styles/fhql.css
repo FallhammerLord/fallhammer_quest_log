@@ -1032,3 +1032,10 @@
   from { box-shadow: 0 0 0 2px var(--fhql-accent), 0 0 18px color-mix(in srgb, var(--fhql-accent) 55%, transparent); }
 }
 @keyframes fhql-tick { from { transform: translateY(-70%); opacity: 0; } }
+
+/* ---------- Hover preview of quest links (inside Foundry's own tooltip) ---------- */
+.fhql-quest-preview { max-width: 260px; text-align: start; }
+.fhql-quest-preview .fhql-preview-card { display: grid; gap: 0.25em; }
+.fhql-quest-preview .fhql-preview-card img { width: 100%; max-height: 52px; object-fit: cover; border: 0; border-radius: 3px; }
+.fhql-quest-preview .fhql-preview-status,
+.fhql-quest-preview .fhql-preview-next { font-size: 0.9em; opacity: 0.85; }

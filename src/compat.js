@@ -181,6 +181,24 @@ export function modifiedTime(doc)
    return doc?._stats?.modifiedTime ?? 0;
 }
 
+/**
+ * Shows Foundry's tooltip with our own HTML next to an element.
+ *
+ * @param {HTMLElement} element - What it points at.
+ * @param {string} html - Tooltip HTML (Foundry cleans it).
+ * @param {string} cssClass - Class on the tooltip, for our styles.
+ */
+export function showTooltip(element, html, cssClass)
+{
+   game.tooltip?.activate(element, { html, cssClass });
+}
+
+/** Hides Foundry's tooltip. */
+export function hideTooltip()
+{
+   game.tooltip?.deactivate();
+}
+
 /** Name of the scene control group our button joins. */
 export const SCENE_CONTROL_GROUP = 'tokens';
 
