@@ -68,15 +68,15 @@ npm run deposits   # deposit rules with Foundry mocked: races, refusals, rollbac
 - **Quick choices** use `src/ui/popover.js` child panels, never Foundry dialogs. Separate windows only for Pop out, FQL import, and Foundry's ownership editor.
 - **Colors** only through `--fhql-*` tokens; a theme changes colors and small shapes, never layout. A new theme is a new file in `styles/themes/` plus its entry in `module.json` `styles` (the tools read that list).
 - **Selector lists** can hold commas inside `:is()`/`:has()`; any script that splits CSS must split on top-level commas only (a naive split once broke every Ledger rule; caught by a computed-style diff).
+- **Manifest changes need a world relaunch.** Foundry reads `module.json` (styles, scripts, languages) only when a world launches; a browser refresh keeps the old list. Tell the user to Return to Setup and relaunch after any manifest change.
 - **Offline tests can't load Foundry's CSS.** Visual checks here are approximations; the user's screenshots are the truth.
 
 ## Verified in Foundry by the user
 
-Storage survives disable/re-enable; editing and autosave; view/edit modes; quick status actions; folders; Beacon sizing (with Carolingian/Classic UI); FQL import on real data; hidden quests hidden from players; Done commits editor text; Ledger theme beside Tidy (title bar, banner, quest image flush on top, Modesto name, follows a changed Tidy color); Sci-fi theme with a 5:1 quest image showing uncropped.
+Storage survives disable/re-enable; editing and autosave; view/edit modes; quick status actions; folders; Beacon sizing (with Carolingian/Classic UI); FQL import on real data; hidden quests hidden from players; Done commits editor text; Ledger theme beside Tidy (title bar, banner, quest image flush on top, Modesto name, follows a changed Tidy color); Sci-fi theme with a 5:1 quest image showing uncropped; after the audit refactor (relay, sheet split, CSS split): claiming, deposits, Edit notes, all themes, the rest.
 
 ## Waiting on the user
 
-- Smoke test after the audit refactor (relay, sheet split, CSS split; no intended behavior change): claim and Give, a deposit and its Undo, accept quest as player, Edit notes, quest menu (move, parent, delete), each theme renders, Beacon.
 - GM notes privacy: as a player, `game.journal.get('ID').pages.contents.map(p => p.name)` should not list "GM notes".
 - Claiming, Give, Undo; player workflow settings; font settings listing uploaded fonts; sci-fi knurl strength; list textures; Dark art-deco fans (CSS-only); live theme preview from Module Settings; Beacon menu toggles closed on second click; Gothic theme; Theme textures toggle (per player, all themes, live preview).
 - Item requirements and deposits: hand over, show only, drag from a character sheet, Undo with return, and two players depositing at once (needs two browsers as different players). Item matching across systems (dnd5e/pf2e quantity).
