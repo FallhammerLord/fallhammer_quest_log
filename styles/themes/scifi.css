@@ -26,15 +26,17 @@
   /* Hex plating: a faint honeycomb of cyan cell edges under a soft diagonal sheen. The tile is one
      pointy-top hexagon (radius 16px) plus the edge joining it to the next row; it repeats seamlessly. */
   --fhql-texture:
-    linear-gradient(115deg, rgb(255 255 255 / 0.05) 0%, transparent 30%, transparent 70%, rgb(52 228 255 / 0.04) 100%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='27.713' height='48' viewBox='0 0 27.713 48'%3E%3Cpath fill='none' stroke='rgba(52,228,255,0.085)' stroke-width='1' d='M13.856 0L27.713 8V24L13.856 32L0 24V8ZM13.856 32V48'/%3E%3C/svg%3E");
+    linear-gradient(115deg, rgb(255 255 255 / 0.1) 0%, transparent 30%, transparent 70%, rgb(52 228 255 / 0.08) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='27.713' height='48' viewBox='0 0 27.713 48'%3E%3Cpath fill='none' stroke='rgba(52,228,255,0.17)' stroke-width='1' d='M13.856 0L27.713 8V24L13.856 32L0 24V8ZM13.856 32V48'/%3E%3C/svg%3E");
   --fhql-texture-size: 100% 100%, 27.713px 48px;
+  --fhql-texture-position: 0 0, 0 0;
   --fhql-texture-blend: normal;
+  --fhql-texture-full: 100;
   /* The quest list reads as an instrument panel: fine scanlines over a coarse grid. */
   --fhql-list-texture:
-    repeating-linear-gradient(0deg, rgb(52 228 255 / 0.035) 0 1px, transparent 1px 3px),
-    repeating-linear-gradient(90deg, rgb(52 228 255 / 0.05) 0 1px, transparent 1px 24px),
-    repeating-linear-gradient(0deg, rgb(52 228 255 / 0.05) 0 1px, transparent 1px 24px);
+    repeating-linear-gradient(0deg, rgb(52 228 255 / 0.07) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgb(52 228 255 / 0.1) 0 1px, transparent 1px 24px),
+    repeating-linear-gradient(0deg, rgb(52 228 255 / 0.1) 0 1px, transparent 1px 24px);
 }
 .fhql-app.fhql-theme-scifi .fhql-sheet-head { border-block-end: 1px solid var(--fhql-rule); }
 .fhql-app.fhql-theme-scifi .fhql-status-badge {

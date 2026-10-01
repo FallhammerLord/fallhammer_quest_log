@@ -1,4 +1,4 @@
-import { MODULE_ID, THEMES } from './constants.js';
+import { MODULE_ID, MODULE_PATH, THEMES } from './constants.js';
 import { tidyBannerColor } from './compat.js';
 
 const THEME_CLASSES = Object.values(THEMES).map((theme) => `fhql-theme-${theme}`);
@@ -8,7 +8,7 @@ const openApps = new Set();
 
 /**
  * Unsaved choices from the open settings window, shown on open windows as a live preview.
- * Keys are setting names (`theme`, `worldTheme`, `textures`, `headingFont`, ...). Cleared when that window closes.
+ * Keys are setting names (`theme`, `worldTheme`, `textureStrength`, `headingFont`, ...). Cleared when that window closes.
  *
  * @type {Record<string, string|boolean>}
  */
@@ -43,10 +43,84 @@ export function applyTheme(element)
    if (!element) { return; }
    element.classList.remove(...THEME_CLASSES);
    element.classList.add(`fhql-theme-${currentTheme()}`);
-   // Smooth panels: the player turned theme textures off.
-   element.classList.toggle('fhql-no-texture', !setting('textures'));
+   const strength = currentStrength();
+   // Smooth panels at 0: textures and images off, the theme's small shapes stay.
+   element.classList.toggle('fhql-no-texture', strength === 0);
+   element.style.setProperty('--fhql-strength', String(strength));
+   applyOverlay(element);
    applyFonts(element);
    applyBanner(element);
+}
+
+/**
+ * Texture strength in effect for this client: their own choice, else the GM's table setting.
+ *
+ * @returns {number} 0 (smooth) to 100; 50 shows each theme as designed.
+ */
+export function currentStrength()
+{
+   const own = setting('textureStrength');
+   const value = Number(own === 'world' ? setting('worldTextureStrength') : own);
+   return Number.isFinite(value) ? Math.max(0, Math.min(100, value)) : 50;
+}
+
+/** Our own washes, drawn by tools/make-washes.mjs. */
+const OWN_WASH = { top: `${MODULE_PATH}/styles/textures/wash-top.webp`, bottom: `${MODULE_PATH}/styles/textures/wash-bottom.webp` };
+
+/** D&D 5e's grey ink washes, used when that system is running (not copied: read from the system). */
+const DND5E_WASH = { top: 'systems/dnd5e/ui/texture-gray1.webp', bottom: 'systems/dnd5e/ui/texture-gray2.webp' };
+
+/** Themes that show a wash unless the GM picks otherwise: the paper-like ones. */
+const WASHED_THEMES = new Set([THEMES.light, THEMES.ledger]);
+
+/**
+ * The default overlay for a theme: D&D 5e's washes when that system runs, else ours, on paper-like
+ * themes; none on the others (their own patterns carry them).
+ *
+ * @param {string} theme - A key of THEMES.
+ * @returns {{top: string, bottom: string}} Image paths, '' for none.
+ */
+export function defaultOverlay(theme)
+{
+   if (!WASHED_THEMES.has(theme)) { return { top: '', bottom: '' }; }
+   return game.system?.id === 'dnd5e' ? { ...DND5E_WASH } : { ...OWN_WASH };
+}
+
+/**
+ * The overlay images in effect for a theme: the GM's uploads, each falling back to the default.
+ *
+ * @param {string} theme - A key of THEMES.
+ * @returns {{top: string, bottom: string}} Image paths, '' for none.
+ */
+export function currentOverlay(theme)
+{
+   const chosen = setting('textureImages')?.[theme] ?? {};
+   if (chosen.off) { return { top: '', bottom: '' }; }
+   const fallback = defaultOverlay(theme);
+   return { top: chosen.top || fallback.top, bottom: chosen.bottom || fallback.bottom };
+}
+
+/** @param {string} path - An image path. @returns {string} A CSS url() for it. */
+const cssUrl = (path) => `url("${encodeURI(path).replace(/"/g, '%22')}")`;
+
+/**
+ * Sets the overlay images on a themed element: a top wash for headers, a lower wash for scrolling
+ * areas (styles/fhql.css, "Texture strength and image overlay").
+ *
+ * @param {HTMLElement} element - A themed element.
+ */
+function applyOverlay(element)
+{
+   let theme = currentTheme();
+   // "Follow Foundry" looks like Light or Dark, so it takes that theme's images (same test as the CSS).
+   if (theme === THEMES.auto)
+   {
+      const dark = element.classList.contains('theme-dark') || (document.body.classList.contains('theme-dark') && !element.classList.contains('theme-light'));
+      theme = dark ? THEMES.dark : THEMES.light;
+   }
+   const { top, bottom } = currentOverlay(theme);
+   element.style.setProperty('--fhql-overlay-top', top ? cssUrl(top) : 'none');
+   element.style.setProperty('--fhql-overlay-bottom', bottom ? cssUrl(bottom) : 'none');
 }
 
 /**

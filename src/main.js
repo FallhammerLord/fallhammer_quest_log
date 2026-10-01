@@ -1,7 +1,7 @@
 import { MODULE_ID, QUEST_TYPE } from './constants.js';
 import { DocumentSheetConfig, TIDY_THEME_SETTING } from './compat.js';
 import { refreshOpenApps } from './theme.js';
-import { registerSettings } from './settings.js';
+import { migrateTextureSetting, registerSettings } from './settings.js';
 import { registerKeybindings } from './keybindings.js';
 import { api } from './api.js';
 import { QuestData } from './data/QuestData.js';
@@ -60,6 +60,7 @@ Hooks.once('ready', () =>
    registerQuestPreview();
    refreshQuestBeacon();
    renameLegacyRootFolder();
+   migrateTextureSetting();
 });
 Hooks.on('renderPlayers', () => refreshQuestBeacon());
 

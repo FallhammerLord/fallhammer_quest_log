@@ -56,8 +56,11 @@ npm run deposits   # deposit and reward rules with Foundry mocked: races, refusa
 | `src/data/seen.js` | new-change dots: per-user seen times (server timestamps), baseline, batched writes |
 | `src/ui/questPreview.js` | hover card for quest links (chat, journals) via Foundry's tooltip |
 | `src/ui/popover.js` | in-window child panels (menus, pickers, confirms) |
+| `src/theme.js` | theme class, texture strength, overlay images, fonts, Tidy banner color, live preview |
+| `src/apps/TextureImagesApp.js` | GM window from Module Settings: header/lower wash image per theme |
 | `styles/fhql.css` | Light tokens (default), then every component, tokens only |
 | `styles/themes/*.css` | one file per other theme: tokens, then its few theme-only rules; listed in `module.json` |
+| `styles/textures/` | our default wash images (drawn by `tools/make-washes.mjs`) |
 | `tools/` | layout, load, and contrast checks; test fixtures |
 
 ## Rules that are easy to break
@@ -74,6 +77,7 @@ npm run deposits   # deposit and reward rules with Foundry mocked: races, refusa
 - **Hidden quests:** hiding sets default and per-player ownership to None (saved in a flag, restored on reveal); `questAccess` also refuses Hidden quests to non-GMs.
 - **Sheet actions** are plain functions called with `this` as the window, grouped per feature in `src/apps/sheet/` and merged through `guardActions`. New feature: new file there, not more lines in the mixin.
 - **Quick choices** use `src/ui/popover.js` child panels, never Foundry dialogs. Separate windows only for Pop out, FQL import, and Foundry's ownership editor.
+- **Textures** are drawn at full strength and faded by a veil layer (`--fhql-veil`, from `--fhql-strength`); 50 is the theme as designed. Each texture site lists veil, overlay, then theme layers, with `background-size/position/repeat` lists at least as long as the layers: a short list repeats from its start and silently stops later layers tiling. A theme with several texture layers must give full-length `--fhql-texture-size` and `--fhql-texture-position` lists.
 - **Colors** only through `--fhql-*` tokens; a theme changes colors and small shapes, never layout. A new theme is a new file in `styles/themes/` plus its entry in `module.json` `styles` (the tools read that list).
 - **Selector lists** can hold commas inside `:is()`/`:has()`; any script that splits CSS must split on top-level commas only (a naive split once broke every Ledger rule; caught by a computed-style diff).
 - **Manifest changes need a world relaunch.** Foundry reads `module.json` (styles, scripts, languages) only when a world launches; a browser refresh keeps the old list. Tell the user to Return to Setup and relaunch after any manifest change.
@@ -86,7 +90,7 @@ Storage survives disable/re-enable; editing and autosave; view/edit modes; quick
 ## Waiting on the user
 
 - GM notes privacy: as a player, `game.journal.get('ID').pages.contents.map(p => p.name)` should not list "GM notes".
-- Claiming, Give, Undo; player workflow settings; font settings listing uploaded fonts; sci-fi hex texture; list textures; Dark art-deco fans (CSS-only); live theme preview from Module Settings; Beacon menu toggles closed on second click; Gothic theme; Theme textures toggle (per player, all themes, live preview).
+- Claiming, Give, Undo; player workflow settings; font settings listing uploaded fonts; sci-fi hex texture; list textures; Dark art-deco fans (CSS-only); live theme preview from Module Settings; Beacon menu toggles closed on second click; Gothic theme; Texture strength (table slider, per-player override incl. Smooth, live preview, old "off" carried over); Theme images window (browse, defaults, off per theme), 5e washes when D&D 5e runs, our washes otherwise; Ledger lattice on heading bars and list toolbar, wash on the banner.
 - Item requirements and deposits: hand over, show only, drag from a character sheet, Undo with return, and two players depositing at once (needs two browsers as different players). Item matching across systems (dnd5e/pf2e quantity). Hand over always confirms source and amount in a panel (starts on the assigned character; party inventory selectable); GM hand over from an NPC; quantity in each of the user's systems: D&D 5e, Cypher, Daggerheart, PF2e. Startup console line names the detected system.
 - Rewards: Claim/Give confirm panel with any owned actor (party inventory); GM Give to any actor (NPCs credited to the GM); Undo "Take it back" (merged stacks reduced by the claimed amount; missing item still clears the claim).
 - Pinned header and list toolbar; panels sized by priority and scrolling on their own (wide); one scroll with collapsible panels and Show all (narrow); scroll kept after ticking an objective; Hide done; editor toolbar pinned in edit mode; very short window falls back to whole-sheet scroll.

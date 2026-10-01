@@ -30,9 +30,30 @@
   --fhql-chamfer: 0px;
   --fhql-glow: none;
   --fhql-texture: url("../../../ui/parchment.jpg");
+  --fhql-texture-size: auto;
+  --fhql-texture-position: 0 0;
   --fhql-texture-blend: normal;
+  /* Parchment is a photo and can't be drawn stronger, so it is at full strength from 50% up. */
+  --fhql-texture-full: 50;
   /* The quest list sits on a darker, aged strip of the same parchment. */
   --fhql-list-texture: linear-gradient(rgb(110 80 40 / 0.14), rgb(110 80 40 / 0.14)), url("../../../ui/parchment.jpg");
+}
+
+/* ---------- Texture strength and image overlay (every theme) ----------
+   Each theme draws its texture at full strength (its look at 100%). A veil of the surface's own color
+   lies over it: 50%, the default, shows each theme as designed. --fhql-strength (0-100) and the
+   overlay images are set on the window by src/theme.js: a top wash stretched over each header (quest
+   header, list toolbar) and a lower wash pinned to the bottom of each scrolling area (sheet, list).
+   Stretched, never tiled, so no seams. --fhql-texture-full lowers the point where a
+   texture reaches full strength (Light's parchment photo can't be drawn stronger than it is). */
+:is(.fhql-app, .fhql-beacon) {
+  --fhql-strength: 50;
+  --fhql-veil-amount: calc(clamp(0, 1 - var(--fhql-strength) / var(--fhql-texture-full, 100), 1) * 100%);
+  --fhql-veil: linear-gradient(color-mix(in srgb, var(--fhql-surface) var(--fhql-veil-amount), transparent) 0 0);
+  --fhql-veil-sunken: linear-gradient(color-mix(in srgb, var(--fhql-surface-sunken) var(--fhql-veil-amount), transparent) 0 0);
+  --fhql-veil-banner: linear-gradient(color-mix(in srgb, var(--fhql-banner, transparent) var(--fhql-veil-amount), transparent) 0 0);
+  --fhql-overlay-top: none;
+  --fhql-overlay-bottom: none;
 }
 
 /* ---------- Window ---------- */
@@ -51,9 +72,10 @@
   color: var(--fhql-ink);
   font-family: var(--fhql-font-body);
   background-color: var(--fhql-surface);
-  background-image: var(--fhql-texture);
-  background-size: var(--fhql-texture-size, auto);
-  background-position: var(--fhql-texture-position, 0 0);
+  background-image: var(--fhql-veil), var(--fhql-texture);
+  background-size: 100% 100%, var(--fhql-texture-size);
+  background-position: 0 0, var(--fhql-texture-position);
+  background-repeat: no-repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat;
   background-blend-mode: var(--fhql-texture-blend);
 }
 
@@ -117,7 +139,10 @@
   overscroll-behavior: contain;
   padding: 0 0.5em 0.5em;
   background-color: var(--fhql-surface-sunken);
-  background-image: var(--fhql-list-texture, none);
+  background-image: var(--fhql-veil-sunken), var(--fhql-overlay-bottom), var(--fhql-list-texture, none);
+  background-size: 100% 100%, 100% auto, auto, auto, auto, auto;
+  background-position: 0 0, bottom, 0 0, 0 0, 0 0, 0 0;
+  background-repeat: no-repeat, no-repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat;
   border-inline-end: 1px solid var(--fhql-rule);
 }
 
@@ -175,6 +200,16 @@
 /* One column by default, ordered by how often each section is used in play. The two column wrappers
    dissolve (display: contents) so sections can reorder; at 560px+ they become real columns. */
 .fhql-sheet { container: fhql-sheet / inline-size; overflow-y: auto; overscroll-behavior: contain; min-width: 0; min-height: 0; }
+/* The sheet carries the theme texture itself, with the lower wash of an overlay image pinned to its
+   bottom edge; a scroll container's background stays put while its contents scroll. */
+.fhql-app .fhql-sheet {
+  background-color: var(--fhql-surface);
+  background-image: var(--fhql-veil), var(--fhql-overlay-bottom), var(--fhql-texture);
+  background-size: 100% 100%, 100% auto, var(--fhql-texture-size);
+  background-position: 0 0, bottom, var(--fhql-texture-position);
+  background-repeat: no-repeat, no-repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat;
+  background-blend-mode: var(--fhql-texture-blend);
+}
 /* Long words wrap only when they must; ordinary words never split. */
 .fhql-app .fhql-sheet, .fhql-app .fhql-list { overflow-wrap: break-word; }
 /* Width containers only on lists without text fields: Foundry's own form and editor styles misbehave
@@ -200,9 +235,11 @@
   margin-inline: calc(-1 * var(--fhql-pad-x));
   padding-inline: var(--fhql-pad-x);
   background-color: var(--fhql-surface);
-  background-image: var(--fhql-texture);
-  background-size: var(--fhql-texture-size, auto);
-  background-position: var(--fhql-texture-position, 0 0);
+  background-image: var(--fhql-veil), var(--fhql-overlay-top), var(--fhql-texture);
+  background-size: 100% 100%, 100% 100%, var(--fhql-texture-size);
+  background-position: 0 0, 0 0, var(--fhql-texture-position);
+  background-repeat: no-repeat, no-repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat;
+  background-blend-mode: var(--fhql-texture-blend);
 }
 .fhql-app .fhql-none { padding: 1em; }
 
@@ -658,9 +695,10 @@
   display: grid;
   color: var(--fhql-ink);
   background: var(--fhql-surface);
-  background-image: var(--fhql-texture);
-  background-size: var(--fhql-texture-size, auto);
-  background-position: var(--fhql-texture-position, 0 0);
+  background-image: var(--fhql-veil), var(--fhql-texture);
+  background-size: 100% 100%, var(--fhql-texture-size);
+  background-position: 0 0, var(--fhql-texture-position);
+  background-repeat: no-repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat;
   background-blend-mode: var(--fhql-texture-blend);
   border: 1px solid var(--fhql-rule);
   border-radius: var(--fhql-radius);
@@ -735,7 +773,9 @@
   margin-inline: -0.5em;
   padding: 0.5em;
   background-color: var(--fhql-surface-sunken);
-  background-image: var(--fhql-list-texture, none);
+  background-image: var(--fhql-veil-sunken), var(--fhql-overlay-top), var(--fhql-list-texture, none);
+  background-size: 100% 100%, 100% 100%, auto, auto, auto, auto;
+  background-repeat: no-repeat, no-repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat;
   border-block-end: 1px solid var(--fhql-rule);
 }
 .fhql-app .fhql-toolbar-row { display: flex; gap: 0.3em; align-items: center; }
@@ -816,6 +856,17 @@
 .fhql-app .fhql-import-option { align-items: flex-start; }
 .fhql-app .fhql-import-footer { display: flex; justify-content: flex-end; gap: 0.5em; }
 .fhql-app .fhql-import-button { width: 100%; justify-content: center; }
+
+/* ---------- Theme images window (GM, from Module Settings) ---------- */
+.fhql-app.fhql-texture-images .window-content { display: block; }
+.fhql-app .fhql-texture-images-body { display: grid; gap: 0.6em; padding: 0.9em 1em; }
+.fhql-app .fhql-texture-images-note { margin: 0; max-width: 65ch; }
+.fhql-app .fhql-texture-images-list { display: grid; gap: 0.6em; max-height: 70vh; overflow-y: auto; }
+.fhql-app .fhql-texture-theme { margin: 0; display: grid; gap: 0.35em; }
+.fhql-app .fhql-texture-theme > legend { padding-inline: 0.3em; }
+.fhql-app .fhql-texture-slot { display: grid; grid-template-columns: 7.5em minmax(0, 1fr) auto auto; gap: 0.3em; align-items: center; }
+.fhql-app .fhql-texture-slot > .fhql-input { min-width: 0; }
+.fhql-app .fhql-texture-images-footer { display: flex; justify-content: flex-end; }
 
 /* ---------- Rewards and claiming ---------- */
 .fhql-app .fhql-rewards { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5em; }
@@ -995,6 +1046,8 @@
   --fhql-texture: none !important;
   --fhql-list-texture: none !important;
   --fhql-banner-texture: none !important;
+  --fhql-overlay-top: none !important;
+  --fhql-overlay-bottom: none !important;
 }
 
 /* ---------- "New" markers ---------- */

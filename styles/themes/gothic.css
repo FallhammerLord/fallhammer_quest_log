@@ -26,23 +26,24 @@
   --fhql-gothic-gilt: #d8b56c;
   /* Iron quatrefoil tracery over wine velvet, with a gilt fleur-de-lis powdered in the gaps
      (as on Pugin's Gothic Revival papers and tiles), then a sheen and a midnight shadow. */
-  --fhql-gothic-ring: transparent 0 9px, rgb(160 55 78 / 0.17) 9px 10px, transparent 10px;
-  --fhql-gothic-fleur: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg transform='translate(19 18)' fill='none' stroke='rgb(200,164,106)' stroke-opacity='0.2' stroke-width='0.9'%3E%3Cpath d='M5 0C6.4 2.3 6.8 4.1 5 6.4C3.2 4.1 3.6 2.3 5 0Z'/%3E%3Cpath d='M5 6.4C7 4.7 9.6 5 9.8 7.1C10 8.8 7.9 9.2 7.1 8M5 6.4C3 4.7 0.4 5 0.2 7.1C0 8.8 2.1 9.2 2.9 8'/%3E%3Cpath d='M2.4 9H7.6M5 9V12'/%3E%3C/g%3E%3C/svg%3E");
+  --fhql-gothic-ring: transparent 0 9px, rgb(160 55 78 / 0.34) 9px 10px, transparent 10px;
+  --fhql-gothic-fleur: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg transform='translate(19 18)' fill='none' stroke='rgb(200,164,106)' stroke-opacity='0.4' stroke-width='0.9'%3E%3Cpath d='M5 0C6.4 2.3 6.8 4.1 5 6.4C3.2 4.1 3.6 2.3 5 0Z'/%3E%3Cpath d='M5 6.4C7 4.7 9.6 5 9.8 7.1C10 8.8 7.9 9.2 7.1 8M5 6.4C3 4.7 0.4 5 0.2 7.1C0 8.8 2.1 9.2 2.9 8'/%3E%3Cpath d='M2.4 9H7.6M5 9V12'/%3E%3C/g%3E%3C/svg%3E");
   --fhql-texture:
     radial-gradient(circle at 24px 14px, var(--fhql-gothic-ring)),
     radial-gradient(circle at 24px 34px, var(--fhql-gothic-ring)),
     radial-gradient(circle at 14px 24px, var(--fhql-gothic-ring)),
     radial-gradient(circle at 34px 24px, var(--fhql-gothic-ring)),
     var(--fhql-gothic-fleur),
-    radial-gradient(ellipse at 20% 0%, rgb(110 30 70 / 0.22), transparent 60%),
-    linear-gradient(to bottom, transparent 40%, rgb(5 6 14 / 0.35));
+    radial-gradient(ellipse at 20% 0%, rgb(110 30 70 / 0.44), transparent 60%),
+    linear-gradient(to bottom, transparent 40%, rgb(5 6 14 / 0.7));
   --fhql-texture-size: 48px 48px, 48px 48px, 48px 48px, 48px 48px, 48px 48px, 100% 100%, 100% 100%;
   --fhql-texture-position: 0 0, 0 0, 0 0, 0 0, 24px 24px, 0 0, 0 0;
   --fhql-texture-blend: normal;
+  --fhql-texture-full: 100;
   /* The quest list: a blind arcade (rows of blank arches, as on cathedral walls) fading into midnight. */
   --fhql-list-texture:
-    linear-gradient(to bottom, rgb(60 20 40 / 0.18), transparent 50%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='48' viewBox='0 0 24 48'%3E%3Cpath d='M2 48V22Q2 6 12 1Q22 6 22 22V48' fill='none' stroke='rgb(110,100,120)' stroke-opacity='0.16' stroke-width='1'/%3E%3C/svg%3E");
+    linear-gradient(to bottom, rgb(60 20 40 / 0.36), transparent 50%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='48' viewBox='0 0 24 48'%3E%3Cpath d='M2 48V22Q2 6 12 1Q22 6 22 22V48' fill='none' stroke='rgb(110,100,120)' stroke-opacity='0.32' stroke-width='1'/%3E%3C/svg%3E");
   /* Small shapes that stay when textures are off. */
   --fhql-gothic-lancet: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='13' viewBox='0 0 9 13'%3E%3Cpath d='M0 13V6Q0 2 4.5 0Q9 2 9 6V13Z' fill='rgb(226,89,106)'/%3E%3C/svg%3E");
   --fhql-gothic-cross: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath d='M7 7L4 1H10ZM7 7L13 4V10ZM7 7L10 13H4ZM7 7L1 10V4Z' fill='rgb(226,89,106)'/%3E%3C/svg%3E");

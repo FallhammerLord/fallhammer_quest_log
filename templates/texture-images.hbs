@@ -1,0 +1,26 @@
+<div class="fhql-texture-images-body">
+  <p class="fhql-muted fhql-texture-images-note">{{localize "FHQL.TextureImages.Intro"}}</p>
+  <div class="fhql-texture-images-list">
+    {{#each themes}}
+    <fieldset class="fhql-card fhql-texture-theme">
+      <legend class="fhql-subheading">{{label}}</legend>
+      <div class="fhql-texture-slot">
+        <label for="fhql-tex-{{top.name}}">{{localize "FHQL.TextureImages.Top"}}</label>
+        <input type="text" class="fhql-input" id="fhql-tex-{{top.name}}" name="{{top.name}}" value="{{top.value}}" placeholder="{{top.placeholder}}">
+        <button type="button" class="fhql-icon-button" data-action="browse" data-field="{{top.name}}" aria-label="{{localize "FHQL.TextureImages.Browse"}}"><i class="fa-solid fa-file-image" inert></i></button>
+        <button type="button" class="fhql-icon-button" data-action="clearImage" data-field="{{top.name}}" aria-label="{{localize "FHQL.TextureImages.UseDefault"}}"><i class="fa-solid fa-rotate-left" inert></i></button>
+      </div>
+      <div class="fhql-texture-slot">
+        <label for="fhql-tex-{{bottom.name}}">{{localize "FHQL.TextureImages.Bottom"}}</label>
+        <input type="text" class="fhql-input" id="fhql-tex-{{bottom.name}}" name="{{bottom.name}}" value="{{bottom.value}}" placeholder="{{bottom.placeholder}}">
+        <button type="button" class="fhql-icon-button" data-action="browse" data-field="{{bottom.name}}" aria-label="{{localize "FHQL.TextureImages.Browse"}}"><i class="fa-solid fa-file-image" inert></i></button>
+        <button type="button" class="fhql-icon-button" data-action="clearImage" data-field="{{bottom.name}}" aria-label="{{localize "FHQL.TextureImages.UseDefault"}}"><i class="fa-solid fa-rotate-left" inert></i></button>
+      </div>
+      <label class="fhql-inline fhql-texture-off"><input type="checkbox" name="{{key}}.off" {{checked off}}> {{localize "FHQL.TextureImages.Off"}}</label>
+    </fieldset>
+    {{/each}}
+  </div>
+  <footer class="fhql-texture-images-footer">
+    <button type="submit" class="fhql-button fhql-primary"><i class="fa-solid fa-floppy-disk" inert></i> {{localize "FHQL.TextureImages.Save"}}</button>
+  </footer>
+</div>

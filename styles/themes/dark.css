@@ -22,7 +22,7 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
   --fhql-status-completed: #8cc98c;
   --fhql-status-failed: #e38a7a;
   /* Seigaiha-style fans: gold arcs, each fan filled with the surface so lower rows overlap upper ones. */
-  --fhql-deco-gold: rgb(224 160 84 / 0.075);
+  --fhql-deco-gold: rgb(224 160 84 / 0.15);
   --fhql-deco-fan: var(--fhql-surface) 0 8px, var(--fhql-deco-gold) 8px 9px,
     var(--fhql-surface) 9px 15px, var(--fhql-deco-gold) 15px 16px,
     var(--fhql-surface) 16px 22px, var(--fhql-deco-gold) 22px 23px,
@@ -33,13 +33,15 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
     radial-gradient(circle at 28px 28px, var(--fhql-deco-fan)),
     radial-gradient(circle at 0 0, var(--fhql-deco-fan)),
     radial-gradient(circle at 56px 0, var(--fhql-deco-fan));
-  --fhql-texture-size: 56px 56px;
+  --fhql-texture-size: 56px 56px, 56px 56px, 56px 56px, 56px 56px, 56px 56px;
+  --fhql-texture-position: 0 0, 0 0, 0 0, 0 0, 0 0;
   --fhql-texture-blend: normal;
+  --fhql-texture-full: 100;
   /* The quest list: deco pinstripes (a double line every 28px) over a faint diamond lattice. */
   --fhql-list-texture:
-    repeating-linear-gradient(90deg, rgb(224 160 84 / 0.07) 0 1px, transparent 1px 4px, rgb(224 160 84 / 0.07) 4px 5px, transparent 5px 28px),
-    repeating-linear-gradient(60deg, rgb(224 160 84 / 0.03) 0 1px, transparent 1px 14px),
-    repeating-linear-gradient(-60deg, rgb(224 160 84 / 0.03) 0 1px, transparent 1px 14px);
+    repeating-linear-gradient(90deg, rgb(224 160 84 / 0.14) 0 1px, transparent 1px 4px, rgb(224 160 84 / 0.14) 4px 5px, transparent 5px 28px),
+    repeating-linear-gradient(60deg, rgb(224 160 84 / 0.06) 0 1px, transparent 1px 14px),
+    repeating-linear-gradient(-60deg, rgb(224 160 84 / 0.06) 0 1px, transparent 1px 14px);
 }
 .fhql-app.fhql-theme-dark .fhql-subheading { font-variant: small-caps; letter-spacing: 0.04em; }
 

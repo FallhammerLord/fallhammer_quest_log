@@ -222,3 +222,15 @@ export function readStoredWorldSetting(key)
       return undefined;
    }
 }
+
+/**
+ * Opens Foundry's file browser for an image (v13+ FilePicker). Closing it without a choice does nothing.
+ *
+ * @param {string} current - The path to start from.
+ * @param {(path: string) => void} onPick - Called with the chosen path.
+ */
+export function browseImage(current, onPick)
+{
+   const Picker = foundry.applications.apps.FilePicker.implementation;
+   new Picker({ type: 'image', current: current || '', callback: onPick }).render(true);
+}

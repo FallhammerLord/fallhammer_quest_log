@@ -2,6 +2,7 @@ import { MODULE_ID, THEMES } from './constants.js';
 import { refreshOpenApps } from './theme.js';
 import { availableFonts } from './compat.js';
 import { refreshQuestBeacon } from './ui/QuestBeacon.js';
+import { TextureImagesApp } from './apps/TextureImagesApp.js';
 
 /** Registers module settings. Called on `init`. */
 export function registerSettings()
@@ -42,14 +43,48 @@ export function registerSettings()
       onChange: restyle
    });
 
-   game.settings.register(MODULE_ID, 'textures', {
-      name: 'FHQL.Settings.Textures.Name',
-      hint: 'FHQL.Settings.Textures.Hint',
+   // Texture strength: the GM sets the table's, each player may override it on their own device.
+   // 0 means smooth panels; 50 shows each theme as designed.
+   game.settings.register(MODULE_ID, 'worldTextureStrength', {
+      name: 'FHQL.Settings.TextureStrength.World.Name',
+      hint: 'FHQL.Settings.TextureStrength.World.Hint',
+      scope: 'world',
+      config: true,
+      type: Number,
+      range: { min: 0, max: 100, step: 5 },
+      default: 50,
+      onChange: restyle
+   });
+   const strengthChoices = { world: 'FHQL.Settings.TextureStrength.UseWorld', 0: 'FHQL.Settings.TextureStrength.Smooth' };
+   for (let n = 10; n <= 100; n += 10) { strengthChoices[n] = `${n}%`; }
+   game.settings.register(MODULE_ID, 'textureStrength', {
+      name: 'FHQL.Settings.TextureStrength.Own.Name',
+      hint: 'FHQL.Settings.TextureStrength.Own.Hint',
       scope: 'client',
       config: true,
-      type: Boolean,
-      default: true,
+      type: String,
+      choices: strengthChoices,
+      default: 'world',
       onChange: restyle
+   });
+   // Before 0.3.0's texture strength: an on/off switch. Kept only to carry "off" over (see migrateTextureSetting).
+   game.settings.register(MODULE_ID, 'textures', { scope: 'client', config: false, type: Boolean, default: true });
+
+   // Overlay images per theme (GM): { [theme]: { top, bottom, off } }. Empty paths use the default.
+   game.settings.register(MODULE_ID, 'textureImages', {
+      scope: 'world',
+      config: false,
+      type: Object,
+      default: {},
+      onChange: restyle
+   });
+   game.settings.registerMenu(MODULE_ID, 'textureImagesMenu', {
+      name: 'FHQL.TextureImages.MenuName',
+      label: 'FHQL.TextureImages.MenuLabel',
+      hint: 'FHQL.TextureImages.MenuHint',
+      icon: 'fa-solid fa-image',
+      type: TextureImagesApp,
+      restricted: true
    });
 
    // Font choices are filled on ready, once uploaded fonts are known. The same objects are kept, so
@@ -209,4 +244,12 @@ export function registerSettings()
       },
       default: OBSERVER
    });
+}
+
+/** A player who had turned textures off keeps smooth panels under the new strength setting. Runs on ready. */
+export async function migrateTextureSetting()
+{
+   if (game.settings.get(MODULE_ID, 'textures') !== false) { return; }
+   if (game.settings.get(MODULE_ID, 'textureStrength') === 'world') { await game.settings.set(MODULE_ID, 'textureStrength', '0'); }
+   await game.settings.set(MODULE_ID, 'textures', true);
 }

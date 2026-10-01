@@ -94,6 +94,21 @@
       "completed": "Completed",
       "failed": "Failed"
     },
+    "TextureImages": {
+      "MenuName": "Theme images",
+      "MenuLabel": "Choose images",
+      "MenuHint": "Washes laid over each theme's panels: one over the headers, one along the bottom. Light and Ledger use a grey ink wash by default (D&D 5e's own when that system runs).",
+      "Title": "Theme images",
+      "Intro": "Images are stretched to fit, never tiled, so they show no seams. Greyscale images with transparent areas suit every theme's colors. Leave a field empty for the default. Texture strength fades them like any pattern.",
+      "Top": "Header wash",
+      "Bottom": "Lower wash",
+      "Browse": "Browse images",
+      "UseDefault": "Use the default",
+      "Default": "Default: {path}",
+      "NoDefault": "Default: none",
+      "Off": "No images for this theme",
+      "Save": "Save"
+    },
     "Page": {
       "SheetLabel": "Quest",
       "OpenInLog": "Open in Quest Log",
@@ -111,9 +126,17 @@
         "Ledger": "Ledger (matches Tidy 5e Sheets)",
         "World": "Use world theme"
       },
-      "Textures": {
-        "Name": "Theme textures (just you)",
-        "Hint": "Shows each theme's background textures. Turn off for smooth, flat panels."
+      "TextureStrength": {
+        "World": {
+          "Name": "Texture strength (table)",
+          "Hint": "How strongly each theme's background patterns and images show, for everyone. 50 is each theme as designed; 0 gives smooth, flat panels. Players can change it for themselves."
+        },
+        "Own": {
+          "Name": "Texture strength (just you)",
+          "Hint": "Use the table's setting, or pick your own on this device. Smooth turns patterns and images off."
+        },
+        "UseWorld": "Use the table's setting",
+        "Smooth": "Smooth (no texture)"
       },
       "DefaultOwnership": {
         "Name": "Player access when a quest is revealed",
