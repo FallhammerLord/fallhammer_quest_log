@@ -454,7 +454,45 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
       const filter = QuestLog.#savedFilter();
       filter.collapsed = filter.collapsed.includes(id) ? filter.collapsed.filter((c) => c !== id) : [...filter.collapsed, id];
       QuestLog.#saveFilter(filter);
+      const rows = [...this.element.querySelectorAll('.fhql-list-items > li')];
+      // A second click mid-slide: drop the running slide, so its end can't re-hide a reopened row.
+      for (const row of rows) { if (row.fhqlSlide) { row.fhqlSlide = null; row.getAnimations().forEach((a) => a.cancel()); row.hidden = row.fhqlClosing ?? row.hidden; row.style.overflow = ''; } }
+      const before = new Set(rows.filter((row) => !row.hidden));
       this.#applyListFilters();
+      QuestLog.#slideRows(rows.filter((row) => before.has(row) && row.hidden), rows.filter((row) => !before.has(row) && !row.hidden));
+   }
+
+   /**
+    * Slides folder contents shut or open instead of snapping (about 180ms). Rows being hidden are shown
+    * again just long enough to fold away. Reduced motion snaps.
+    *
+    * @param {HTMLElement[]} closing - Rows that just became hidden.
+    * @param {HTMLElement[]} opening - Rows that just became visible.
+    */
+   static #slideRows(closing, opening)
+   {
+      if (globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches) { return; }
+      const timing = { duration: 180, easing: 'cubic-bezier(.2,.7,.2,1)' };
+      const slide = (row, keyframes, closingRow) =>
+      {
+         const token = Symbol('slide');
+         row.fhqlSlide = token;
+         row.fhqlClosing = closingRow;
+         row.style.overflow = 'hidden';
+         row.animate(keyframes, timing).finished.then(() =>
+         {
+            if (row.fhqlSlide !== token) { return; }
+            row.fhqlSlide = null;
+            row.hidden = closingRow;
+            row.style.overflow = '';
+         }, () => {});
+      };
+      for (const row of opening) { slide(row, [{ height: '0px', opacity: 0 }, { height: `${row.offsetHeight}px`, opacity: 1 }], false); }
+      for (const row of closing)
+      {
+         row.hidden = false;
+         slide(row, [{ height: `${row.offsetHeight}px`, opacity: 1 }, { height: '0px', opacity: 0 }], true);
+      }
    }
 
    /** @this {QuestLog} */
