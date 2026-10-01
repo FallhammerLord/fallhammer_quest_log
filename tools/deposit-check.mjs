@@ -136,7 +136,11 @@ expect('undo recreates a stack that was handed over whole', [...a1.items.values(
 quest = makeQuest({ ...pelt });
 const a3 = makeActor('brannoc', 'p1');
 const s3 = makeItem(a3, 'i3', 'Wolf pelt', 5, { failUpdate: true });
+// The rollback logs an error on purpose; keep it out of the check output.
+const logError = console.error;
+console.error = () => {};
 const r4 = await deposit('p1', s3);
+console.error = logError;
 expect('deposit fails when the item cannot be taken', !r4.ok);
 expect('failed deposit leaves no record', quest.objective().deposits.length === 0 && quest.objective().state === 'open');
 expect('failed deposit leaves the stack alone', s3.system.quantity === 5);
