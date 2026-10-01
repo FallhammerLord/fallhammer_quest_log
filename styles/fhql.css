@@ -1027,6 +1027,10 @@
 .fhql-beacon .fhql-beacon-panel.is-empty { opacity: 0.85; }
 .fhql-beacon .fhql-beacon-panel.is-empty:hover { opacity: 1; }
 .fhql-beacon .fhql-popover { z-index: 1000; }
+/* Beacon panels float on the page (src/ui/popover.js, floatingShell): a zero-size fixed holder carrying
+   the Beacon's theme, so the panel's own fixed position is measured from the screen. */
+.fhql-app.fhql-floating { position: fixed; inset: 0 auto auto 0; width: 0; height: 0; z-index: 1000; color: var(--fhql-ink); font-family: var(--fhql-font-body); }
+.fhql-app.fhql-floating .fhql-popover { z-index: 1000; max-width: min(22em, calc(100vw - 16px)); }
 
 /* ---------- Quest image banner ---------- */
 .fhql-app .fhql-banner {

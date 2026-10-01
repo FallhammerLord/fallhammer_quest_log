@@ -38,8 +38,11 @@ export function openPanel(app, anchor, html, wire, { label, role = 'dialog' })
    panel.setAttribute('role', role);
    panel.setAttribute('aria-label', label);
    panel.innerHTML = html;
-   host.append(panel);
-   if (fixed) { positionInViewport(panel, anchor); }
+   // A Beacon panel goes on the page itself: a transformed ancestor (Foundry's UI, the Beacon's own
+   // motion) would otherwise become the reference for its fixed position and throw it off-screen.
+   const shell = fixed ? floatingShell(host) : null;
+   (shell ?? host).append(panel);
+   if (shell) { document.body.append(shell); positionInViewport(panel, anchor); }
    else { position(panel, host, anchor); }
 
    return new Promise((resolve) =>
@@ -51,6 +54,7 @@ export function openPanel(app, anchor, html, wire, { label, role = 'dialog' })
          closed = true;
          document.removeEventListener('pointerdown', onOutside, true);
          panel.remove();
+         shell?.remove();
          openPanels.delete(host);
          if (returnFocus?.isConnected) { returnFocus.focus(); }
          resolve(value);
@@ -100,6 +104,22 @@ function position(panel, host, anchor)
 
    panel.style.left = `${left}px`;
    panel.style.top = `${top}px`;
+}
+
+/**
+ * A themed, empty holder on the page for a floating panel: the host's theme classes and its inline
+ * theme settings (texture strength, fonts, banner color), so the panel looks like its host.
+ *
+ * @param {HTMLElement} host - The element the panel belongs to (the Beacon).
+ * @returns {HTMLElement} The holder.
+ */
+function floatingShell(host)
+{
+   const shell = document.createElement('div');
+   const themed = [...host.classList].filter((c) => c === 'fhql-app' || /^fhql-(theme-|no-texture|portrait-)/.test(c) || /^theme-/.test(c));
+   shell.className = [...themed, 'fhql-floating'].join(' ');
+   shell.style.cssText = host.style.cssText;
+   return shell;
 }
 
 /**
