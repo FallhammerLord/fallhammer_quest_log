@@ -703,6 +703,7 @@
 
 /* ---------- Quest Beacon ---------- */
 .fhql-beacon {
+  position: relative;
   box-sizing: border-box;
   width: 200px;
   margin-block-end: 6px;
@@ -1145,6 +1146,7 @@
 .fhql-beacon .fhql-beacon-panel { position: relative; }
 .fhql-beacon .fhql-new-dot {
   position: absolute;
+  z-index: 2;
   top: -5px;
   right: -5px;
   width: 11px;

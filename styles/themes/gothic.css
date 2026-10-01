@@ -138,9 +138,10 @@
 
 
 /* ---------- Easter egg: the bell tolls (src/ui/eggs.js) ---------- */
-/* An iron bell swings above the Beacon's corner and sends out three brass rings, then fades. */
-.fhql-beacon.fhql-theme-gothic .fhql-beacon-panel.is-tolling { clip-path: none; }
-.fhql-beacon .fhql-egg-bell { position: absolute; right: 6px; top: -22px; width: 26px; height: 30px; z-index: 2; pointer-events: none; opacity: 0; transform-origin: 50% 3px; }
+/* An iron bell swings above the Beacon's corner and sends out three brass rings, then fades. It sits on
+   the Beacon itself, outside the clipped panel; --fhql-toll-elapsed (negative) lets a redraw mid-toll
+   carry on from where it was. */
+.fhql-beacon .fhql-egg-bell { position: absolute; right: 6px; top: -22px; width: 26px; height: 30px; z-index: 3; pointer-events: none; opacity: 0; transform-origin: 50% 3px; }
 .fhql-beacon .fhql-egg-bell svg { display: block; width: 100%; height: 100%; overflow: visible; }
 .fhql-beacon .fhql-egg-ring { position: absolute; left: 50%; top: 60%; width: 0; height: 0; translate: -50% -50%; border: 1px solid var(--fhql-gothic-brass); border-radius: 50%; opacity: 0; }
 @keyframes fhql-bell-in { 0% { opacity: 0; translate: 0 5px; } 12% { opacity: 1; translate: 0 0; } 85% { opacity: 1; } 100% { opacity: 0; } }
@@ -148,11 +149,14 @@
 @keyframes fhql-bell-toll { 0% { opacity: 0.8; width: 0; height: 0; } 100% { opacity: 0; width: 96px; height: 96px; } }
 @keyframes fhql-bell-fade { 0% { opacity: 0; } 15%, 80% { opacity: 1; } 100% { opacity: 0; } }
 @media (prefers-reduced-motion: no-preference) {
-  .fhql-beacon .is-tolling .fhql-egg-bell { animation: fhql-bell-in 2.4s ease-out forwards, fhql-bell-swing 1.9s cubic-bezier(.3,.1,.3,1) 0.15s; }
-  .fhql-beacon .is-tolling .fhql-egg-ring { animation: fhql-bell-toll 1.4s ease-out forwards; }
-  .fhql-beacon .is-tolling .fhql-egg-ring:nth-child(2) { animation-delay: 0.45s; }
-  .fhql-beacon .is-tolling .fhql-egg-ring:nth-child(3) { animation-delay: 0.9s; }
+  .fhql-beacon .fhql-egg-bell {
+    animation: fhql-bell-in 2.4s ease-out var(--fhql-toll-elapsed, 0ms) forwards,
+      fhql-bell-swing 1.9s cubic-bezier(.3,.1,.3,1) calc(var(--fhql-toll-elapsed, 0ms) + 150ms);
+  }
+  .fhql-beacon .fhql-egg-ring { animation: fhql-bell-toll 1.4s ease-out var(--fhql-toll-elapsed, 0ms) forwards; }
+  .fhql-beacon .fhql-egg-ring:nth-child(2) { animation-delay: calc(var(--fhql-toll-elapsed, 0ms) + 450ms); }
+  .fhql-beacon .fhql-egg-ring:nth-child(3) { animation-delay: calc(var(--fhql-toll-elapsed, 0ms) + 900ms); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .fhql-beacon .is-tolling .fhql-egg-bell { animation: fhql-bell-fade 2s ease forwards; }
+  .fhql-beacon .fhql-egg-bell { animation: fhql-bell-fade 2s ease var(--fhql-toll-elapsed, 0ms) forwards; }
 }

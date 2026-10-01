@@ -134,6 +134,10 @@ function renderEmpty()
  */
 let lastShown = { entryId: null, keys: new Map(), status: null, allDone: null };
 
+/** The Gothic bell: which quest it tolls for, since when, and how long it plays (ms). */
+let tolling = { entryId: null, at: 0 };
+const TOLL_MS = 2600;
+
 function renderWidget({ entry, party }, marked)
 {
    const system = questPage(entry).system;
@@ -175,7 +179,11 @@ function renderWidget({ entry, party }, marked)
    const celebrate = same && lastShown.status !== system.status && ['completed', 'failed'].includes(system.status);
    // Gothic easter egg: the bell tolls when the last open objective is completed.
    const allDone = objectives.length > 0 && objectives.every((o) => o.state === 'done');
-   const toll = same && allDone && lastShown.allDone === false && eggFor(THEMES.gothic);
+   if (same && allDone && lastShown.allDone === false && eggFor(THEMES.gothic)) { tolling = { entryId: entry.id, at: Date.now() }; }
+   // The Beacon redraws on any change (the new-change dot clearing, a deposit); the bell carries on
+   // from where it was instead of vanishing mid-swing.
+   const tollElapsed = tolling.entryId === entry.id ? Date.now() - tolling.at : Infinity;
+   const bell = tollElapsed < TOLL_MS ? BELL_HTML.replace('class="fhql-egg-bell"', `class="fhql-egg-bell" style="--fhql-toll-elapsed: -${tollElapsed}ms"`) : '';
    const list = objectives.length ? `<ol class="fhql-beacon-objectives" aria-label="${localize('FHQL.Quest.Objectives')}">
       ${objectives.map((o) => `<li class="is-${o.state} ${flash(o) ? 'is-flash' : ''}">
         <i class="fhql-state-icon ${OBJECTIVE_ICONS[o.state]}" aria-label="${localize(`FHQL.Objective.State.${o.state}`)}"></i>
@@ -187,7 +195,8 @@ function renderWidget({ entry, party }, marked)
    const dot = isUnseen(entry)
     ? `<span class="fhql-new-dot" data-tooltip="${localize('FHQL.Seen.New')}" aria-label="${localize('FHQL.Seen.New')}"></span>` : '';
    lastShown = { entryId: entry.id, keys, status: system.status, allDone };
-   return `<div class="fhql-beacon-panel ${celebrate ? 'is-celebrate' : ''} ${toll ? 'is-tolling' : ''}" data-quest-id="${entry.id}">${dot}${toll ? BELL_HTML : ''}
+   // The dot and the bell sit outside the panel, which clips to its own shape.
+   return `${dot}${bell}<div class="fhql-beacon-panel ${celebrate ? 'is-celebrate' : ''}" data-quest-id="${entry.id}">
       <div class="fhql-beacon-headrow">
         <button type="button" class="fhql-beacon-head" aria-label="${escape(label)}">
           ${markIcon}
