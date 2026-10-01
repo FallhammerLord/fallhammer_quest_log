@@ -53,6 +53,7 @@
   background-color: var(--fhql-surface);
   background-image: var(--fhql-texture);
   background-size: var(--fhql-texture-size, auto);
+  background-position: var(--fhql-texture-position, 0 0);
   background-blend-mode: var(--fhql-texture-blend);
 }
 
@@ -201,6 +202,7 @@
   background-color: var(--fhql-surface);
   background-image: var(--fhql-texture);
   background-size: var(--fhql-texture-size, auto);
+  background-position: var(--fhql-texture-position, 0 0);
 }
 .fhql-app .fhql-none { padding: 1em; }
 
@@ -658,6 +660,7 @@
   background: var(--fhql-surface);
   background-image: var(--fhql-texture);
   background-size: var(--fhql-texture-size, auto);
+  background-position: var(--fhql-texture-position, 0 0);
   background-blend-mode: var(--fhql-texture-blend);
   border: 1px solid var(--fhql-rule);
   border-radius: var(--fhql-radius);

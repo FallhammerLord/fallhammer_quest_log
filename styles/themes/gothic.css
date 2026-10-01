@@ -23,15 +23,23 @@
   --fhql-radius: 2px;
   --fhql-glow: 0 0 8px rgb(140 20 40 / 0.3);
   /* Iron quatrefoil tracery over wine velvet: four rings per tile, then a sheen and a midnight shadow. */
-  --fhql-gothic-ring: transparent 0 9px, rgb(150 50 70 / 0.11) 9px 10px, transparent 10px;
+  /* A stronger main quatrefoil, plus a small offset quatrefoil between them (the same tile, shifted
+     half a tile), so the eye has something to settle on instead of losing the pattern. */
+  --fhql-gothic-ring: transparent 0 9px, rgb(160 55 78 / 0.17) 9px 10px, transparent 10px;
+  --fhql-gothic-ring-small: transparent 0 4.5px, rgb(140 70 110 / 0.14) 4.5px 5.5px, transparent 5.5px;
   --fhql-texture:
     radial-gradient(circle at 24px 14px, var(--fhql-gothic-ring)),
     radial-gradient(circle at 24px 34px, var(--fhql-gothic-ring)),
     radial-gradient(circle at 14px 24px, var(--fhql-gothic-ring)),
     radial-gradient(circle at 34px 24px, var(--fhql-gothic-ring)),
+    radial-gradient(circle at 24px 19px, var(--fhql-gothic-ring-small)),
+    radial-gradient(circle at 24px 29px, var(--fhql-gothic-ring-small)),
+    radial-gradient(circle at 19px 24px, var(--fhql-gothic-ring-small)),
+    radial-gradient(circle at 29px 24px, var(--fhql-gothic-ring-small)),
     radial-gradient(ellipse at 20% 0%, rgb(110 30 70 / 0.22), transparent 60%),
     linear-gradient(to bottom, transparent 40%, rgb(5 6 14 / 0.35));
-  --fhql-texture-size: 48px 48px, 48px 48px, 48px 48px, 48px 48px, 100% 100%, 100% 100%;
+  --fhql-texture-size: 48px 48px, 48px 48px, 48px 48px, 48px 48px, 48px 48px, 48px 48px, 48px 48px, 48px 48px, 100% 100%, 100% 100%;
+  --fhql-texture-position: 0 0, 0 0, 0 0, 0 0, 24px 24px, 24px 24px, 24px 24px, 24px 24px, 0 0, 0 0;
   --fhql-texture-blend: normal;
   /* The quest list: wrought-iron bars fading into midnight. */
   --fhql-list-texture:
