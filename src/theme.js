@@ -8,13 +8,13 @@ const openApps = new Set();
 
 /**
  * Unsaved choices from the open settings window, shown on open windows as a live preview.
- * Keys are setting names (`theme`, `worldTheme`, `headingFont`, ...). Cleared when that window closes.
+ * Keys are setting names (`theme`, `worldTheme`, `textures`, `headingFont`, ...). Cleared when that window closes.
  *
- * @type {Record<string, string>}
+ * @type {Record<string, string|boolean>}
  */
 let preview = {};
 
-/** @param {string} key - A theme or font setting. @returns {string} Its previewed value, else the saved one. */
+/** @param {string} key - A theme or font setting. @returns {string|boolean} Its previewed value, else the saved one. */
 const setting = (key) => preview[key] ?? game.settings.get(MODULE_ID, key);
 
 /**
@@ -43,6 +43,8 @@ export function applyTheme(element)
    if (!element) { return; }
    element.classList.remove(...THEME_CLASSES);
    element.classList.add(`fhql-theme-${currentTheme()}`);
+   // Smooth panels: the player turned theme textures off.
+   element.classList.toggle('fhql-no-texture', !setting('textures'));
    applyFonts(element);
    applyBanner(element);
 }

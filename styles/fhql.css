@@ -1228,3 +1228,11 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
 
 /* Beacon: a banner stripe across the top. */
 .fhql-beacon.fhql-theme-ledger .fhql-beacon-panel { border-block-start: 3px solid var(--fhql-banner); }
+
+/* ---------- Smooth panels (per-player "Theme textures" off) ---------- */
+/* !important beats every theme's token block, whatever its selector weight. Colors stay. */
+.fhql-app.fhql-no-texture {
+  --fhql-texture: none !important;
+  --fhql-list-texture: none !important;
+  --fhql-banner-texture: none !important;
+}

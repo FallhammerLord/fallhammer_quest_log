@@ -42,6 +42,16 @@ export function registerSettings()
       onChange: restyle
    });
 
+   game.settings.register(MODULE_ID, 'textures', {
+      name: 'FHQL.Settings.Textures.Name',
+      hint: 'FHQL.Settings.Textures.Hint',
+      scope: 'client',
+      config: true,
+      type: Boolean,
+      default: true,
+      onChange: restyle
+   });
+
    // Font choices are filled on ready, once uploaded fonts are known. The same objects are kept, so
    // the settings window lists them.
    const worldFontChoices = { '': 'FHQL.Settings.Font.ThemeDefault' };

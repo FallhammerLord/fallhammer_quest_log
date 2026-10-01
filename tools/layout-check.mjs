@@ -35,6 +35,8 @@ const CASES = [
    { name: 'gm-edit-gothic', gm: true, editing: true, theme: 'gothic' },
    { name: 'gm-read-ledger', gm: true, editing: false, theme: 'ledger' },
    { name: 'player-ledger', gm: false, editing: false, theme: 'ledger' },
+   // Theme textures off: the class follows the theme name into the window's class list.
+   { name: 'gm-read-gothic-smooth', gm: true, editing: false, theme: 'gothic fhql-no-texture' },
    { name: 'gm-read-widefont', gm: true, editing: false, theme: 'light', font: WIDE_FONT },
    { name: 'gm-edit-widefont', gm: true, editing: true, theme: 'light', font: WIDE_FONT }
 ];

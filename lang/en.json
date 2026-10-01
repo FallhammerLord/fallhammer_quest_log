@@ -113,6 +113,10 @@
         "Ledger": "Ledger (matches Tidy 5e Sheets)",
         "World": "Use world theme"
       },
+      "Textures": {
+        "Name": "Theme textures (just you)",
+        "Hint": "Shows each theme's background textures. Turn off for smooth, flat panels."
+      },
       "DefaultOwnership": {
         "Name": "Player access when a quest is revealed",
         "Hint": "Hidden quests give players no access. When a quest leaves Hidden, all players get this level. Adjust single quests with Foundry's ownership controls.",

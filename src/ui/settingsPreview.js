@@ -2,7 +2,7 @@ import { settingsFormFields, SETTINGS_WINDOW_HOOKS } from '../compat.js';
 import { previewTheme } from '../theme.js';
 
 /** Settings that restyle our windows, and so preview live while the settings window is open. */
-const PREVIEW_KEYS = ['theme', 'worldTheme', 'headingFont', 'bodyFont', 'worldHeadingFont', 'worldBodyFont'];
+const PREVIEW_KEYS = ['theme', 'worldTheme', 'textures', 'headingFont', 'bodyFont', 'worldHeadingFont', 'worldBodyFont'];
 
 /**
  * Previews theme and font choices on open quest windows and the Beacon as soon as they change in
@@ -19,7 +19,7 @@ export function registerSettingsPreview()
       {
          const fields = settingsFormFields(root, PREVIEW_KEYS);
          if (!Object.values(fields).includes(event.target)) { return; }
-         previewTheme(Object.fromEntries(Object.entries(fields).map(([key, field]) => [key, field.value])));
+         previewTheme(Object.fromEntries(Object.entries(fields).map(([key, field]) => [key, field.type === 'checkbox' ? field.checked : field.value])));
       });
    });
    Hooks.on(SETTINGS_WINDOW_HOOKS.close, () => previewTheme(null));
