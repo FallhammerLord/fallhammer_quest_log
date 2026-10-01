@@ -451,6 +451,14 @@ Separate windows are kept only for full workflows: Pop out, FQL import, and Foun
 - One window per quest.
 - Hard-coded offsets for positioning around the hotbar.
 
+
+### 7.4f Easter eggs (2026-10-01)
+
+Rare, purely visual, theme-only moments (`src/ui/eggs.js`, CSS in the theme's file). Never clickable, never announced, a plain fade for reduced motion. GM setting `easterEggs` (on by default) turns them off for the table.
+
+- **Gothic:** the Beacon's bell tolls (swings, three brass rings) when the shown quest's last open objective is completed; with three or more marked quests the switcher's tooltip adds "A hunter is never alone."
+- **Cabaret:** the third quest completed in a session (counted per client) gets a curtain call over the open Quest Log or quest window: velvet drapes, a gilt "Spectacular, spectacular!" marquee with chasing bulbs, about three seconds.
+
 ## 8. FQL import
 
 - Source: `JournalEntry.flags['forien-quest-log'].json`.

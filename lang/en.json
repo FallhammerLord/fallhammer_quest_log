@@ -94,6 +94,11 @@
       "completed": "Completed",
       "failed": "Failed"
     },
+    "Egg": {
+      "Hunter": "A hunter is never alone.",
+      "Curtain": "Spectacular, spectacular!",
+      "CurtainSub": "Three quests completed tonight"
+    },
     "Subquest": {
       "OpenBeside": "Open beside this quest",
       "Remove": "Remove from this quest",
@@ -134,6 +139,10 @@
         "Cabaret": "Cabaret (wine velvet and footlights)",
         "Ledger": "Ledger (matches Tidy 5e Sheets)",
         "World": "Use world theme"
+      },
+      "EasterEggs": {
+        "Name": "Theme easter eggs",
+        "Hint": "Rare, purely visual moments in some themes (no sound, nothing to click). Turn off to keep every theme plain."
       },
       "PortraitFrame": {
         "Name": "Quest giver portrait frame",

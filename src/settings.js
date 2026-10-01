@@ -44,6 +44,15 @@ export function registerSettings()
       onChange: restyle
    });
 
+   game.settings.register(MODULE_ID, 'easterEggs', {
+      name: 'FHQL.Settings.EasterEggs.Name',
+      hint: 'FHQL.Settings.EasterEggs.Hint',
+      scope: 'world',
+      config: true,
+      type: Boolean,
+      default: true
+   });
+
    game.settings.register(MODULE_ID, 'portraitFrame', {
       name: 'FHQL.Settings.PortraitFrame.Name',
       hint: 'FHQL.Settings.PortraitFrame.Hint',

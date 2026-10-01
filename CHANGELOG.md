@@ -15,6 +15,7 @@ First feature-complete preview. Requires Foundry VTT v14.
 - Gothic theme, after Bloodborne: soot, oxblood, tarnished brass and moonlight; quatrefoil tracery with iron spear finials, an iron-railing quest list, iron-framed panels with lancet marks, a cross divider and a red initial that stay when textures are off.
 - Subquests work: adding or clicking one opens it beside its parent (a second subquest takes the first one's place; deeper ones open beside theirs), the log nests them, the GM can unlink one as its own quest or delete it, and dropping a quest on Subquests or Objectives makes it a subquest. (The parent link was hidden by a Foundry name clash; saved links carry over.)
 - The Beacon leads the Quest Log: switching quests moves an open log, and clicking shows the Beacon's quest before closing.
+- Easter eggs in Gothic and Cabaret (rare, visual only; the GM can turn them off).
 - Each theme has its own heading font: Amiri (Light), Josefin Sans (Dark), Oxanium (Sci-fi), IM Fell English SC (Gothic), Limelight (Cabaret), Modesto (Ledger); the bundled ones are SIL Open Font License. Light and Dark gain their own panel shapes (bookbinder and art deco).
 - Gothic headings use IM Fell English SC (bundled, SIL Open Font License), registered with Foundry so it also appears in font pickers.
 - Resizing settles on comfortable widths when you drag near them (hold Shift to resize freely).

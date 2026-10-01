@@ -13,6 +13,7 @@ import { registerEntryPoints } from './ui/entryPoints.js';
 import { refreshQuestBeacon } from './ui/QuestBeacon.js';
 import { registerSettingsPreview } from './ui/settingsPreview.js';
 import { registerShareQuery } from './ui/share.js';
+import { registerEggs } from './ui/eggs.js';
 import { registerQuestPreview } from './ui/questPreview.js';
 import { registerRewardDrop, registerRewardQueries } from './data/rewards.js';
 import { registerLifecycleHooks } from './data/lifecycle.js';
@@ -42,6 +43,7 @@ Hooks.once('init', () =>
    registerDepositQueries();
    registerSettingsPreview();
    registerShareQuery();
+   registerEggs();
    game.modules.get(MODULE_ID).api = api;
 });
 

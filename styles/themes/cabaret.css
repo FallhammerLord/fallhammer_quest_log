@@ -25,6 +25,12 @@
   --fhql-radius: 2px;
   --fhql-glow: 0 0 10px rgb(200 120 60 / 0.18);
   --fhql-cabaret-gilt: #d8b56c;
+  /* Easter egg drapes and marquee bulbs. */
+  --fhql-cabaret-velvet-deep: #2a0410;
+  --fhql-cabaret-velvet: #6e0f2a;
+  --fhql-cabaret-velvet-light: #a3243f;
+  --fhql-cabaret-bulb: #fff1c9;
+  --fhql-cabaret-bulb-glow: #ffd27a;
   /* A gilt harlequin trellis with sequins at every crossing and a rose-red one in each diamond, warmed
      by footlights glowing up from the bottom edge and a spotlight from above. */
   --fhql-texture:
@@ -125,3 +131,41 @@
 .fhql-app.fhql-theme-cabaret .fhql-objectives li.is-done .fhql-state-icon { color: var(--fhql-cabaret-gilt); }
 
 .fhql-app.fhql-theme-cabaret .fhql-button.fhql-danger-fill { color: var(--fhql-surface-sunken); }
+
+/* ---------- Easter egg: curtain call (src/ui/eggs.js) ---------- */
+/* Velvet drapes sweep in over the window, a gilt marquee lights with chasing bulbs, the drapes part.
+   About three seconds; nothing underneath stops being clickable. */
+.fhql-app.fhql-theme-cabaret .fhql-egg-curtain { position: absolute; inset: 0; z-index: 50; overflow: hidden; pointer-events: none; }
+.fhql-app.fhql-theme-cabaret .fhql-egg-drape {
+  position: absolute; top: 0; bottom: 0; width: 52%;
+  background: repeating-linear-gradient(90deg, var(--fhql-cabaret-velvet-deep) 0, var(--fhql-cabaret-velvet) 9px, var(--fhql-cabaret-velvet-light) 14px, var(--fhql-cabaret-velvet) 19px, var(--fhql-cabaret-velvet-deep) 28px);
+  box-shadow: 0 0 22px rgb(0 0 0 / 0.7);
+}
+.fhql-app.fhql-theme-cabaret .fhql-egg-drape::after { content: ''; position: absolute; inset: auto 0 0; height: 10px; background: repeating-linear-gradient(90deg, var(--fhql-cabaret-gilt) 0 2px, transparent 2px 5px); opacity: 0.8; }
+.fhql-app.fhql-theme-cabaret .fhql-egg-drape.is-left { left: 0; translate: -101% 0; }
+.fhql-app.fhql-theme-cabaret .fhql-egg-drape.is-right { right: 0; translate: 101% 0; }
+.fhql-app.fhql-theme-cabaret .fhql-egg-marquee {
+  position: absolute; left: 50%; top: 50%; translate: -50% -50%; opacity: 0;
+  display: grid; justify-items: center; gap: 6px; padding: 14px 22px; max-width: calc(100% - 24px);
+  border: 2px solid var(--fhql-cabaret-gilt); background: color-mix(in srgb, var(--fhql-surface) 92%, transparent); text-align: center;
+}
+.fhql-app.fhql-theme-cabaret .fhql-egg-line { font: 400 1.9em/1.05 var(--fhql-font-heading); color: var(--fhql-cabaret-gilt); text-wrap: balance; }
+.fhql-app.fhql-theme-cabaret .fhql-egg-sub { font-style: italic; color: var(--fhql-ink); }
+.fhql-app.fhql-theme-cabaret .fhql-egg-bulbs { display: flex; gap: 9px; }
+.fhql-app.fhql-theme-cabaret .fhql-egg-bulbs i { width: 6px; height: 6px; border-radius: 50%; background: var(--fhql-cabaret-bulb); box-shadow: 0 0 6px var(--fhql-cabaret-bulb-glow); }
+@keyframes fhql-drape-l { 0% { translate: -101% 0; } 22%, 72% { translate: 0 0; } 100% { translate: -101% 0; } }
+@keyframes fhql-drape-r { 0% { translate: 101% 0; } 22%, 72% { translate: 0 0; } 100% { translate: 101% 0; } }
+@keyframes fhql-marquee { 0%, 18% { opacity: 0; scale: 0.92; } 28%, 68% { opacity: 1; scale: 1; } 78%, 100% { opacity: 0; } }
+@keyframes fhql-chase { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+@keyframes fhql-marquee-fade { 0% { opacity: 0; } 20%, 75% { opacity: 1; } 100% { opacity: 0; } }
+@media (prefers-reduced-motion: no-preference) {
+  .fhql-app.fhql-theme-cabaret .fhql-egg-drape.is-left { animation: fhql-drape-l 3.2s cubic-bezier(.5,0,.3,1) forwards; }
+  .fhql-app.fhql-theme-cabaret .fhql-egg-drape.is-right { animation: fhql-drape-r 3.2s cubic-bezier(.5,0,.3,1) forwards; }
+  .fhql-app.fhql-theme-cabaret .fhql-egg-marquee { animation: fhql-marquee 3.2s ease forwards; }
+  .fhql-app.fhql-theme-cabaret .fhql-egg-bulbs i { animation: fhql-chase 0.5s steps(1) infinite; }
+  .fhql-app.fhql-theme-cabaret .fhql-egg-bulbs i:nth-child(even) { animation-delay: 0.25s; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fhql-app.fhql-theme-cabaret .fhql-egg-drape { display: none; }
+  .fhql-app.fhql-theme-cabaret .fhql-egg-marquee { animation: fhql-marquee-fade 2.4s ease forwards; }
+}

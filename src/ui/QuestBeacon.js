@@ -1,5 +1,6 @@
 import { playerRowElement, playersElement } from '../compat.js';
-import { MODULE_ID } from '../constants.js';
+import { MODULE_ID, THEMES } from '../constants.js';
+import { BELL_HTML, eggFor } from './eggs.js';
 import { openQuestLog, showInOpenLog, toggleQuestLog } from '../api.js';
 import { questAccess, questPage } from '../data/quests.js';
 import { beaconChoice, beaconQuests, setBeaconChoice } from '../data/tracking.js';
@@ -131,7 +132,7 @@ function renderEmpty()
  * What the Beacon showed last time, so a changed objective (ticked, failed, a deposit) can glow once.
  * Keyed by objective: state and deposit progress.
  */
-let lastShown = { entryId: null, keys: new Map(), status: null };
+let lastShown = { entryId: null, keys: new Map(), status: null, allDone: null };
 
 function renderWidget({ entry, party }, marked)
 {
@@ -149,7 +150,7 @@ function renderWidget({ entry, party }, marked)
    const switcher = marked.length > 1
     ? `<button type="button" class="fhql-beacon-switch" data-beacon-switch aria-haspopup="menu"
          aria-label="${escape(game.i18n.format('FHQL.Beacon.SwitchLabel', { count: marked.length }))}"
-         data-tooltip="${localize('FHQL.Beacon.Choose')}">${marked.length}<i class="fa-solid fa-chevron-up" inert></i></button>`
+         data-tooltip="${localize('FHQL.Beacon.Choose')}${marked.length >= 3 && eggFor(THEMES.gothic) ? ` · ${localize('FHQL.Egg.Hunter')}` : ''}">${marked.length}<i class="fa-solid fa-chevron-up" inert></i></button>`
     : '';
    const label = game.i18n.format('FHQL.Beacon.Label', { name: entry.name });
    const hasRewards = !access.gm && access.full && !playerOwned(entry) && Object.values(system.rewards).some((r) =>
@@ -172,6 +173,9 @@ function renderWidget({ entry, party }, marked)
       return same && lastShown.keys.has(o.id) && lastShown.keys.get(o.id) !== key;
    };
    const celebrate = same && lastShown.status !== system.status && ['completed', 'failed'].includes(system.status);
+   // Gothic easter egg: the bell tolls when the last open objective is completed.
+   const allDone = objectives.length > 0 && objectives.every((o) => o.state === 'done');
+   const toll = same && allDone && lastShown.allDone === false && eggFor(THEMES.gothic);
    const list = objectives.length ? `<ol class="fhql-beacon-objectives" aria-label="${localize('FHQL.Quest.Objectives')}">
       ${objectives.map((o) => `<li class="is-${o.state} ${flash(o) ? 'is-flash' : ''}">
         <i class="fhql-state-icon ${OBJECTIVE_ICONS[o.state]}" aria-label="${localize(`FHQL.Objective.State.${o.state}`)}"></i>
@@ -182,8 +186,8 @@ function renderWidget({ entry, party }, marked)
 
    const dot = isUnseen(entry)
     ? `<span class="fhql-new-dot" data-tooltip="${localize('FHQL.Seen.New')}" aria-label="${localize('FHQL.Seen.New')}"></span>` : '';
-   lastShown = { entryId: entry.id, keys, status: system.status };
-   return `<div class="fhql-beacon-panel ${celebrate ? 'is-celebrate' : ''}" data-quest-id="${entry.id}">${dot}
+   lastShown = { entryId: entry.id, keys, status: system.status, allDone };
+   return `<div class="fhql-beacon-panel ${celebrate ? 'is-celebrate' : ''} ${toll ? 'is-tolling' : ''}" data-quest-id="${entry.id}">${dot}${toll ? BELL_HTML : ''}
       <div class="fhql-beacon-headrow">
         <button type="button" class="fhql-beacon-head" aria-label="${escape(label)}">
           ${markIcon}
