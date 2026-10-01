@@ -171,6 +171,15 @@ export function postChat(alias, content)
    return ChatMessage.implementation.create({ speaker: { alias }, content });
 }
 
+/**
+ * @param {Document|undefined} doc - Any document.
+ * @returns {number} When it last changed (server time, ms), or 0 if unknown.
+ */
+export function modifiedTime(doc)
+{
+   return doc?._stats?.modifiedTime ?? 0;
+}
+
 /** Name of the scene control group our button joins. */
 export const SCENE_CONTROL_GROUP = 'tokens';
 

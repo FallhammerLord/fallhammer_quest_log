@@ -8,6 +8,7 @@ import { questLogAvailable } from '../data/playerActions.js';
 import { playerOwned } from '../data/rewards.js';
 import { applyTheme } from '../theme.js';
 import { depositedTotal, hasRequirement } from '../data/deposits.js';
+import { isUnseen } from '../data/seen.js';
 
 const WIDGET_ID = 'fhql-beacon';
 
@@ -160,7 +161,9 @@ function renderWidget({ entry, party }, marked)
       </li>`).join('')}
     </ol>` : '';
 
-   return `<div class="fhql-beacon-panel" data-quest-id="${entry.id}">
+   const dot = isUnseen(entry)
+    ? `<span class="fhql-new-dot" data-tooltip="${localize('FHQL.Seen.New')}" aria-label="${localize('FHQL.Seen.New')}"></span>` : '';
+   return `<div class="fhql-beacon-panel" data-quest-id="${entry.id}">${dot}
       <div class="fhql-beacon-headrow">
         <button type="button" class="fhql-beacon-head" aria-label="${escape(label)}">
           ${markIcon}

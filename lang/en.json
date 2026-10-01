@@ -425,6 +425,9 @@
       "Shown": "Shown to {names}.",
       "Missed": "Couldn't show it to {names}. They may have just disconnected.",
       "NoOne": "No connected player can see this quest. Reveal it, or give them access, first."
+    },
+    "Seen": {
+      "New": "Changed since you last looked"
     }
   }
 }

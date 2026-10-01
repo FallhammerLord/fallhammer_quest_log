@@ -996,3 +996,23 @@
   --fhql-list-texture: none !important;
   --fhql-banner-texture: none !important;
 }
+
+/* ---------- "New" markers ---------- */
+.fhql-app .fhql-new-dot {
+  display: inline-block;
+  width: 0.55em;
+  height: 0.55em;
+  border-radius: 50%;
+  background: var(--fhql-accent);
+  box-shadow: 0 0 0 2px var(--fhql-surface-sunken);
+  vertical-align: middle;
+}
+.fhql-beacon .fhql-beacon-panel { position: relative; }
+.fhql-beacon .fhql-new-dot {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 11px;
+  height: 11px;
+  box-shadow: 0 0 0 2px var(--fhql-surface);
+}

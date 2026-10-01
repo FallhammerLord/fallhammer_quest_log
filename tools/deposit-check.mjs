@@ -276,4 +276,36 @@ const gone = await undoClaim(quest.entry, 'r1', 0, { takeBack: true });
 expect('Undo of a missing item clears the claim without taking anything', gone.undone && !gone.tookBack && quest.reward().claims.length === 0);
 users[1].character = null;
 
+/* ---------- "New" markers ---------- */
+const { isUnseen, markSeen, startSeenTracking } = await import(new URL('../src/data/seen.js', import.meta.url));
+let writes = 0;
+const viewer = users[1];
+viewer.flags = {};
+viewer.getFlag = (scope, key) => viewer.flags[scope]?.[key];
+viewer.setFlag = async (scope, key, value) =>
+{
+   writes++;
+   viewer.flags[scope] ??= {};
+   viewer.flags[scope][key] = { ...(viewer.flags[scope][key] ?? {}), ...value };
+};
+globalThis.game.user = viewer;
+quest = makeQuest({ ...pelt });
+quest.entry._stats = { modifiedTime: 1000 };
+quest.page._stats = { modifiedTime: 1200 };
+quest.entry.testUserPermission = () => true;
+globalThis.game.journal = { get: (id) => (id === 'q1' ? quest.entry : undefined), filter: (fn) => [quest.entry].filter(fn), [Symbol.iterator]: function* () { yield quest.entry; } };
+expect('no dots before tracking starts', !isUnseen(quest.entry));
+await startSeenTracking();
+expect('existing quests count as seen on first use', !isUnseen(quest.entry));
+quest.page._stats.modifiedTime = 2000;
+expect('a change since then lights the dot', isUnseen(quest.entry));
+markSeen(quest.entry);
+await new Promise((r) => { setTimeout(r, 450); });
+expect('viewing the quest clears the dot', !isUnseen(quest.entry));
+const before = writes;
+markSeen(quest.entry);
+await new Promise((r) => { setTimeout(r, 450); });
+expect('viewing a seen quest writes nothing', writes === before);
+globalThis.game.user = users[0];
+
 process.exit(failures ? 1 : 0);

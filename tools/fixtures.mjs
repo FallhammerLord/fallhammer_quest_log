@@ -22,7 +22,7 @@ export function listContext(t, gm = true)
          { folder: true, id: 'f1', name: 'Act One: The Salt Roads of the Burning Pass', color: '#c9a24a', depth: 0, chain: '', count: 3 },
          q('p', 'The Salt Roads', 'active', 1, 'f1'),
          q('a', 'Extraordinarilyunbreakablequestnamewithoutspaces', 'active', 2, 'f1', true),
-         q('c', 'Find the missing courier before the rains', 'available', 3, 'f1')
+         { ...q('c', 'Find the missing courier before the rains', 'available', 3, 'f1'), unseen: true }
       ]
    };
 }

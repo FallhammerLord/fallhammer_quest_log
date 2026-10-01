@@ -16,6 +16,7 @@ import {
 import { openQuestMenu, questMenuActions } from './sheet/questMenu.js';
 import { shareActions } from './sheet/share.js';
 import { animateClose, animateOpen } from '../ui/motion.js';
+import { markSeen } from '../data/seen.js';
 import {
    applyCollapsed, capturePanelScroll, layoutPanels, onPanelHeadingClick, restorePanelScroll, watchPanels
 } from './sheet/panels.js';
@@ -175,6 +176,8 @@ export function QuestSheetMixin(Base)
          this.#restoreFocus(this.#pendingFocus);
          this.#pendingFocus = null;
          openNotesIfAsked(this);
+         // A quest on screen counts as seen (clears its "new" dot).
+         if (!this.minimized) { markSeen(this.questEntry); }
       }
 
       /** @override */

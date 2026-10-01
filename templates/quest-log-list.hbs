@@ -52,6 +52,7 @@
         <i class="fhql-status-icon {{statusIcon}}" data-tooltip="{{statusLabel}}" inert></i>
         <span class="fhql-row-name" data-tooltip="{{name}}">{{name}}</span>
         <span class="fhql-row-status">
+          {{#if unseen}}<span class="fhql-new-dot" data-tooltip="{{localize 'FHQL.Seen.New'}}" aria-label="{{localize 'FHQL.Seen.New'}}"></span>{{/if}}
           {{#if inProgress}}<i class="fa-solid fa-star fhql-in-progress" data-tooltip="{{localize 'FHQL.Quest.InProgress'}}" aria-label="{{localize 'FHQL.Quest.InProgress'}}"></i>{{/if}}
           {{#if tracked}}<i class="fa-solid fa-bookmark fhql-in-progress" data-tooltip="{{localize 'FHQL.Beacon.Tracked'}}" aria-label="{{localize 'FHQL.Beacon.Tracked'}}"></i>{{/if}}
           <span class="sr-only">{{statusLabel}}</span>

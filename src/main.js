@@ -19,6 +19,7 @@ import { registerPlayerActionQueries } from './data/playerActions.js';
 import { registerDepositQueries } from './data/deposits.js';
 import { releaseNotes, touchesNotesLock } from './data/notesLock.js';
 import { systemSupportSummary } from './data/systemItems.js';
+import { onlySeenChanged, startSeenTracking } from './data/seen.js';
 
 Hooks.once('init', () =>
 {
@@ -54,6 +55,7 @@ Hooks.once('ready', () =>
    console.log(`${MODULE_ID} | ${systemSupportSummary()}`);
    // A notes lock left from a previous session (closed browser) is cleared.
    releaseNotes();
+   startSeenTracking();
    refreshQuestBeacon();
    renameLegacyRootFolder();
 });
@@ -75,6 +77,13 @@ Hooks.on('updateUser', (user, changes) =>
 {
    const mine = user.id === game.user.id && foundry.utils.hasProperty(changes, `flags.${MODULE_ID}`);
    if (!mine && !touchesNotesLock(changes)) { return; }
+   // Seeing a quest only changes its dot: redraw the list and Beacon, never an open sheet.
+   if (mine && onlySeenChanged(changes))
+   {
+      refreshQuestBeacon();
+      if (QuestLog.instance.rendered) { QuestLog.instance.render({ parts: ['list'] }); }
+      return;
+   }
    refreshQuestBeacon();
    QuestLog.instance.onQuestChanged({}, null);
    QuestSheetApp.refreshAll({}, null);

@@ -13,6 +13,7 @@ import {
 import { QuestSheetMixin } from './QuestSheetMixin.js';
 import { stopEditingNotes } from './sheet/notes.js';
 import { guardActions } from './sheet/rows.js';
+import { isUnseen } from '../data/seen.js';
 
 /** The Quest Log window: quest list plus a quest sheet in the detail pane. Singleton. */
 export class QuestLog extends QuestSheetMixin(HandlebarsApp)
@@ -243,7 +244,8 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
             chain: chain.join(' '),
             statusIcon: STATUSES[status].icon,
             statusLabel: game.i18n.localize(`FHQL.Status.${status}`),
-            selected: entry.id === this.#selectedId
+            selected: entry.id === this.#selectedId,
+            unseen: entry.id !== this.#selectedId && isUnseen(entry)
          });
          for (const child of childrenOf.get(entry.id) ?? []) { add(child, level + 1); }
       };
