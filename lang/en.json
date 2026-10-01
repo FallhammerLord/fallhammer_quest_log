@@ -82,7 +82,10 @@
         "failed": "Failed"
       },
       "Show": "Hidden from players. Click to show",
-      "HideAction": "Visible to players. Click to hide"
+      "HideAction": "Visible to players. Click to hide",
+      "HideDone": "Hide done",
+      "AllDoneHidden": "Every objective is done. Untick Hide done to see them.",
+      "ShowAll": "Show all {count}"
     },
     "Status": {
       "hidden": "Hidden",

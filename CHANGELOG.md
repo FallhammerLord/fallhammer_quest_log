@@ -10,6 +10,7 @@ First feature-complete preview. Requires Foundry VTT v14.
 - Reward claiming: items onto characters, actors as followers, GM Give and Undo, locks, per-player rewards, chat cards.
 - Player workflows (GM settings): accept quests, propose quests, trusted status changes, shared player notes; hide the Quest Log from players; per-button toggles.
 - Hidden quests hide from every player, including per-player access, restored on reveal.
+- The quest header and list toolbar stay pinned; each quest panel scrolls on its own, with Objectives given room first. Narrow windows use one scroll with collapsible panels. Hide done on Objectives.
 - Player notes are edited in place from the read view, one person at a time; others see who is editing.
 - Item requirements on objectives: players hand items over (or only show them) from their characters, by button or drag. Deposits take only what's still needed, so several players filling the last slots never lose items. GM Undo returns them.
 - Import from Forien's Quest Log, in place, with parent/subquest repair and a report.

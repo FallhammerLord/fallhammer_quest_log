@@ -14,9 +14,15 @@ import {
    notesActions, notesContext, openNotesIfAsked, rememberOpenNotes, savePlayerNotes, stopEditingNotes
 } from './sheet/notes.js';
 import { openQuestMenu, questMenuActions } from './sheet/questMenu.js';
+import {
+   applyCollapsed, capturePanelScroll, layoutPanels, onPanelHeadingClick, restorePanelScroll, watchPanels
+} from './sheet/panels.js';
 
 /** Update option marking a text edit made from this window, so it re-renders lightly and keeps focus. */
 export const QUIET = { fhqlQuiet: true };
+
+/** Narrow layout: objectives shown before "Show all". Matches the CSS cap in styles/fhql.css. */
+const OBJECTIVE_CAP = 8;
 
 /** One-click status changes in the read view, by current status. */
 const STATUS_ACTIONS = {
@@ -53,6 +59,7 @@ export function QuestSheetMixin(Base)
             clearGiver: QuestSheet.#onClearGiver,
             showQuest: QuestSheet.#onShowQuest,
             addSubquest: QuestSheet.#onAddSubquest,
+            showAllObjectives: QuestSheet.#onShowAllObjectives,
             ...objectiveActions,
             ...rewardActions,
             ...notesActions,
@@ -71,6 +78,15 @@ export function QuestSheetMixin(Base)
 
       /** Open the notes editor after the next render, saving a second click. */
       _openNotesEditor = false;
+
+      /** Narrow layout: show every objective instead of the first few. Reset when the quest changes. */
+      _showAllObjectives = false;
+
+      /** Narrow layout: panels the viewer collapsed, by panel key. Kept while the window is open. */
+      _collapsedPanels = new Set();
+
+      /** Panel scroll positions captured before a render, restored after it. */
+      #pendingScroll = null;
 
       /** Last save outcome shown in edit mode: '', 'saving', 'saved', or 'failed'. */
       #saveState = '';
@@ -119,6 +135,7 @@ export function QuestSheetMixin(Base)
       {
          await super._preRender(context, options);
          this.#pendingFocus = this.#captureFocus();
+         this.#pendingScroll = capturePanelScroll(this.element);
          rememberOpenNotes(this);
       }
 
@@ -126,6 +143,12 @@ export function QuestSheetMixin(Base)
       _onRender(context, options)
       {
          super._onRender(context, options);
+         applyCollapsed(this);
+         // Size panels first, so restored scroll positions land inside their final heights.
+         layoutPanels(this.element);
+         watchPanels(this);
+         restorePanelScroll(this.element, this.#pendingScroll);
+         this.#pendingScroll = null;
          this.#restoreFocus(this.#pendingFocus);
          this.#pendingFocus = null;
          openNotesIfAsked(this);
@@ -136,6 +159,7 @@ export function QuestSheetMixin(Base)
       {
          await this._flushEdits();
          if (this.questEntry) { await stopEditingNotes(this, this.questEntry); }
+         this._panelObserver?.disconnect();
          return super._preClose(options);
       }
 
@@ -250,7 +274,13 @@ export function QuestSheetMixin(Base)
          const notesViaGM = canEditNotesViaGM(entry);
          const enrich = (html) => textEditor().enrichHTML(html ?? '', { secrets: access.editable, relativeTo: page });
          const localize = (key) => game.i18n.localize(key);
-         const objectives = objectivesContext(system, access, editing);
+         const allObjectives = objectivesContext(system, access, editing);
+         // "Hide done" is the viewer's own choice; edit mode always shows everything.
+         const hideDone = !editing && game.settings.get(MODULE_ID, 'hideDoneObjectives');
+         const objectives = hideDone ? allObjectives.filter((o) => o.state !== 'done') : allObjectives;
+         const doneCount = allObjectives.filter((o) => o.state === 'done').length;
+         // Narrow layout shows the first few objectives with "Show all"; CSS applies the cap only when narrow.
+         const objectivesCapped = !editing && !this._showAllObjectives && objectives.length > OBJECTIVE_CAP;
          const { rewards, rewardSummary } = rewardsContext(entry, system, access);
 
          const parentEntry = getQuestEntry(system.parent);
@@ -294,12 +324,18 @@ export function QuestSheetMixin(Base)
             description: system.description,
             descriptionHTML: access.full ? await enrich(system.description) : '',
             objectives,
-            doneCount: objectives.filter((o) => o.state === 'done').length,
+            doneCount,
+            objectiveTotal: allObjectives.length,
+            hideDone,
+            hideDoneToggle: !editing && (doneCount > 0 || hideDone),
+            allHidden: hideDone && allObjectives.length > 0 && objectives.length === 0,
+            objectivesCapped,
+            objectivesMoreLabel: game.i18n.format('FHQL.Objective.ShowAll', { count: objectives.length }),
             rewards,
             rewardSummary,
             subquests: children,
             showHiddenNotice: access.gm && system.status === 'hidden',
-            showObjectives: objectives.length > 0 || editing,
+            showObjectives: allObjectives.length > 0 || editing,
             showRewards: rewards.length > 0 || editing,
             textRewardEditing: { text: editing },
             playerNotes: system.playerNotes,
@@ -335,7 +371,16 @@ export function QuestSheetMixin(Base)
       {
          super._onFirstRender(context, options);
          const el = this.element;
-         el.addEventListener('change', (event) => this.#onFieldChange(event));
+         el.addEventListener('change', (event) =>
+         {
+            if (event.target.matches?.('[data-hide-done]'))
+            {
+               game.settings.set(MODULE_ID, 'hideDoneObjectives', event.target.checked).then(() => this.render());
+               return;
+            }
+            this.#onFieldChange(event);
+         });
+         el.addEventListener('click', (event) => onPanelHeadingClick(this, event));
          el.addEventListener('dragover', (event) => this.#onDragOver(event));
          el.addEventListener('dragleave', (event) => event.target.closest?.('[data-drop]')?.classList.remove('is-drop-target'));
          el.addEventListener('drop', (event) => this.#onDrop(event));
@@ -553,6 +598,13 @@ export function QuestSheetMixin(Base)
          if (!entry) { return; }
          const child = await createSubquest(entry);
          this.showQuest(child.id, { edit: true });
+      }
+
+      /** @this {QuestSheet} */
+      static #onShowAllObjectives()
+      {
+         this._showAllObjectives = true;
+         this.render();
       }
 
       /**

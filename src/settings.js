@@ -166,6 +166,13 @@ export function registerSettings()
       default: { statuses: [], collapsed: [] }
    });
 
+   game.settings.register(MODULE_ID, 'hideDoneObjectives', {
+      scope: 'client',
+      config: false,
+      type: Boolean,
+      default: false
+   });
+
    game.settings.register(MODULE_ID, 'gmNotesOpen', {
       scope: 'client',
       config: false,

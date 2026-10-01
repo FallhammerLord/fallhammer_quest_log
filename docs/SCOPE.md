@@ -389,6 +389,19 @@ Each is toggleable by the GM, separately for GMs and players. *Built 2026-09-29 
 - One primary (filled) button per region: Done in edit mode, Claim for players.
 - `npm run layout` renders every template at each breakpoint with stress data (long names, unbroken words, every reward state) and fails on any overflow. Run it before each release and after any layout change.
 
+### 7.4c Pinned header, self-scrolling panels (2026-10-01)
+
+The whole quest log never scrolls in normal use. Prototyped first (artifact "Quest Sheet Panels"), then built.
+
+- **Pinned:** the quest list toolbar (New quest, New folder, Import, search, filters) and the quest header (image, title, meta, buttons). The quest image shrinks from 160px to 80px as the window gets shorter, before panels are squeezed.
+- **Wide (sheet 560px+), two columns:** each panel is never taller than its contents and scrolls on its own, heading always visible. Every panel first gets a minimum: its contents or about four rows, whichever is smaller (a one-row panel stays one row). Leftover height goes out per column: right column by priority, Objectives, then Subquests, then Rewards; left column, Description and Player notes in proportion to what each still needs. Empty space under a column is fine. GM notes span the bottom; opened, they take at most 30% of the screen height and scroll.
+- **Last resort:** if the minimums don't fit (a very short window), the body grows and the sheet scrolls as a whole, header still pinned.
+- **Narrow (under 560px), one column:** following the usual guidance against scroll areas nested inside a scrolling page on narrow screens: one scroll, pinned compact header (no quest image), panels collapse by tapping their heading, Objectives shows the first 8 with "Show all N".
+- **Keeping your place:** each panel's scroll position is captured before every redraw and restored after it (ticking objective 150 keeps the list where it was).
+- **Edit mode:** rich-text editor toolbars stay pinned inside their scrolling panel.
+- **Hide done:** a per-player checkbox on Objectives hides completed objectives (read view only; edit mode shows all). The count still shows done/total.
+- **How:** CSS can't express "Objectives first", since flexbox shrinks by content size, so `src/apps/sheet/panels.js` measures after each render and whenever the window or a panel's contents change size (a ResizeObserver), and sets each panel's height. The layout test runs the same code on its pages, and has a long-quest case (65 objectives).
+
 ### 7.4b Child panels (2026-09-29)
 
 Quick choices open as child panels inside the same window, beside the control that asked, in the window's theme: the quest menu (⋮ and right-click on a list row), Move to folder, Set parent, Give and Claim recipient pickers, delete and undo confirmations, and the new-folder name prompt. Panels close on Esc or a click outside, support arrow keys, Home, and End, and return focus to the control that opened them. One per window. Built in `src/ui/popover.js`.

@@ -40,6 +40,8 @@ const CASES = [
    { name: 'player-ledger', gm: false, editing: false, theme: 'ledger' },
    // Theme textures off: the class follows the theme name into the window's class list.
    { name: 'gm-read-gothic-smooth', gm: true, editing: false, theme: 'gothic fhql-no-texture' },
+   // A long quest: panels share the height and scroll on their own.
+   { name: 'gm-read-long', gm: true, editing: false, theme: 'scifi', long: true },
    { name: 'gm-read-widefont', gm: true, editing: false, theme: 'light', font: WIDE_FONT },
    { name: 'gm-edit-widefont', gm: true, editing: true, theme: 'light', font: WIDE_FONT }
 ];
@@ -60,6 +62,9 @@ for (const c of CASES)
    }
 }
 
+// The module's panel sizing, as a plain script (file:// pages can't import modules from other files).
+const panelsScript = readFileSync(`${root}src/apps/sheet/panels.js`, 'utf8').replace(/^export /gm, '');
+
 const browser = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
 const page = await browser.newPage({ viewport: { width: 1100, height: 1000 } });
 const problems = [];
@@ -69,6 +74,10 @@ for (const p of pages)
    writeFileSync(`${out}/${p.id}.html`, `<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="file://${fa}">
      <style>body{margin:0;background:#444;font-family:sans-serif}*{box-sizing:border-box}button,input,select{font:inherit}${css}</style></head><body>${p.html}</body></html>`);
    await page.goto(`file://${out}/${p.id}.html`);
+   // Run the module's own panel sizing, as Foundry would after a render, so screenshots and checks
+   // see panels at their shared heights.
+   await page.addScriptTag({ content: `${panelsScript}
+      for (const app of document.querySelectorAll('.application')) { layoutPanels(app); }` });
    const found = await page.evaluate(() =>
    {
       const issues = [];

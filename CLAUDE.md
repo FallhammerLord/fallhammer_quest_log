@@ -16,7 +16,7 @@ A Foundry VTT **v14** quest log module (ID `fhql`, CSS prefix `fhql-`), built as
 
 ```sh
 npm run check      # lint + load + contrast + deposits. Run before every push; CI runs it on push too.
-npm run layout     # renders templates at 60 widths/themes/modes, fails on overflow
+npm run layout     # renders templates at 110 widths/themes/modes (runs panels.js), fails on overflow
                    # set CHROMIUM_PATH (here: /opt/pw-browsers/chromium)
 npm run load       # loads every module file with Foundry mocked; catches bad imports
 npm run contrast   # WCAG AA check of theme tokens
@@ -46,6 +46,7 @@ npm run deposits   # deposit and reward rules with Foundry mocked: races, refusa
 | `src/apps/sheet/rewards.js` | sheet feature: rewards and claiming (context + actions) |
 | `src/apps/sheet/notes.js` | sheet feature: player notes in place (context + actions) |
 | `src/apps/sheet/questMenu.js` | sheet feature: GM quest menu (pop out, access, move, parent, delete) |
+| `src/apps/sheet/panels.js` | panel heights (priority/proportional sharing), scroll keeping, narrow collapse; runs after every render |
 | `src/apps/sheet/rows.js` | row lookups, `editorUnsaved`, `guardActions` (actions show a notice on failure) |
 | `src/apps/QuestLog.js` | log window: folder tree, filters, search, right-click menu |
 | `src/apps/QuestSheetApp.js` | pop-out quest window |
@@ -59,6 +60,7 @@ npm run deposits   # deposit and reward rules with Foundry mocked: races, refusa
 
 - **Imports:** one missing or misnamed import stops the whole module in Foundry and ESLint won't see it. `npm run load` catches it; always run `npm run check`.
 - **Editing by slicing:** two bugs came from Python/regex cuts that ran past their end marker and deleted neighboring functions. After any cut, diff the file against the previous commit.
+- **Panel layout:** the sheet's height is shared by `panels.js`, not CSS. Panel contents go inside `.fhql-panel-body[data-scroll=key]` on a `.fhql-card[data-panel=key]`; new panels need both, or they won't size or keep their scroll. Narrow-only rules live inside `@container fhql-sheet (max-width: 559px)`; a same-weight default rule later in the file beats an override inside an earlier container query.
 - **Width containers:** never put `container-type` on an element that contains a text field or rich-text editor. Foundry's own form/editor styles collapse inside one. Containers sit only on the sheet, reward list, and subquest list. The layout test enforces this.
 - **Rich-text editors:** use `<prose-mirror toggled>` without `open`. Adding `open` at render broke editing. Unsaved editor text is flushed on Done, on close, and on switching quests via `_flushEdits`. Only *open* editors count as unsaved (a just-saved toggled editor can still report dirty).
 - **Player notes** are edited in place with a one-editor lock on User flags (`src/data/notesLock.js`), not in edit mode.
@@ -83,6 +85,7 @@ Storage survives disable/re-enable; editing and autosave; view/edit modes; quick
 - Claiming, Give, Undo; player workflow settings; font settings listing uploaded fonts; sci-fi knurl strength; list textures; Dark art-deco fans (CSS-only); live theme preview from Module Settings; Beacon menu toggles closed on second click; Gothic theme; Theme textures toggle (per player, all themes, live preview).
 - Item requirements and deposits: hand over, show only, drag from a character sheet, Undo with return, and two players depositing at once (needs two browsers as different players). Item matching across systems (dnd5e/pf2e quantity). Hand over always confirms source and amount in a panel (starts on the assigned character; party inventory selectable); GM hand over from an NPC; quantity in each of the user's systems: D&D 5e, Cypher, Daggerheart, PF2e. Startup console line names the detected system.
 - Rewards: Claim/Give confirm panel with any owned actor (party inventory); GM Give to any actor (NPCs credited to the GM); Undo "Take it back" (merged stacks reduced by the claimed amount; missing item still clears the claim).
+- Pinned header and list toolbar; panels sized by priority and scrolling on their own (wide); one scroll with collapsible panels and Show all (narrow); scroll kept after ticking an objective; Hide done; editor toolbar pinned in edit mode; very short window falls back to whole-sheet scroll.
 - Player notes in place: Edit notes opens the editor in one click (auto-clicks the editor's pen; unverified), lock shown to a second user, GM Edit anyway, saved text stays visible after the editor's Save.
 
 ## Next up (see `docs/SCOPE.md` §11 milestones and §13 open decisions)

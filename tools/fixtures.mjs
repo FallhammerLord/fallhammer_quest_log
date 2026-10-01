@@ -27,7 +27,7 @@ export function listContext(t, gm = true)
    };
 }
 
-export function sheetContext(t, { gm = true, editing = false } = {})
+export function sheetContext(t, { gm = true, editing = false, long = false } = {})
 {
    const objectives = [
       ['Meet the caravan at Cinderford', 'done'], ['Clear the rockfall at the switchbacks before the autumn rains', 'open', true],
@@ -48,6 +48,16 @@ export function sheetContext(t, { gm = true, editing = false } = {})
          { index: 1, label: 'Rinn (Kestrel of the Long Watch): 3', held: true, gm }
       ]
    });
+
+   // A long quest: 60 objectives and a long description, so panels must share height and scroll.
+   if (long)
+   {
+      for (let i = 0; i < 60; i++)
+      {
+         const state = i < 12 ? 'done' : 'open';
+         objectives.push({ id: `l${i}`, name: `Recruit fabricators for shift ${i + 1}`, state, icon: OI[state], stateLabel: t(`Objective.${state}`) });
+      }
+   }
 
    const reward = (id, over) => ({
       id, type: 'item', icon: 'fa-solid fa-gem', linked: true, uuid: `Item.${id}`, claimable: true, locked: false,
@@ -77,8 +87,10 @@ export function sheetContext(t, { gm = true, editing = false } = {})
          giver: { name: 'Warden Hask of the Cinderford Garrison', uuid: 'Actor.x', img: '', linked: true },
          parent: { id: 'p', name: 'The Salt Roads' },
          description: '<p>x</p>',
-         descriptionHTML: '<p>Escort the salt caravan through the burned pass before the autumn rains close it for the season.</p>',
-         objectives, doneCount: 1,
+         descriptionHTML: '<p>Escort the salt caravan through the burned pass before the autumn rains close it for the season.</p>'
+          + (long ? '<p>The Homefront wing needs bodies before the next convoy cycle. Each recruit is screened twice.</p>'.repeat(10) : ''),
+         objectives, doneCount: objectives.filter((o) => o.state === 'done').length, objectiveTotal: objectives.length,
+         hideDoneToggle: !editing, objectivesCapped: !editing && objectives.length > 8, objectivesMoreLabel: `Show all ${objectives.length}`,
          rewards, rewardSummary: t('Reward.Summary').replace('{claimed}', '1').replace('{total}', '3'),
          subquests: [{ id: 'c', name: 'Find the missing courier before the rains', status: 'available', icon: S.available, label: t('Status.available') }],
          playerNotes: '', playerNotesHTML: '<p>Hask owes us 40 gold.</p>',

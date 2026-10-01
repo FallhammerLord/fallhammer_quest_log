@@ -69,7 +69,7 @@
   border-block-end: 2px solid var(--fhql-metal);
   box-shadow: 0 4px 10px rgb(0 0 0 / 0.4);
 }
-.fhql-app.fhql-theme-ledger .fhql-sheet-inner > .fhql-sheet-head:first-child:not(:has(.fhql-sheet-fields)) {
+.fhql-app.fhql-theme-ledger .fhql-sheet-top > .fhql-sheet-head:first-child:not(:has(.fhql-sheet-fields)) {
   margin-block-start: calc(-1 * var(--fhql-pad-top));
 }
 .fhql-app.fhql-theme-ledger .fhql-banner + .fhql-sheet-head:not(:has(.fhql-sheet-fields)) { margin-block-start: -0.8em; }

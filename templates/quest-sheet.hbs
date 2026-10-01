@@ -1,6 +1,7 @@
 <div class="fhql-sheet">
 {{#with sheet}}
 <div class="fhql-sheet-inner">
+<div class="fhql-sheet-top">
   {{#if image}}{{#unless editing}}<img class="fhql-banner" src="{{image}}" alt="">{{/unless}}{{/if}}
 
   {{! ---------- Header ---------- }}
@@ -112,6 +113,7 @@
   {{#if showHiddenNotice}}
   <p class="fhql-notice"><i class="fa-solid fa-eye-slash" inert></i> {{localize "FHQL.QuestLog.HiddenNotice"}}</p>
   {{/if}}
+</div>
 
   {{#if full}}
   <div class="fhql-sheet-body">
@@ -119,34 +121,38 @@
 
       {{! ---------- Description ---------- }}
       {{#if editing}}
-      <section class="fhql-card fhql-area-description">
+      <section class="fhql-card fhql-area-description" data-panel="description">
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.Description"}}</h3>
+        <div class="fhql-panel-body" data-scroll="description">
         <prose-mirror name="description" data-field="description" toggled value="{{description}}">{{{descriptionHTML}}}</prose-mirror>
+        </div>
       </section>
       {{else if descriptionHTML}}
-      <section class="fhql-card fhql-area-description">
+      <section class="fhql-card fhql-area-description" data-panel="description">
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.Description"}}</h3>
-        <div class="fhql-prose">{{{descriptionHTML}}}</div>
+        <div class="fhql-panel-body" data-scroll="description"><div class="fhql-prose">{{{descriptionHTML}}}</div></div>
       </section>
       {{/if}}
 
       {{! ---------- Player notes: edited in place, by one person at a time, in either view ---------- }}
       {{#if notesEditing}}
-      <section class="fhql-card fhql-area-notes">
+      <section class="fhql-card fhql-area-notes" data-panel="notes">
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.PlayerNotes"}}
           <button type="button" class="fhql-button fhql-small fhql-primary fhql-push" data-action="finishNotes"
             aria-label="{{localize 'FHQL.Notes.Done'}}"><i class="fa-solid fa-check" inert></i><span class="fhql-label">{{localize "FHQL.Notes.Done"}}</span></button></h3>
+        <div class="fhql-panel-body" data-scroll="notes">
         <prose-mirror name="playerNotes" data-field="playerNotes" toggled value="{{playerNotes}}">{{{playerNotesHTML}}}</prose-mirror>
+        </div>
       </section>
       {{else if playerNotesHTML}}
-      <section class="fhql-card fhql-area-notes">
+      <section class="fhql-card fhql-area-notes" data-panel="notes">
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.PlayerNotes"}}
           {{#if notesLockedBy}}<span class="fhql-empty-note fhql-push"><i class="fa-solid fa-lock" inert></i> {{notesLockedBy}}</span>
           {{#if notesTakeOver}}<button type="button" class="fhql-button fhql-small" data-action="editNotes" data-force
             aria-label="{{localize 'FHQL.Notes.TakeOver'}}" data-tooltip="{{localize 'FHQL.Notes.TakeOverHint'}}"><i class="fa-solid fa-pen" inert></i><span class="fhql-label">{{localize "FHQL.Notes.TakeOver"}}</span></button>{{/if}}
           {{else if notesCanStart}}<button type="button" class="fhql-button fhql-small fhql-push" data-action="editNotes"
             aria-label="{{localize 'FHQL.Player.EditNotes'}}"><i class="fa-solid fa-pen" inert></i><span class="fhql-label">{{localize "FHQL.Player.EditNotes"}}</span></button>{{/if}}</h3>
-        <div class="fhql-prose">{{{playerNotesHTML}}}</div>
+        <div class="fhql-panel-body" data-scroll="notes"><div class="fhql-prose">{{{playerNotesHTML}}}</div></div>
       </section>
       {{else if canEditNotes}}
       <section class="fhql-card fhql-compact fhql-area-notes">
@@ -164,10 +170,14 @@
 
       {{! ---------- Objectives ---------- }}
       {{#if showObjectives}}
-      <section class="fhql-card fhql-area-objectives">
+      <section class="fhql-card fhql-area-objectives" data-panel="objectives">
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.Objectives"}}
-          <span class="fhql-count">{{doneCount}}/{{objectives.length}}</span></h3>
-        <ul class="fhql-objectives">
+          {{#if hideDoneToggle}}<label class="fhql-hide-done"><input type="checkbox" data-hide-done {{#if hideDone}}checked{{/if}}>
+            {{localize "FHQL.Objective.HideDone"}}</label>{{/if}}
+          <span class="fhql-count">{{doneCount}}/{{objectiveTotal}}</span></h3>
+        <div class="fhql-panel-body" data-scroll="objectives">
+        {{#if allHidden}}<p class="fhql-muted">{{localize "FHQL.Objective.AllDoneHidden"}}</p>{{/if}}
+        <ul class="fhql-objectives {{#if objectivesCapped}}is-capped{{/if}}">
           {{#each objectives}}
           <li class="is-{{state}} {{#if requirement}}has-requirement{{/if}}" data-objective-id="{{id}}"
               {{#if ../editing}}data-drop="requirement"{{else if canDeposit}}data-deposit{{/if}}>
@@ -243,6 +253,8 @@
           <p class="fhql-hint">{{localize "FHQL.Deposit.DropHint"}}</p>
         </div>
         {{/if}}
+        {{#if objectivesCapped}}<button type="button" class="fhql-button fhql-small fhql-show-all" data-action="showAllObjectives">{{objectivesMoreLabel}}</button>{{/if}}
+        </div>
       </section>
       {{else if editable}}
       <section class="fhql-card fhql-compact fhql-area-objectives">
@@ -252,11 +264,12 @@
 
       {{! ---------- Subquests ---------- }}
       {{#if subquests.length}}
-      <section class="fhql-card fhql-area-subquests">
+      <section class="fhql-card fhql-area-subquests" data-panel="subquests">
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.Subquests"}}
           <span class="fhql-count">{{subquests.length}}</span>
           {{#if gm}}<button type="button" class="fhql-button fhql-small" data-action="addSubquest" aria-label="{{localize 'FHQL.Quest.AddSubquestLabel'}}" data-tooltip="{{localize 'FHQL.Quest.AddSubquestLabel'}}"><i class="fa-solid fa-plus" inert></i><span class="fhql-label">{{localize "FHQL.Quest.AddSubquest"}}</span></button>{{/if}}
         </h3>
+        <div class="fhql-panel-body" data-scroll="subquests">
         <ul class="fhql-rows">
           {{#each subquests}}
           <li class="fhql-status-{{status}}">
@@ -268,6 +281,7 @@
           </li>
           {{/each}}
         </ul>
+        </div>
       </section>
       {{else if gm}}
       <section class="fhql-card fhql-compact fhql-area-subquests">
@@ -278,9 +292,10 @@
 
       {{! ---------- Rewards ---------- }}
       {{#if showRewards}}
-      <section class="fhql-card fhql-area-rewards" {{#if editable}}data-drop="rewards"{{/if}}>
+      <section class="fhql-card fhql-area-rewards" data-panel="rewards" {{#if editable}}data-drop="rewards"{{/if}}>
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.Rewards"}}
           <span class="fhql-count">{{#if rewardSummary}}{{rewardSummary}}{{else}}{{rewards.length}}{{/if}}</span></h3>
+        <div class="fhql-panel-body" data-scroll="rewards">
         <ul class="fhql-rewards {{#if editing}}is-editing{{/if}}">
           {{#each rewards}}
           <li class="fhql-reward {{#if struck}}is-claimed{{/if}}" data-reward-id="{{id}}"
@@ -357,6 +372,7 @@
             <i class="fa-solid fa-plus" inert></i> {{localize "FHQL.Reward.AddText"}}</button>{{/if}}
         </div>
         {{/if}}
+        </div>
       </section>
       {{else if editable}}
       <section class="fhql-card fhql-compact fhql-area-rewards" data-drop="rewards">
@@ -373,6 +389,7 @@
         <i class="fa-solid fa-user-secret" inert></i> {{localize "FHQL.Quest.GMNotes"}}
         <span class="fhql-gm-tag">{{localize "FHQL.Quest.GMOnly"}}</span>
       </summary>
+      <div class="fhql-panel-body" data-scroll="gmNotes">
       {{#if editing}}
       <prose-mirror name="gmNotes" data-field="gmNotes" toggled value="{{gmNotes.raw}}">{{{gmNotes.html}}}</prose-mirror>
       {{else if gmNotes.html}}
@@ -380,6 +397,7 @@
       {{else}}
       <p class="fhql-muted">{{localize "FHQL.Quest.GMNotesEmpty"}}</p>
       {{/if}}
+      </div>
     </details>
     {{/if}}
   </div>
