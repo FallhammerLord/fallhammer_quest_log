@@ -61,7 +61,7 @@ npm run deposits   # deposit rules with Foundry mocked: races, refusals, rollbac
 
 ## Verified in Foundry by the user
 
-Storage survives disable/re-enable; editing and autosave; view/edit modes; quick status actions; folders; Beacon sizing (with Carolingian/Classic UI); FQL import on real data; hidden quests hidden from players; Done commits editor text; Ledger theme beside Tidy (title bar, banner, quest image flush on top, Modesto name, follows a changed Tidy color).
+Storage survives disable/re-enable; editing and autosave; view/edit modes; quick status actions; folders; Beacon sizing (with Carolingian/Classic UI); FQL import on real data; hidden quests hidden from players; Done commits editor text; Ledger theme beside Tidy (title bar, banner, quest image flush on top, Modesto name, follows a changed Tidy color); Sci-fi theme with a 5:1 quest image showing uncropped.
 
 ## Waiting on the user
 
