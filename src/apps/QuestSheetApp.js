@@ -1,7 +1,7 @@
 import { HandlebarsApp } from '../compat.js';
 import { MODULE_PATH } from '../constants.js';
 import { applyTheme, trackApp, untrackApp } from '../theme.js';
-import { clampToMinSize } from './minSize.js';
+import { clampToMinSize, snapWidth } from './minSize.js';
 import { getQuestEntry } from '../data/quests.js';
 import { QuestSheetMixin } from './QuestSheetMixin.js';
 import { QuestLog } from './QuestLog.js';
@@ -104,10 +104,16 @@ export class QuestSheetApp extends QuestSheetMixin(HandlebarsApp)
    /** Smallest readable size; the layout reflows down to this. */
    static MIN_SIZE = { width: 340, height: 320 };
 
+   /**
+    * Comfort widths (see snapWidth). The sheet turns two-column at 560px (styles/fhql.css). 420: a
+    * comfortable single column. 580: the first two-column width. 760: the default.
+    */
+   static SNAP_WIDTHS = [420, 580, 760];
+
    /** @override */
    _updatePosition(position)
    {
-      return super._updatePosition(clampToMinSize(position, QuestSheetApp.MIN_SIZE));
+      return super._updatePosition(clampToMinSize(snapWidth(position, QuestSheetApp.SNAP_WIDTHS), QuestSheetApp.MIN_SIZE));
    }
 
    /** @override */

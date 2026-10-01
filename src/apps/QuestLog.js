@@ -2,7 +2,7 @@ import { HandlebarsApp } from '../compat.js';
 import { inputPopover } from '../ui/popover.js';
 import { MODULE_ID, MODULE_PATH, STATUSES } from '../constants.js';
 import { applyTheme, trackApp, untrackApp } from '../theme.js';
-import { clampToMinSize } from './minSize.js';
+import { clampToMinSize, snapWidth } from './minSize.js';
 import { scanFqlQuests } from '../import/fql.js';
 import { trackedIds } from '../data/tracking.js';
 import { canProposeQuests, requestPlayerAction } from '../data/playerActions.js';
@@ -398,10 +398,17 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
    /** Smallest readable size; the layout reflows down to this. */
    static MIN_SIZE = { width: 420, height: 380 };
 
+   /**
+    * Comfort widths (see snapWidth). The list takes about 252px; the sheet beside it turns two-column
+    * at 560px (styles/fhql.css, fhql-sheet container). 560: list beside a one-column sheet, just past
+    * the stacked layout (540). 830: the first roomy two-column width. 1040: the default.
+    */
+   static SNAP_WIDTHS = [560, 830, 1040];
+
    /** @override */
    _updatePosition(position)
    {
-      return super._updatePosition(clampToMinSize(position, QuestLog.MIN_SIZE));
+      return super._updatePosition(clampToMinSize(snapWidth(position, QuestLog.SNAP_WIDTHS), QuestLog.MIN_SIZE));
    }
 
    /** @override */
