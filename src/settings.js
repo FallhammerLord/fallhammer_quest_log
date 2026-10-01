@@ -175,6 +175,13 @@ export function registerSettings()
       default: true
    });
 
+   game.settings.register(MODULE_ID, 'windowMemory', {
+      scope: 'client',
+      config: false,
+      type: Object,
+      default: {}
+   });
+
    game.settings.register(MODULE_ID, 'hideDoneObjectives', {
       scope: 'client',
       config: false,

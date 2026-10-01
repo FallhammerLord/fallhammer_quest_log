@@ -44,6 +44,9 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
       })
    };
 
+   /** Remembers each player's last size and place. */
+   static MEMORY_KEY = 'questLog';
+
    static PARTS = {
       list: { template: `${MODULE_PATH}/templates/quest-log-list.hbs`, scrollable: [''] },
       detail: { template: `${MODULE_PATH}/templates/quest-sheet.hbs`, scrollable: [''] }

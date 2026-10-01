@@ -98,6 +98,49 @@ export function QuestSheetMixin(Base)
       /** @returns {HTMLElement|null} Where this window settles when it closes; null for its own center. */
       _closeToward() { return null; }
 
+      /* ---------- Window memory: each player's last size (and, for the log, place) ---------- */
+
+      /** Key in the `windowMemory` client setting; null for no memory. Set by each window class. */
+      static MEMORY_KEY = null;
+
+      /** Whether the remembered place is restored too, or only the size (pop-outs, so they don't stack). */
+      static MEMORY_PLACE = true;
+
+      /** @override */
+      _initializeApplicationOptions(options)
+      {
+         const resolved = super._initializeApplicationOptions(options);
+         const key = this.constructor.MEMORY_KEY;
+         let saved = null;
+         // The window may be built before settings exist (early hooks); then it opens at its default size.
+         try { saved = key ? game.settings.get(MODULE_ID, 'windowMemory')?.[key] : null; }
+         catch { saved = null; }
+         if (saved)
+         {
+            const { width, height, left, top } = saved;
+            resolved.position = { ...resolved.position, width, height, ...(this.constructor.MEMORY_PLACE ? { left, top } : {}) };
+         }
+         return resolved;
+      }
+
+      #memoryTimer = null;
+
+      /** Saves size and place after each move or resize, batched. @override */
+      _onPosition(position)
+      {
+         super._onPosition?.(position);
+         const key = this.constructor.MEMORY_KEY;
+         if (!key || this.minimized || !this.rendered) { return; }
+         clearTimeout(this.#memoryTimer);
+         this.#memoryTimer = setTimeout(() =>
+         {
+            const { width, height, left, top } = this.position;
+            const all = { ...(game.settings.get(MODULE_ID, 'windowMemory') ?? {}) };
+            all[key] = { width, height, left, top };
+            game.settings.set(MODULE_ID, 'windowMemory', all);
+         }, 500);
+      }
+
       /**
        * Closes with our settle motion instead of Foundry's own, so the two never play together.
        *

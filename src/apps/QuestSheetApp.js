@@ -68,6 +68,10 @@ export class QuestSheetApp extends QuestSheetMixin(HandlebarsApp)
       position: { width: 760, height: 640 }
    };
 
+   /** Remembers each player's last pop-out size (not place, so several windows don't stack exactly). */
+   static MEMORY_KEY = 'questSheet';
+   static MEMORY_PLACE = false;
+
    static PARTS = {
       sheet: { template: `${MODULE_PATH}/templates/quest-sheet.hbs`, scrollable: [''] }
    };
