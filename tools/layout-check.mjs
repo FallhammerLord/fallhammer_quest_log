@@ -34,6 +34,7 @@ const CASES = [
    { name: 'gm-read', gm: true, editing: false, theme: 'dark' },
    { name: 'gm-edit', gm: true, editing: true, theme: 'dark' },
    { name: 'player', gm: false, editing: false, theme: 'dark' },
+   { name: 'gm-read-light', gm: true, editing: false, theme: 'light' },
    { name: 'gm-read-scifi', gm: true, editing: false, theme: 'scifi' },
    { name: 'gm-edit-gothic', gm: true, editing: true, theme: 'gothic' },
    { name: 'gm-read-cabaret', gm: true, editing: false, theme: 'cabaret' },

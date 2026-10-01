@@ -23,7 +23,8 @@
   --fhql-status-failed: #9b2020;
   /* Each theme sets the -theme fonts; a GM or player font choice overrides the plain tokens inline. */
   --fhql-font-body-theme: var(--font-body, "Signika", sans-serif);
-  --fhql-font-heading-theme: var(--font-body, "Signika", sans-serif);
+  /* Amiri ships with Foundry: a book serif for parchment headings. */
+  --fhql-font-heading-theme: "Amiri", Georgia, serif;
   --fhql-font-body: var(--fhql-font-body-theme);
   --fhql-font-heading: var(--fhql-font-heading-theme);
   --fhql-radius: 4px;

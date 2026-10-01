@@ -8,6 +8,7 @@
 .fhql-app.fhql-theme-auto.theme-dark,
 body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
   --fhql-surface: #1e1812;
+  --fhql-font-heading-theme: "Josefin Sans", var(--font-body, "Signika"), sans-serif;
   --fhql-surface-raised: #2a221a;
   --fhql-surface-sunken: #15110c;
   --fhql-ink: #eadfc8;
@@ -43,6 +44,54 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
     repeating-linear-gradient(60deg, rgb(224 160 84 / 0.06) 0 1px, transparent 1px 14px),
     repeating-linear-gradient(-60deg, rgb(224 160 84 / 0.06) 0 1px, transparent 1px 14px);
 }
-.fhql-app.fhql-theme-dark .fhql-subheading { font-variant: small-caps; letter-spacing: 0.04em; }
 
 .fhql-app.fhql-theme-dark .fhql-button.fhql-danger-fill { color: var(--fhql-surface-sunken); }
+
+/* ---------- Shapes (art deco; kept with textures off). Also "Follow Foundry" while Foundry is dark. ---------- */
+.fhql-app:is(.fhql-theme-dark, :where(.fhql-theme-auto.theme-dark, body.theme-dark .fhql-theme-auto:not(.theme-light))) {
+  --fhql-dark-fan: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='10' viewBox='0 0 14 10'%3E%3Cpath d='M7 10L0.5 3.5A9 9 0 0 1 13.5 3.5Z' fill='none' stroke='rgb(224,160,84)' stroke-width='1'/%3E%3Cpath d='M7 10V1.2M7 10L3 2.4M7 10L11 2.4' stroke='rgb(224,160,84)' stroke-width='0.9'/%3E%3C/svg%3E");
+  --fhql-dark-diamond: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='12' viewBox='0 0 22 12'%3E%3Cpath d='M11 1L16 6L11 11L6 6Z' fill='none' stroke='rgb(224,160,84)' stroke-width='1'/%3E%3Cpath d='M11 3.5L13.5 6L11 8.5L8.5 6Z' fill='rgb(224,160,84)'/%3E%3Cpath d='M1 6H5M17 6H21' stroke='rgb(224,160,84)' stroke-width='1'/%3E%3C/svg%3E");
+  --fhql-dark-gold: rgb(224 160 84 / 0.6);
+}
+
+/* Panels: a gold hairline inner frame with stepped deco brackets at the top corners. */
+.fhql-app:is(.fhql-theme-dark, :where(.fhql-theme-auto.theme-dark, body.theme-dark .fhql-theme-auto:not(.theme-light))) .fhql-card {
+  box-shadow: inset 0 0 0 3px var(--fhql-surface-raised), inset 0 0 0 4px rgb(224 160 84 / 0.2);
+  background-image:
+    linear-gradient(var(--fhql-dark-gold), var(--fhql-dark-gold)), linear-gradient(var(--fhql-dark-gold), var(--fhql-dark-gold)),
+    linear-gradient(var(--fhql-dark-gold), var(--fhql-dark-gold)), linear-gradient(var(--fhql-dark-gold), var(--fhql-dark-gold)),
+    linear-gradient(var(--fhql-dark-gold), var(--fhql-dark-gold)), linear-gradient(var(--fhql-dark-gold), var(--fhql-dark-gold)),
+    linear-gradient(var(--fhql-dark-gold), var(--fhql-dark-gold)), linear-gradient(var(--fhql-dark-gold), var(--fhql-dark-gold));
+  background-size: 14px 1px, 1px 14px, 8px 1px, 1px 8px, 14px 1px, 1px 14px, 8px 1px, 1px 8px;
+  background-position: 5px 5px, 5px 5px, 8px 8px, 8px 8px, right 5px top 5px, right 5px top 5px, right 8px top 8px, right 8px top 8px;
+  background-repeat: no-repeat;
+}
+
+/* Panel headings: letter-spaced deco capitals after a small sunburst fan, a gold hairline under them. */
+.fhql-app:is(.fhql-theme-dark, :where(.fhql-theme-auto.theme-dark, body.theme-dark .fhql-theme-auto:not(.theme-light))) .fhql-subheading { font-variant: normal; text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.95em; }
+.fhql-app:is(.fhql-theme-dark, :where(.fhql-theme-auto.theme-dark, body.theme-dark .fhql-theme-auto:not(.theme-light))) .fhql-card > .fhql-subheading {
+  padding-inline-start: 19px;
+  background: var(--fhql-dark-fan) no-repeat left center / 14px 10px;
+}
+.fhql-app:is(.fhql-theme-dark, :where(.fhql-theme-auto.theme-dark, body.theme-dark .fhql-theme-auto:not(.theme-light))) .fhql-card:not(.fhql-compact) > .fhql-subheading {
+  padding-block-end: 0.25em;
+  border-block-end: 1px solid rgb(224 160 84 / 0.28);
+}
+
+/* Under the quest header: gold lines meeting a stepped diamond. */
+.fhql-app:is(.fhql-theme-dark, :where(.fhql-theme-auto.theme-dark, body.theme-dark .fhql-theme-auto:not(.theme-light))) .fhql-sheet-head {
+  border-block-end: 0;
+  padding-block-end: calc(0.8em + 12px);
+  background: var(--fhql-dark-diamond) no-repeat center bottom / 22px 12px,
+    linear-gradient(var(--fhql-dark-gold), var(--fhql-dark-gold)) no-repeat left bottom 5px / calc(50% - 16px) 1px,
+    linear-gradient(var(--fhql-dark-gold), var(--fhql-dark-gold)) no-repeat right bottom 5px / calc(50% - 16px) 1px;
+}
+
+/* Description: a gold deco drop capital, two lines deep. */
+.fhql-app:is(.fhql-theme-dark, :where(.fhql-theme-auto.theme-dark, body.theme-dark .fhql-theme-auto:not(.theme-light))) .fhql-area-description .fhql-prose > p:first-child::first-letter {
+  color: var(--fhql-accent);
+  font-family: var(--fhql-font-heading);
+  font-weight: 600;
+  initial-letter: 2;
+  margin-inline-end: 0.12em;
+}

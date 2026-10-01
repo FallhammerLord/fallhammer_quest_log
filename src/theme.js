@@ -234,7 +234,7 @@ export function previewTheme(values)
 }
 
 /** Theme style files, as listed in module.json `styles`. */
-const THEME_FILES = ['dark', 'scifi', 'gothic', 'cabaret', 'ledger'];
+const THEME_FILES = ['light', 'dark', 'scifi', 'gothic', 'cabaret', 'ledger'];
 
 /**
  * Foundry reads module.json's style list only when a world launches, so a theme added by an update
@@ -256,7 +256,10 @@ export function ensureThemeStyles()
 
 /** Fonts the module ships, for theme headings. */
 const BUNDLED_FONTS = [
-   { family: 'IM Fell English SC', url: `${MODULE_PATH}/styles/fonts/im-fell-english-sc/IMFellEnglishSC-Regular.woff2` }
+   { family: 'IM Fell English SC', url: `${MODULE_PATH}/styles/fonts/im-fell-english-sc/IMFellEnglishSC-Regular.woff2` },
+   { family: 'Josefin Sans', url: `${MODULE_PATH}/styles/fonts/josefin-sans/JosefinSans-SemiBold.woff2`, weight: '400 700' },
+   { family: 'Oxanium', url: `${MODULE_PATH}/styles/fonts/oxanium/Oxanium-SemiBold.woff2`, weight: '400 700' },
+   { family: 'Limelight', url: `${MODULE_PATH}/styles/fonts/limelight/Limelight-Regular.woff2` }
 ];
 
 /**
@@ -265,11 +268,12 @@ const BUNDLED_FONTS = [
  */
 export function loadBundledFonts()
 {
-   for (const { family, url } of BUNDLED_FONTS)
+   for (const { family, url, weight = 'normal' } of BUNDLED_FONTS)
    {
       registerFont(family, url);
       if (typeof FontFace === 'undefined' || !document.fonts) { continue; }
-      const face = new FontFace(family, `url("${url}")`, { display: 'swap' });
+      // One file per family; a weight range makes it serve bold headings without a synthesized bold.
+      const face = new FontFace(family, `url("${url}")`, { display: 'swap', weight });
       document.fonts.add(face);
       face.load().catch((error) => console.warn(`${MODULE_ID} | Could not load the font ${family} from ${url}.`, error));
    }

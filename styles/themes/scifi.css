@@ -19,7 +19,7 @@
   --fhql-status-active: #34e4ff;
   --fhql-status-completed: #5cf2a4;
   --fhql-status-failed: #ff5c7a;
-  --fhql-font-heading-theme: ui-monospace, "Cascadia Mono", "Consolas", monospace;
+  --fhql-font-heading-theme: "Oxanium", ui-monospace, "Cascadia Mono", "Consolas", monospace;
   --fhql-radius: 0px;
   --fhql-chamfer: 10px;
   --fhql-glow: 0 0 6px rgb(52 228 255 / 0.35);

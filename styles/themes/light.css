@@ -1,0 +1,50 @@
+/*
+ * Fallhammer Quest Log: Light theme shapes. Light's tokens are the defaults in styles/fhql.css; this file
+ * holds only its small shapes (a bookbinder's touches), which stay when textures are off. Applies to
+ * Light, and to "Follow Foundry" while Foundry is light. Loaded after styles/fhql.css (see module.json).
+ */
+.fhql-app:is(.fhql-theme-light, :where(.fhql-theme-auto.theme-light, body:not(.theme-dark) .fhql-theme-auto:not(.theme-dark))) {
+  --fhql-light-ivy: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='13' viewBox='0 0 12 13'%3E%3Cpath d='M6 12.5V8' stroke='rgb(122,46,28)' stroke-width='1'/%3E%3Cpath d='M6 8.6C3.2 7.4 1 5.6 1 3.6C1 2.1 2.2 1 3.6 1C4.7 1 5.6 1.7 6 2.6C6.4 1.7 7.3 1 8.4 1C9.8 1 11 2.1 11 3.6C11 5.6 8.8 7.4 6 8.6Z' fill='rgb(122,46,28)'/%3E%3C/svg%3E");
+  --fhql-light-fleuron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='12' viewBox='0 0 30 12'%3E%3Cpath d='M15 2C17 4 17 8 15 10C13 8 13 4 15 2Z' fill='rgb(122,46,28)'/%3E%3Cpath d='M13 6H2M17 6H28' stroke='rgb(122,46,28)' stroke-width='1'/%3E%3Ccircle cx='1.5' cy='6' r='1.2' fill='rgb(122,46,28)'/%3E%3Ccircle cx='28.5' cy='6' r='1.2' fill='rgb(122,46,28)'/%3E%3C/svg%3E");
+  --fhql-light-corner: rgb(122 46 28 / 0.55);
+}
+
+/* Panels: an inked double frame with corner brackets, like a bookplate. */
+.fhql-app:is(.fhql-theme-light, :where(.fhql-theme-auto.theme-light, body:not(.theme-dark) .fhql-theme-auto:not(.theme-dark))) .fhql-card {
+  box-shadow: inset 0 0 0 3px var(--fhql-surface-raised), inset 0 0 0 4px rgb(122 46 28 / 0.18);
+  background-image:
+    linear-gradient(var(--fhql-light-corner), var(--fhql-light-corner)), linear-gradient(var(--fhql-light-corner), var(--fhql-light-corner)),
+    linear-gradient(var(--fhql-light-corner), var(--fhql-light-corner)), linear-gradient(var(--fhql-light-corner), var(--fhql-light-corner)),
+    linear-gradient(var(--fhql-light-corner), var(--fhql-light-corner)), linear-gradient(var(--fhql-light-corner), var(--fhql-light-corner)),
+    linear-gradient(var(--fhql-light-corner), var(--fhql-light-corner)), linear-gradient(var(--fhql-light-corner), var(--fhql-light-corner));
+  background-size: 10px 1px, 1px 10px, 10px 1px, 1px 10px, 10px 1px, 1px 10px, 10px 1px, 1px 10px;
+  background-position: 6px 6px, 6px 6px, right 6px top 6px, right 6px top 6px, 6px bottom 6px, 6px bottom 6px, right 6px bottom 6px, right 6px bottom 6px;
+  background-repeat: no-repeat;
+}
+
+/* Panel headings: an ivy leaf before the name, a hairline under it. */
+.fhql-app:is(.fhql-theme-light, :where(.fhql-theme-auto.theme-light, body:not(.theme-dark) .fhql-theme-auto:not(.theme-dark))) .fhql-card > .fhql-subheading {
+  padding-inline-start: 17px;
+  background: var(--fhql-light-ivy) no-repeat left center / 12px 13px;
+}
+.fhql-app:is(.fhql-theme-light, :where(.fhql-theme-auto.theme-light, body:not(.theme-dark) .fhql-theme-auto:not(.theme-dark))) .fhql-card:not(.fhql-compact) > .fhql-subheading {
+  padding-block-end: 0.2em;
+  border-block-end: 1px solid rgb(122 46 28 / 0.25);
+}
+
+/* Under the quest header: a fleuron on a rule. */
+.fhql-app:is(.fhql-theme-light, :where(.fhql-theme-auto.theme-light, body:not(.theme-dark) .fhql-theme-auto:not(.theme-dark))) .fhql-sheet-head {
+  border-block-end: 0;
+  padding-block-end: calc(0.8em + 12px);
+  background: var(--fhql-light-fleuron) no-repeat center bottom / 30px 12px,
+    linear-gradient(var(--fhql-rule), var(--fhql-rule)) no-repeat left bottom 5px / calc(50% - 20px) 1px,
+    linear-gradient(var(--fhql-rule), var(--fhql-rule)) no-repeat right bottom 5px / calc(50% - 20px) 1px;
+}
+
+/* Description: an inked drop capital, two lines deep. */
+.fhql-app:is(.fhql-theme-light, :where(.fhql-theme-auto.theme-light, body:not(.theme-dark) .fhql-theme-auto:not(.theme-dark))) .fhql-area-description .fhql-prose > p:first-child::first-letter {
+  color: var(--fhql-accent);
+  font-family: var(--fhql-font-heading);
+  initial-letter: 2;
+  margin-inline-end: 0.1em;
+}
