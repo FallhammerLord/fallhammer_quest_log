@@ -4,7 +4,7 @@ import { addRequirementObjective, setRequirement } from '../data/deposits.js';
 import { canAccept, canChangeStatusAsPlayer, canEditNotesViaGM, requestPlayerAction } from '../data/playerActions.js';
 import { MODULE_ID, STATUSES } from '../constants.js';
 import {
-   addRewardFromDocument, clearGiver, createSubquest, getQuestEntry, gmNotesPage, questAccess, questPage, renameQuest,
+   addRewardFromDocument, clearGiver, getQuestEntry, gmNotesPage, questAccess, questPage, renameQuest,
    setGiverFromDocument, setGmNotes, setStatus, subquests, updateQuest
 } from '../data/quests.js';
 import { editorUnsaved, guardActions } from './sheet/rows.js';
@@ -15,6 +15,7 @@ import {
 } from './sheet/notes.js';
 import { openQuestMenu, questMenuActions } from './sheet/questMenu.js';
 import { shareActions } from './sheet/share.js';
+import { subquestActions } from './sheet/subquests.js';
 import { animateClose, animateOpen } from '../ui/motion.js';
 import { markSeen } from '../data/seen.js';
 import {
@@ -61,13 +62,13 @@ export function QuestSheetMixin(Base)
             openDocument: QuestSheet.#onOpenDocument,
             clearGiver: QuestSheet.#onClearGiver,
             showQuest: QuestSheet.#onShowQuest,
-            addSubquest: QuestSheet.#onAddSubquest,
             showAllObjectives: QuestSheet.#onShowAllObjectives,
             ...objectiveActions,
             ...rewardActions,
             ...notesActions,
             ...questMenuActions,
-            ...shareActions
+            ...shareActions,
+            ...subquestActions
          })
       };
 
@@ -661,17 +662,6 @@ export function QuestSheetMixin(Base)
       static #onShowQuest(event, target)
       {
          if (target.dataset.questId) { this.showQuest(target.dataset.questId); }
-      }
-
-      /** @this {QuestSheet} */
-      static async #onAddSubquest()
-      {
-         const entry = this.questEntry;
-         if (!entry) { return; }
-         const child = await createSubquest(entry);
-         // The new subquest opens in its own window beside this one, ready to edit, so parent and
-         // subquest can be read side by side.
-         game.modules.get(MODULE_ID).api.openQuestSheet(child.id, { edit: true, beside: this });
       }
 
       /** @this {QuestSheet} */

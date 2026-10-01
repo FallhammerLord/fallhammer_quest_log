@@ -94,6 +94,13 @@
       "completed": "Completed",
       "failed": "Failed"
     },
+    "Subquest": {
+      "OpenBeside": "Open beside this quest",
+      "Remove": "Remove from this quest",
+      "RemoveConfirm": "Remove <strong>{name}</strong> from this quest? Keep it as its own quest, or delete it.",
+      "MakeStandalone": "Keep as its own quest",
+      "DeleteQuest": "Delete quest"
+    },
     "TextureImages": {
       "MenuName": "Theme images",
       "MenuLabel": "Choose images",

@@ -1,6 +1,6 @@
 import { MODULE_ID, QUEST_TYPE } from './constants.js';
 import { DocumentSheetConfig, TIDY_THEME_SETTING } from './compat.js';
-import { ensureThemeStyles, refreshOpenApps } from './theme.js';
+import { ensureThemeStyles, loadBundledFonts, refreshOpenApps } from './theme.js';
 import { migrateTextureSetting, registerSettings } from './settings.js';
 import { registerKeybindings } from './keybindings.js';
 import { api } from './api.js';
@@ -24,6 +24,7 @@ import { onlySeenChanged, startSeenTracking } from './data/seen.js';
 
 Hooks.once('init', () =>
 {
+   loadBundledFonts();
    CONFIG.JournalEntryPage.dataModels[QUEST_TYPE] = QuestData;
    DocumentSheetConfig.registerSheet(JournalEntryPage, MODULE_ID, QuestPageSheet, {
       types: [QUEST_TYPE],

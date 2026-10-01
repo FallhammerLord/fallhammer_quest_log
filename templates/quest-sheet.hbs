@@ -278,11 +278,13 @@
         <ul class="fhql-rows">
           {{#each subquests}}
           <li class="fhql-status-{{status}}">
-            <button type="button" class="fhql-row-link" data-action="showQuest" data-quest-id="{{id}}">
+            <button type="button" class="fhql-row-link" data-action="openSubquest" data-quest-id="{{id}}" data-tooltip="{{localize 'FHQL.Subquest.OpenBeside'}}">
               <span class="fhql-thumb"><i class="{{icon}} fhql-status-icon" inert></i></span>
               <span class="fhql-row-name">{{name}}</span>
               <span class="fhql-row-status">{{label}}</span>
             </button>
+            {{#if ../gm}}<button type="button" class="fhql-button fhql-small fhql-icon-only fhql-subquest-remove" data-action="removeSubquest" data-quest-id="{{id}}"
+                    aria-label="{{localize 'FHQL.Subquest.Remove'}}" data-tooltip="{{localize 'FHQL.Subquest.Remove'}}"><i class="fa-solid fa-link-slash" inert></i></button>{{/if}}
           </li>
           {{/each}}
         </ul>

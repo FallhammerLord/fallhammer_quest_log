@@ -119,14 +119,23 @@
   font-size: 0.8em;
 }
 
-/* Description: the first letter rubricated, as scribes did in red ink. */
+/* Description: the first letter rubricated, as scribes did in red ink. initial-letter sinks it two lines deep with its top flush
+   with the first line's capitals and its foot on the second line's baseline; the float is for browsers
+   without it. */
 .fhql-app.fhql-theme-gothic .fhql-area-description .fhql-prose > p:first-child::first-letter {
-  float: left;
-  margin: 0.05em 0.12em 0 0;
   color: var(--fhql-accent);
   font-family: var(--fhql-font-heading);
-  font-size: 2.3em;
-  line-height: 0.9;
+  font-weight: 400;
+  initial-letter: 2;
+  margin-inline-end: 0.12em;
+}
+@supports not (initial-letter: 2) {
+  .fhql-app.fhql-theme-gothic .fhql-area-description .fhql-prose > p:first-child::first-letter {
+    float: left;
+    margin: 0.1em 0.12em 0 0;
+    font-size: 2.6em;
+    line-height: 0.78;
+  }
 }
 
 /* Finished objectives tick in tarnished brass (the icon and strike-through still say "done"). */

@@ -253,3 +253,23 @@ export function ensureThemeStyles()
    }
    if (missing.length) { console.warn(`${MODULE_ID} | Loaded theme styles Foundry had not (${missing.join(', ')}). Relaunch the world to load them normally.`); }
 }
+
+/** Fonts the module ships, for theme headings. */
+const BUNDLED_FONTS = [
+   { family: 'IM Fell English SC', url: `${MODULE_PATH}/styles/fonts/im-fell-english-sc/IMFellEnglishSC-Regular.woff2` }
+];
+
+/**
+ * Registers the module's own fonts from code, so they load however Foundry includes the stylesheets
+ * (a url() inside a stylesheet resolves against wherever that sheet is served from). Runs on init.
+ */
+export function loadBundledFonts()
+{
+   if (typeof FontFace === 'undefined' || !document.fonts) { return; }
+   for (const { family, url } of BUNDLED_FONTS)
+   {
+      const face = new FontFace(family, `url("${url}")`, { display: 'swap' });
+      document.fonts.add(face);
+      face.load().catch((error) => console.warn(`${MODULE_ID} | Could not load the font ${family} from ${url}.`, error));
+   }
+}

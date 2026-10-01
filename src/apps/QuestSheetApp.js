@@ -18,7 +18,9 @@ export class QuestSheetApp extends QuestSheetMixin(HandlebarsApp)
     * @param {string} questId - JournalEntry ID.
     * @param {object} [options]
     * @param {boolean} [options.edit] - Open in edit mode.
-    * @param {object} [options.beside] - A window to open next to (right if there is room, else left).
+    * @param {object} [options.beside] - The window it opens from (drill-down): it goes in that window's
+    *   side slot, beside it (right if there is room, else left, else cascaded over it). Each window has
+    *   one side slot: opening another quest from it takes the previous one's place, which closes.
     * @returns {QuestSheetApp|undefined} The window.
     */
    static open(questId, { edit = false, beside = null } = {})
@@ -31,12 +33,24 @@ export class QuestSheetApp extends QuestSheetMixin(HandlebarsApp)
          QuestSheetApp.#windows.set(questId, app);
       }
       if (edit) { app._editing = true; }
-      if (app.rendered) { app.bringToFront(); if (edit) { app.render(); } }
-      else
+
+      const previous = beside?._sideWindow;
+      const spot = previous?.rendered && previous !== app ? { ...previous.position } : null;
+      if (beside) { beside._sideWindow = app; }
+      const place = () =>
       {
-         const shown = app.render({ force: true });
-         if (beside?.rendered) { Promise.resolve(shown).then(() => placeBeside(app, beside)); }
+         if (spot) { app.setPosition({ left: spot.left, top: spot.top, width: spot.width, height: spot.height }); }
+         else if (beside?.rendered) { placeBeside(app, beside); }
+      };
+
+      if (app.rendered)
+      {
+         app.bringToFront();
+         if (edit) { app.render(); }
+         if (beside) { place(); }
       }
+      else { Promise.resolve(app.render({ force: true })).then(place); }
+      if (spot) { closeSideChain(previous, app); }
       return app;
    }
 
@@ -146,7 +160,7 @@ const GAP = 8;
 
 /**
  * Places a window beside another, for side-by-side reading: to the right if it fits there at a
- * comfortable width, else to the left, else where it opened. Same top and height as the other window.
+ * comfortable width, else to the left, else cascaded over it. Same top and height as the other window.
  *
  * @param {QuestSheetApp} app - The window to place.
  * @param {object} other - The window to sit beside.
@@ -167,5 +181,27 @@ function placeBeside(app, other)
       const width = Math.min(want, left);
       app.setPosition({ left: near.left - GAP - width, top, width, height });
    }
+   // No room either side (deep drill-downs on a small screen): cascade over it, offset so both titles show.
+   else { app.setPosition({ left: near.left + CASCADE, top: near.top + CASCADE }); }
+}
+
+/** Offset for a cascaded window, in pixels. */
+const CASCADE = 36;
+
+/**
+ * Closes a side window and the side windows opened from it, leaving one window open.
+ *
+ * @param {QuestSheetApp} win - The side window being replaced.
+ * @param {QuestSheetApp} keep - The window taking its place.
+ */
+function closeSideChain(win, keep)
+{
+   const seen = new Set();
+   for (let w = win; w && !seen.has(w); w = w._sideWindow)
+   {
+      seen.add(w);
+      if (w !== keep && w.rendered) { w.close(); }
+   }
+   win._sideWindow = null;
 }
 
