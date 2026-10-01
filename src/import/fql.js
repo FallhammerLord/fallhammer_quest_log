@@ -245,6 +245,3 @@ export async function importFqlQuests({ overwrite = [], moveToFolder = true } = 
    }
    return result;
 }
-
-/** Exposed for tests only. */
-export const _internal = { reconcileParents, convert };

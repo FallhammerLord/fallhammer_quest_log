@@ -1,6 +1,6 @@
 # Fallhammer Quest Log
 
-A quest log for Foundry VTT v14 with light, dark, and sci-fi themes, and import from Forien's Quest Log.
+A quest log for Foundry VTT v14 with light, dark, sci-fi, gothic, and ledger (Tidy 5e style) themes, item turn-ins on objectives, reward claiming, and import from Forien's Quest Log.
 
 **Status:** feature-complete preview (0.3.0). Requires Foundry VTT v14. See [CHANGELOG.md](CHANGELOG.md).
 
@@ -30,7 +30,14 @@ This works once a GitHub release has been published (see Releasing below).
    - The Focus quest above the players list (appears once a quest is marked Focus).
    - A key you bind in Configure Controls → Fallhammer Quest Log → Open Quest Log.
    - Macro: `game.modules.get('fhql').api.openQuestLog()`
-4. Themes: the GM sets "Quest Log theme (world default)"; each player can override it with "Quest Log theme (just you)".
+4. Themes: the GM sets "Quest Log theme (world default)"; each player can override it with "Quest Log theme (just you)", and can turn "Theme textures" off for flat panels. Ledger takes Tidy 5e Sheets' colors when Tidy is active.
+5. Quest image: shown as a banner across the top of the quest, up to 160 px tall and cropped top and bottom only. Use 5:1 (2000 × 400) and keep key content in the middle 60% of the height.
+
+## Item turn-ins and player notes
+
+- In edit mode, drop an item on an objective to require it (set the count, and Hand over or Show only), or below the objectives to add one for it.
+- Players use **Hand over** / **Show** on the objective, or drag the item from their character sheet onto it. Deposits take only what is still needed; the GM can Undo and return items.
+- **Player notes** are edited in place with **Edit notes**, one person at a time; others see who is editing.
 
 ## What to check in milestone 2
 

@@ -1,7 +1,7 @@
 {
   "id": "fhql",
   "title": "Fallhammer Quest Log",
-  "description": "A themeable quest log with light, dark, and sci-fi themes, and import from Forien's Quest Log.",
+  "description": "A themeable quest log: light, dark, sci-fi, gothic, and ledger (Tidy 5e style) themes, item turn-ins, reward claiming, and import from Forien's Quest Log.",
   "version": "0.3.0",
   "authors": [
     {
