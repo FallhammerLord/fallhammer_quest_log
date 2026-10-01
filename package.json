@@ -6,10 +6,11 @@
   "scripts": {
     "lint": "eslint src tools",
     "contrast": "node tools/check-contrast.mjs",
-    "check": "npm run lint && npm run load && npm run contrast && npm run deposits",
+    "check": "npm run lint && npm run load && npm run contrast && npm run deposits && npm run quests",
     "deposits": "node tools/deposit-check.mjs",
     "layout": "node tools/layout-check.mjs",
-    "load": "node tools/load-check.mjs"
+    "load": "node tools/load-check.mjs",
+    "quests": "node tools/quest-check.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",

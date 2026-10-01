@@ -165,10 +165,24 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
          if (root && id === root.id) { return 'top'; }
          return 'outside';
       };
+      // A subquest shows under its parent wherever it is stored (older quests may sit in another folder),
+      // so each quest is grouped by its top visible ancestor's folder.
+      const byId = new Map(entries.map((e) => [e.id, e]));
+      const topOf = (entry) =>
+      {
+         const seen = new Set();
+         let top = entry;
+         while (byId.has(questPage(top).system.parent) && !seen.has(top.id))
+         {
+            seen.add(top.id);
+            top = byId.get(questPage(top).system.parent);
+         }
+         return top;
+      };
       const groups = new Map();
       for (const entry of entries)
       {
-         const key = groupOf(entry);
+         const key = groupOf(topOf(entry));
          groups.set(key, [...(groups.get(key) ?? []), entry]);
       }
 

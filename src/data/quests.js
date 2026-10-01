@@ -188,7 +188,10 @@ export async function moveQuestToFolder(entry, folderId)
 {
    const root = await questFolder();
    const target = folderId && inQuestTree(game.folders.get(folderId)) ? folderId : root.id;
-   if (entry.folder?.id !== target) { await entry.update({ folder: target }); }
+   // A quest's subquests travel with it: a family lives in one folder.
+   const family = [entry, ...[...descendantIds(entry)].map((id) => game.journal.get(id)).filter(Boolean)];
+   const moves = family.filter((e) => e.folder?.id !== target).map((e) => ({ _id: e.id, folder: target }));
+   if (moves.length) { await JournalEntry.implementation.updateDocuments(moves); }
 }
 
 /**
@@ -197,17 +200,19 @@ export async function moveQuestToFolder(entry, folderId)
  * @param {object} [data] - Initial values.
  * @param {string} [data.name] - Quest name.
  * @param {object} [data.system] - Initial quest page system data.
+ * @param {string} [data.folder] - Folder ID in the quest tree; defaults to the top level.
  * @returns {Promise<JournalEntry>} The new quest entry.
  */
-export async function createQuest({ name, system = {} } = {})
+export async function createQuest({ name, system = {}, folder: folderId } = {})
 {
    name ||= game.i18n.localize('FHQL.Quest.NewName');
    const status = system.status ?? 'hidden';
-   const folder = await questFolder();
+   const root = await questFolder();
+   const folder = folderId && inQuestTree(game.folders.get(folderId)) ? folderId : root?.id;
 
    return JournalEntry.implementation.create({
       name,
-      folder: folder?.id,
+      folder,
       ownership: { default: status === 'hidden' ? NONE : revealedOwnership() },
       pages: [{
          name,
@@ -520,6 +525,9 @@ export async function setParent(entry, parentId)
 {
    if (parentId && !parentCandidates(entry).some((e) => e.id === parentId)) { return; }
    await updateQuest(entry, { 'system.parent': parentId ?? '' });
+   // A subquest joins its parent's folder, so the Quest Log shows it under the parent.
+   const parent = parentId ? game.journal.get(parentId) : null;
+   if (parent?.folder && parent.folder.id !== entry.folder?.id) { await moveQuestToFolder(entry, parent.folder.id); }
 }
 
 /**
@@ -530,7 +538,7 @@ export async function setParent(entry, parentId)
  */
 export async function createSubquest(parent)
 {
-   return createQuest({ system: { parent: parent.id, status: 'hidden' } });
+   return createQuest({ system: { parent: parent.id, status: 'hidden' }, folder: parent.folder?.id });
 }
 
 /** Sample quests covering every status, for testing layout and themes. */
