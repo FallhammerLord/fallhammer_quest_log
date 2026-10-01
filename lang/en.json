@@ -195,7 +195,9 @@
       }
     },
     "Keybindings": {
-      "OpenQuestLog": "Open Quest Log"
+      "OpenQuestLog": "Open Quest Log",
+      "FocusSearch": "Search the Quest Log",
+      "FocusSearchHint": "While the Quest Log is open, jumps to its search box. Esc clears the search."
     },
     "Section": {
       "Empty": "Empty",
@@ -284,7 +286,7 @@
     },
     "Filter": {
       "Label": "Filter quests",
-      "Search": "Search quests",
+      "Search": "Search quests (/)",
       "NoMatches": "No quests match."
     },
     "Import": {

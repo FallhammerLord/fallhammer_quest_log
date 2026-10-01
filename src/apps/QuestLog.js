@@ -318,6 +318,17 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
          next.focus();
       });
 
+      // Esc in a search box with text clears it first; Foundry's own Esc then leaves the box, then closes.
+      el.addEventListener('keydown', (event) =>
+      {
+         if (event.key !== 'Escape' || !event.target.matches?.('[data-list-search]') || !event.target.value) { return; }
+         event.preventDefault();
+         event.stopPropagation();
+         event.target.value = '';
+         this.#query = '';
+         this.#applyListFilters();
+      });
+
       el.addEventListener('input', (event) =>
       {
          if (!event.target.matches('[data-list-search]')) { return; }

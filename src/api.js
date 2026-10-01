@@ -48,6 +48,22 @@ export function toggleQuestLog(questId, from = null)
    return openQuestLog(questId, { from });
 }
 
+/**
+ * Focuses the Quest Log's search box, if the log is open and showing.
+ *
+ * @returns {boolean} Whether it did (so the key is used up), else false to let the key pass.
+ */
+export function focusQuestSearch()
+{
+   const log = QuestLog.instance;
+   const box = log.rendered && !log.minimized ? log.element?.querySelector('[data-list-search]') : null;
+   if (!box) { return false; }
+   log.bringToFront();
+   box.focus();
+   box.select();
+   return true;
+}
+
 export function openQuestSheet(questId)
 {
    if (!questLogAvailable()) { return undefined; }
