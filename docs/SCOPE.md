@@ -459,6 +459,7 @@ Separate windows are kept only for full workflows: Pop out, FQL import, and Foun
 Rare, purely visual, theme-only moments (`src/ui/eggs.js`, CSS in the theme's file). Never clickable, never announced, a plain fade for reduced motion. GM setting `easterEggs` (on by default) turns them off for the table.
 
 - **Gothic:** the Beacon's bell tolls (swings, three brass rings) when the shown quest's last open objective is completed; with three or more marked quests the switcher's tooltip adds "A hunter is never alone."
+- **Sci-fi:** a passive click (a quest row, a panel, a title, the Beacon; never a button, link, field, menu, or an editing panel) glitches the clicked element 1 time in 20, at most once every 10 seconds (silent cooldown): two copies tinted cyan and magenta, cut into bands that jump sideways for 400ms, a one-pixel shiver, a pseudo-data readout. Sideways movement only, under the flash limit; reduced motion shows only the readout.
 - **Cabaret:** the third quest completed in a session (counted per client) gets a curtain call over the open Quest Log or quest window: velvet drapes, a gilt "Spectacular, spectacular!" marquee with chasing bulbs, about three seconds.
 
 ## 8. FQL import

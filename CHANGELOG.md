@@ -17,7 +17,7 @@ First feature-complete preview. Requires Foundry VTT v14.
 - The Beacon leads the Quest Log: switching quests moves an open log, and clicking shows the Beacon's quest before closing.
 - Our windows' title bars follow the theme.
 - Hope and Fear theme (after Daggerheart's styling: indigo, Hope gold, Fear violet, duality-dice texture) and Noir theme (for Blades in the Dark: graphite, blinds and rain, a typed case file).
-- Easter eggs in Gothic and Cabaret (rare, visual only; the GM can turn them off).
+- Easter eggs in Gothic, Cabaret and Sci-fi (rare, visual only; the GM can turn them off).
 - Each theme has its own heading font: Amiri (Light), Josefin Sans (Dark), Oxanium (Sci-fi), IM Fell English SC (Gothic), Limelight (Cabaret), Modesto (Ledger); the bundled ones are SIL Open Font License. Light and Dark gain their own panel shapes (bookbinder and art deco).
 - Gothic headings use IM Fell English SC (bundled, SIL Open Font License), registered with Foundry so it also appears in font pickers.
 - Resizing settles on comfortable widths when you drag near them (hold Shift to resize freely).

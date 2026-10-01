@@ -83,3 +83,52 @@
 .fhql-app.fhql-theme-scifi .fhql-gm-notes { --fhql-card-border: var(--fhql-gm); --fhql-card-fill: var(--fhql-surface-sunken); }
 .fhql-beacon.fhql-theme-scifi .fhql-beacon-panel { --fhql-card-fill: var(--fhql-surface); }
 .fhql-beacon.fhql-theme-scifi .fhql-beacon-panel:hover { --fhql-card-border: var(--fhql-accent); }
+
+/* ---------- Easter egg: ghost signal (src/ui/eggs.js) ---------- */
+/* A passive click, rarely, glitches what was clicked: two copies tinted cyan and magenta, cut into
+   bands that jump sideways in six steps over 400ms, a one-pixel shiver, a readout in the corner.
+   Sideways movement, not brightness: well under the three-flashes-per-second limit. Reduced motion
+   gets only the readout, held still. */
+.fhql-app.fhql-theme-scifi {
+  --fhql-scifi-magenta: #ff3fa4;
+  --fhql-glitch-x: 10px;
+  --fhql-glitch-ms: 400ms;
+}
+.fhql-app.fhql-theme-scifi .fhql-egg-glitch { position: absolute; z-index: 60; overflow: hidden; pointer-events: none; }
+.fhql-app.fhql-theme-scifi .fhql-egg-copy { position: absolute; inset: 0; margin: 0; mix-blend-mode: screen; opacity: 0.85; pointer-events: none; }
+.fhql-app.fhql-theme-scifi .fhql-egg-copy.is-cyan { filter: grayscale(1) sepia(1) saturate(6) hue-rotate(150deg) brightness(1.05); }
+.fhql-app.fhql-theme-scifi .fhql-egg-copy.is-magenta { filter: grayscale(1) sepia(1) saturate(6) hue-rotate(275deg) brightness(1.05); }
+.fhql-app.fhql-theme-scifi .fhql-egg-readout {
+  position: absolute; right: 4px; top: 2px; opacity: 0;
+  font: 600 10px/1 ui-monospace, "Cascadia Mono", Consolas, monospace; letter-spacing: 0.08em;
+  color: var(--fhql-accent); text-shadow: 1px 0 var(--fhql-scifi-magenta);
+}
+@keyframes fhql-glitch-a {
+  0%   { clip-path: inset(8% 0 72% 0);  translate: var(--fhql-glitch-x) 0; }
+  17%  { clip-path: inset(46% 0 30% 0); translate: calc(-1 * var(--fhql-glitch-x)) 0; }
+  34%  { clip-path: inset(70% 0 8% 0);  translate: calc(var(--fhql-glitch-x) * 1.6) 0; }
+  51%  { clip-path: inset(22% 0 60% 0); translate: calc(var(--fhql-glitch-x) * -0.6) 0; }
+  68%  { clip-path: inset(58% 0 22% 0); translate: calc(var(--fhql-glitch-x) * 0.4) 0; }
+  85%, 100% { clip-path: inset(50% 0 50% 0); translate: 0 0; opacity: 0; }
+}
+@keyframes fhql-glitch-b {
+  0%   { clip-path: inset(62% 0 18% 0); translate: calc(-1 * var(--fhql-glitch-x)) 0; }
+  17%  { clip-path: inset(14% 0 66% 0); translate: calc(var(--fhql-glitch-x) * 1.3) 0; }
+  34%  { clip-path: inset(36% 0 44% 0); translate: calc(var(--fhql-glitch-x) * -1.8) 0; }
+  51%  { clip-path: inset(80% 0 4% 0);  translate: var(--fhql-glitch-x) 0; }
+  68%  { clip-path: inset(4% 0 84% 0);  translate: calc(var(--fhql-glitch-x) * -0.5) 0; }
+  85%, 100% { clip-path: inset(50% 0 50% 0); translate: 0 0; opacity: 0; }
+}
+@keyframes fhql-glitch-readout { 0%, 33% { opacity: 0; } 34%, 67% { opacity: 1; } 68%, 100% { opacity: 0; } }
+@keyframes fhql-glitch-shiver { 0% { translate: 1px 0; } 34% { translate: -1px 0; } 68% { translate: 1px 0; } 100% { translate: 0 0; } }
+@keyframes fhql-glitch-still { 0% { opacity: 0; } 20%, 70% { opacity: 1; } 100% { opacity: 0; } }
+@media (prefers-reduced-motion: no-preference) {
+  .fhql-app.fhql-theme-scifi .fhql-egg-copy.is-cyan { animation: fhql-glitch-a var(--fhql-glitch-ms) steps(1) forwards; }
+  .fhql-app.fhql-theme-scifi .fhql-egg-copy.is-magenta { animation: fhql-glitch-b var(--fhql-glitch-ms) steps(1) forwards; }
+  .fhql-app.fhql-theme-scifi .fhql-egg-readout { animation: fhql-glitch-readout var(--fhql-glitch-ms) steps(1) forwards; }
+  .fhql-app.fhql-theme-scifi .fhql-egg-shiver { animation: fhql-glitch-shiver var(--fhql-glitch-ms) steps(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fhql-app.fhql-theme-scifi .fhql-egg-copy { display: none; }
+  .fhql-app.fhql-theme-scifi .fhql-egg-readout { animation: fhql-glitch-still 900ms ease forwards; }
+}
