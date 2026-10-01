@@ -16,6 +16,7 @@ import { registerRewardDrop, registerRewardQueries } from './data/rewards.js';
 import { registerLifecycleHooks } from './data/lifecycle.js';
 import { registerPlayerActionQueries } from './data/playerActions.js';
 import { registerDepositQueries } from './data/deposits.js';
+import { releaseNotes, touchesNotesLock } from './data/notesLock.js';
 
 Hooks.once('init', () =>
 {
@@ -38,8 +39,17 @@ Hooks.once('init', () =>
    game.modules.get(MODULE_ID).api = api;
 });
 
+/** A user leaving drops their notes lock in effect (only connected users count); show it. */
+Hooks.on('userConnected', () =>
+{
+   QuestLog.instance.onQuestChanged({}, null);
+   QuestSheetApp.refreshAll({}, null);
+});
+
 Hooks.once('ready', () =>
 {
+   // A notes lock left from a previous session (closed browser) is cleared.
+   releaseNotes();
    refreshQuestBeacon();
    renameLegacyRootFolder();
 });
@@ -53,10 +63,14 @@ Hooks.on('updateSetting', (setting) =>
    refreshQuestBeacon();
 });
 
-/** Personal tracking lives on the user's own document; refresh when it changes. */
+/**
+ * Personal tracking lives on the user's own document; refresh when it changes. Anyone's player-notes
+ * lock also refreshes, so others see "Rinn is editing" come and go.
+ */
 Hooks.on('updateUser', (user, changes) =>
 {
-   if (user.id !== game.user.id || !foundry.utils.hasProperty(changes, `flags.${MODULE_ID}`)) { return; }
+   const mine = user.id === game.user.id && foundry.utils.hasProperty(changes, `flags.${MODULE_ID}`);
+   if (!mine && !touchesNotesLock(changes)) { return; }
    refreshQuestBeacon();
    QuestLog.instance.onQuestChanged({}, null);
    QuestSheetApp.refreshAll({}, null);

@@ -1,6 +1,7 @@
 import { DocumentOwnershipConfig, textEditor } from '../compat.js';
 import { confirmPopover, menuPopover } from '../ui/popover.js';
 import { isTracked, toggleTracked } from '../data/tracking.js';
+import { claimNotes, holdsNotes, notesEditor, releaseNotes } from '../data/notesLock.js';
 import {
    addRequirementObjective, clearRequirement, depositCandidates, depositedTotal, depositLabel, hasRequirement, requestDeposit,
    setRequirement, stillNeeded, undoDeposit
@@ -53,7 +54,8 @@ export function QuestSheetMixin(Base)
             toggleInProgress: QuestSheet.#onToggleInProgress,
             toggleTracked: QuestSheet.#onToggleTracked,
             acceptQuest: QuestSheet.#onAcceptQuest,
-            editNotesViaGM: QuestSheet.#onEditNotesViaGM,
+            editNotes: QuestSheet.#onEditNotes,
+            finishNotes: QuestSheet.#onFinishNotes,
             addObjective: QuestSheet.#onAddObjective,
             cycleObjective: QuestSheet.#onCycleObjective,
             deleteObjective: QuestSheet.#onDeleteObjective,
@@ -82,8 +84,11 @@ export function QuestSheetMixin(Base)
       /** Focused control and unsaved typing, captured before a re-render and restored after it. */
       #pendingFocus = null;
 
-      /** Whether a player is editing shared player notes through the GM (read view only). */
+      /** Whether this user is editing the shown quest's player notes (read or edit view; one editor at a time). */
       _notesEditing = false;
+
+      /** Open the notes editor after the next render, saving a second click. */
+      #openNotesEditor = false;
 
       /** Last save outcome shown in edit mode: '', 'saving', 'saved', or 'failed'. */
       #saveState = '';
@@ -132,6 +137,8 @@ export function QuestSheetMixin(Base)
       {
          await super._preRender(context, options);
          this.#pendingFocus = this.#captureFocus();
+         // An open notes editor (nothing typed yet) reopens after an unrelated re-render.
+         if (this._notesEditing && this.element?.querySelector('prose-mirror[name="playerNotes"]')?.open) { this.#openNotesEditor = true; }
       }
 
       /** @override */
@@ -140,12 +147,20 @@ export function QuestSheetMixin(Base)
          super._onRender(context, options);
          this.#restoreFocus(this.#pendingFocus);
          this.#pendingFocus = null;
+         if (this.#openNotesEditor)
+         {
+            this.#openNotesEditor = false;
+            const editor = this.element?.querySelector('prose-mirror[name="playerNotes"]');
+            // Same as the player clicking the editor's own pen; the `open` attribute at render breaks editing.
+            if (editor && !editor.open) { requestAnimationFrame(() => editor.querySelector(':scope > button')?.click()); }
+         }
       }
 
       /** @override */
       async _preClose(options)
       {
          await this._flushEdits();
+         if (this._notesEditing && this.questEntry) { this._notesEditing = false; await releaseNotes(this.questEntry); }
          return super._preClose(options);
       }
 
@@ -164,14 +179,26 @@ export function QuestSheetMixin(Base)
          // Saving an editor fires its change event, which the change listener turns into an update.
          for (const editor of this.element?.querySelectorAll('prose-mirror') ?? [])
          {
-            if (editor.isDirty?.()) { editor.save(); }
+            if (QuestSheet.#unsaved(editor)) { editor.save(); }
          }
+      }
+
+      /**
+       * Only an open editor can hold unsaved text. A toggled editor that was just saved can still
+       * report dirty; counting it blocked the re-render, so the saved text vanished until Done.
+       *
+       * @param {HTMLElement} editor - A prose-mirror element.
+       * @returns {boolean} Whether it holds unsaved changes.
+       */
+      static #unsaved(editor)
+      {
+         return editor.open !== false && !!editor.isDirty?.();
       }
 
       /** @returns {boolean} Whether a rich-text editor here holds unsaved changes. */
       _hasUnsavedEditor()
       {
-         return [...(this.element?.querySelectorAll('prose-mirror') ?? [])].some((editor) => editor.isDirty?.());
+         return [...(this.element?.querySelectorAll('prose-mirror') ?? [])].some((editor) => QuestSheet.#unsaved(editor));
       }
 
       /**
@@ -331,8 +358,7 @@ export function QuestSheetMixin(Base)
              })) : [],
             canSetStatus: access.gm || trusted,
             canAccept: canAccept(entry),
-            canEditNotesViaGM: notesViaGM,
-            notesEditing: notesViaGM && this._notesEditing,
+            ...this.#notesContext(entry, access, notesViaGM),
             inProgress: system.inProgress,
             tracked: isTracked(entry),
             saveStateLabel: editing ? this.#saveStateLabel() : '',
@@ -359,6 +385,28 @@ export function QuestSheetMixin(Base)
                html: await enrich(gmNotesRaw),
                open: editing || game.settings.get(MODULE_ID, 'gmNotesOpen')
             } : null
+         };
+      }
+
+      /**
+       * Render data for player notes: who may edit them, and who is editing now.
+       *
+       * @param {JournalEntry} entry - The quest.
+       * @param {object} access - From questAccess.
+       * @param {boolean} viaGM - The player edits through the GM.
+       * @returns {object} Fields merged into the sheet context.
+       */
+      #notesContext(entry, access, viaGM)
+      {
+         const canEditNotes = access.editable || viaGM;
+         const notesEditing = canEditNotes && this._notesEditing && holdsNotes(entry);
+         const holder = notesEditing ? null : notesEditor(entry);
+         return {
+            canEditNotes,
+            notesEditing,
+            notesLockedBy: holder ? game.i18n.format('FHQL.Notes.LockedBy', { name: holder.name }) : '',
+            notesTakeOver: !!holder && access.gm,
+            notesCanStart: canEditNotes && !holder
          };
       }
 
@@ -485,8 +533,20 @@ export function QuestSheetMixin(Base)
             case 'inProgress': return updateQuest(entry, { 'system.inProgress': value });
             case 'giver.name': return updateQuest(entry, { 'system.giver.name': value }, QUIET);
             case 'image': return updateQuest(entry, { 'system.image': value });
-            case 'description':
-            case 'playerNotes': return updateQuest(entry, { [`system.${field}`]: value });
+            case 'description': return updateQuest(entry, { 'system.description': value });
+            case 'playerNotes':
+            {
+               if (questAccess(entry).editable) { await updateQuest(entry, { 'system.playerNotes': value }); }
+               else
+               {
+                  const result = await requestPlayerAction({ action: 'playerNotes', entryId: entry.id, html: value });
+                  if (!result.ok) { throw new Error('Player notes refused'); }
+               }
+               this._notesEditing = false;
+               await releaseNotes(entry);
+               this.render();
+               return;
+            }
             case 'gmNotes': return setGmNotes(entry, value);
             case 'objective.name': return updateQuest(entry, { [`system.objectives.${objectiveId}.name`]: value }, QUIET);
             case 'objective.hidden': return updateQuest(entry, { [`system.objectives.${objectiveId}.hidden`]: value });
@@ -499,13 +559,6 @@ export function QuestSheetMixin(Base)
             case 'reward.name': return updateQuest(entry, { [`system.rewards.${rewardId}.name`]: value }, QUIET);
             case 'reward.hidden': return updateQuest(entry, { [`system.rewards.${rewardId}.hidden`]: value });
             case 'reward.claimLimit': return updateQuest(entry, { [`system.rewards.${rewardId}.claimLimit`]: value });
-            case 'playerNotesViaGM':
-            {
-               this._notesEditing = false;
-               const result = await requestPlayerAction({ action: 'playerNotes', entryId: entry.id, html: value });
-               if (!result.ok) { throw new Error('Player notes refused'); }
-               return result;
-            }
          }
       }
 
@@ -652,10 +705,40 @@ export function QuestSheetMixin(Base)
          }
       }
 
-      /** @this {QuestSheet} */
-      static #onEditNotesViaGM()
+      /**
+       * Starts editing player notes in place. Claims them first, so only one person edits at a time;
+       * the GM can take over from someone who walked away.
+       *
+       * @this {QuestSheet}
+       */
+      static async #onEditNotes(event, target)
       {
+         const entry = this.questEntry;
+         if (!entry) { return; }
+         const holder = await claimNotes(entry, { force: 'force' in target.dataset && game.user.isGM });
+         if (holder)
+         {
+            ui.notifications.warn(game.i18n.format('FHQL.Notes.LockedBy', { name: holder.name }));
+            this.render();
+            return;
+         }
          this._notesEditing = true;
+         this.#openNotesEditor = true;
+         this.render();
+      }
+
+      /**
+       * Finishes editing player notes: saves unsaved text (which releases them), or just releases.
+       *
+       * @this {QuestSheet}
+       */
+      static async #onFinishNotes()
+      {
+         const entry = this.questEntry;
+         const editor = this.element?.querySelector('prose-mirror[name="playerNotes"]');
+         if (editor && QuestSheet.#unsaved(editor)) { editor.save(); return; }
+         this._notesEditing = false;
+         if (entry) { await releaseNotes(entry); }
          this.render();
       }
 

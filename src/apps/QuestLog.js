@@ -11,6 +11,7 @@ import {
    questSubfolders, visibleQuests
 } from '../data/quests.js';
 import { QuestSheetMixin } from './QuestSheetMixin.js';
+import { releaseNotes } from '../data/notesLock.js';
 
 /** The Quest Log window: quest list plus a quest sheet in the detail pane. Singleton. */
 export class QuestLog extends QuestSheetMixin(HandlebarsApp)
@@ -62,7 +63,11 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
     */
    select(id)
    {
-      if (id !== this.#selectedId) { this._editing = false; this._notesEditing = false; }
+      if (id !== this.#selectedId)
+      {
+         this._editing = false;
+         if (this._notesEditing) { this._notesEditing = false; releaseNotes(); }
+      }
       this.#selectedId = id;
    }
 
@@ -384,8 +389,10 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
    }
 
    /** @this {QuestLog} */
-   static #onSelectQuest(event, target)
+   static async #onSelectQuest(event, target)
    {
+      // Typed but unsaved editor text belongs to the quest being left; save it first.
+      await this._flushEdits();
       this.showQuest(target.dataset.questId);
    }
 

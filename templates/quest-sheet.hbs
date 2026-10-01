@@ -130,32 +130,32 @@
       </section>
       {{/if}}
 
-      {{! ---------- Player notes ---------- }}
-      {{#if editing}}
+      {{! ---------- Player notes: edited in place, by one person at a time, in either view ---------- }}
+      {{#if notesEditing}}
       <section class="fhql-card fhql-area-notes">
-        <h3 class="fhql-subheading">{{localize "FHQL.Quest.PlayerNotes"}}</h3>
+        <h3 class="fhql-subheading">{{localize "FHQL.Quest.PlayerNotes"}}
+          <button type="button" class="fhql-button fhql-small fhql-primary fhql-push" data-action="finishNotes"
+            aria-label="{{localize 'FHQL.Notes.Done'}}"><i class="fa-solid fa-check" inert></i><span class="fhql-label">{{localize "FHQL.Notes.Done"}}</span></button></h3>
         <prose-mirror name="playerNotes" data-field="playerNotes" toggled value="{{playerNotes}}">{{{playerNotesHTML}}}</prose-mirror>
-      </section>
-      {{else if notesEditing}}
-      <section class="fhql-card fhql-area-notes">
-        <h3 class="fhql-subheading">{{localize "FHQL.Quest.PlayerNotes"}}</h3>
-        <prose-mirror name="playerNotesViaGM" data-field="playerNotesViaGM" toggled value="{{playerNotes}}">{{{playerNotesHTML}}}</prose-mirror>
       </section>
       {{else if playerNotesHTML}}
       <section class="fhql-card fhql-area-notes">
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.PlayerNotes"}}
-          {{#if canEditNotesViaGM}}<button type="button" class="fhql-button fhql-small fhql-push" data-action="editNotesViaGM"
+          {{#if notesLockedBy}}<span class="fhql-empty-note fhql-push"><i class="fa-solid fa-lock" inert></i> {{notesLockedBy}}</span>
+          {{#if notesTakeOver}}<button type="button" class="fhql-button fhql-small" data-action="editNotes" data-force
+            aria-label="{{localize 'FHQL.Notes.TakeOver'}}" data-tooltip="{{localize 'FHQL.Notes.TakeOverHint'}}"><i class="fa-solid fa-pen" inert></i><span class="fhql-label">{{localize "FHQL.Notes.TakeOver"}}</span></button>{{/if}}
+          {{else if notesCanStart}}<button type="button" class="fhql-button fhql-small fhql-push" data-action="editNotes"
             aria-label="{{localize 'FHQL.Player.EditNotes'}}"><i class="fa-solid fa-pen" inert></i><span class="fhql-label">{{localize "FHQL.Player.EditNotes"}}</span></button>{{/if}}</h3>
         <div class="fhql-prose">{{{playerNotesHTML}}}</div>
       </section>
-      {{else if editable}}
-      <section class="fhql-card fhql-compact fhql-area-notes">
-        <h3 class="fhql-subheading">{{localize "FHQL.Quest.PlayerNotes"}}<span class="fhql-empty-note">{{localize "FHQL.Section.Empty"}}</span></h3>
-      </section>
-      {{else if canEditNotesViaGM}}
+      {{else if canEditNotes}}
       <section class="fhql-card fhql-compact fhql-area-notes">
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.PlayerNotes"}}<span class="fhql-empty-note">{{localize "FHQL.Section.Empty"}}</span>
-          <button type="button" class="fhql-button fhql-small" data-action="editNotesViaGM"><i class="fa-solid fa-plus" inert></i> {{localize "FHQL.Player.AddNotes"}}</button></h3>
+          {{#if notesLockedBy}}<span class="fhql-empty-note fhql-push"><i class="fa-solid fa-lock" inert></i> {{notesLockedBy}}</span>
+          {{#if notesTakeOver}}<button type="button" class="fhql-button fhql-small" data-action="editNotes" data-force
+            aria-label="{{localize 'FHQL.Notes.TakeOver'}}" data-tooltip="{{localize 'FHQL.Notes.TakeOverHint'}}"><i class="fa-solid fa-pen" inert></i><span class="fhql-label">{{localize "FHQL.Notes.TakeOver"}}</span></button>{{/if}}
+          {{else if notesCanStart}}<button type="button" class="fhql-button fhql-small" data-action="editNotes"
+            aria-label="{{localize 'FHQL.Player.AddNotes'}}"><i class="fa-solid fa-plus" inert></i><span class="fhql-label">{{localize "FHQL.Player.AddNotes"}}</span></button>{{/if}}</h3>
       </section>
       {{/if}}
     </div>

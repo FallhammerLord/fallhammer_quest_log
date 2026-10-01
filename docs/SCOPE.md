@@ -239,6 +239,15 @@ An objective can require an item: "Bring 3 wolf pelts". The requirement lives on
 - **Copies:** duplicating a quest clears deposits, so Undo can't return items twice. Deleting an objective holding handed-over items asks first.
 - **Tested offline:** `npm run deposits` covers racing deposits, refusals, rollback, and Undo. Two real players depositing at once is untested in Foundry.
 
+### 5.12 Player notes, edited in place (2026-10-01)
+
+Player notes are edited from the read view (and the edit view), without entering edit mode. One person edits at a time.
+
+- **Who:** anyone who can edit the quest, plus players when "players edit notes" is on (their save goes through the GM relay, as before).
+- **Lock:** the editor marks `flags.fhql.editingNotes = { entryId, at }` on their own User document, which every player may write and every client sees. Only connected users count, so a closed browser never leaves notes locked; a leftover mark is cleared on the next login. If two people claim in the same moment, the earlier claim keeps it. Others see "Rinn is editing"; the GM can "Edit anyway".
+- **Flow:** Edit notes claims the lock and opens the editor (by clicking its own pen after render; the `open` attribute breaks editing). Saving or Done releases it, as do closing the window and switching quests (which save unsaved text first).
+- **Saved text vanishing (fixed):** a toggled editor that was just saved could still report dirty, which blocked the re-render, so its text vanished until Done. Only open editors now count as unsaved.
+
 ## 6. Theming spec
 
 ### 6.1 Structure

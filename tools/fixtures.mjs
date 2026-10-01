@@ -82,6 +82,7 @@ export function sheetContext(t, { gm = true, editing = false } = {})
          rewards, rewardSummary: t('Reward.Summary').replace('{claimed}', '1').replace('{total}', '3'),
          subquests: [{ id: 'c', name: 'Find the missing courier before the rains', status: 'available', icon: S.available, label: t('Status.available') }],
          playerNotes: '', playerNotesHTML: '<p>Hask owes us 40 gold.</p>',
+         canEditNotes: true, notesCanStart: gm, notesLockedBy: gm ? '' : 'Player2 (Corvus AAI:2101 G5) is editing',
          gmNotes: gm ? { raw: '', html: '<p>The rockfall was deliberate.</p>', open: true } : null,
          showHiddenNotice: false, showObjectives: true, showRewards: true, textRewardEditing: { text: editing }
       }

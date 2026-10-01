@@ -405,6 +405,12 @@
         "NotItem": "Only items can be required.",
         "HasDeposits": "Undo this objective's deposits first."
       }
+    },
+    "Notes": {
+      "Done": "Done",
+      "LockedBy": "{name} is editing",
+      "TakeOver": "Edit anyway",
+      "TakeOverHint": "Take over the notes. Anything they haven't saved may be overwritten."
     }
   }
 }
