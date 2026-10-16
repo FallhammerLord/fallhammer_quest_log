@@ -84,6 +84,7 @@ npm run quests     # quest family rules with Foundry mocked: subquests live in t
 - **`questPage(doc)` must stay safe for any document.** Drops pass Items and Actors through it; when it assumed `doc.pages`, every item drop on Objectives silently failed (2026-10-16). `npm run quests` checks it.
 - **Redraws are batched** (`refresh` in `src/main.js`): document hooks queue the changed quest (and its parent, read at hook time) and one animation frame redraws the log, the affected quest windows, and the Beacon. Pass the entry ID; `null` means "redraw everything" (used when a parent changes).
 - **Exclusive actions** (`EXCLUSIVE` in `src/apps/sheet/rows.js`) ignore repeat clicks on the same row while saving. Never add an action that opens a popover to that list: a second click must reach the popover to close it.
+- **Notifications with names** (items, actors, users, quests) go through `notify()` in `compat.js`, which turns `<`/`>` into look-alike marks. Chat cards and popovers escape with `foundry.utils.escapeHTML`.
 - **Hidden quests:** hiding sets default and per-player ownership to None (saved in a flag, restored on reveal); `questAccess` also refuses Hidden quests to non-GMs.
 - **Sheet actions** are plain functions called with `this` as the window, grouped per feature in `src/apps/sheet/` and merged through `guardActions`. New feature: new file there, not more lines in the mixin.
 - **Target sizes:** every button and select is at least 24px (WCAG 2.2 AA 2.5.8); icon-only actions use `.fhql-icon-only` (28px) with `aria-label` and `data-tooltip`.
@@ -124,7 +125,7 @@ Storage survives disable/re-enable; editing and autosave; view/edit modes; quick
 5. **High contrast, take two:** prototype a version that keeps each theme's character (keep textures faint, strengthen edges and text) before showing the toggle again.
 8. **Sharing:** compendium/Adventure import keeping parent links (IDs change); map pins tested.
 9. **Scale:** index quests instead of scanning `game.journal` per render; time a 500-quest world. Open quest windows all re-render on any quest change; watch for stutter with many windows.
-10. **Code:** move the sheet's render context out of `QuestSheetMixin.js` (695 lines) into `src/apps/sheet/`; consider splitting `styles/fhql.css` (1,100 lines) by component; Handlebars partials for the repeated eye button and notes lock controls; a settings submenu for advanced settings; check whether notifications escape HTML.
+10. **Code:** move the sheet's render context out of `QuestSheetMixin.js` (695 lines) into `src/apps/sheet/`; consider splitting `styles/fhql.css` (1,100 lines) by component; Handlebars partials for the repeated eye button and notes lock controls; a settings submenu for advanced settings.
 11. **Translations:** English only today.
 
 Quest image guidance (told to the user): shown full pane width, max 160px tall, cropped top and bottom only. Recommend 5:1, 2000×400, key content in the middle 60% of height. Per-quest banner tint declined (2026-10-01).

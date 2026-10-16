@@ -1,3 +1,4 @@
+import { notify } from '../../compat.js';
 import { claimNotes, holdsNotes, notesEditor, releaseNotes } from '../../data/notesLock.js';
 import { requestPlayerAction } from '../../data/playerActions.js';
 import { questAccess, updateQuest } from '../../data/quests.js';
@@ -106,7 +107,7 @@ async function onEditNotes(event, target)
    const holder = await claimNotes(entry, { force: 'force' in target.dataset && game.user.isGM });
    if (holder)
    {
-      ui.notifications.warn(game.i18n.format('FHQL.Notes.LockedBy', { name: holder.name }));
+      notify('warn', game.i18n.format('FHQL.Notes.LockedBy', { name: holder.name }));
       this.render();
       return;
    }

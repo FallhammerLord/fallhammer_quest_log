@@ -1,3 +1,4 @@
+import { notify } from '../../compat.js';
 import { choicePanel, confirmPopover } from '../../ui/popover.js';
 import {
    claimLabel, claimedItem, claimsExhausted, claimTargets, isClaimable, playerOwned, recipientOptions, requestClaim, undoClaim
@@ -162,7 +163,7 @@ async function onUndoClaim(event, target)
       takeBack = !!item && answer;
    }
    const result = await undoClaim(this.questEntry, found.id, index, { takeBack });
-   if (result.tookBack) { ui.notifications.info(game.i18n.format('FHQL.Reward.TookBack', { item: found.reward.name })); }
+   if (result.tookBack) { notify('info', game.i18n.format('FHQL.Reward.TookBack', { item: found.reward.name })); }
 }
 
 /** Reward and claim actions, merged into the quest sheet's actions. */

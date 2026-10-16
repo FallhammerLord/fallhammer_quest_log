@@ -1,4 +1,4 @@
-import { activeGM, queryUser, registerQuery } from '../compat.js';
+import { activeGM, notify, queryUser, registerQuery } from '../compat.js';
 import { MODULE_ID } from '../constants.js';
 
 /**
@@ -74,7 +74,7 @@ export async function relay(name, data, { needGM, failed, notifySuccess = true }
    }
 
    result ??= { ok: false, message: game.i18n.localize(failed) };
-   if (!result.ok && result.message) { ui.notifications.warn(result.message); }
-   else if (result.ok && notifySuccess && result.message) { ui.notifications.info(result.message); }
+   if (!result.ok && result.message) { notify('warn', result.message); }
+   else if (result.ok && notifySuccess && result.message) { notify('info', result.message); }
    return result;
 }

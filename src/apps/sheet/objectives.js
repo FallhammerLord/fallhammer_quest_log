@@ -1,3 +1,4 @@
+import { notify } from '../../compat.js';
 import { confirmPopover, openPanel } from '../../ui/popover.js';
 import {
    clearRequirement, defaultDepositChoice, depositCandidates, depositedTotal, depositLabel, hasRequirement, requestDeposit,
@@ -152,13 +153,13 @@ async function startDeposit(app, anchor, objectiveId, itemUuid)
    const choices = depositCandidates(objective, asGM);
    if (!choices.length)
    {
-      ui.notifications.warn(game.i18n.format(asGM ? 'FHQL.Deposit.NoneAnywhere' : 'FHQL.Deposit.NoneCarried', { item: requirement.name }));
+      notify('warn', game.i18n.format(asGM ? 'FHQL.Deposit.NoneAnywhere' : 'FHQL.Deposit.NoneCarried', { item: requirement.name }));
       return;
    }
    const dropped = itemUuid ? choices.find((c) => c.itemUuid === itemUuid) : null;
    if (itemUuid && !dropped)
    {
-      ui.notifications.warn(game.i18n.format('FHQL.Deposit.Error.WrongItem', { item: requirement.name }));
+      notify('warn', game.i18n.format('FHQL.Deposit.Error.WrongItem', { item: requirement.name }));
       return;
    }
    const confirmed = await confirmDeposit(app, anchor, objective, choices, dropped ?? (asGM ? null : defaultDepositChoice(choices)));

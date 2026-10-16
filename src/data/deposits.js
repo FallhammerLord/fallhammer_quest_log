@@ -1,4 +1,4 @@
-import { postChat } from '../compat.js';
+import { notify, postChat } from '../compat.js';
 import { itemQuantity, itemQuantityUpdate, itemSourceUuids } from './systemItems.js';
 import { registerRelay, relay } from './relay.js';
 import { MODULE_ID } from '../constants.js';
@@ -266,7 +266,7 @@ export async function undoDeposit(entry, objectiveId, index, { returnItem = fals
       const actor = await fromUuid(deposit.actorUuid);
       if (!actor)
       {
-         ui.notifications.warn(game.i18n.format('FHQL.Deposit.Error.ActorGone', { actor: deposit.actorName }));
+         notify('warn', game.i18n.format('FHQL.Deposit.Error.ActorGone', { actor: deposit.actorName }));
          return false;
       }
       const stack = actor.items.get(deposit.item._id);

@@ -1,3 +1,4 @@
+import { notify } from '../../compat.js';
 import { menuPopover } from '../../ui/popover.js';
 import { showablePlayers, showToPlayers } from '../../ui/share.js';
 
@@ -28,8 +29,8 @@ async function onShowToPlayers(event, target)
    if (choice === null) { return; }
    const users = choice === '__all' ? players : players.filter((u) => u.id === choice);
    const { shown, missed } = await showToPlayers(entry, users);
-   if (shown.length) { ui.notifications.info(t('FHQL.Share.Shown', { names: shown.map((u) => u.name).join(', ') })); }
-   if (missed.length) { ui.notifications.warn(t('FHQL.Share.Missed', { names: missed.map((u) => u.name).join(', ') })); }
+   if (shown.length) { notify('info', t('FHQL.Share.Shown', { names: shown.map((u) => u.name).join(', ') })); }
+   if (missed.length) { notify('warn', t('FHQL.Share.Missed', { names: missed.map((u) => u.name).join(', ') })); }
 }
 
 /** Show to players action, merged into the quest sheet's actions. */

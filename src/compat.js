@@ -259,3 +259,16 @@ export function registerFont(family, url)
    CONFIG.fontDefinitions[family] = { editor: true, fonts: [{ urls: [url] }] };
    return true;
 }
+
+/**
+ * Shows a notification whose text may hold names players chose (items, actors, users, quests). Angle
+ * brackets become look-alike marks, so a name can never be read as markup, whether or not Foundry
+ * escapes notifications itself (and nothing is escaped twice).
+ *
+ * @param {'info'|'warn'|'error'} level - Notification type.
+ * @param {string} message - Plain text.
+ */
+export function notify(level, message)
+{
+   ui.notifications[level]?.(String(message ?? '').replace(/</g, '‹').replace(/>/g, '›'));
+}
