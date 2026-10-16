@@ -463,6 +463,11 @@
 .fhql-app prose-mirror,
 .fhql-app prose-mirror * { user-select: text; -webkit-user-select: text; }
 .fhql-app prose-mirror .editor-content { min-height: 6em; }
+/* An open editor fills its panel, which panels.js gives every spare pixel in its column (.is-writing),
+   so long text flows instead of scrolling in a small box. One-column layouts give it a tall minimum. */
+.fhql-app .fhql-card.is-writing > .fhql-panel-body { display: flex; flex-direction: column; }
+.fhql-app .fhql-card.is-writing prose-mirror { flex: 1 0 auto; display: flex; flex-direction: column; }
+.fhql-app .fhql-card.is-writing prose-mirror .editor-content { flex: 1 0 auto; min-height: 12em; }
 
 /* Objectives */
 .fhql-objectives {

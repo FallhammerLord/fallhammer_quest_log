@@ -23,6 +23,12 @@ const MIN_ROWS_EM = 5.5;
 /** Pixels of slack per column so rounding never clips the last panel's border. */
 const SLACK = 4;
 
+/**
+ * @param {HTMLElement} card - A panel.
+ * @returns {boolean} Whether it holds an open (being written in) rich-text editor.
+ */
+const isWriting = (card) => [...card.querySelectorAll('prose-mirror')].some((editor) => editor.open === true || editor.hasAttribute('open'));
+
 /** @param {HTMLElement} root - The sheet window element. @returns {HTMLElement|null} The sheet body. */
 const sheetBody = (root) => root?.querySelector('.fhql-sheet-body') ?? null;
 
@@ -78,11 +84,13 @@ function measure(card)
 {
    card.style.flexBasis = '';
    const natural = card.offsetHeight;
+   const writing = isWriting(card);
+   card.classList.toggle('is-writing', writing);
    const body = card.querySelector(':scope > .fhql-panel-body');
-   if (!body) { return { card, natural, min: natural }; }
+   if (!body) { return { card, natural, min: natural, writing }; }
    const chrome = natural - body.offsetHeight;
    const rows = parseFloat(getComputedStyle(body).fontSize) * MIN_ROWS_EM;
-   return { card, natural, min: Math.min(natural, chrome + rows) };
+   return { card, natural, min: Math.min(natural, chrome + rows), writing };
 }
 
 /**
@@ -95,6 +103,15 @@ function measure(card)
 function share(items, avail, mode)
 {
    let spare = Math.max(0, avail - items.reduce((n, it) => n + it.min, 0));
+   // A panel being written in takes every spare pixel, so the editor has room to work; the others keep
+   // their minimum (about four rows) and scroll.
+   const writing = items.find((it) => it.writing);
+   if (writing)
+   {
+      for (const it of items) { it.height = it === writing ? it.min + spare : it.min; }
+      for (const it of items) { it.card.style.flexBasis = `${Math.floor(it.height)}px`; }
+      return;
+   }
    if (mode === 'priority')
    {
       for (const it of items)
@@ -133,7 +150,12 @@ export function layoutPanels(root)
    const keep = capturePanelScroll(root);
    body.style.minHeight = '';
    const cards = [...body.querySelectorAll('.fhql-col > .fhql-card')];
-   if (isNarrow(root)) { for (const card of cards) { card.style.flexBasis = ''; } restorePanelScroll(root, keep); return; }
+   if (isNarrow(root))
+   {
+      for (const card of cards) { card.style.flexBasis = ''; card.classList.toggle('is-writing', isWriting(card)); }
+      restorePanelScroll(root, keep);
+      return;
+   }
 
    const cols = [...body.querySelectorAll(':scope > .fhql-col')];
    const plan = cols.map((col, i) =>
