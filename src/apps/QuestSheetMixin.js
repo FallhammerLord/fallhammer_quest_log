@@ -1,18 +1,16 @@
 import { textEditor } from '../compat.js';
-import { isTracked, toggleTracked } from '../data/tracking.js';
 import { addRequirementObjective, setRequirement } from '../data/deposits.js';
-import { canAccept, canChangeStatusAsPlayer, canEditNotesViaGM, requestPlayerAction } from '../data/playerActions.js';
-import { MODULE_ID, STATUSES } from '../constants.js';
+import { MODULE_ID } from '../constants.js';
 import {
-   addRewardFromDocument, clearGiver, getQuestEntry, gmNotesPage, parentCandidates, questAccess, questPage,
-   renameQuest, setGiverFromDocument, setGmNotes, setParent, setStatus, subquests, updateQuest
+   addRewardFromDocument, getQuestEntry, parentCandidates, questAccess, questPage, renameQuest, setGiverFromDocument,
+   setGmNotes, setParent, setStatus, updateQuest
 } from '../data/quests.js';
 import { editorUnsaved, guardActions } from './sheet/rows.js';
-import { depositDropped, flashChangedObjectives, objectiveActions, objectivesContext } from './sheet/objectives.js';
-import { rewardActions, rewardsContext } from './sheet/rewards.js';
-import {
-   notesActions, notesContext, openNotesIfAsked, rememberOpenNotes, savePlayerNotes, stopEditingNotes
-} from './sheet/notes.js';
+import { sheetContext } from './sheet/context.js';
+import { questActions } from './sheet/questActions.js';
+import { depositDropped, flashChangedObjectives, objectiveActions } from './sheet/objectives.js';
+import { rewardActions } from './sheet/rewards.js';
+import { notesActions, openNotesIfAsked, rememberOpenNotes, savePlayerNotes, stopEditingNotes } from './sheet/notes.js';
 import { openQuestMenu, questMenuActions } from './sheet/questMenu.js';
 import { shareActions } from './sheet/share.js';
 import { subquestActions } from './sheet/subquests.js';
@@ -26,23 +24,11 @@ import {
 /** Update option marking a text edit made from this window, so it re-renders lightly and keeps focus. */
 export const QUIET = { fhqlQuiet: true };
 
-/** Narrow layout: objectives shown before "Show all". Matches the CSS cap in styles/fhql.css. */
-const OBJECTIVE_CAP = 8;
-
 /** Size and place are saved this long (ms) after the last move or resize, so a drag writes once. */
 const MEMORY_DELAY = 500;
 
 /** Screen readers announce a live region only when its text changes; clear it, then refill after this pause (ms). */
 const ANNOUNCE_DELAY = 50;
-
-/** One-click status changes in the read view, by current status. */
-const STATUS_ACTIONS = {
-   hidden: [['available', 'Reveal'], ['active', 'RevealActive']],
-   available: [['active', 'Start'], ['completed', 'Complete'], ['failed', 'Fail'], ['hidden', 'Hide']],
-   active: [['completed', 'Complete'], ['failed', 'Fail'], ['hidden', 'Hide']],
-   completed: [['active', 'Reopen'], ['hidden', 'Hide']],
-   failed: [['active', 'Reopen'], ['hidden', 'Hide']]
-};
 
 /**
  * Quest sheet behavior shared by the Quest Log's detail pane and the pop-out Quest Sheet window:
@@ -62,14 +48,9 @@ export function QuestSheetMixin(Base)
          actions: guardActions({
             editQuest: QuestSheet.#onEditQuest,
             finishEditing: QuestSheet.#onFinishEditing,
-            setQuestStatus: QuestSheet.#onSetQuestStatus,
-            toggleInProgress: QuestSheet.#onToggleInProgress,
-            toggleTracked: QuestSheet.#onToggleTracked,
-            acceptQuest: QuestSheet.#onAcceptQuest,
-            openDocument: QuestSheet.#onOpenDocument,
-            clearGiver: QuestSheet.#onClearGiver,
             showQuest: QuestSheet.#onShowQuest,
             showAllObjectives: QuestSheet.#onShowAllObjectives,
+            ...questActions,
             ...objectiveActions,
             ...rewardActions,
             ...notesActions,
@@ -335,113 +316,14 @@ export function QuestSheetMixin(Base)
       get questEntry() { return getQuestEntry(this.questId); }
 
       /**
-       * Builds the render data for one quest.
+       * Builds the render data for one quest (src/apps/sheet/context.js).
        *
        * @param {JournalEntry} entry - The quest entry.
        * @returns {Promise<object|null>} Sheet context.
        */
       async _prepareSheet(entry)
       {
-         if (!entry) { return null; }
-
-         const page = questPage(entry);
-         const system = page.system;
-         const access = questAccess(entry);
-         const editing = access.editable && this._editing;
-         const trusted = canChangeStatusAsPlayer(entry);
-         const notesViaGM = canEditNotesViaGM(entry);
-         const enrich = (html) => textEditor().enrichHTML(html ?? '', { secrets: access.editable, relativeTo: page });
-         const localize = (key) => game.i18n.localize(key);
-         const allObjectives = objectivesContext(system, access, editing);
-         // "Hide done" is the viewer's own choice; edit mode always shows everything.
-         const hideDone = !editing && getSetting('hideDoneObjectives');
-         const objectives = hideDone ? allObjectives.filter((o) => o.state !== 'done') : allObjectives;
-         const doneCount = allObjectives.filter((o) => o.state === 'done').length;
-         // Narrow layout shows the first few objectives with "Show all"; CSS applies the cap only when narrow.
-         const objectivesCapped = !editing && !this._showAllObjectives && objectives.length > OBJECTIVE_CAP;
-         const { rewards, rewardSummary } = rewardsContext(entry, system, access);
-
-         const parentEntry = getQuestEntry(system.parentQuest);
-         const parent = parentEntry && questAccess(parentEntry).visible ? { id: parentEntry.id, name: parentEntry.name } : null;
-
-         const children = subquests(entry).map((child) =>
-         {
-            const status = questPage(child).system.status;
-            return { id: child.id, name: child.name, status, icon: STATUSES[status].icon, label: localize(`FHQL.Status.${status}`) };
-         });
-
-         const gmPage = access.gm ? gmNotesPage(entry) : null;
-         const gmNotesRaw = gmPage?.text.content ?? '';
-
-         return {
-            id: entry.id,
-            name: entry.name,
-            ...access,
-            editing,
-            status: system.status,
-            statusIcon: STATUSES[system.status].icon,
-            statusLabel: localize(`FHQL.Status.${system.status}`),
-            statusOptions: Object.keys(STATUSES).filter((key) => access.gm || key !== 'hidden').map((key) => ({
-               value: key, label: localize(`FHQL.Status.${key}`), selected: key === system.status
-            })),
-            statusActions: (access.gm || trusted) ? (STATUS_ACTIONS[system.status] ?? [])
-             .filter(([target]) => access.gm || target !== 'hidden')
-             .map(([target, verb]) => ({
-                status: target, icon: STATUSES[target].icon, label: localize(`FHQL.QuestLog.StatusAction.${verb}`)
-             })) : [],
-            canSetStatus: access.gm || trusted,
-            canAccept: canAccept(entry),
-            ...notesContext(this, entry, access, notesViaGM),
-            inProgress: system.inProgress,
-            tracked: isTracked(entry),
-            saveStateLabel: editing ? this.#saveStateLabel() : '',
-            image: system.image,
-            dateLine: QuestSheet.#dateLine(system),
-            giver: { ...system.giver, linked: !!system.giver.uuid },
-            parent,
-            description: system.description,
-            descriptionHTML: access.full ? await enrich(system.description) : '',
-            objectives,
-            doneCount,
-            objectiveTotal: allObjectives.length,
-            hideDone,
-            hideDoneToggle: !editing && (doneCount > 0 || hideDone),
-            allHidden: hideDone && allObjectives.length > 0 && objectives.length === 0,
-            objectivesCapped,
-            objectivesMoreLabel: game.i18n.format('FHQL.Objective.ShowAll', { count: objectives.length }),
-            rewards,
-            rewardSummary,
-            subquests: children,
-            showHiddenNotice: access.gm && system.status === 'hidden',
-            showObjectives: allObjectives.length > 0 || editing,
-            showRewards: rewards.length > 0 || editing,
-            textRewardEditing: { text: editing },
-            playerNotes: system.playerNotes,
-            playerNotesHTML: access.full ? await enrich(system.playerNotes) : '',
-            gmNotes: access.gm ? {
-               raw: gmNotesRaw,
-               html: await enrich(gmNotesRaw),
-               open: editing || getSetting('gmNotesOpen')
-            } : null
-         };
-      }
-
-      /**
-       * "Started 3 Oct 2026 · Completed 9 Oct 2026", from whichever dates are recorded.
-       *
-       * @param {object} system - Quest data.
-       * @returns {string} The line, or '' if nothing is recorded.
-       */
-      static #dateLine(system)
-      {
-         const format = (ts) => new Date(ts).toLocaleDateString(game.i18n.lang, { day: 'numeric', month: 'short', year: 'numeric' });
-         const parts = [];
-         if (system.dates.started) { parts.push(game.i18n.format('FHQL.Quest.Started', { date: format(system.dates.started) })); }
-         if (system.dates.ended && ['completed', 'failed'].includes(system.status))
-         {
-            parts.push(game.i18n.format(`FHQL.Quest.Ended.${system.status}`, { date: format(system.dates.ended) }));
-         }
-         return parts.join(' · ');
+         return entry ? sheetContext(this, entry, this._editing ? this.#saveStateLabel() : '') : null;
       }
 
       /** @override */
@@ -616,63 +498,6 @@ export function QuestSheetMixin(Base)
          await this._flushEdits();
          this._editing = false;
          this.render();
-      }
-
-      /** @this {QuestSheet} */
-      static async #onSetQuestStatus(event, target)
-      {
-         if (!this.questEntry) { return; }
-         await setStatus(this.questEntry, target.dataset.status);
-         this._announce(game.i18n.format('FHQL.Announce.Status', { status: game.i18n.localize(`FHQL.Status.${target.dataset.status}`) }));
-      }
-
-      /** @this {QuestSheet} */
-      static async #onToggleInProgress()
-      {
-         const entry = this.questEntry;
-         if (!entry) { return; }
-         const on = !questPage(entry).system.inProgress;
-         await updateQuest(entry, { 'system.inProgress': on });
-         this._announce(game.i18n.localize(on ? 'FHQL.Announce.FocusOn' : 'FHQL.Announce.FocusOff'));
-      }
-
-      /** @this {QuestSheet} */
-      static async #onAcceptQuest()
-      {
-         if (!this.questEntry) { return; }
-         const result = await requestPlayerAction({ action: 'accept', entryId: this.questEntry.id });
-         if (result.ok)
-         {
-            ui.notifications.info(game.i18n.localize('FHQL.Player.Accepted'));
-            this._announce(game.i18n.format('FHQL.Announce.Status', { status: game.i18n.localize('FHQL.Status.active') }));
-         }
-      }
-
-      /** @this {QuestSheet} */
-      static async #onToggleTracked()
-      {
-         if (!this.questEntry) { return; }
-         const on = !isTracked(this.questEntry);
-         await toggleTracked(this.questEntry);
-         this._announce(game.i18n.localize(on ? 'FHQL.Announce.TrackOn' : 'FHQL.Announce.TrackOff'));
-      }
-
-      /** Opens a linked giver or reward document's sheet, if the viewer may see it. */
-      static async #onOpenDocument(event, target)
-      {
-         const doc = target.dataset.uuid ? await fromUuid(target.dataset.uuid) : null;
-         if (!doc?.testUserPermission?.(game.user, 'LIMITED'))
-         {
-            ui.notifications.info(game.i18n.localize('FHQL.Drop.CannotOpen'));
-            return;
-         }
-         doc.sheet?.render({ force: true });
-      }
-
-      /** @this {QuestSheet} */
-      static async #onClearGiver()
-      {
-         if (this.questEntry) { await clearGiver(this.questEntry); }
       }
 
       /** @this {QuestSheet} */

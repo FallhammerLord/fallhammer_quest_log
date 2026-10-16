@@ -45,7 +45,9 @@ npm run quests     # Foundry mocked: quest families (folders, no loops), double-
 | `src/data/migrations.js` | world data upgrades: numbered steps, run once by the active GM on ready (setting `dataVersion`) |
 | `src/data/lifecycle.js` | duplicate/delete consistency hooks |
 | `src/import/fql.js` | FQL import (in place, parent repair, report) |
-| `src/apps/QuestSheetMixin.js` | shared quest sheet core: render context, edit mode, field saves, drops, focus/save safety |
+| `src/apps/QuestSheetMixin.js` | shared quest sheet core: edit mode, field saves, drops, focus/save safety, window memory |
+| `src/apps/sheet/context.js` | the sheet's render data for one quest (each feature adds its part) |
+| `src/apps/sheet/questActions.js` | sheet feature: status, party focus, track, accept, open linked document, clear giver |
 | `src/apps/sheet/objectives.js` | sheet feature: objectives, requirements, deposits (context + actions) |
 | `src/apps/sheet/rewards.js` | sheet feature: rewards and claiming (context + actions) |
 | `src/apps/sheet/notes.js` | sheet feature: player notes in place (context + actions) |
@@ -134,7 +136,7 @@ Storage survives disable/re-enable; editing and autosave; view/edit modes; quick
 5. **High contrast, take two:** prototype a version that keeps each theme's character (keep textures faint, strengthen edges and text) before showing the toggle again.
 8. **Sharing:** compendium/Adventure import keeping parent links (IDs change); map pins tested.
 9. **Scale:** index quests instead of scanning `game.journal` per render; time a 500-quest world. Open quest windows all re-render on any quest change; watch for stutter with many windows.
-10. **Code:** move the sheet's render context out of `QuestSheetMixin.js` (695 lines) into `src/apps/sheet/`; consider splitting `styles/fhql.css` (1,100 lines) by component; Handlebars partials for the repeated eye button and notes lock controls; a settings submenu for advanced settings.
+10. **Code:** a settings submenu for advanced settings.
 11. **Translations:** English only today.
 
 Quest image guidance (told to the user): shown full pane width, max 160px tall, cropped top and bottom only. Recommend 5:1, 2000×400, key content in the middle 60% of height. Per-quest banner tint declined (2026-10-01).
