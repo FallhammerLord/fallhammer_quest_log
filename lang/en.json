@@ -99,6 +99,9 @@
       "Curtain": "Spectacular, spectacular!",
       "CurtainSub": "Three quests completed tonight"
     },
+    "Migration": {
+      "Failed": "Fallhammer Quest Log could not finish updating this world's quests ({step}). Nothing was lost; it will try again next time the world launches. Details are in the console (F12)."
+    },
     "Subquest": {
       "OpenBeside": "Open beside this quest",
       "Remove": "Remove from this quest",

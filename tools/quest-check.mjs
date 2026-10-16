@@ -140,5 +140,39 @@ check(quests.questPage({ documentName: 'Item', name: 'Sealed salt cask' }) === u
    check(calls.filter((c) => c === 'add').length === 2, 'the lock clears once the action finishes');
 }
 
+// Data upgrades: old 'parent' links move to 'parentQuest' once; a finished step never runs again;
+// a failure keeps the old version so the next launch retries.
+{
+   const store = { dataVersion: 0 };
+   const savedGame = { ...globalThis.game };
+   const page = (system, fail = false) =>
+   {
+      const p = { type: QUEST_TYPE, _source: { system }, updates: [] };
+      p.update = async (data) => { if (fail) { throw new Error('offline'); } p.updates.push(data); };
+      return p;
+   };
+   const oldLink = page({ parent: 'abc', parentQuest: '' });
+   const modern = page({ parentQuest: 'xyz' });
+   Object.assign(globalThis.game, {
+      journal: [{ pages: [oldLink] }, { pages: [modern] }],
+      users: { activeGM: { isSelf: true } },
+      settings: { get: (m, k) => store[k], set: async (m, k, v) => { store[k] = v; } },
+      i18n: { localize: (k) => k, format: (k) => k }
+   });
+   globalThis.ui = { notifications: { error() {} } };
+   const { runMigrations } = await import('../src/data/migrations.js');
+   await runMigrations();
+   check(oldLink.updates.length === 1 && oldLink.updates[0]['system.parentQuest'] === 'abc', 'an old parent link is moved to parentQuest');
+   check(modern.updates.length === 0, 'quests without old links are left alone');
+   check(store.dataVersion === 1, 'the world records the upgrade');
+   await runMigrations();
+   check(oldLink.updates.length === 1, 'a finished upgrade never runs again');
+   store.dataVersion = 0;
+   globalThis.game.journal = [{ pages: [page({ parent: 'abc' }, true)] }];
+   await runMigrations();
+   check(store.dataVersion === 0, 'a failed upgrade keeps the old version, to retry next launch');
+   Object.assign(globalThis.game, savedGame);
+}
+
 if (failures) { console.log(`${failures} failed`); process.exit(1); }
 console.log('Quest family rules hold.');

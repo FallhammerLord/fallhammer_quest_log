@@ -2,6 +2,7 @@ import { MODULE_ID, QUEST_TYPE } from './constants.js';
 import { DocumentSheetConfig, TIDY_THEME_SETTING } from './compat.js';
 import { ensureThemeStyles, loadBundledFonts, refreshOpenApps } from './theme.js';
 import { migrateTextureSetting, registerSettings } from './settings.js';
+import { runMigrations } from './data/migrations.js';
 import { registerKeybindings } from './keybindings.js';
 import { api } from './api.js';
 import { QuestData } from './data/QuestData.js';
@@ -65,6 +66,7 @@ Hooks.once('ready', () =>
    refreshQuestBeacon();
    renameLegacyRootFolder();
    migrateTextureSetting();
+   runMigrations();
 });
 Hooks.on('renderPlayers', () => refreshQuestBeacon());
 

@@ -246,6 +246,14 @@ export function registerSettings()
       default: true
    });
 
+   // The last data upgrade applied to this world (src/data/migrations.js).
+   game.settings.register(MODULE_ID, 'dataVersion', {
+      scope: 'world',
+      config: false,
+      type: Number,
+      default: 0
+   });
+
    game.settings.register(MODULE_ID, 'windowMemory', {
       scope: 'client',
       config: false,

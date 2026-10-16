@@ -40,6 +40,7 @@ npm run quests     # quest family rules with Foundry mocked: subquests live in t
 | `src/data/owners.js` | which player an actor belongs to (assigned, else owner), shared actors, player actors |
 | `src/data/notesLock.js` | one-at-a-time player notes editing (User flags) |
 | `src/data/tracking.js` | personal Track and Beacon choice (User flags) |
+| `src/data/migrations.js` | world data upgrades: numbered steps, run once by the active GM on ready (setting `dataVersion`) |
 | `src/data/lifecycle.js` | duplicate/delete consistency hooks |
 | `src/import/fql.js` | FQL import (in place, parent repair, report) |
 | `src/apps/QuestSheetMixin.js` | shared quest sheet core: render context, edit mode, field saves, drops, focus/save safety |
@@ -80,6 +81,7 @@ npm run quests     # quest family rules with Foundry mocked: subquests live in t
 - **GM relays** go through `src/data/relay.js` only (`registerRelay` / `relay`): one queue on the GM client for every request type, shared notifications, transport in `compat.js`. The handler isn't told who sent a request: re-check everything against the named user, and refuse requests naming a GM.
 - **Deposits never move without confirmation:** Hand over/Show and drops open the confirm panel (source, amount). The GM client takes only what is still needed, one deposit at a time, recording before taking and rolling back on failure. Keep `npm run deposits` passing; it fails if the relay queue is removed.
 - **Quest families** live in one folder: a new subquest is created in its parent's folder, setting a parent moves the quest there, moving a quest moves its subquests. The Quest Log also nests a subquest under its parent wherever it is stored (older data).
+- **Stored data changes shape → add a step to `MIGRATIONS`** in `src/data/migrations.js` (next version number), keep reading old data in `QuestData.migrateData` meanwhile, and add a case to `npm run quests`.
 - **Never name a data field `parent`** (or any other DataModel property): Foundry's own `parent` (the owning document) hides it. The quest's parent is `system.parentQuest`; `QuestData.migrateData` carries old `parent` values over. This hid every subquest link until 2026-10-01; `npm run quests` mocks the collision.
 - **`questPage(doc)` must stay safe for any document.** Drops pass Items and Actors through it; when it assumed `doc.pages`, every item drop on Objectives silently failed (2026-10-16). `npm run quests` checks it.
 - **Redraws are batched** (`refresh` in `src/main.js`): document hooks queue the changed quest (and its parent, read at hook time) and one animation frame redraws the log, the affected quest windows, and the Beacon. Pass the entry ID; `null` means "redraw everything" (used when a parent changes).
