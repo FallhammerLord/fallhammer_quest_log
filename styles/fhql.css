@@ -460,6 +460,9 @@
 .fhql-app .fhql-prose > :last-child { margin-block-end: 0; }
 /* Leave Foundry's own editor layout alone; give it room, and make sure text can be selected and typed. */
 .fhql-app prose-mirror { min-height: 8em; }
+/* Foundry's editor toggle (pen) is icon-only; Foundry spaces icons for a label beside them, which pushes it off center. */
+.fhql-app prose-mirror button:has(> i:only-child):not(.editor-menu button) { display: inline-grid; place-items: center; }
+.fhql-app prose-mirror button:has(> i:only-child):not(.editor-menu button) > i { margin: 0; }
 .fhql-app prose-mirror,
 .fhql-app prose-mirror * { user-select: text; -webkit-user-select: text; }
 .fhql-app prose-mirror .editor-content { min-height: 6em; }
@@ -534,6 +537,8 @@
 .fhql-app .fhql-hint { margin: 0; font-size: 0.85em; color: var(--fhql-ink-muted); }
 
 /* Rewards and subquests */
+/* A little room at the scroll edges, so the first and last row's borders and focus rings aren't clipped. */
+.fhql-app .fhql-panel-body > .fhql-rows { padding-block: 2px; }
 .fhql-app .fhql-rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.35em; }
 .fhql-app .fhql-rows > li { display: flex; gap: 0.5em; align-items: center; min-width: 0; }
 .fhql-app .fhql-thumb {
