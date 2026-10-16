@@ -90,13 +90,16 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
     *
     * @param {object} options - The document operation options.
     * @param {string} userId - The user who made the change.
+    * @param {Set<string>|null} [changed] - Changed quests and their parents; null redraws the sheet too.
     */
-   onQuestChanged(options, userId)
+   onQuestChanged(options, userId, changed = null)
    {
       if (!this.rendered) { return; }
       const quiet = userId === game.user.id && options?.fhqlQuiet;
-      // Someone else's change must not wipe text being written in an open editor here.
-      this.render(quiet || this._hasUnsavedEditor() ? { parts: ['list'] } : {});
+      // Someone else's change must not wipe text being written in an open editor here, and a change to
+      // another quest only touches the list.
+      const elsewhere = changed && !changed.has(this.#selectedId) && !changed.has(questPage(this.questEntry)?.system.parentQuest);
+      this.render(quiet || elsewhere || this._hasUnsavedEditor() ? { parts: ['list'] } : {});
    }
 
    /** @override */
@@ -431,10 +434,17 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
    }
 
    /** @this {QuestLog} */
+   /** Increases with each quest click, so only the latest click wins after an editor save. */
+   #selectToken = 0;
+
+   /** @this {QuestLog} */
    static async #onSelectQuest(event, target)
    {
+      const token = ++this.#selectToken;
       // Typed but unsaved editor text belongs to the quest being left; save it first.
       await this._flushEdits();
+      // Another quest was clicked while saving: that later click decides.
+      if (token !== this.#selectToken) { return; }
       this.showQuest(target.dataset.questId);
    }
 

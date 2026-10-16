@@ -2,7 +2,7 @@ import { HandlebarsApp } from '../compat.js';
 import { MODULE_PATH } from '../constants.js';
 import { applyTheme, trackApp, untrackApp } from '../theme.js';
 import { clampToMinSize, snapWidth } from './minSize.js';
-import { getQuestEntry } from '../data/quests.js';
+import { getQuestEntry, questPage } from '../data/quests.js';
 import { QuestSheetMixin } from './QuestSheetMixin.js';
 import { QuestLog } from './QuestLog.js';
 
@@ -65,12 +65,16 @@ export class QuestSheetApp extends QuestSheetMixin(HandlebarsApp)
     *
     * @param {object} options - The document operation options.
     * @param {string} userId - The user who made the change.
+    * @param {Set<string>|null} [changed] - Changed quests and their parents; null redraws every window.
     */
-   static refreshAll(options, userId)
+   static refreshAll(options, userId, changed = null)
    {
       for (const app of QuestSheetApp.#windows.values())
       {
          if (!app.rendered) { continue; }
+         // Only windows showing a changed quest (or its parent) redraw; a gone quest's window closes below.
+         const affected = !changed || changed.has(app.questId) || changed.has(questPage(app.questEntry)?.system.parentQuest) || !app.questEntry;
+         if (!affected) { continue; }
          if (!app.questEntry || (!game.user.isGM && !app.questEntry.testUserPermission(game.user, 'LIMITED')))
          {
             app.close();

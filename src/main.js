@@ -96,13 +96,45 @@ Hooks.on('updateUser', (user, changes) =>
    QuestSheetApp.refreshAll({}, null);
 });
 
-/** Re-render our UI when any quest changes, on any client. */
-const refresh = (options, userId) =>
+/**
+ * Re-render our UI when any quest changes, on any client. Batched to one redraw per animation frame:
+ * one change fires several hooks (page and entry), and fast clicks stacked overlapping redraws. Quest
+ * windows redraw only when they show a changed quest, its parent, or one of its subquests.
+ */
+let batch = null;
+
+/**
+ * @param {object} options - The document operation options.
+ * @param {string} userId - Who made the change.
+ * @param {string|null} entryId - The changed quest's JournalEntry ID, or null if unknown.
+ * @param {string} [parentId] - Its parent quest, read when the change happened (a deleted quest can't
+ *   be looked up later).
+ */
+const refresh = (options, userId, entryId = null, parentId = '') =>
 {
-   QuestLog.instance.onQuestChanged(options, userId);
-   QuestSheetApp.refreshAll(options, userId);
-   refreshQuestBeacon();
+   if (!batch)
+   {
+      batch = { quiet: true, ids: new Set(), unknown: false };
+      requestAnimationFrame(flushRefresh);
+   }
+   // Quiet (a field this client typed into) only if every change in the batch was.
+   batch.quiet &&= userId === game.user.id && !!options?.fhqlQuiet;
+   if (entryId) { batch.ids.add(entryId); }
+   else { batch.unknown = true; }
+   if (parentId) { batch.ids.add(parentId); }
 };
+
+function flushRefresh()
+{
+   const { quiet, ids, unknown } = batch;
+   batch = null;
+   const options = quiet ? { fhqlQuiet: true } : {};
+   const userId = quiet ? game.user.id : null;
+   const changed = unknown ? null : ids;
+   QuestLog.instance.onQuestChanged(options, userId, changed);
+   QuestSheetApp.refreshAll(options, userId, changed);
+   refreshQuestBeacon();
+}
 
 for (const action of ['create', 'update', 'delete'])
 {
@@ -112,10 +144,14 @@ for (const action of ['create', 'update', 'delete'])
    });
    Hooks.on(`${action}JournalEntryPage`, (page, ...rest) =>
    {
-      if (page.type === QUEST_TYPE || page.getFlag(MODULE_ID, 'gmNotes')) { refresh(rest.at(-2), rest.at(-1)); }
+      if (page.type !== QUEST_TYPE && !page.getFlag(MODULE_ID, 'gmNotes')) { return; }
+      // A new parent also changes the old parent's subquest list, which can't be known here: redraw all.
+      const reparented = action === 'update' && foundry.utils.hasProperty(rest[0], 'system.parentQuest');
+      const entry = page.parent;
+      refresh(rest.at(-2), rest.at(-1), reparented ? null : entry?.id ?? null, questPage(entry)?.system.parentQuest);
    });
    Hooks.on(`${action}JournalEntry`, (entry, ...rest) =>
    {
-      if (action === 'delete' || questPage(entry)) { refresh(rest.at(-2), rest.at(-1)); }
+      if (action === 'delete' || questPage(entry)) { refresh(rest.at(-2), rest.at(-1), entry.id, questPage(entry)?.system.parentQuest); }
    });
 }
