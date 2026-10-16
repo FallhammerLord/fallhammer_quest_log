@@ -1,5 +1,5 @@
-import { MODULE_ID, PARTIALS, QUEST_TYPE } from './constants.js';
-import { DocumentSheetConfig, loadPartials, TIDY_THEME_SETTING } from './compat.js';
+import { BEACON_TEMPLATE, MODULE_ID, PARTIALS, QUEST_TYPE } from './constants.js';
+import { DocumentSheetConfig, preloadTemplates, TIDY_THEME_SETTING } from './compat.js';
 import { ensureThemeStyles, loadBundledFonts, refreshOpenApps } from './theme.js';
 import { migrateTextureSetting, registerSettings } from './settings.js';
 import { runMigrations } from './data/migrations.js';
@@ -25,10 +25,13 @@ import { releaseNotes, touchesNotesLock } from './data/notesLock.js';
 import { systemSupportSummary } from './data/systemItems.js';
 import { onlySeenChanged, startSeenTracking } from './data/seen.js';
 
+/** Template pieces and the Beacon template, loading from init; the Beacon waits for them on ready. */
+let templatesReady = Promise.resolve();
+
 Hooks.once('init', () =>
 {
    loadBundledFonts();
-   loadPartials(PARTIALS);
+   templatesReady = preloadTemplates([...PARTIALS, BEACON_TEMPLATE]);
    CONFIG.JournalEntryPage.dataModels[QUEST_TYPE] = QuestData;
    DocumentSheetConfig.registerSheet(JournalEntryPage, MODULE_ID, QuestPageSheet, {
       types: [QUEST_TYPE],
@@ -57,7 +60,7 @@ Hooks.on('userConnected', () =>
    QuestSheetApp.refreshAll({}, null);
 });
 
-Hooks.once('ready', () =>
+Hooks.once('ready', async () =>
 {
    console.log(`${MODULE_ID} | ${systemSupportSummary()}`);
    ensureThemeStyles();
@@ -65,10 +68,11 @@ Hooks.once('ready', () =>
    releaseNotes();
    startSeenTracking();
    registerQuestPreview();
-   refreshQuestBeacon();
    renameLegacyRootFolder();
    migrateTextureSetting();
    runMigrations();
+   await templatesReady.catch((err) => console.error(`${MODULE_ID} | Templates failed to load`, err));
+   refreshQuestBeacon();
 });
 Hooks.on('renderPlayers', () => refreshQuestBeacon());
 // In-world tests, only when the Quench module is active (src/tests/quench.js).

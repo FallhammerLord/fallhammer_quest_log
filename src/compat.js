@@ -274,12 +274,28 @@ export function notify(level, message)
 }
 
 /**
- * Registers template pieces as Handlebars partials, each under its own path.
+ * Loads templates and registers each as a Handlebars partial under its own path.
  *
  * @param {string[]} paths - Template paths, relative to Foundry's root.
  * @returns {Promise<void>} Resolves once all are loaded.
  */
-export async function loadPartials(paths)
+export async function preloadTemplates(paths)
 {
    await foundry.applications.handlebars.loadTemplates(paths);
+}
+
+/**
+ * Renders a template loaded by preloadTemplates without waiting, for UI that redraws in step with a
+ * change (the Beacon). Foundry's renderTemplate is async, and overlapping redraws could land out of order.
+ *
+ * @param {string} path - A template path given to preloadTemplates.
+ * @param {object} data - The template's data.
+ * @returns {string|null} HTML, or null while the template is still loading.
+ */
+export function renderLoadedTemplate(path, data)
+{
+   let template = Handlebars.partials[path];
+   if (!template) { return null; }
+   if (typeof template === 'string') { template = Handlebars.compile(template); }
+   return template(data, { allowProtoPropertiesByDefault: true, allowProtoMethodsByDefault: true });
 }

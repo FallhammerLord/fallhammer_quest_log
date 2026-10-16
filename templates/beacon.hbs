@@ -1,0 +1,49 @@
+{{!-- The Quest Beacon (src/ui/QuestBeacon.js). The dot and the bell sit outside the panel, which clips to its own shape. --}}
+{{#if empty}}
+<div class="fhql-beacon-panel is-empty">
+  <button type="button" class="fhql-beacon-head" data-beacon-empty aria-label="{{localize 'FHQL.Beacon.EmptyLabel'}}">
+    <i class="fa-regular fa-bookmark fhql-muted" inert></i>
+    <span class="fhql-beacon-name fhql-muted">{{localize "FHQL.Beacon.Empty"}}</span>
+    <i class="fa-solid fa-scroll fhql-beacon-gift" inert></i>
+  </button>
+</div>
+{{else}}
+{{#if unseen}}<span class="fhql-new-dot" data-tooltip="{{localize 'FHQL.Seen.New'}}" aria-label="{{localize 'FHQL.Seen.New'}}"></span>{{/if}}
+{{#if bell}}
+{{!-- Gothic easter egg: an iron bell, a blood-red clapper, and three rings. It resumes mid-swing after a redraw. --}}
+<span class="fhql-egg-bell" style="--fhql-toll-elapsed: -{{bell.elapsed}}ms" aria-hidden="true">
+  <span class="fhql-egg-ring"></span><span class="fhql-egg-ring"></span><span class="fhql-egg-ring"></span>
+  <svg viewBox="0 0 34 40"><path d="M17 1v4" stroke="var(--fhql-gothic-iron)" stroke-width="2"/>
+    <path d="M9 26c0-10 2-17 8-17s8 7 8 17l3 5H6z" fill="var(--fhql-surface-raised)" stroke="var(--fhql-gothic-brass)" stroke-width="1.2"/>
+    <circle cx="17" cy="34" r="3" fill="var(--fhql-accent)"/></svg></span>
+{{/if}}
+<div class="fhql-beacon-panel{{#if celebrate}} is-celebrate{{/if}}" data-quest-id="{{entryId}}">
+  <div class="fhql-beacon-headrow">
+    <button type="button" class="fhql-beacon-head" aria-label="{{label}}">
+      {{#if party}}
+      <i class="fa-solid fa-star fhql-in-progress" data-tooltip="{{localize 'FHQL.Beacon.Party'}}" aria-label="{{localize 'FHQL.Beacon.Party'}}"></i>
+      {{else}}
+      <i class="fa-solid fa-bookmark fhql-in-progress" data-tooltip="{{localize 'FHQL.Beacon.Tracked'}}" aria-label="{{localize 'FHQL.Beacon.Tracked'}}"></i>
+      {{/if}}
+      <span class="fhql-beacon-name" data-tooltip="{{name}}">{{name}}</span>
+      {{#if gift}}<i class="fa-solid fa-gift fhql-beacon-gift" data-tooltip="{{localize 'FHQL.Beacon.Rewards'}}" aria-label="{{localize 'FHQL.Beacon.Rewards'}}"></i>{{/if}}
+      {{#if hiddenQuest}}<i class="fa-solid fa-eye-slash" data-tooltip="{{localize 'FHQL.Status.hidden'}}"></i>{{/if}}
+    </button>
+    {{#if switcher}}
+    <button type="button" class="fhql-beacon-switch" data-beacon-switch aria-haspopup="menu" aria-label="{{switcher.label}}"
+            data-tooltip="{{switcher.tooltip}}">{{switcher.count}}<i class="fa-solid fa-chevron-up" inert></i></button>
+    {{/if}}
+  </div>
+  {{#if objectives.length}}
+  <ol class="fhql-beacon-objectives" aria-label="{{localize 'FHQL.Quest.Objectives'}}">
+    {{#each objectives}}
+    <li class="is-{{state}}{{#if flash}} is-flash{{/if}}">
+      <i class="fhql-state-icon {{icon}}" aria-label="{{stateLabel}}"></i>
+      <span>{{name}}{{#if progress}} <span class="fhql-beacon-progress"><span class="{{#if progress.tick}}fhql-tick{{/if}}">{{progress.done}}</span>/{{progress.count}}</span>{{/if}}</span>
+      {{#if hidden}}<i class="fa-solid fa-eye-slash fhql-muted" aria-label="{{localize 'FHQL.Objective.Hidden'}}"></i>{{/if}}
+    </li>
+    {{/each}}
+  </ol>
+  {{/if}}
+</div>
+{{/if}}

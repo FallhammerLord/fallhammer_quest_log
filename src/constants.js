@@ -10,6 +10,9 @@ export const MODULE_PATH = `modules/${MODULE_ID}`;
  */
 export const PARTIALS = Object.freeze(['eye-toggle', 'notes-lock'].map((name) => `${MODULE_PATH}/templates/partials/${name}.hbs`));
 
+/** The Quest Beacon, drawn without waiting (see renderLoadedTemplate in src/compat.js), so loaded with the partials. */
+export const BEACON_TEMPLATE = `${MODULE_PATH}/templates/beacon.hbs`;
+
 /** Journal page subtype holding quest data. */
 export const QUEST_TYPE = `${MODULE_ID}.quest`;
 

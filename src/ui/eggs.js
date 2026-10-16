@@ -24,13 +24,6 @@ export function eggFor(theme)
    catch { return false; }
 }
 
-/** The Gothic bell for the Beacon: an iron bell, a blood-red clapper, and three rings. */
-export const BELL_HTML = `<span class="fhql-egg-bell" aria-hidden="true">
-   <span class="fhql-egg-ring"></span><span class="fhql-egg-ring"></span><span class="fhql-egg-ring"></span>
-   <svg viewBox="0 0 34 40"><path d="M17 1v4" stroke="var(--fhql-gothic-iron)" stroke-width="2"/>
-     <path d="M9 26c0-10 2-17 8-17s8 7 8 17l3 5H6z" fill="var(--fhql-surface-raised)" stroke="var(--fhql-gothic-brass)" stroke-width="1.2"/>
-     <circle cx="17" cy="34" r="3" fill="var(--fhql-accent)"/></svg></span>`;
-
 /** Quests completed this session, as this client saw them. */
 let completions = 0;
 
