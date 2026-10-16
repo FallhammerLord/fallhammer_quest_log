@@ -93,7 +93,7 @@ export class QuestData extends TypeDataModel
          /**
           * JournalEntry ID of the parent quest. Subquests are derived from this, never stored twice.
           * Not named `parent`: every Foundry data model already has `parent` (its owning document), which
-          * hid this field, so subquests never linked (found 2026-10-01). Old data migrates below.
+          * hid this field, so subquests never linked. Old data migrates below.
           */
          parentQuest: text(),
 

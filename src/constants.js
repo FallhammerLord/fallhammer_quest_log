@@ -10,8 +10,15 @@ export const MODULE_PATH = `modules/${MODULE_ID}`;
  */
 export const PARTIALS = Object.freeze(['eye-toggle', 'notes-lock'].map((name) => `${MODULE_PATH}/templates/partials/${name}.hbs`));
 
-/** The Quest Beacon, drawn without waiting (see renderLoadedTemplate in src/compat.js), so loaded with the partials. */
-export const BEACON_TEMPLATE = `${MODULE_PATH}/templates/beacon.hbs`;
+/**
+ * Templates drawn without waiting (renderTemplateNow in src/compat.js): the Beacon, child panels, chat
+ * cards, the hover preview, the curtain call. Loaded on init with the partials.
+ */
+export const TEMPLATES = Object.freeze(Object.fromEntries(Object.entries({
+   beacon: 'ui/beacon', preview: 'ui/preview', curtain: 'ui/curtain', chatCard: 'cards/chat',
+   menu: 'popovers/menu', confirm: 'popovers/confirm', input: 'popovers/input', choice: 'popovers/choice',
+   deposit: 'popovers/deposit'
+}).map(([key, name]) => [key, `${MODULE_PATH}/templates/${name}.hbs`])));
 
 /** Journal page subtype holding quest data. */
 export const QUEST_TYPE = `${MODULE_ID}.quest`;

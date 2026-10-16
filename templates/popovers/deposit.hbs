@@ -1,0 +1,17 @@
+{{!-- Hand over / show: which actor, how many, and (GM, shared sheet) who gave it (src/apps/sheet/objectives.js). --}}
+<form class="fhql-popover-form fhql-deposit-form">
+  <div class="fhql-popover-title">{{title}}</div>
+  <label class="fhql-field"><span>{{localize "FHQL.Deposit.From"}}</span>
+    <select class="fhql-input" name="source">
+      {{#each sources}}<option value="{{@index}}"{{#if selected}} selected{{/if}}>{{label}}</option>{{/each}}
+    </select></label>
+  <label class="fhql-field"><span>{{howMany}}</span>
+    <input class="fhql-input fhql-count-input" type="number" name="qty" min="1" step="1"></label>
+  <label class="fhql-field" data-giver-field hidden><span>{{localize "FHQL.Deposit.GivenBy"}}</span>
+    <select class="fhql-input" name="giver"></select></label>
+  <p class="fhql-hint" data-deposit-note></p>
+  <div class="fhql-popover-buttons">
+    <button type="button" class="fhql-button" data-answer="cancel">{{localize "FHQL.Popover.Cancel"}}</button>
+    <button type="submit" class="fhql-button fhql-primary">{{verb}}</button>
+  </div>
+</form>

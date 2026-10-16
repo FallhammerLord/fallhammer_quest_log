@@ -64,10 +64,11 @@ npm run quests     # Foundry mocked: quest families (folders, no loops), double-
 | `src/data/seen.js` | new-change dots: per-user seen times (server timestamps), baseline, batched writes |
 | `src/ui/questPreview.js` | hover card for quest links (chat, journals) via Foundry's tooltip |
 | `src/ui/eggs.js` | theme easter eggs (Gothic bell on the Beacon, Cabaret curtain call, Sci-fi glitch on passive clicks); GM setting `easterEggs` |
-| `src/ui/popover.js` | in-window child panels (menus, pickers, confirms) |
+| `src/ui/popover.js` | in-window child panels (menus, pickers, confirms); markup in `templates/popovers/` |
 | `src/theme.js` | theme class, texture strength, overlay images, fonts, Tidy banner color, live preview |
 | `src/apps/TextureImagesApp.js` | GM window from Module Settings: header/lower wash image per theme |
-| `styles/fhql.css` | Light tokens (default), then every component, tokens only |
+| `styles/fhql.css` | Light tokens (default), textures, windows, shared pieces |
+| `styles/components/*.css` | in load order: controls (generic buttons, inputs), list, sheet, Beacon, small windows, popovers, overrides (targets, scrollbars, smooth panels, title bars), high contrast, moments; tokens only. Order in `module.json` matters (later files win ties) and must match `STYLE_FILES` in `src/theme.js` |
 | `styles/themes/*.css` | one file per other theme: tokens, then its few theme-only rules; listed in `module.json`. `light.css` holds only Light's shapes (its tokens are the defaults in fhql.css) |
 | `styles/fonts/` | bundled heading fonts, each with its OFL licence: IM Fell English SC (Gothic), Josefin Sans (Dark), Oxanium (Sci-fi), Limelight (Cabaret), Cinzel (Hope and Fear), Courier Prime (Noir); listed in `BUNDLED_FONTS` in `src/theme.js`. Light uses Amiri, Ledger Modesto (both ship with Foundry) |
 | `styles/textures/` | our default wash images (drawn by `tools/make-washes.mjs`) |
@@ -104,9 +105,9 @@ npm run quests     # Foundry mocked: quest families (folders, no loops), double-
 - **Heading fonts** are set with `!important` (Foundry's own h2/h3 rules outranked ours in v14, so theme and GM fonts never reached headings). To give a heading another face, set `--fhql-heading-face` on it, never `font-family` (Ledger's section bars do this for the body font).
 - **Light/Dark shape selectors** use `.fhql-app:is(.fhql-theme-light, :where(...auto cases...))` so Follow Foundry gets them without raising specificity above (0,2,0).
 - **High contrast** (`.fhql-hc-dark` / `.fhql-hc-light`, per-player setting `contrastMode`, hidden for now) overrides every theme's tokens with `!important` and turns textures off. Theme rules that color text or state with a literal (gilt ticks) need an HC override.
-- **Beacon markup** is `templates/beacon.hbs`, drawn without waiting by `renderLoadedTemplate` (an async render could land redraws out of order); `QuestBeacon.js` only builds its data.
+- **HTML lives in templates.** Window parts load through Foundry's `PARTS`; everything drawn on the spot (Beacon, child panels, chat cards, hover preview, curtain call) is in `TEMPLATES` (`src/constants.js`), preloaded on init and drawn without waiting by `renderTemplateNow` / `renderLoadedTemplate` (an async render could land redraws out of order). The offline checks load every template through `tools/templates.mjs`.
 - **Beacon overlays** (new-change dot, easter-egg bell) sit on `.fhql-beacon`, outside `.fhql-beacon-panel`, which clips to its own shape. The Beacon redraws on any change: anything animated on it must survive a redraw (the bell carries `--fhql-toll-elapsed`).
-- **Colors** only through `--fhql-*` tokens; a theme changes colors and small shapes, never layout. A new theme is a new file in `styles/themes/` plus its entry in `module.json` `styles` (the tools read that list) and in `THEME_FILES` in `src/theme.js` (loads a theme file Foundry missed before a relaunch).
+- **Colors** only through `--fhql-*` tokens; a theme changes colors and small shapes, never layout. A new theme or component file goes in `module.json` `styles` (the tools read that list) and in `STYLE_FILES` in `src/theme.js` at the same place (loads a file Foundry missed before a relaunch, in order). Moving rules between files can change which rule wins a tie: compare computed styles before and after.
 - **Selector lists** can hold commas inside `:is()`/`:has()`; any script that splits CSS must split on top-level commas only (a naive split once broke every Ledger rule; caught by a computed-style diff).
 - **Manifest changes need a world relaunch.** Foundry reads `module.json` (styles, scripts, languages) only when a world launches; a browser refresh keeps the old list. Tell the user to Return to Setup and relaunch after any manifest change.
 - **Offline tests can't load Foundry's CSS.** Visual checks here are approximations; the user's screenshots are the truth.

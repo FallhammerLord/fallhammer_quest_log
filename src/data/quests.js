@@ -1,5 +1,5 @@
-import { deleteKeyUpdate, folderMaxDepth, postChat } from '../compat.js';
-import { MODULE_ID, OBJECTIVE_STATES, QUEST_TYPE, STATUSES } from '../constants.js';
+import { deleteKeyUpdate, folderMaxDepth, postChat, renderTemplateNow } from '../compat.js';
+import { MODULE_ID, OBJECTIVE_STATES, QUEST_TYPE, STATUSES, TEMPLATES } from '../constants.js';
 import { getSetting } from '../setting.js';
 
 const { NONE, LIMITED, OBSERVER } = CONST.DOCUMENT_OWNERSHIP_LEVELS;
@@ -358,10 +358,12 @@ async function announceOutcome(entry, status)
    const seeing = players.filter((u) => questAccess(entry, u).visible);
    if (!seeing.length) { return; }
    const whisper = seeing.length === players.length ? [] : [...seeing, ...game.users.filter((u) => u.isGM)].map((u) => u.id);
-   const icon = status === 'completed' ? 'fa-circle-check' : 'fa-circle-xmark';
-   await postChat(game.i18n.localize('FHQL.QuestLog.Title'), `<div class="fhql-chat-claim fhql-chat-outcome">
-      <p><i class="fa-solid ${icon}" inert></i> <strong>${game.i18n.localize(`FHQL.Announce.Outcome.${status}`)}</strong>
-      @UUID[${entry.uuid}]{${foundry.utils.escapeHTML(entry.name)}}</p></div>`, { whisper });
+   await postChat(game.i18n.localize('FHQL.QuestLog.Title'), renderTemplateNow(TEMPLATES.chatCard, {
+      outcome: true,
+      icon: status === 'completed' ? 'fa-circle-check' : 'fa-circle-xmark',
+      message: `<strong>${foundry.utils.escapeHTML(game.i18n.localize(`FHQL.Announce.Outcome.${status}`))}</strong>
+         @UUID[${entry.uuid}]{${foundry.utils.escapeHTML(entry.name)}}`
+   }), { whisper });
 }
 
 /**

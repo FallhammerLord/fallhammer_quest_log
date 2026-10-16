@@ -28,7 +28,10 @@ export function registerEntryPoints()
       button.className = BUTTON_CLASS;
       button.dataset.tooltip = label;
       button.setAttribute('aria-label', label);
-      button.innerHTML = `<i class="fa-solid fa-scroll" inert></i> ${game.i18n.localize('FHQL.QuestLog.Title')}`;
+      const icon = document.createElement('i');
+      icon.className = 'fa-solid fa-scroll';
+      icon.inert = true;
+      button.replaceChildren(icon, ` ${game.i18n.localize('FHQL.QuestLog.Title')}`);
       button.addEventListener('click', (event) =>
       {
          event.preventDefault();

@@ -1,0 +1,62 @@
+/* Child panels inside our windows: menus, pickers, confirmations (src/ui/popover.js). Tokens only. */
+
+/* ---------- Child panels (menus, pickers, confirmations) ---------- */
+.fhql-app .fhql-popover {
+  position: absolute;
+  z-index: 100;
+  display: grid;
+  gap: 0.4em;
+  min-width: 12em;
+  max-width: min(22em, calc(100% - 12px));
+  max-height: calc(100% - 12px);
+  overflow-y: auto;
+  padding: 0.35em;
+  color: var(--fhql-ink);
+  font-family: var(--fhql-font-body);
+  background: var(--fhql-surface-raised);
+  border: 1px solid var(--fhql-rule);
+  border-radius: var(--fhql-radius);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.4), var(--fhql-glow);
+}
+.fhql-app .fhql-popover-title {
+  padding: 0.2em 0.5em 0.3em;
+  font-family: var(--fhql-font-heading);
+  font-weight: bold;
+  font-size: 0.9em;
+  color: var(--fhql-ink-muted);
+  border-block-end: 1px solid var(--fhql-rule);
+}
+.fhql-app .fhql-popover-items { display: grid; }
+.fhql-app .fhql-popover-item {
+  display: grid;
+  grid-template-columns: 1.4em minmax(0, 1fr);
+  gap: 0.45em;
+  align-items: center;
+  width: 100%;
+  height: auto;
+  min-height: 2em;
+  padding: 0.35em 0.8em 0.35em 0.5em;
+  font: inherit;
+  line-height: 1.3;
+  color: var(--fhql-ink);
+  text-align: start;
+  background: none;
+  border: 0;
+  border-radius: var(--fhql-radius);
+  cursor: pointer;
+}
+.fhql-app .fhql-popover-item:hover,
+.fhql-app .fhql-popover-item:focus-visible { background: var(--fhql-hover); outline: none; box-shadow: inset 3px 0 0 var(--fhql-accent); }
+.fhql-app .fhql-popover-item.fhql-danger { color: var(--fhql-status-failed); }
+.fhql-app .fhql-popover-item.is-current { font-weight: bold; }
+.fhql-app .fhql-popover-item.is-current i { color: var(--fhql-accent); }
+.fhql-app .fhql-popover-item small { display: block; color: var(--fhql-ink-muted); font-size: 0.82em; font-weight: normal; }
+.fhql-app .fhql-popover-message { padding: 0.3em 0.5em; line-height: 1.4; }
+.fhql-app .fhql-popover-message p { margin: 0; }
+.fhql-app .fhql-popover-form { display: grid; gap: 0.5em; padding: 0.3em; }
+.fhql-app .fhql-popover-buttons { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.35em; padding: 0 0.3em 0.2em; }
+.fhql-app .fhql-button.fhql-danger-fill {
+  color: var(--fhql-danger-ink);
+  background: var(--fhql-status-failed);
+  border-color: var(--fhql-status-failed);
+}

@@ -13,7 +13,7 @@ import { objectivesContext } from './objectives.js';
 import { rewardsContext } from './rewards.js';
 import { notesContext } from './notes.js';
 
-/** Narrow layout: objectives shown before "Show all". Matches the CSS cap in styles/fhql.css. */
+/** Narrow layout: objectives shown before "Show all". Matches the CSS cap in styles/components/sheet.css. */
 const OBJECTIVE_CAP = 8;
 
 /** One-click status changes in the read view, by current status. */

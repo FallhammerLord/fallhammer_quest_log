@@ -1,0 +1,36 @@
+/* Rules that must win over the components: target sizes, scrollbars, smooth panels, title bars. */
+
+/* ---------- Save state, target sizes ---------- */
+.fhql-app .fhql-save-state { font-size: 0.85em; color: var(--fhql-status-completed); }
+.fhql-app .fhql-save-state.is-failed { color: var(--fhql-status-failed); }
+/* WCAG 2.2 minimum target size: 24px. */
+.fhql-app .fhql-chip { min-height: 24px; min-width: 28px; justify-content: center; }
+.fhql-app .fhql-undo { min-width: 24px; min-height: 24px; display: inline-grid; place-items: center; }
+.fhql-app .fhql-icon-button { min-width: 24px; min-height: 24px; }
+/* A data-changing action still saving (src/apps/sheet/rows.js): further clicks are ignored meanwhile. */
+.fhql-app [aria-busy="true"] { cursor: progress; opacity: 0.6; }
+
+/* ---------- Scrollbars and dropdown lists follow the theme ---------- */
+.fhql-app, .fhql-app * { scrollbar-color: var(--fhql-rule) transparent; }
+.fhql-app option { color: var(--fhql-ink); background: var(--fhql-surface-raised); }
+
+/* ---------- Smooth panels (per-player "Theme textures" off) ---------- */
+/* !important beats every theme's token block, whatever its selector weight. Colors stay. */
+.fhql-app.fhql-no-texture {
+  --fhql-texture: none !important;
+  --fhql-list-texture: none !important;
+  --fhql-banner-texture: none !important;
+  --fhql-overlay-top: none !important;
+  --fhql-overlay-bottom: none !important;
+}
+
+/* ---------- Window title bars (all themes) ---------- */
+/* theme.js marks our windows' header .fhql-titlebar (found through compat.js). */
+.fhql-app .fhql-titlebar {
+  color: var(--fhql-ink);
+  background: var(--fhql-surface-sunken);
+  border-block-end: 1px solid var(--fhql-rule);
+}
+.fhql-app .fhql-titlebar :is(h1, h2, h3) { color: inherit; font-family: var(--fhql-font-heading); letter-spacing: 0.03em; }
+.fhql-app .fhql-titlebar :is(button, a) { color: var(--fhql-ink-muted); }
+.fhql-app .fhql-titlebar :is(button, a):is(:hover, :focus-visible) { color: var(--fhql-accent); }

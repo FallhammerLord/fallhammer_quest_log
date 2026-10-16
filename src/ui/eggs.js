@@ -1,4 +1,5 @@
-import { QUEST_TYPE, THEMES } from '../constants.js';
+import { renderTemplateNow } from '../compat.js';
+import { QUEST_TYPE, TEMPLATES, THEMES } from '../constants.js';
 import { currentTheme } from '../theme.js';
 import { getSetting } from '../setting.js';
 
@@ -21,7 +22,7 @@ import { getSetting } from '../setting.js';
 export function eggFor(theme)
 {
    try { return getSetting('easterEggs') && currentTheme() === theme; }
-   catch { return false; }
+   catch { return false; } // Settings not registered yet (a click before init finished): no egg.
 }
 
 /** Quests completed this session, as this client saw them. */
@@ -114,13 +115,10 @@ function curtainCall()
 {
    const host = document.querySelector('.fhql-quest-log:not(.minimized)') ?? document.querySelector('.fhql-quest-sheet:not(.minimized)');
    if (!host) { return; }
-   const bulbs = '<span class="fhql-egg-bulbs"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>';
    const overlay = document.createElement('div');
    overlay.className = 'fhql-egg-curtain';
    overlay.setAttribute('aria-hidden', 'true');
-   overlay.innerHTML = `<span class="fhql-egg-drape is-left"></span><span class="fhql-egg-drape is-right"></span>
-      <span class="fhql-egg-marquee">${bulbs}<span class="fhql-egg-line">${game.i18n.localize('FHQL.Egg.Curtain')}</span>
-      <span class="fhql-egg-sub">${game.i18n.localize('FHQL.Egg.CurtainSub')}</span>${bulbs}</span>`;
+   overlay.innerHTML = renderTemplateNow(TEMPLATES.curtain, {});
    host.append(overlay);
    setTimeout(() => overlay.remove(), CURTAIN_MS);
 }

@@ -1,6 +1,6 @@
-import { BEACON_TEMPLATE, MODULE_ID, PARTIALS, QUEST_TYPE } from './constants.js';
+import { MODULE_ID, PARTIALS, QUEST_TYPE, TEMPLATES } from './constants.js';
 import { DocumentSheetConfig, preloadTemplates, TIDY_THEME_SETTING } from './compat.js';
-import { ensureThemeStyles, loadBundledFonts, refreshOpenApps } from './theme.js';
+import { ensureStyles, loadBundledFonts, refreshOpenApps } from './theme.js';
 import { migrateTextureSetting, registerSettings } from './settings.js';
 import { runMigrations } from './data/migrations.js';
 import { registerQuenchTests } from './tests/quench.js';
@@ -25,13 +25,13 @@ import { releaseNotes, touchesNotesLock } from './data/notesLock.js';
 import { systemSupportSummary } from './data/systemItems.js';
 import { onlySeenChanged, startSeenTracking } from './data/seen.js';
 
-/** Template pieces and the Beacon template, loading from init; the Beacon waits for them on ready. */
+/** Template pieces and the templates drawn without waiting, loading from init; the Beacon waits for them on ready. */
 let templatesReady = Promise.resolve();
 
 Hooks.once('init', () =>
 {
    loadBundledFonts();
-   templatesReady = preloadTemplates([...PARTIALS, BEACON_TEMPLATE]);
+   templatesReady = preloadTemplates([...PARTIALS, ...Object.values(TEMPLATES)]);
    CONFIG.JournalEntryPage.dataModels[QUEST_TYPE] = QuestData;
    DocumentSheetConfig.registerSheet(JournalEntryPage, MODULE_ID, QuestPageSheet, {
       types: [QUEST_TYPE],
@@ -63,7 +63,7 @@ Hooks.on('userConnected', () =>
 Hooks.once('ready', async () =>
 {
    console.log(`${MODULE_ID} | ${systemSupportSummary()}`);
-   ensureThemeStyles();
+   ensureStyles();
    // A notes lock left from a previous session (closed browser) is cleared.
    releaseNotes();
    startSeenTracking();

@@ -36,7 +36,7 @@ const sheetBody = (root) => root?.querySelector('.fhql-sheet-body') ?? null;
  * @param {HTMLElement} root - The sheet window element.
  * @returns {boolean} Whether the sheet is in its one-column layout (columns dissolved by CSS).
  */
-export function isNarrow(root)
+function isNarrow(root)
 {
    const col = sheetBody(root)?.querySelector('.fhql-col');
    return !col || getComputedStyle(col).display === 'contents';

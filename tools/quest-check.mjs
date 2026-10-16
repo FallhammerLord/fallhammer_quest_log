@@ -4,6 +4,7 @@
  * parent's folder, setting a parent moves the quest there, and moving a quest moves its subquests.
  * Usage: npm run quests
  */
+import './templates.mjs';
 const QUEST_TYPE = 'fhql.quest';
 
 class Collection extends Map

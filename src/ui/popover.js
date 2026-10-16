@@ -7,7 +7,8 @@
  * control that opened it. Only one is open per window. Activating the same control again closes it.
  */
 
-const escape = (value) => foundry.utils.escapeHTML(String(value ?? ''));
+import { renderTemplateNow } from '../compat.js';
+import { TEMPLATES } from '../constants.js';
 
 /** @type {WeakMap<HTMLElement, { done: Function, anchor: unknown }>} Each window's open panel: its close function and opener. */
 const openPanels = new WeakMap();
@@ -168,13 +169,10 @@ function arrowKeys(panel, selector)
  */
 export function menuPopover(app, anchor, { title, items })
 {
-   const html = `${title ? `<div class="fhql-popover-title">${escape(title)}</div>` : ''}
-     <div class="fhql-popover-items">${items.map((item) => `
-       <button type="button" role="menuitem" class="fhql-popover-item ${item.danger ? 'fhql-danger' : ''} ${item.current ? 'is-current' : ''}"
-               data-value="${escape(item.value)}" ${item.current ? 'aria-current="true"' : ''}>
-         <i class="${escape(item.icon ?? (item.current ? 'fa-solid fa-check' : ''))}" inert></i>
-         <span>${escape(item.label)}${item.hint ? `<small>${escape(item.hint)}</small>` : ''}</span>
-       </button>`).join('')}</div>`;
+   const html = renderTemplateNow(TEMPLATES.menu, {
+      title,
+      items: items.map((item) => ({ ...item, icon: item.icon ?? (item.current ? 'fa-solid fa-check' : '') }))
+   });
 
    return openPanel(app, anchor, html, (panel, done) =>
    {
@@ -203,13 +201,7 @@ export function menuPopover(app, anchor, { title, items })
  */
 export function confirmPopover(app, anchor, { message, yes, no, danger = false })
 {
-   const cancel = game.i18n.localize('FHQL.Popover.Cancel');
-   const html = `<div class="fhql-popover-message">${message}</div>
-     <div class="fhql-popover-buttons">
-       <button type="button" class="fhql-button" data-answer="cancel">${escape(cancel)}</button>
-       ${no ? `<button type="button" class="fhql-button" data-answer="no">${escape(no)}</button>` : ''}
-       <button type="button" class="fhql-button ${danger ? 'fhql-danger-fill' : 'fhql-primary'}" data-answer="yes" autofocus>${escape(yes)}</button>
-     </div>`;
+   const html = renderTemplateNow(TEMPLATES.confirm, { message, yes, no, danger });
 
    return openPanel(app, anchor, html, (panel, done) =>
    {
@@ -234,14 +226,7 @@ export function confirmPopover(app, anchor, { message, yes, no, danger = false }
  */
 export function inputPopover(app, anchor, { label, value = '', ok })
 {
-   const cancel = game.i18n.localize('FHQL.Popover.Cancel');
-   const html = `<form class="fhql-popover-form">
-       <label class="fhql-field"><span>${escape(label)}</span>
-         <input type="text" class="fhql-input" name="value" value="${escape(value)}" autofocus></label>
-       <div class="fhql-popover-buttons">
-         <button type="button" class="fhql-button" data-answer="cancel">${escape(cancel)}</button>
-         <button type="submit" class="fhql-button fhql-primary">${escape(ok)}</button>
-       </div></form>`;
+   const html = renderTemplateNow(TEMPLATES.input, { label, value, ok });
 
    return openPanel(app, anchor, html, (panel, done) =>
    {
@@ -269,16 +254,9 @@ export function inputPopover(app, anchor, { label, value = '', ok })
  */
 export function choicePanel(app, anchor, { title, label, choices, start = 0, ok })
 {
-   const cancel = game.i18n.localize('FHQL.Popover.Cancel');
-   const html = `<form class="fhql-popover-form">
-       <div class="fhql-popover-title">${escape(title)}</div>
-       <label class="fhql-field"><span>${escape(label)}</span>
-         <select class="fhql-input" name="choice" autofocus>${choices.map((c, i) =>
-            `<option value="${i}" ${i === start ? 'selected' : ''}>${escape(c)}</option>`).join('')}</select></label>
-       <div class="fhql-popover-buttons">
-         <button type="button" class="fhql-button" data-answer="cancel">${escape(cancel)}</button>
-         <button type="submit" class="fhql-button fhql-primary">${escape(ok)}</button>
-       </div></form>`;
+   const html = renderTemplateNow(TEMPLATES.choice, {
+      title, label, ok, choices: choices.map((c, i) => ({ label: c, selected: i === start }))
+   });
 
    return openPanel(app, anchor, html, (panel, done) =>
    {

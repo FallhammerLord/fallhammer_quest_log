@@ -1,7 +1,7 @@
 /*
  * Fallhammer Quest Log: Hope and Fear theme, after the Daggerheart system's styling (deep indigo,
  * Hope gold, Fear violet, Cinzel). Tokens, then rules only this theme needs.
- * Loaded after styles/fhql.css (see module.json).
+ * Loaded after styles/fhql.css and styles/components/ (see module.json).
  */
 
 /* ---------- Tokens: Hope and Fear (indigo night, Hope gold, Fear violet) ---------- */

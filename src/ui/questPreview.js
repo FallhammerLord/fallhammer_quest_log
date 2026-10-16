@@ -1,5 +1,5 @@
-import { hideTooltip, showTooltip } from '../compat.js';
-import { STATUSES } from '../constants.js';
+import { hideTooltip, renderTemplateNow, showTooltip } from '../compat.js';
+import { STATUSES, TEMPLATES } from '../constants.js';
 import { getQuestEntry, questAccess, questPage } from '../data/quests.js';
 
 /**
@@ -27,19 +27,19 @@ function questFromLink(link)
  */
 function cardHTML(entry)
 {
-   const escape = foundry.utils.escapeHTML;
-   const t = (key) => game.i18n.localize(key);
    const access = questAccess(entry);
    const system = questPage(entry).system;
    const objectives = access.full ? system.objectiveList.filter((o) => access.gm || !o.hidden) : [];
-   const done = objectives.filter((o) => o.state === 'done').length;
    const next = objectives.find((o) => o.state === 'open');
-   return `<div class="fhql-preview-card">
-      ${system.image ? `<img src="${escape(system.image)}" alt="">` : ''}
-      <strong>${escape(entry.name)}</strong>
-      <span class="fhql-preview-status"><i class="${STATUSES[system.status].icon}" inert></i> ${t(`FHQL.Status.${system.status}`)}${objectives.length ? ` · ${done}/${objectives.length}` : ''}</span>
-      ${next ? `<span class="fhql-preview-next">${escape(game.i18n.format('FHQL.Preview.Next', { objective: next.name }))}</span>` : ''}
-   </div>`;
+   return renderTemplateNow(TEMPLATES.preview, {
+      image: system.image,
+      name: entry.name,
+      statusIcon: STATUSES[system.status].icon,
+      statusLabel: game.i18n.localize(`FHQL.Status.${system.status}`),
+      done: objectives.filter((o) => o.state === 'done').length,
+      total: objectives.length,
+      next: next ? game.i18n.format('FHQL.Preview.Next', { objective: next.name }) : ''
+   });
 }
 
 /** Registers the hover listener. Called on `ready`. */

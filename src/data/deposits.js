@@ -1,7 +1,7 @@
-import { notify, postChat } from '../compat.js';
+import { notify, postChat, renderTemplateNow } from '../compat.js';
 import { itemQuantity, itemQuantityUpdate, itemSourceUuids } from './systemItems.js';
 import { registerRelay, relay } from './relay.js';
-import { MODULE_ID } from '../constants.js';
+import { MODULE_ID, TEMPLATES } from '../constants.js';
 import { addObjective, getQuestEntry, questAccess, questPage, updateQuest } from './quests.js';
 import { claimTargets } from './rewards.js';
 import { actorsForGM, assignedToSomeone, playerFor, playerOwners, sharedActor } from './owners.js';
@@ -60,7 +60,7 @@ export function stillNeeded(objective)
  * @param {Item} item - An item on a character.
  * @returns {number} How many it counts as: its stack size, or 1 where the system has no quantity.
  */
-export function itemCount(item)
+function itemCount(item)
 {
    return itemQuantity(item) ?? 1;
 }
@@ -73,7 +73,7 @@ export function itemCount(item)
  * @param {object} requirement - Requirement data.
  * @returns {boolean} Whether it matches.
  */
-export function itemMatches(item, requirement)
+function itemMatches(item, requirement)
 {
    if (!item || !requirement?.uuid) { return false; }
    if (item.uuid === requirement.uuid || itemSourceUuids(item).includes(requirement.uuid)) { return true; }
@@ -235,11 +235,12 @@ async function depositNow(data, { force = false } = {})
 
    const who = `${user.name} (${actor.name})`;
    const escape = foundry.utils.escapeHTML;
-   await postChat(game.i18n.localize('FHQL.QuestLog.Title'), `<div class="fhql-chat-claim">
-         ${requirement.img ? `<img src="${escape(requirement.img)}" alt="" width="36" height="36">` : ''}
-         <p>${game.i18n.format(`FHQL.Deposit.Chat.${requirement.mode}`, {
-            who: escape(who), qty: take, item: escape(item.name), quest: escape(entry.name)
-         })}</p></div>`);
+   await postChat(game.i18n.localize('FHQL.QuestLog.Title'), renderTemplateNow(TEMPLATES.chatCard, {
+      img: requirement.img,
+      message: game.i18n.format(`FHQL.Deposit.Chat.${requirement.mode}`, {
+         who: escape(who), qty: take, item: escape(item.name), quest: escape(entry.name)
+      })
+   }));
 
    const kept = give ? have - take : 0;
    const key = give ? (kept > 0 ? 'GaveKept' : 'Gave') : 'Shown';

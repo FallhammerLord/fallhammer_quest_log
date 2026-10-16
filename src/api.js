@@ -92,7 +92,7 @@ export function openQuestSheet(questId, options = {})
  *
  * @returns {object[]} One row per editor on screen.
  */
-export function debugEditor()
+function debugEditor()
 {
    const rows = [...document.querySelectorAll('.fhql-app prose-mirror')].map((el) =>
    {

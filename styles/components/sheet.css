@@ -1,0 +1,488 @@
+/* Quest sheet: layout, header, panels, objectives, rewards, subquests, notes, image banner, narrow layouts. Tokens only. */
+
+/* ---------- Quest sheet ---------- */
+/* One column by default, ordered by how often each section is used in play. The two column wrappers
+   dissolve (display: contents) so sections can reorder; at 560px+ they become real columns. */
+.fhql-sheet { container: fhql-sheet / inline-size; overflow-y: auto; overscroll-behavior: contain; min-width: 0; min-height: 0; }
+/* The sheet carries the theme texture itself, with the lower wash of an overlay image pinned to its
+   bottom edge; a scroll container's background stays put while its contents scroll. */
+.fhql-app .fhql-sheet {
+  background-color: var(--fhql-surface);
+  background-image: var(--fhql-veil), var(--fhql-overlay-bottom), var(--fhql-texture);
+  background-size: 100% 100%, 100% auto, var(--fhql-texture-size);
+  background-position: 0 0, bottom, var(--fhql-texture-position);
+  background-repeat: no-repeat, no-repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat;
+  background-blend-mode: var(--fhql-texture-blend);
+}
+/* Long words wrap only when they must; ordinary words never split. */
+.fhql-app .fhql-sheet, .fhql-app .fhql-list { overflow-wrap: break-word; }
+/* Width containers only on lists without text fields: Foundry's own form and editor styles misbehave
+   when a nearby ancestor is a size container (found in testing: edit-mode cards collapsed). */
+.fhql-app .fhql-rewards:not(.is-editing) { container: fhql-rewards / inline-size; }
+.fhql-app .fhql-rows { container: fhql-rows / inline-size; }
+.fhql-app .fhql-subheading { flex-wrap: wrap; }
+.fhql-app .fhql-button .fhql-label { white-space: nowrap; }
+.fhql-app .fhql-sheet-inner {
+  --fhql-pad-x: 1em; --fhql-pad-top: 0.9em;
+  display: grid; grid-template-rows: auto auto; gap: 0.8em;
+  /* No top padding here: the header carries it, so it starts at the sheet's top edge (see below). */
+  padding: 0 var(--fhql-pad-x) 1em;
+}
+/* The quest image, title, and buttons stay nailed at the top whenever the sheet itself scrolls
+   (narrow windows, or a window too short for the panels' minimums). */
+.fhql-app .fhql-sheet-top {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: grid;
+  gap: 0.8em;
+  /* Spans the sheet edge to edge and starts at its top edge, so its background covers what scrolls
+     under it and its texture tiles from the same corner as the sheet's: the two line up exactly,
+     scrolled or not. */
+  margin-inline: calc(-1 * var(--fhql-pad-x));
+  padding: var(--fhql-pad-top) var(--fhql-pad-x) 0;
+  background-color: var(--fhql-surface);
+  background-image: var(--fhql-veil), var(--fhql-overlay-top), var(--fhql-texture);
+  background-size: 100% 100%, 100% 100%, var(--fhql-texture-size);
+  background-position: 0 0, 0 0, var(--fhql-texture-position);
+  background-repeat: no-repeat, no-repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat;
+  background-blend-mode: var(--fhql-texture-blend);
+}
+.fhql-app .fhql-none { padding: 1em; }
+
+.fhql-app .fhql-sheet-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: "portrait title menu" "portrait meta meta" "actions actions actions" "fields fields fields";
+  gap: 0.3em 0.9em;
+  align-items: start;
+  padding-block-end: 0.8em;
+  border-block-end: 3px double var(--fhql-rule);
+}
+
+.fhql-app .fhql-portrait {
+  grid-area: portrait;
+  position: relative;
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  overflow: hidden;
+  color: var(--fhql-ink-muted);
+  font-size: 28px;
+  background: var(--fhql-surface-sunken);
+  border: 1px solid var(--fhql-rule);
+  border-radius: var(--fhql-radius);
+}
+.fhql-app .fhql-portrait img { width: 100%; height: 100%; object-fit: cover; border: 0; }
+.fhql-app button.fhql-portrait { cursor: pointer; }
+.fhql-app button.fhql-portrait:hover { border-color: var(--fhql-accent); }
+.fhql-app .fhql-portrait-drop { border: 2px dashed var(--fhql-rule); }
+/* Portrait frame (GM setting): round by default, square on request. The empty drop slot in edit mode
+   stays square so its hint fits; with a picture in it, the hint moves to the tooltip. */
+.fhql-app:not(.fhql-portrait-square) .fhql-portrait:not(.is-empty) { border-radius: 50%; }
+.fhql-app:not(.fhql-portrait-square) .fhql-portrait-drop:not(.is-empty) .fhql-portrait-hint { display: none; }
+.fhql-app .fhql-portrait-hint {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  padding: 2px 3px;
+  font-size: 9px;
+  line-height: 1.15;
+  text-align: center;
+  color: var(--fhql-ink);
+  background: color-mix(in srgb, var(--fhql-surface-sunken) 85%, transparent);
+}
+
+.fhql-app .fhql-sheet-title { grid-area: title; min-width: 0; }
+.fhql-app .fhql-sheet-title .fhql-heading { text-wrap: balance; line-height: 1.2; }
+.fhql-app .fhql-sheet-meta {
+  grid-area: meta;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25em 0.6em;
+  align-items: center;
+  color: var(--fhql-ink-muted);
+  font-size: 0.92em;
+}
+.fhql-app .fhql-sep { opacity: 0.6; }
+.fhql-app .fhql-sheet-actions {
+  grid-area: actions;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4em;
+  align-items: center;
+  margin-block-start: 0.4em;
+}
+.fhql-app .fhql-sheet-actions .fhql-status-icon { color: var(--fhql-status); }
+.fhql-app .fhql-sheet-fields {
+  grid-area: fields;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6em 1em;
+  align-items: end;
+}
+.fhql-app .fhql-grow { flex: 1 1 12em; }
+.fhql-app .fhql-inline { display: flex; gap: 0.3em; align-items: center; }
+.fhql-app .fhql-push { margin-inline-start: auto; }
+
+.fhql-app .fhql-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  padding: 0.05em 0.6em;
+  color: var(--fhql-status);
+  border: 1px solid var(--fhql-status);
+  border-radius: 999px;
+  font-size: 0.9em;
+  font-weight: 600;
+}
+
+.fhql-app .fhql-link {
+  display: inline;
+  width: auto;
+  padding: 0;
+  font: inherit;
+  color: var(--fhql-accent);
+  background: none;
+  border: 0;
+  border-block-end: 1px dotted currentColor;
+  border-radius: 0;
+  cursor: pointer;
+  text-align: start;
+}
+
+.fhql-app .fhql-menu { grid-area: menu; }
+
+/* Body */
+.fhql-app .fhql-sheet-body { display: flex; flex-direction: column; gap: 0.8em; min-height: 0; }
+.fhql-app .fhql-col { display: contents; }
+.fhql-app .fhql-area-objectives { order: 1; }
+.fhql-app .fhql-area-description { order: 2; }
+.fhql-app .fhql-area-rewards { order: 3; }
+.fhql-app .fhql-area-subquests { order: 4; }
+.fhql-app .fhql-area-notes { order: 5; }
+.fhql-app .fhql-gm-notes { order: 6; }
+.fhql-app .fhql-sheet-body .fhql-card { margin: 0; min-width: 0; }
+
+@container fhql-sheet (min-width: 560px) {
+  /* Wide: two columns fill the height under the pinned header; src/apps/sheet/panels.js shares each
+     column's height between its panels, and each panel scrolls on its own. The sheet's grid is exactly
+     the window's height; when panel minimums don't fit, panels.js gives the body a min-height, it
+     overflows, and the sheet scrolls (last resort). */
+  .fhql-app .fhql-sheet-inner { height: 100%; grid-template-rows: auto minmax(0, 1fr); }
+  .fhql-app .fhql-sheet-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+    align-items: stretch;
+  }
+  .fhql-app .fhql-col { display: flex; flex-direction: column; gap: 0.8em; min-width: 0; min-height: 0; overflow: hidden; }
+  .fhql-app .fhql-col > * { order: 0; }
+  .fhql-app .fhql-col > .fhql-card { flex: 0 0 auto; display: flex; flex-direction: column; min-height: 0; }
+  .fhql-app .fhql-col > .fhql-card > .fhql-panel-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .fhql-app .fhql-gm-notes { grid-column: 1 / -1; }
+  .fhql-app .fhql-gm-notes[open] > .fhql-panel-body { max-height: 30vh; overflow-y: auto; overscroll-behavior: contain; }
+  .fhql-app .fhql-button.fhql-show-all { display: none; }
+}
+
+/* Narrow: one scroll, no nested scrolling. Panels collapse by their heading; long objective lists show
+   the first 8 with "Show all" (the 8 matches OBJECTIVE_CAP in src/apps/sheet/context.js). */
+.fhql-app .fhql-show-all { margin-block-start: 0.4em; }
+@container fhql-sheet (max-width: 559px) {
+  .fhql-app .fhql-banner { display: none; }
+  .fhql-app .fhql-card.is-collapsed > .fhql-panel-body { display: none; }
+  /* The collapse arrow leads the title; counts and buttons stay right. */
+  .fhql-app .fhql-card[data-panel] > .fhql-subheading { cursor: pointer; justify-content: flex-start; }
+  .fhql-app .fhql-card[data-panel] > .fhql-subheading > .fhql-count { margin-inline-start: auto; }
+  .fhql-app .fhql-card[data-panel] > .fhql-subheading > .fhql-hide-done ~ .fhql-count { margin-inline-start: 0.5em; }
+  .fhql-app .fhql-card[data-panel] > .fhql-subheading::before { content: "\25BE"; color: var(--fhql-ink-muted); font-size: 0.8em; }
+  .fhql-app .fhql-card.is-collapsed > .fhql-subheading::before { content: "\25B8"; }
+  .fhql-app .fhql-objectives.is-capped > li:nth-child(n + 9) { display: none; }
+}
+
+/* Rich-text editors in a scrolling panel keep their toolbar in view while you type. */
+.fhql-app .fhql-panel-body prose-mirror .editor-menu {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--fhql-surface-raised);
+}
+
+/* Objectives: Hide done */
+.fhql-app .fhql-hide-done { display: inline-flex; gap: 0.3em; align-items: center; margin-inline-start: auto; font-family: var(--fhql-font-body); font-size: 0.75em; font-weight: normal; letter-spacing: 0; text-transform: none; color: var(--fhql-ink-muted); cursor: pointer; }
+.fhql-app .fhql-hide-done input { margin: 0; }
+@container fhql-sheet (max-width: 400px) {
+  .fhql-app .fhql-sheet-head {
+    grid-template-areas: "portrait title menu" "meta meta meta" "actions actions actions" "fields fields fields";
+  }
+  .fhql-app .fhql-portrait { width: 48px; height: 48px; font-size: 20px; }
+  .fhql-app .fhql-sheet-inner { --fhql-pad-x: 0.6em; }
+}
+
+/* Section headings */
+.fhql-app .fhql-subheading { display: flex; align-items: baseline; gap: 0.5em; margin: 0 0 0.5em; }
+.fhql-app.fhql-theme-light .fhql-subheading,
+.fhql-app.fhql-theme-auto .fhql-subheading { font-variant: small-caps; letter-spacing: 0.04em; }
+.fhql-app .fhql-count {
+  margin-inline-start: auto;
+  font-variant: normal;
+  font-variant-numeric: tabular-nums;
+  color: var(--fhql-ink-muted);
+}
+.fhql-app .fhql-count + .fhql-button { margin-inline-start: 0.4em; }
+.fhql-app .fhql-compact { padding-block: 0.45em; }
+.fhql-app .fhql-compact .fhql-subheading { margin: 0; align-items: center; }
+.fhql-app .fhql-empty-note {
+  margin-inline-start: auto;
+  font-variant: normal;
+  font-size: 0.85em;
+  font-weight: normal;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--fhql-ink-muted);
+}
+.fhql-app .fhql-empty-note + .fhql-button { margin-inline-start: 0.4em; }
+.fhql-app .fhql-button.fhql-small { min-height: 24px; padding: 0.1em 0.5em; font-size: 0.85em; font-variant: normal; letter-spacing: 0; text-transform: none; }
+/* Targets: at least 24px (WCAG 2.2 AA, 2.5.8); icon-only actions 28px, since they carry no text to aim at. */
+.fhql-app .fhql-button.fhql-icon-only { min-width: 28px; min-height: 28px; padding: 0; justify-content: center; }
+.fhql-app .fhql-add { margin-block-start: 0.5em; }
+
+.fhql-app .fhql-prose { line-height: 1.5; }
+.fhql-app .fhql-prose > :first-child { margin-block-start: 0; }
+.fhql-app .fhql-prose > :last-child { margin-block-end: 0; }
+/* Leave Foundry's own editor layout alone; give it room, and make sure text can be selected and typed. */
+.fhql-app prose-mirror { min-height: 8em; }
+/* Foundry's editor toggle (pen) is icon-only; Foundry spaces icons for a label beside them, which pushes it off center. */
+.fhql-app prose-mirror button:has(> i:only-child):not(.editor-menu button) { display: inline-grid; place-items: center; }
+.fhql-app prose-mirror button:has(> i:only-child):not(.editor-menu button) > i { margin: 0; }
+.fhql-app prose-mirror,
+.fhql-app prose-mirror * { user-select: text; -webkit-user-select: text; }
+.fhql-app prose-mirror .editor-content { min-height: 6em; }
+/* An open editor fills its panel, which panels.js gives every spare pixel in its column (.is-writing),
+   so long text flows instead of scrolling in a small box. One-column layouts give it a tall minimum. */
+.fhql-app .fhql-card.is-writing > .fhql-panel-body { display: flex; flex-direction: column; }
+.fhql-app .fhql-card.is-writing prose-mirror { flex: 1 0 auto; display: flex; flex-direction: column; }
+.fhql-app .fhql-card.is-writing prose-mirror .editor-content { flex: 1 0 auto; min-height: 12em; }
+
+/* Objectives */
+.fhql-objectives {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.3em;
+}
+.fhql-objectives li { display: flex; gap: 0.5em; align-items: center; min-width: 0; }
+.fhql-objectives li > span { min-width: 0; }
+.fhql-objectives li > .fhql-input { flex: 1 1 auto; }
+.fhql-objectives li.is-done { color: var(--fhql-ink-muted); }
+.fhql-objectives li.is-done > span { text-decoration: line-through; }
+.fhql-objectives li.is-done .fhql-state-icon { color: var(--fhql-status-completed); }
+.fhql-objectives li.is-done .fhql-input { text-decoration: line-through; color: var(--fhql-ink-muted); }
+.fhql-objectives li.is-failed .fhql-state-icon { color: var(--fhql-status-failed); }
+.fhql-objectives li.has-requirement { flex-wrap: wrap; }
+/* Zero basis keeps the name on the first line with its buttons; the requirement block wraps below. */
+.fhql-objectives li.has-requirement > .fhql-input,
+.fhql-objectives li.has-requirement > .fhql-grow-text { flex: 1 1 0; min-width: 0; }
+
+/* Item requirement under an objective: item, progress, deposit button, who gave what. */
+.fhql-app .fhql-requirement {
+  flex: 1 0 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25em 0.5em;
+  align-items: center;
+  min-width: 0;
+  padding-inline-start: 1.75em;
+  font-size: 0.9em;
+  color: var(--fhql-ink);
+  text-decoration: none;
+}
+.fhql-app .fhql-requirement-item { display: inline-flex; gap: 0.35em; align-items: center; min-width: 0; flex-wrap: wrap; }
+/* Hand over / Show sits at the row's end, in the same column as the objective's eye button above it. */
+.fhql-app .fhql-requirement > [data-action="depositItem"] { margin-inline-start: auto; }
+.fhql-app .fhql-objectives .fhql-eye { min-width: 28px; }
+.fhql-app .fhql-requirement-thumb {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  color: var(--fhql-ink-muted);
+  border: 1px solid var(--fhql-rule);
+  border-radius: var(--fhql-radius);
+}
+.fhql-app .fhql-requirement-thumb img { width: 100%; height: 100%; object-fit: cover; border: 0; }
+.fhql-app .fhql-requirement-progress {
+  font-variant-numeric: tabular-nums;
+  padding: 0 0.35em;
+  border: 1px solid var(--fhql-rule);
+  border-radius: var(--fhql-radius);
+}
+.fhql-app .fhql-requirement.is-met .fhql-requirement-progress { color: var(--fhql-status-completed); border-color: currentColor; }
+.fhql-app .fhql-requirement-edit { display: inline-flex; flex-wrap: wrap; gap: 0.35em; align-items: center; min-width: 0; max-width: 100%; }
+.fhql-app .fhql-requirement-edit .fhql-small-select { min-width: 0; max-width: 100%; }
+.fhql-app .fhql-requirement-edit .fhql-count-input { width: 4.5em; flex: none; }
+.fhql-app .fhql-deposits { flex: 1 0 100%; display: flex; flex-wrap: wrap; gap: 0.15em 0.75em; font-size: 0.92em; }
+.fhql-app .fhql-objectives-drop { display: grid; gap: 0.25em; justify-items: start; margin-top: 0.4em; }
+.fhql-app .fhql-hint { margin: 0; font-size: 0.85em; color: var(--fhql-ink-muted); }
+
+/* Rewards and subquests */
+/* A little room at the scroll edges, so the first and last row's borders and focus rings aren't clipped. */
+.fhql-app .fhql-panel-body > .fhql-rows { padding-block: 2px; }
+.fhql-app .fhql-rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.35em; }
+.fhql-app .fhql-rows > li { display: flex; gap: 0.5em; align-items: center; min-width: 0; }
+.fhql-app .fhql-thumb {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  color: var(--fhql-ink-muted);
+  background: var(--fhql-surface-sunken);
+  border: 1px solid var(--fhql-rule);
+  border-radius: var(--fhql-radius);
+}
+.fhql-app .fhql-thumb img { width: 100%; height: 100%; object-fit: cover; border: 0; }
+.fhql-app .fhql-rows .fhql-row-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.fhql-app .fhql-row-link {
+  display: flex;
+  flex: 1;
+  gap: 0.5em;
+  align-items: center;
+  min-width: 0;
+  padding: 0;
+  font: inherit;
+  color: var(--fhql-ink);
+  text-align: start;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.fhql-app .fhql-row-link:hover .fhql-row-name { color: var(--fhql-accent); }
+.fhql-app .fhql-row-link .fhql-row-status { color: var(--fhql-status); }
+.fhql-app .fhql-drop-hint {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  align-items: center;
+  margin-block-start: 0.5em;
+  padding: 0.35em 0.5em;
+  font-size: 0.88em;
+  color: var(--fhql-ink-muted);
+  border: 1px dashed var(--fhql-rule);
+  border-radius: var(--fhql-radius);
+}
+.fhql-app .is-drop-target { outline: 2px dashed var(--fhql-accent); outline-offset: 2px; }
+
+/* GM notes */
+.fhql-app .fhql-gm-notes {
+  --fhql-gm: color-mix(in srgb, var(--fhql-accent) 45%, #8a4fa3);
+  background: var(--fhql-surface-sunken);
+  border: 1px dashed var(--fhql-gm);
+}
+.fhql-app .fhql-gm-notes > summary {
+  display: flex;
+  gap: 0.5em;
+  align-items: center;
+  list-style: none;
+  cursor: pointer;
+  font-family: var(--fhql-font-heading);
+  font-weight: bold;
+  color: var(--fhql-ink);
+}
+.fhql-app .fhql-gm-notes > summary::-webkit-details-marker { display: none; }
+.fhql-app .fhql-gm-notes[open] > summary { margin-block-end: 0.5em; }
+.fhql-app .fhql-gm-notes[open] .fhql-chevron { transform: rotate(90deg); }
+.fhql-app .fhql-gm-tag {
+  margin-inline-start: auto;
+  padding: 0 0.4em;
+  font-size: 0.78em;
+  border: 1px solid var(--fhql-gm);
+  border-radius: var(--fhql-radius);
+}
+
+/* ---------- Rewards and claiming ---------- */
+.fhql-app .fhql-rewards { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5em; }
+.fhql-app .fhql-reward {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+  gap: 0.2em 0.55em;
+  align-items: center;
+}
+.fhql-app .fhql-reward[draggable="true"] { cursor: grab; }
+.fhql-app .fhql-reward-main { display: grid; gap: 0.1em; min-width: 0; }
+.fhql-app .fhql-reward-name { text-align: start; }
+.fhql-app .fhql-reward.is-claimed .fhql-reward-name { text-decoration: line-through; color: var(--fhql-ink-muted); }
+.fhql-app .fhql-reward.is-claimed .fhql-thumb { opacity: 0.55; }
+.fhql-app .fhql-reward-state { display: flex; flex-wrap: wrap; gap: 0.1em 0.7em; font-size: 0.82em; }
+.fhql-app .fhql-claim { color: var(--fhql-status-completed); display: inline-flex; gap: 0.3em; align-items: center; }
+.fhql-app .fhql-undo { border: 0; color: var(--fhql-ink-muted); }
+.fhql-app .fhql-reward-actions { display: flex; flex-wrap: wrap; gap: 0.25em; align-items: center; justify-content: flex-end; }
+.fhql-app .fhql-icon-button.is-on { color: var(--fhql-accent); }
+.fhql-app .fhql-small-select { width: auto; min-height: 24px; padding: 0.1em 0.3em; font-size: 0.82em; }
+.fhql-app .fhql-grow-text { flex: 1; min-width: 0; }
+.fhql-app .fhql-eye { margin-inline-start: auto; opacity: 0.7; }
+.fhql-app .fhql-eye:hover, .fhql-app .fhql-eye[aria-pressed="true"] { opacity: 1; }
+
+.fhql-chat-claim { display: flex; gap: 0.6em; align-items: center; }
+.fhql-chat-claim p { margin: 0; }
+.fhql-chat-claim img { border: 0; flex: none; }
+
+.fhql-beacon .fhql-beacon-gift { color: var(--fhql-accent); flex: none; }
+
+/* Edit mode puts reward controls on their own line under the name. */
+.fhql-app .fhql-rewards.is-editing .fhql-reward { grid-template-columns: 30px minmax(0, 1fr); }
+.fhql-app .fhql-rewards.is-editing .fhql-reward-actions { grid-column: 2; justify-content: flex-start; }
+
+/* ---------- Narrow layouts ----------
+   The sheet, the reward list, and the subquest list respond to their own width. Buttons keep their
+   icon, tooltip, and screen-reader label when their text is dropped. */
+@container fhql-sheet (max-width: 460px) {
+  .fhql-app .fhql-sheet-actions .fhql-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .fhql-app .fhql-sheet-actions .fhql-button { gap: 0; padding-inline: 0.55em; }
+}
+@container fhql-rewards (max-width: 340px) {
+  .fhql-app .fhql-reward { grid-template-columns: 30px minmax(0, 1fr); }
+  .fhql-app .fhql-reward-actions { grid-column: 2; justify-content: flex-start; }
+}
+@container fhql-rewards (max-width: 230px) {
+  .fhql-app .fhql-reward-actions .fhql-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .fhql-app .fhql-reward-actions .fhql-button { gap: 0; }
+  .fhql-app .fhql-reward { grid-template-columns: 24px minmax(0, 1fr); }
+  .fhql-app .fhql-reward .fhql-thumb { width: 24px; height: 24px; }
+}
+@container fhql-rows (max-width: 230px) {
+  .fhql-app .fhql-row-link .fhql-row-status { display: none; }
+}
+@container fhql-sheet (max-width: 400px) {
+  .fhql-app .fhql-subheading .fhql-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .fhql-app .fhql-subheading .fhql-button { gap: 0; }
+}
+
+/* ---------- Quest image banner ---------- */
+.fhql-app .fhql-banner {
+  display: block;
+  width: 100%;
+  max-height: var(--fhql-banner-h, 160px);
+  object-fit: cover;
+  border: 1px solid var(--fhql-rule);
+  border-radius: var(--fhql-radius);
+}
+.fhql-app .fhql-dates { font-variant-numeric: tabular-nums; }
+.fhql-app file-picker { display: flex; gap: 0.3em; min-width: 0; }

@@ -23,7 +23,7 @@ function seenTimes()
  * @param {JournalEntry} entry - A quest.
  * @returns {number} When the quest last changed: its entry or its quest page, whichever is newer.
  */
-export function questModified(entry)
+function questModified(entry)
 {
    return Math.max(modifiedTime(entry), modifiedTime(questPage(entry)));
 }

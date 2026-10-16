@@ -131,7 +131,7 @@ export class QuestSheetApp extends QuestSheetMixin(HandlebarsApp)
    static MIN_SIZE = { width: 340, height: 320 };
 
    /**
-    * Comfort widths (see snapWidth). The sheet turns two-column at 560px (styles/fhql.css). 420: a
+    * Comfort widths (see snapWidth). The sheet turns two-column at 560px (styles/components/sheet.css). 420: a
     * comfortable single column. 580: the first two-column width. 760: the default.
     */
    static SNAP_WIDTHS = [420, 580, 760];

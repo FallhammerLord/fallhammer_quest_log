@@ -1,0 +1,45 @@
+/* Small moments: "new" dots, completion glows, hover previews of quest links. Tokens only. */
+
+/* ---------- "New" markers ---------- */
+.fhql-app .fhql-new-dot {
+  display: inline-block;
+  width: 0.55em;
+  height: 0.55em;
+  border-radius: 50%;
+  background: var(--fhql-accent);
+  box-shadow: 0 0 0 2px var(--fhql-surface-sunken);
+  vertical-align: middle;
+}
+.fhql-beacon .fhql-beacon-panel { position: relative; }
+.fhql-beacon .fhql-new-dot {
+  position: absolute;
+  z-index: 2;
+  top: -5px;
+  right: -5px;
+  width: 11px;
+  height: 11px;
+  box-shadow: 0 0 0 2px var(--fhql-surface);
+}
+
+/* ---------- Completion moments ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .fhql-app .fhql-objectives > li.is-flash,
+  .fhql-beacon .fhql-beacon-objectives > li.is-flash { animation: fhql-flash 1.4s ease-out; }
+  .fhql-beacon .fhql-beacon-panel.is-celebrate { animation: fhql-celebrate 1.6s ease-out; }
+  .fhql-app .fhql-tick { display: inline-block; animation: fhql-tick 380ms cubic-bezier(.2, .7, .2, 1); }
+}
+@keyframes fhql-flash {
+  from { background-color: color-mix(in srgb, var(--fhql-accent) 40%, transparent); box-shadow: 0 0 0 1px var(--fhql-accent); }
+  to { background-color: transparent; box-shadow: 0 0 0 1px transparent; }
+}
+@keyframes fhql-celebrate {
+  from { box-shadow: 0 0 0 2px var(--fhql-accent), 0 0 18px color-mix(in srgb, var(--fhql-accent) 55%, transparent); }
+}
+@keyframes fhql-tick { from { transform: translateY(-70%); opacity: 0; } }
+
+/* ---------- Hover preview of quest links (inside Foundry's own tooltip) ---------- */
+.fhql-quest-preview { max-width: 260px; text-align: start; }
+.fhql-quest-preview .fhql-preview-card { display: grid; gap: 0.25em; }
+.fhql-quest-preview .fhql-preview-card img { width: 100%; max-height: 52px; object-fit: cover; border: 0; border-radius: 3px; }
+.fhql-quest-preview .fhql-preview-status,
+.fhql-quest-preview .fhql-preview-next { font-size: 0.9em; opacity: 0.85; }

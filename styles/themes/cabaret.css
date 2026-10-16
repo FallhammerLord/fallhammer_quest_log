@@ -1,11 +1,11 @@
 /*
  * Fallhammer Quest Log: Cabaret theme (wine velvet, gilt, footlights). Tokens, then rules only this theme needs.
- * Loaded after styles/fhql.css (see module.json).
+ * Loaded after styles/fhql.css and styles/components/ (see module.json).
  */
 
 /* ---------- Tokens: Cabaret ---------- */
 .fhql-app.fhql-theme-cabaret {
-  /* Cabaret (2026-10-01): the original warm Gothic, leaning into the stage. Midnight house, wine
+  /* Cabaret: the original warm Gothic, leaning into the stage. Midnight house, wine
      velvet, gilt, rose red, candle and footlight. */
   --fhql-surface: #11131e;
   --fhql-surface-raised: #211523;

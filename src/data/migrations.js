@@ -8,7 +8,7 @@ import { getSetting, setSetting } from '../setting.js';
  * run and tells the GM; the next launch tries again from there. Add a step here whenever stored data
  * changes shape, and keep `QuestData.migrateData` for reading old data in the meantime.
  */
-export const MIGRATIONS = [
+const MIGRATIONS = [
    {
       version: 1,
       name: 'Subquest links: parent → parentQuest',
@@ -30,9 +30,6 @@ export const MIGRATIONS = [
       }
    }
 ];
-
-/** @returns {number} The newest data version this module knows. */
-export const CURRENT_DATA_VERSION = Math.max(0, ...MIGRATIONS.map((m) => m.version));
 
 /**
  * Runs pending migrations on the active GM's client. Called on ready.

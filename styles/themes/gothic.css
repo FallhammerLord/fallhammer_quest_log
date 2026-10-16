@@ -1,6 +1,6 @@
 /*
  * Fallhammer Quest Log: Gothic theme (Yharnam: malevolent decadence). Tokens, then rules only this theme needs.
- * Loaded after styles/fhql.css (see module.json).
+ * Loaded after styles/fhql.css and styles/components/ (see module.json).
  */
 
 /* Headings use IM Fell English SC (bundled; registered in src/theme.js, licence in
@@ -9,7 +9,7 @@
 
 /* ---------- Tokens: Gothic (soot, cold stone, oxblood, tarnished brass, moonlight) ---------- */
 .fhql-app.fhql-theme-gothic {
-  /* Yharnam (2026-10-01): soot, cold stone, oxblood, tarnished brass, bone ink, moonlight. Cold and
+  /* Yharnam: soot, cold stone, oxblood, tarnished brass, bone ink, moonlight. Cold and
      desaturated; blood is the only warm note. The old warm wine-and-gilt look is now Cabaret. */
   --fhql-surface: #0e0f14;
   --fhql-surface-raised: #18171d;

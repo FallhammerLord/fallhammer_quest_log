@@ -1,4 +1,4 @@
-import { BEACON_TEMPLATE, MODULE_ID, MODULE_PATH, PARTIALS, QUEST_TYPE } from '../constants.js';
+import { MODULE_ID, MODULE_PATH, PARTIALS, QUEST_TYPE, TEMPLATES } from '../constants.js';
 import {
    createQuest, createQuestFolder, createSubquest, deleteQuest, moveQuestToFolder, questPage, setParent, subquests
 } from '../data/quests.js';
@@ -97,7 +97,7 @@ export function registerQuenchTests(quench)
 
          it('registers its template pieces', function ()
          {
-            for (const path of [...PARTIALS, BEACON_TEMPLATE]) { assert.property(Handlebars.partials, path); }
+            for (const path of [...PARTIALS, ...Object.values(TEMPLATES)]) { assert.property(Handlebars.partials, path); }
          });
 
          it('uses the quest page type', function ()

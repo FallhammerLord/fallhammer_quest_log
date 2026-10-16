@@ -1,0 +1,11 @@
+{{!-- A menu or pick list (src/ui/popover.js, menuPopover). --}}
+{{#if title}}<div class="fhql-popover-title">{{title}}</div>{{/if}}
+<div class="fhql-popover-items">
+  {{#each items}}
+  <button type="button" role="menuitem" class="fhql-popover-item{{#if danger}} fhql-danger{{/if}}{{#if current}} is-current{{/if}}"
+          data-value="{{value}}"{{#if current}} aria-current="true"{{/if}}>
+    <i class="{{icon}}" inert></i>
+    <span>{{label}}{{#if hint}}<small>{{hint}}</small>{{/if}}</span>
+  </button>
+  {{/each}}
+</div>

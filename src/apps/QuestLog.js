@@ -398,7 +398,7 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
       zone.classList.remove('is-drop-target');
       let data;
       try { data = JSON.parse(event.dataTransfer.getData('text/plain')); }
-      catch { return; }
+      catch { return; } // Not our drag (plain text from elsewhere): nothing to move.
       const id = data?.type === 'JournalEntry' ? data.uuid?.split('.').pop() : null;
       const entry = getQuestEntry(id);
       if (entry && zone.dataset.folderDrop !== 'outside') { await moveQuestToFolder(entry, zone.dataset.folderDrop); }
@@ -409,7 +409,7 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
 
    /**
     * Comfort widths (see snapWidth). The list takes about 252px; the sheet beside it turns two-column
-    * at 560px (styles/fhql.css, fhql-sheet container). 560: list beside a one-column sheet, just past
+    * at 560px (styles/components/sheet.css, fhql-sheet container). 560: list beside a one-column sheet, just past
     * the stacked layout (540). 830: the first roomy two-column width. 1040: the default.
     */
    static SNAP_WIDTHS = [560, 830, 1040];

@@ -1,0 +1,12 @@
+{{!-- Pick one option and confirm it (choicePanel). --}}
+<form class="fhql-popover-form">
+  <div class="fhql-popover-title">{{title}}</div>
+  <label class="fhql-field"><span>{{label}}</span>
+    <select class="fhql-input" name="choice" autofocus>
+      {{#each choices}}<option value="{{@index}}"{{#if selected}} selected{{/if}}>{{label}}</option>{{/each}}
+    </select></label>
+  <div class="fhql-popover-buttons">
+    <button type="button" class="fhql-button" data-answer="cancel">{{localize "FHQL.Popover.Cancel"}}</button>
+    <button type="submit" class="fhql-button fhql-primary">{{ok}}</button>
+  </div>
+</form>

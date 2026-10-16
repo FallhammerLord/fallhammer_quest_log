@@ -22,7 +22,7 @@ import {
 } from './sheet/panels.js';
 
 /** Update option marking a text edit made from this window, so it re-renders lightly and keeps focus. */
-export const QUIET = { fhqlQuiet: true };
+const QUIET = { fhqlQuiet: true };
 
 /** Size and place are saved this long (ms) after the last move or resize, so a drag writes once. */
 const MEMORY_DELAY = 500;

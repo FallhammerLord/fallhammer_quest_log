@@ -1,0 +1,7 @@
+{{!-- Hover card for a quest link (src/ui/questPreview.js), shown inside Foundry's tooltip. --}}
+<div class="fhql-preview-card">
+  {{#if image}}<img src="{{image}}" alt="">{{/if}}
+  <strong>{{name}}</strong>
+  <span class="fhql-preview-status"><i class="{{statusIcon}}" inert></i> {{statusLabel}}{{#if total}} · {{done}}/{{total}}{{/if}}</span>
+  {{#if next}}<span class="fhql-preview-next">{{next}}</span>{{/if}}
+</div>

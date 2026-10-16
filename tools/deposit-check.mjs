@@ -5,6 +5,7 @@
  * missing items). Document updates resolve after a delay, as they do over the network.
  * Usage: npm run deposits
  */
+import './templates.mjs';
 const tick = () => new Promise((resolve) => { setTimeout(resolve, 5); });
 const getProperty = (obj, path) => path.split('.').reduce((o, k) => o?.[k], obj);
 const setProperty = (obj, path, value) =>
@@ -26,7 +27,8 @@ globalThis.foundry = {
 globalThis.CONST = { DOCUMENT_OWNERSHIP_LEVELS: { NONE: 0, LIMITED: 1, OBSERVER: 2, OWNER: 3 }, SORT_INTEGER_DENSITY: 100000 };
 globalThis.CONFIG = { queries: {} };
 globalThis.Hooks = { on() {}, once() {} };
-globalThis.ChatMessage = { implementation: { create: async () => {} } };
+const chat = [];
+globalThis.ChatMessage = { implementation: { create: async (data) => { chat.push(data.content); } } };
 globalThis.ui = { notifications: { info() {}, warn() {} } };
 
 const registry = new Map();
@@ -135,6 +137,7 @@ expect('first player hands over the whole stack of 2', !a1.items.has('i1'));
 expect('second player gives only the 1 still needed and keeps 4', s2.system.quantity === 4);
 expect('objective totals exactly 3', quest.objective().deposits.reduce((s, d) => s + d.qty, 0) === 3);
 expect('objective marked done', quest.objective().state === 'done');
+expect('each hand over posts a chat card naming the item', chat.length === 2 && chat.every((c) => c.includes('fhql-chat-claim') && c.includes('Wolf pelt')));
 
 // A full objective takes nothing.
 const r3 = await deposit('p2', s2);

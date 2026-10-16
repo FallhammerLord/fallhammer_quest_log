@@ -63,7 +63,7 @@ export function applyTheme(element)
  *
  * @returns {number} 0 (smooth) to 100; 50 shows each theme as designed.
  */
-export function currentStrength()
+function currentStrength()
 {
    const own = shownSetting('textureStrength');
    const value = Number(own === 'world' ? shownSetting('worldTextureStrength') : own);
@@ -98,7 +98,7 @@ export function defaultOverlay(theme)
  * @param {string} theme - A key of THEMES.
  * @returns {{top: string, bottom: string}} Image paths, '' for none.
  */
-export function currentOverlay(theme)
+function currentOverlay(theme)
 {
    const chosen = shownSetting('textureImages')?.[theme] ?? {};
    if (chosen.off) { return { top: '', bottom: '' }; }
@@ -153,7 +153,7 @@ function applyBanner(element)
  * @param {number[]} rgb - Background color, 0-255 channels.
  * @returns {string} White or near-black, whichever has more contrast on it.
  */
-export function bannerInk(rgb)
+function bannerInk(rgb)
 {
    const channel = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
    const lum = (0.2126 * channel(rgb[0])) + (0.7152 * channel(rgb[1])) + (0.0722 * channel(rgb[2]));
@@ -189,7 +189,7 @@ function parseColor(color)
  * @param {'heading'|'body'} role - Which font.
  * @returns {string} Font family, or '' for the theme default.
  */
-export function currentFont(role)
+function currentFont(role)
 {
    const own = shownSetting(`${role}Font`);
    if (own !== 'world') { return own; }
@@ -238,25 +238,39 @@ export function previewTheme(values)
    if (beacon) { applyTheme(beacon); }
 }
 
-/** Theme style files, as listed in module.json `styles`. */
-const THEME_FILES = ['light', 'dark', 'scifi', 'gothic', 'cabaret', 'hopefear', 'noir', 'ledger'];
+/** Every style file, in module.json `styles` order (npm run load checks the two match). */
+const STYLE_FILES = [
+   'fhql', 'components/controls', 'components/list', 'components/sheet', 'components/beacon', 'components/windows',
+   'components/popovers', 'components/overrides', 'components/contrast', 'components/moments',
+   'themes/light', 'themes/dark', 'themes/scifi', 'themes/gothic', 'themes/cabaret', 'themes/hopefear', 'themes/noir',
+   'themes/ledger'
+];
 
 /**
- * Foundry reads module.json's style list only when a world launches, so a theme added by an update
- * stays unstyled (looking like Light) until a relaunch. Loads any missing theme file now and says so.
- * Runs on ready.
+ * Foundry reads module.json's style list only when a world launches, so a style file added by an
+ * update is missing until a relaunch (a new theme looks like Light). Loads any missing file now, in
+ * its place in the order (later files override earlier ones), and says so. Runs on ready.
  */
-export function ensureThemeStyles()
+export function ensureStyles()
 {
-   const missing = THEME_FILES.filter((name) => !document.querySelector(`link[href*="${MODULE_PATH}/styles/themes/${name}.css"]`));
-   for (const name of missing)
+   const href = (name) => `${MODULE_PATH}/styles/${name}.css`;
+   const missing = [];
+   let previous = null;
+   for (const name of STYLE_FILES)
    {
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = `${MODULE_PATH}/styles/themes/${name}.css`;
-      document.head.append(link);
+      let link = document.querySelector(`link[href*="${href(name)}"]`);
+      if (!link)
+      {
+         link = document.createElement('link');
+         link.rel = 'stylesheet';
+         link.href = href(name);
+         if (previous) { previous.after(link); }
+         else { document.head.append(link); }
+         missing.push(name);
+      }
+      previous = link;
    }
-   if (missing.length) { console.warn(`${MODULE_ID} | Loaded theme styles Foundry had not (${missing.join(', ')}). Relaunch the world to load them normally.`); }
+   if (missing.length) { console.warn(`${MODULE_ID} | Loaded styles Foundry had not (${missing.join(', ')}). Relaunch the world to load them normally.`); }
 }
 
 /** Fonts the module ships, for theme headings. */

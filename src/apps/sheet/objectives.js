@@ -1,4 +1,5 @@
-import { notify } from '../../compat.js';
+import { notify, renderTemplateNow } from '../../compat.js';
+import { TEMPLATES } from '../../constants.js';
 import { confirmPopover, openPanel } from '../../ui/popover.js';
 import {
    clearRequirement, defaultDepositChoice, depositCandidates, depositedTotal, depositLabel, hasRequirement, requestDeposit,
@@ -85,7 +86,6 @@ function requirementContext(objective, { open, gm, editing })
 function confirmDeposit(app, anchor, objective, choices, preselect)
 {
    const t = (key, data) => (data ? game.i18n.format(key, data) : game.i18n.localize(key));
-   const escape = foundry.utils.escapeHTML;
    const { requirement } = objective;
    const give = requirement.mode === 'give';
    const need = stillNeeded(objective);
@@ -96,19 +96,12 @@ function confirmDeposit(app, anchor, objective, choices, preselect)
       c.shared ? t('FHQL.Deposit.Shared') : ''
    ].filter(Boolean).join(', ');
    const verb = t(give ? 'FHQL.Deposit.Give' : 'FHQL.Deposit.Show');
-   const html = `<form class="fhql-popover-form fhql-deposit-form">
-      <div class="fhql-popover-title">${escape(t('FHQL.Deposit.ConfirmTitle', { verb, item: requirement.name }))}</div>
-      <label class="fhql-field"><span>${escape(t('FHQL.Deposit.From'))}</span>
-        <select class="fhql-input" name="source">${choices.map((c, i) => `<option value="${i}" ${i === start ? 'selected' : ''}>${escape(c.label)}${hint(c) ? ` (${escape(hint(c))})` : ''}</option>`).join('')}</select></label>
-      <label class="fhql-field"><span>${escape(t(give ? 'FHQL.Deposit.HowManyGive' : 'FHQL.Deposit.HowManyShow'))}</span>
-        <input class="fhql-input fhql-count-input" type="number" name="qty" min="1" step="1"></label>
-      <label class="fhql-field" data-giver-field hidden><span>${escape(t('FHQL.Deposit.GivenBy'))}</span>
-        <select class="fhql-input" name="giver"></select></label>
-      <p class="fhql-hint" data-deposit-note></p>
-      <div class="fhql-popover-buttons">
-        <button type="button" class="fhql-button" data-answer="cancel">${escape(t('FHQL.Popover.Cancel'))}</button>
-        <button type="submit" class="fhql-button fhql-primary">${escape(verb)}</button>
-      </div></form>`;
+   const html = renderTemplateNow(TEMPLATES.deposit, {
+      title: t('FHQL.Deposit.ConfirmTitle', { verb, item: requirement.name }),
+      sources: choices.map((c, i) => ({ label: hint(c) ? `${c.label} (${hint(c)})` : c.label, selected: i === start })),
+      howMany: t(give ? 'FHQL.Deposit.HowManyGive' : 'FHQL.Deposit.HowManyShow'),
+      verb
+   });
 
    return openPanel(app, anchor, html, (panel, done) =>
    {
@@ -127,7 +120,7 @@ function confirmDeposit(app, anchor, objective, choices, preselect)
          // GM, shared sheet: say which of its players gave it (starts on the one it's assigned to).
          const givers = choices[Number(source.value)].givers ?? [];
          giverField.hidden = givers.length < 2;
-         giver.innerHTML = givers.map((g) => `<option value="${g.id}">${escape(g.name)}</option>`).join('');
+         giver.replaceChildren(...givers.map((g) => new Option(g.name, g.id)));
       };
       refresh();
       source.addEventListener('change', refresh);

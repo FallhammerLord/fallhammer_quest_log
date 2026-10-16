@@ -28,7 +28,7 @@ export const { DocumentSheetConfig, DocumentOwnershipConfig } = foundry.applicat
 export function availableFonts()
 {
    try { return foundry.applications.settings.menus.FontConfig.getAvailableFontChoices() ?? {}; }
-   catch { return {}; }
+   catch { return {}; } // No font list in this Foundry version: the themes' own fonts still apply.
 }
 
 /** @returns {typeof foundry.applications.ux.TextEditor} The configured TextEditor class. */
@@ -124,7 +124,7 @@ export function tidyBannerColor()
       const settings = game.settings.get(TIDY_ID, 'worldThemeSettings');
       return settings?.headerBackgroundColor || settings?.accentColor || null;
    }
-   catch { return null; }
+   catch { return null; } // Tidy renamed or dropped this setting: Ledger falls back to its own banner color.
 }
 
 /* ---------- GM relay transport (v13+ query API) ---------- */
@@ -298,6 +298,21 @@ export function renderLoadedTemplate(path, data)
    if (!template) { return null; }
    if (typeof template === 'string') { template = Handlebars.compile(template); }
    return template(data, { allowProtoPropertiesByDefault: true, allowProtoMethodsByDefault: true });
+}
+
+/**
+ * Like renderLoadedTemplate, for UI that can't wait or do without (child panels, chat cards). Throws
+ * if the template hasn't loaded, which only happens in the first moments after a launch.
+ *
+ * @param {string} path - A template path given to preloadTemplates.
+ * @param {object} data - The template's data.
+ * @returns {string} HTML.
+ */
+export function renderTemplateNow(path, data)
+{
+   const html = renderLoadedTemplate(path, data);
+   if (html === null) { throw new Error(`${path} has not loaded yet`); }
+   return html;
 }
 
 /** @returns {number} How deep Foundry lets folders nest, counting the top-level folder as 1. */

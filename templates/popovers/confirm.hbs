@@ -1,0 +1,7 @@
+{{!-- A yes/no question (confirmPopover). `message` is HTML: callers escape any names in it. --}}
+<div class="fhql-popover-message">{{{message}}}</div>
+<div class="fhql-popover-buttons">
+  <button type="button" class="fhql-button" data-answer="cancel">{{localize "FHQL.Popover.Cancel"}}</button>
+  {{#if no}}<button type="button" class="fhql-button" data-answer="no">{{no}}</button>{{/if}}
+  <button type="button" class="fhql-button {{#if danger}}fhql-danger-fill{{else}}fhql-primary{{/if}}" data-answer="yes" autofocus>{{yes}}</button>
+</div>

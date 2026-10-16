@@ -38,16 +38,17 @@ catch (err)
    process.exit(1);
 }
 
-// The theme files src/theme.js loads as a fallback must match module.json, and every bundled font must
+// The style files src/theme.js loads as a fallback must match module.json, in order, and every bundled font must
 // exist with its licence beside it.
 const { readFileSync, existsSync } = await import('node:fs');
 const root = new URL('../', import.meta.url);
 const manifest = JSON.parse(readFileSync(new URL('module.json', root), 'utf8'));
 const themeSource = readFileSync(new URL('src/theme.js', root), 'utf8');
-const listed = manifest.styles.filter((s) => s.startsWith('styles/themes/')).map((s) => s.slice(14, -4)).sort();
-const inCode = (themeSource.match(/THEME_FILES = \[([^\]]*)\]/)?.[1] ?? '').match(/'([^']+)'/g)?.map((s) => s.slice(1, -1)).sort() ?? [];
+const listed = manifest.styles.map((s) => s.slice(7, -4));
+const inCode = (themeSource.match(/STYLE_FILES = \[([^\]]*)\]/)?.[1] ?? '').match(/'([^']+)'/g)?.map((s) => s.slice(1, -1)) ?? [];
 const problems = [];
-if (listed.join() !== inCode.join()) { problems.push(`THEME_FILES (${inCode}) differs from module.json themes (${listed})`); }
+if (listed.join() !== inCode.join()) { problems.push(`STYLE_FILES (${inCode}) differs from module.json styles, in order (${listed})`); }
+for (const path of manifest.styles) { if (!existsSync(new URL(path, root))) { problems.push(`missing style file ${path}`); } }
 for (const [, path] of themeSource.matchAll(/\$\{MODULE_PATH\}\/(styles\/fonts\/[^`]+\.woff2)/g))
 {
    if (!existsSync(new URL(path, root))) { problems.push(`missing font file ${path}`); }
@@ -66,5 +67,10 @@ for (const file of readdirSync(new URL('templates/', root)).filter((f) => f.ends
       if (!PARTIALS.includes(name)) { problems.push(`${file} uses partial ${name}, which isn't in PARTIALS`); }
    }
 }
+const { TEMPLATES } = await import('../src/constants.js');
+for (const path of Object.values(TEMPLATES))
+{
+   if (!existsSync(new URL(path.replace('modules/fhql/', ''), root))) { problems.push(`missing template ${path}`); }
+}
 if (problems.length) { console.error(problems.join('\n')); process.exit(1); }
-console.log('Theme files, bundled fonts and template partials are consistent.');
+console.log('Style files, bundled fonts and template partials are consistent.');

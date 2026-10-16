@@ -55,8 +55,8 @@ function registerLookSettings()
       onChange: restyle
    });
 
-   // High contrast: built (styles/fhql.css) but hidden from Module Settings while its look is
-   // prototyped further (2026-10-01: too flat, loses each theme's character).
+   // High contrast: built (styles/components/contrast.css) but hidden from Module Settings while its
+   // look is reworked: as built it is too flat and loses each theme's character.
    game.settings.register(MODULE_ID, 'contrastMode', {
       name: 'FHQL.Settings.Contrast.Name',
       hint: 'FHQL.Settings.Contrast.Hint',

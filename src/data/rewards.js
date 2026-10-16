@@ -1,8 +1,8 @@
-import { deleteKeyUpdate, postChat } from '../compat.js';
+import { deleteKeyUpdate, postChat, renderTemplateNow } from '../compat.js';
 import { registerRelay, relay } from './relay.js';
 import { itemQuantity, itemQuantityUpdate } from './systemItems.js';
 import { actorsForGM, assignedToSomeone, playerFor, sharedActor } from './owners.js';
-import { MODULE_ID } from '../constants.js';
+import { MODULE_ID, TEMPLATES } from '../constants.js';
 import { getQuestEntry, questAccess, questPage } from './quests.js';
 import { getSetting } from '../setting.js';
 
@@ -190,11 +190,12 @@ async function claimNow(data, { force = false } = {})
    await page.update({ [`system.rewards.${data.rewardId}.claims`]: [...reward.claims, claim] });
 
    const who = claimLabel(claim);
-   await postChat(game.i18n.localize('FHQL.QuestLog.Title'), `<div class="fhql-chat-claim">
-         ${reward.img ? `<img src="${foundry.utils.escapeHTML(reward.img)}" alt="" width="36" height="36">` : ''}
-         <p>${game.i18n.format('FHQL.Reward.ChatClaimed', {
-            who: foundry.utils.escapeHTML(who), reward: foundry.utils.escapeHTML(reward.name), quest: foundry.utils.escapeHTML(entry.name)
-         })}</p></div>`);
+   await postChat(game.i18n.localize('FHQL.QuestLog.Title'), renderTemplateNow(TEMPLATES.chatCard, {
+      img: reward.img,
+      message: game.i18n.format('FHQL.Reward.ChatClaimed', {
+         who: foundry.utils.escapeHTML(who), reward: foundry.utils.escapeHTML(reward.name), quest: foundry.utils.escapeHTML(entry.name)
+      })
+   }));
 
    return { ok: true, message: game.i18n.format('FHQL.Reward.Claimed', { reward: reward.name, who }) };
 }

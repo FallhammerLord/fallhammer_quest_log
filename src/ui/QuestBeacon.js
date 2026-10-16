@@ -1,5 +1,5 @@
 import { playerRowElement, playersElement, renderLoadedTemplate } from '../compat.js';
-import { BEACON_TEMPLATE, THEMES } from '../constants.js';
+import { TEMPLATES, THEMES } from '../constants.js';
 import { eggFor } from './eggs.js';
 import { openQuestLog, showInOpenLog, toggleQuestLog } from '../api.js';
 import { questAccess, questPage } from '../data/quests.js';
@@ -50,7 +50,7 @@ export function refreshQuestBeacon()
    const shown = marked.find((q) => q.entry.id === choice) ?? marked[0] ?? null;
 
    applyTheme(widget);
-   const html = renderLoadedTemplate(BEACON_TEMPLATE, shown ? beaconContext(shown, marked) : { empty: true });
+   const html = renderLoadedTemplate(TEMPLATES.beacon, shown ? beaconContext(shown, marked) : { empty: true });
    // Before the template has loaded (only during startup), keep what is there; the ready hook redraws.
    if (html !== null) { widget.innerHTML = html; }
    matchPlayersSize(widget, players);
