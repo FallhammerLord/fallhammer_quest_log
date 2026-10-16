@@ -47,6 +47,9 @@ export async function startSeenTracking()
    await game.user.setFlag(MODULE_ID, FLAG, { _base: base });
 }
 
+/** Seen marks are written this long (ms) after the last one, so paging through quests writes once. */
+const WRITE_DELAY = 400;
+
 /** Quests marked seen but not yet written, batched into one write. */
 const pending = new Map();
 let timer = null;
@@ -67,7 +70,7 @@ export function markSeen(entry)
       const update = Object.fromEntries(pending);
       pending.clear();
       game.user.setFlag(MODULE_ID, FLAG, update);
-   }, 400);
+   }, WRITE_DELAY);
 }
 
 /**

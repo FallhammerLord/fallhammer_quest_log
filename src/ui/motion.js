@@ -10,6 +10,12 @@
 const EASE_OPEN = 'cubic-bezier(.2,.7,.2,1)';
 const EASE_CLOSE = 'cubic-bezier(.5,0,.75,0)';
 
+/** Durations in ms. Short enough not to slow the table down; the fades are for reduced motion. */
+const OPEN_MS = 180;
+const CLOSE_MS = 140;
+const FADE_IN_MS = 120;
+const FADE_OUT_MS = 100;
+
 /** @returns {boolean} Whether the player asked for reduced motion. */
 const reduced = () => globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
 
@@ -33,11 +39,11 @@ function originFor(el, anchor)
 export function animateOpen(el, from = null)
 {
    if (!el?.animate) { return; }
-   if (reduced()) { el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 120 }); return; }
+   if (reduced()) { el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: FADE_IN_MS }); return; }
    el.animate(
       [{ opacity: 0, transform: 'translateY(8px) scale(0.96)', transformOrigin: originFor(el, from) },
        { opacity: 1, transform: 'none', transformOrigin: originFor(el, from) }],
-      { duration: 180, easing: EASE_OPEN }
+      { duration: OPEN_MS, easing: EASE_OPEN }
    );
 }
 
@@ -50,11 +56,11 @@ export async function animateClose(el, toward = null)
 {
    if (!el?.animate) { return; }
    const animation = reduced()
-    ? el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 100, fill: 'forwards' })
+    ? el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: FADE_OUT_MS, fill: 'forwards' })
     : el.animate(
        [{ opacity: 1, transform: 'none', transformOrigin: originFor(el, toward) },
         { opacity: 0, transform: 'translateY(6px) scale(0.96)', transformOrigin: originFor(el, toward) }],
-       { duration: 140, easing: EASE_CLOSE, fill: 'forwards' }
+       { duration: CLOSE_MS, easing: EASE_CLOSE, fill: 'forwards' }
     );
    try { await animation.finished; }
    catch { /* cancelled: close anyway */ }

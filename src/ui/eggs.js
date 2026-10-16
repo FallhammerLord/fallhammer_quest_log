@@ -38,6 +38,10 @@ let completions = 0;
 const GLITCH_ODDS = 1 / 20;
 const GLITCH_COOLDOWN = 10000;
 const GLITCH_MS = 400;
+/** The reduced-motion readout's fade, as in styles/themes/scifi.css. */
+const GLITCH_STILL_MS = 900;
+/** The curtain call's run (3.2s in styles/themes/cabaret.css), plus a moment's margin. */
+const CURTAIN_MS = 3400;
 const READOUTS = ['SYNC 0x3F…OK', 'GHOST// ACK', 'PKT LOSS 0.02%', 'NODE 7 ⟶ RELINK', 'CRC 9A1F OK'];
 let lastGlitch = -Infinity;
 
@@ -96,8 +100,8 @@ function glitch(el)
    layer.append(readout);
    host.append(layer);
    el.classList.add('fhql-egg-shiver');
-   // Long enough for the reduced-motion readout (900ms) too.
-   setTimeout(() => { layer.remove(); el.classList.remove('fhql-egg-shiver'); }, Math.max(GLITCH_MS, 900) + 100);
+   // Long enough for the reduced-motion readout too.
+   setTimeout(() => { layer.remove(); el.classList.remove('fhql-egg-shiver'); }, Math.max(GLITCH_MS, GLITCH_STILL_MS) + 100);
 }
 
 /** Counts completions for the Cabaret curtain call; listens for Sci-fi glitch clicks. Called on init. */
@@ -125,5 +129,5 @@ function curtainCall()
       <span class="fhql-egg-marquee">${bulbs}<span class="fhql-egg-line">${game.i18n.localize('FHQL.Egg.Curtain')}</span>
       <span class="fhql-egg-sub">${game.i18n.localize('FHQL.Egg.CurtainSub')}</span>${bulbs}</span>`;
    host.append(overlay);
-   setTimeout(() => overlay.remove(), 3400);
+   setTimeout(() => overlay.remove(), CURTAIN_MS);
 }

@@ -29,6 +29,12 @@ export const QUIET = { fhqlQuiet: true };
 /** Narrow layout: objectives shown before "Show all". Matches the CSS cap in styles/fhql.css. */
 const OBJECTIVE_CAP = 8;
 
+/** Size and place are saved this long (ms) after the last move or resize, so a drag writes once. */
+const MEMORY_DELAY = 500;
+
+/** Screen readers announce a live region only when its text changes; clear it, then refill after this pause (ms). */
+const ANNOUNCE_DELAY = 50;
+
 /** One-click status changes in the read view, by current status. */
 const STATUS_ACTIONS = {
    hidden: [['available', 'Reveal'], ['active', 'RevealActive']],
@@ -140,7 +146,7 @@ export function QuestSheetMixin(Base)
             const all = { ...(getSetting('windowMemory') ?? {}) };
             all[key] = { width, height, left, top };
             setSetting('windowMemory', all);
-         }, 500);
+         }, MEMORY_DELAY);
       }
 
       /**
@@ -196,7 +202,7 @@ export function QuestSheetMixin(Base)
             region.setAttribute('role', 'status');
             this.element.append(region);
          }
-         if (region) { region.textContent = ''; setTimeout(() => { region.textContent = message; }, 50); }
+         if (region) { region.textContent = ''; setTimeout(() => { region.textContent = message; }, ANNOUNCE_DELAY); }
       }
 
       /** @override */
