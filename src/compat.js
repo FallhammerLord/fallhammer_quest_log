@@ -299,3 +299,9 @@ export function renderLoadedTemplate(path, data)
    if (typeof template === 'string') { template = Handlebars.compile(template); }
    return template(data, { allowProtoPropertiesByDefault: true, allowProtoMethodsByDefault: true });
 }
+
+/** @returns {number} How deep Foundry lets folders nest, counting the top-level folder as 1. */
+export function folderMaxDepth()
+{
+   return CONST.FOLDER_MAX_DEPTH ?? 4;
+}

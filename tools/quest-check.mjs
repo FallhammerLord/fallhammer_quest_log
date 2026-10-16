@@ -28,7 +28,7 @@ globalThis.foundry = {
    data: { fields: {} },
    utils: { getProperty, setProperty, deepClone: structuredClone, randomID: () => Math.random().toString(36).slice(2, 10) }
 };
-globalThis.CONST = { DOCUMENT_OWNERSHIP_LEVELS: { NONE: 0, LIMITED: 1, OBSERVER: 2, OWNER: 3 }, SORT_INTEGER_DENSITY: 100000 };
+globalThis.CONST = { DOCUMENT_OWNERSHIP_LEVELS: { NONE: 0, LIMITED: 1, OBSERVER: 2, OWNER: 3 }, SORT_INTEGER_DENSITY: 100000, FOLDER_MAX_DEPTH: 4 };
 globalThis.CONFIG = { queries: {} };
 globalThis.Hooks = { on() {}, once() {} };
 
@@ -41,7 +41,9 @@ function makeFolder(id, name, parent = null, quests = false)
    const folder = {
       id, name, type: 'JournalEntry', folder: parent,
       get ancestors() { const list = []; for (let f = this.folder; f; f = f.folder) { list.push(f); } return list; },
-      getFlag: (scope, key) => (key === 'quests' ? quests : undefined)
+      getFlag: (scope, key) => (key === 'quests' ? quests : undefined),
+      update: async (data) => { if ('folder' in data) { folder.folder = folders.get(data.folder) ?? null; } if (data.name) { folder.name = data.name; } },
+      delete: async () => { folders.delete(id); }
    };
    folders.set(id, folder);
    return folder;
@@ -66,7 +68,10 @@ function makeEntry({ name, folder, pages })
    return entry;
 }
 
-globalThis.Folder = { implementation: { create: async (data) => makeFolder(`f${nextId++}`, data.name, null, true) } };
+globalThis.Folder = { implementation: {
+   create: async (data) => makeFolder(`f${nextId++}`, data.name, folders.get(data.folder) ?? null, !data.folder),
+   updateDocuments: async (list) => { for (const { _id, folder } of list) { folders.get(_id).folder = folders.get(folder) ?? null; } }
+} };
 globalThis.JournalEntry = {
    implementation: {
       create: async (data) => makeEntry(data),
@@ -109,6 +114,25 @@ check([parent, child, loose, grandchild].every((e) => e.folder?.id === act2.id),
 
 await quests.setParent(parent, grandchild.id);
 check(quests.questPage(parent).system.parentQuest === '', 'a parent below the quest is refused (no loops)');
+
+// Nested folders: Foundry allows 4 levels counting FHQL Quests, so 3 below it.
+{
+   const deep = await quests.createQuestFolder('Chapter', act1.id);
+   check(deep.folder?.id === act1.id, 'a subfolder is created inside its folder');
+   check(quests.canHoldSubfolder(deep), 'a third level can still hold a subfolder');
+   const deepest = await quests.createQuestFolder('Scene', deep.id);
+   check(!quests.canHoldSubfolder(deepest), 'the fourth level holds no more subfolders');
+   const targets = quests.folderMoveTargets(act1).map((f) => f.id);
+   check(!targets.includes(act1.id) && !targets.includes(deep.id), 'a folder cannot move into itself or its own subfolders');
+   check(!targets.includes(act2.id), 'a folder too tall to fit is refused (Act One holds two levels)');
+   check(quests.folderMoveTargets(deepest).map((f) => f.id).includes(act2.id), 'a single folder can move into another');
+   const stored = await quests.createQuest({ name: 'Stored', folder: deep.id });
+   await quests.deleteQuestFolder(deep);
+   check(!folders.has(deep.id), 'the folder is deleted');
+   check(stored.folder?.id === act1.id && deepest.folder?.id === act1.id, 'its quests and subfolders move up a level, nothing lost');
+   await quests.deleteQuestFolder(root);
+   check(folders.has(root.id), 'FHQL Quests itself cannot be deleted');
+}
 
 // Data saved before the rename (stored as `parent`) is carried over on load.
 const { QuestData } = await import('../src/data/QuestData.js');

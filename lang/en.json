@@ -340,7 +340,12 @@
       "TopLevel": "Top level",
       "Outside": "Outside FHQL Quests",
       "OutsideHint": "These quests were moved out of the FHQL Quests journal folder.",
-      "Create": "Create"
+      "Create": "Create",
+      "NewSub": "New subfolder",
+      "Rename": "Rename",
+      "Move": "Move into folder",
+      "Delete": "Delete folder",
+      "DeleteConfirm": "Delete the folder \"{name}\"? Its quests and folders move up to {parent}."
     },
     "Filter": {
       "Label": "Filter quests",
@@ -472,6 +477,7 @@
       "Shared": "Shared",
       "ConfirmTitle": "{verb}: {item}",
       "From": "From",
+      "GivenBy": "Given by",
       "HowManyGive": "How many to hand over",
       "HowManyShow": "How many to show",
       "ConfirmNote": "Still needed: {need}. This stack: {have}."

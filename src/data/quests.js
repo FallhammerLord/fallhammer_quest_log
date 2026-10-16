@@ -1,4 +1,4 @@
-import { deleteKeyUpdate, postChat } from '../compat.js';
+import { deleteKeyUpdate, folderMaxDepth, postChat } from '../compat.js';
 import { MODULE_ID, OBJECTIVE_STATES, QUEST_TYPE, STATUSES } from '../constants.js';
 import { getSetting } from '../setting.js';
 
@@ -179,6 +179,61 @@ export async function createQuestFolder(name, parentId)
    const root = await questFolder();
    const parent = parentId && inQuestTree(game.folders.get(parentId)) ? parentId : root.id;
    return Folder.implementation.create({ name: name.trim() || game.i18n.localize('FHQL.Folders.NewName'), type: 'JournalEntry', folder: parent });
+}
+
+/**
+ * @param {Folder} folder - A quest folder.
+ * @returns {boolean} Whether a subfolder can go inside it (Foundry caps folder depth).
+ */
+export function canHoldSubfolder(folder)
+{
+   return inQuestTree(folder) && (folder.ancestors.length + 1) < folderMaxDepth();
+}
+
+/**
+ * @param {Folder} folder - A quest folder to move.
+ * @returns {Folder[]} Folders it can move into: the quest tree, minus itself, its own subfolders, its
+ *   current parent, and any too deep to hold it with the folders inside it.
+ */
+export function folderMoveTargets(folder)
+{
+   const root = questRootFolder();
+   if (!root || !inQuestTree(folder) || folder.id === root.id) { return []; }
+   const below = (f) => f.ancestors.some((a) => a.id === folder.id);
+   const subtree = [folder, ...questSubfolders().filter(below)];
+   const height = Math.max(...subtree.map((f) => f.ancestors.length - folder.ancestors.length)) + 1;
+   return [root, ...questSubfolders()].filter((f) => f.id !== folder.id && !below(f) && f.id !== folder.folder?.id
+      && (f.ancestors.length + 1) + height <= folderMaxDepth());
+}
+
+/**
+ * Moves a quest folder (with everything in it) into another quest folder. GM only.
+ *
+ * @param {Folder} folder - The folder to move.
+ * @param {string} targetId - The folder to move it into.
+ */
+export async function moveQuestFolder(folder, targetId)
+{
+   if (!folderMoveTargets(folder).some((f) => f.id === targetId)) { return; }
+   await folder.update({ folder: targetId });
+}
+
+/**
+ * Deletes a quest folder. Its quests and subfolders move up to its parent first, so nothing is lost.
+ * GM only.
+ *
+ * @param {Folder} folder - The folder to delete.
+ */
+export async function deleteQuestFolder(folder)
+{
+   const root = questRootFolder();
+   if (!inQuestTree(folder) || folder.id === root?.id) { return; }
+   const parent = folder.folder?.id ?? root.id;
+   const entries = game.journal.filter((e) => e.folder?.id === folder.id).map((e) => ({ _id: e.id, folder: parent }));
+   const folders = game.folders.filter((f) => f.folder?.id === folder.id).map((f) => ({ _id: f.id, folder: parent }));
+   if (entries.length) { await JournalEntry.implementation.updateDocuments(entries); }
+   if (folders.length) { await Folder.implementation.updateDocuments(folders); }
+   await folder.delete();
 }
 
 /**
