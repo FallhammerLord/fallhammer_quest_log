@@ -1,5 +1,6 @@
 # Runs the offline checks on every push and pull request: lint, module load with Foundry mocked,
-# theme contrast, and the deposit rules. The layout check needs a browser and runs locally.
+# theme contrast, deposit and quest rules; and the layout check, which renders the templates in
+# Chromium at many widths and themes and fails on overflow.
 name: Check
 
 on:
@@ -26,3 +27,21 @@ jobs:
         run: |
           npm ci
           npm run check
+
+  layout:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Layout
+        run: npm run layout

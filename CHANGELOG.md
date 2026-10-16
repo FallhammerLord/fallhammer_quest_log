@@ -4,6 +4,9 @@
 
 First feature-complete preview. Requires Foundry VTT v14.
 
+- Nested quest folders: the GM right-clicks a folder to add a subfolder, rename, move it into another folder, or delete it (its quests move up a level). Up to three levels, as Foundry allows.
+- A GM handing over from a sheet several players share chooses who gave it.
+- Row borders and focus rings no longer clip at the edge of a scrolling panel; the editor's pen button is centered.
 - Quest Log with folders (inside the FHQL Quests journal folder), status filters, search, nested subquests, and a right-click quest menu.
 - Quest sheet in the log or its own window: rich text, quest giver and reward drag-and-drop, GM-only notes, subquests, quest image, dates, read and edit modes with autosave.
 - Quest Beacon above the players list: party Focus quests and personally tracked quests with their objectives, a switcher, and an empty state that opens the log.
