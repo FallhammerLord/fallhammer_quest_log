@@ -31,6 +31,7 @@ npm run quests     # Foundry mocked: quest families (folders, no loops), double-
 |---|---|
 | `src/main.js` | init/ready hooks, document hooks that re-render UI |
 | `src/compat.js` | **only** place for version-sensitive Foundry APIs |
+| `src/setting.js` | `getSetting` / `setSetting`: every read and write of our settings outside `settings.js` |
 | `src/data/QuestData.js` | `fhql.quest` JournalEntryPage TypeDataModel |
 | `src/data/quests.js` | quest CRUD, access rules, folders, hide/reveal ownership |
 | `src/data/relay.js` | GM relay: register, send, one shared queue, notifications |
@@ -80,6 +81,8 @@ npm run quests     # Foundry mocked: quest families (folders, no loops), double-
 - **Rich-text editors:** use `<prose-mirror toggled>` without `open`. Adding `open` at render broke editing. Unsaved editor text is flushed on Done, on close, and on switching quests via `_flushEdits`. Only *open* editors count as unsaved (a just-saved toggled editor can still report dirty).
 - **Player notes** are edited in place with a one-editor lock on User flags (`src/data/notesLock.js`), not in edit mode.
 - **Handlebars helpers:** don't rely on `eq`/`and`/`or`; compute booleans in JS. `lookup` is fine.
+- **Template pieces** used in more than one place live in `templates/partials/`, listed in `PARTIALS` (`src/constants.js`), loaded on init, and called by full path: `{{> "modules/fhql/templates/partials/eye-toggle.hbs" ...}}`. `npm run load` checks the list against the folder and the templates.
+- **Timings** are named constants beside their use, saying what ties them down (a CSS animation length, a write batch).
 - **Relay senders can't be verified** (checked 2026-10-16 against the Foundry type definitions: query handlers get only data and a timeout; module sockets carry no server-confirmed sender). A player with console access could name another player. Mitigations: every request is rechecked against the named user's own permissions, requests naming a GM are refused, and deposits and claims are recorded by name with GM Undo.
 - **GM relays** go through `src/data/relay.js` only (`registerRelay` / `relay`): one queue on the GM client for every request type, shared notifications, transport in `compat.js`. The handler isn't told who sent a request: re-check everything against the named user, and refuse requests naming a GM.
 - **Deposits never move without confirmation:** Hand over/Show and drops open the confirm panel (source, amount). The GM client takes only what is still needed, one deposit at a time, recording before taking and rolling back on failure. Keep `npm run deposits` passing; it fails if the relay queue is removed.

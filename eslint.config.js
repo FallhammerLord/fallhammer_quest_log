@@ -13,6 +13,7 @@ export default [
             ...globals.browser,
             foundry: 'readonly',
             game: 'readonly',
+            Handlebars: 'readonly',
             ui: 'readonly',
             Hooks: 'readonly',
             CONFIG: 'readonly',

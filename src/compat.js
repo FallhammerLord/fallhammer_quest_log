@@ -272,3 +272,14 @@ export function notify(level, message)
 {
    ui.notifications[level]?.(String(message ?? '').replace(/</g, '‹').replace(/>/g, '›'));
 }
+
+/**
+ * Registers template pieces as Handlebars partials, each under its own path.
+ *
+ * @param {string[]} paths - Template paths, relative to Foundry's root.
+ * @returns {Promise<void>} Resolves once all are loaded.
+ */
+export async function loadPartials(paths)
+{
+   await foundry.applications.handlebars.loadTemplates(paths);
+}

@@ -5,7 +5,7 @@
  * Set CHROMIUM_PATH to use an installed Chromium instead of Playwright's download.
  */
 import Handlebars from 'handlebars';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { chromium } from 'playwright';
 import { listContext, sheetContext } from './fixtures.mjs';
 
@@ -16,6 +16,10 @@ mkdirSync(out, { recursive: true });
 const lang = JSON.parse(readFileSync(`${root}lang/en.json`, 'utf8'));
 const t = (key) => key.replace(/^FHQL\./, '').split('.').reduce((o, p) => o?.[p], lang.FHQL) ?? key;
 Handlebars.registerHelper('localize', (key) => t(key));
+for (const file of readdirSync(`${root}templates/partials`))
+{
+   Handlebars.registerPartial(`modules/fhql/templates/partials/${file}`, readFileSync(`${root}templates/partials/${file}`, 'utf8'));
+}
 const tpl = (name) => Handlebars.compile(readFileSync(`${root}templates/${name}.hbs`, 'utf8'));
 const listT = tpl('quest-log-list');
 const sheetT = tpl('quest-sheet');

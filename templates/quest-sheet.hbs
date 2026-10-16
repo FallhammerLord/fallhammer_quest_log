@@ -152,9 +152,7 @@
       {{else if playerNotesHTML}}
       <section class="fhql-card fhql-area-notes" data-panel="notes">
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.PlayerNotes"}}
-          {{#if notesLockedBy}}<span class="fhql-empty-note fhql-push"><i class="fa-solid fa-lock" inert></i> {{notesLockedBy}}</span>
-          {{#if notesTakeOver}}<button type="button" class="fhql-button fhql-small" data-action="editNotes" data-force
-            aria-label="{{localize 'FHQL.Notes.TakeOver'}}" data-tooltip="{{localize 'FHQL.Notes.TakeOverHint'}}"><i class="fa-solid fa-pen" inert></i><span class="fhql-label">{{localize "FHQL.Notes.TakeOver"}}</span></button>{{/if}}
+          {{#if notesLockedBy}}{{> "modules/fhql/templates/partials/notes-lock.hbs"}}
           {{else if notesCanStart}}<button type="button" class="fhql-button fhql-small fhql-push" data-action="editNotes"
             aria-label="{{localize 'FHQL.Player.EditNotes'}}"><i class="fa-solid fa-pen" inert></i><span class="fhql-label">{{localize "FHQL.Player.EditNotes"}}</span></button>{{/if}}</h3>
         <div class="fhql-panel-body" data-scroll="notes"><div class="fhql-prose">{{{playerNotesHTML}}}</div></div>
@@ -162,9 +160,7 @@
       {{else if canEditNotes}}
       <section class="fhql-card fhql-compact fhql-area-notes">
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.PlayerNotes"}}<span class="fhql-empty-note">{{localize "FHQL.Section.Empty"}}</span>
-          {{#if notesLockedBy}}<span class="fhql-empty-note fhql-push"><i class="fa-solid fa-lock" inert></i> {{notesLockedBy}}</span>
-          {{#if notesTakeOver}}<button type="button" class="fhql-button fhql-small" data-action="editNotes" data-force
-            aria-label="{{localize 'FHQL.Notes.TakeOver'}}" data-tooltip="{{localize 'FHQL.Notes.TakeOverHint'}}"><i class="fa-solid fa-pen" inert></i><span class="fhql-label">{{localize "FHQL.Notes.TakeOver"}}</span></button>{{/if}}
+          {{#if notesLockedBy}}{{> "modules/fhql/templates/partials/notes-lock.hbs"}}
           {{else if notesCanStart}}<button type="button" class="fhql-button fhql-small" data-action="editNotes"
             aria-label="{{localize 'FHQL.Player.AddNotes'}}"><i class="fa-solid fa-plus" inert></i><span class="fhql-label">{{localize "FHQL.Player.AddNotes"}}</span></button>{{/if}}</h3>
       </section>
@@ -196,10 +192,8 @@
             <input type="text" class="fhql-input" name="objective-{{id}}" data-field="objective.name" value="{{name}}"
                    placeholder="{{localize 'FHQL.Objective.Placeholder'}}" aria-label="{{localize 'FHQL.Objective.Name'}}">
             {{#if ../gm}}
-            <button type="button" class="fhql-icon-button fhql-eye" data-action="toggleObjectiveHidden" aria-pressed="{{#if hidden}}true{{else}}false{{/if}}"
-                    data-tooltip="{{#if hidden}}{{localize 'FHQL.Objective.Show'}}{{else}}{{localize 'FHQL.Objective.HideAction'}}{{/if}}"
-                    aria-label="{{#if hidden}}{{localize 'FHQL.Objective.Show'}}{{else}}{{localize 'FHQL.Objective.HideAction'}}{{/if}}">
-              <i class="fa-solid {{#if hidden}}fa-eye-slash{{else}}fa-eye{{/if}}" inert></i></button>
+            {{> "modules/fhql/templates/partials/eye-toggle.hbs" action="toggleObjectiveHidden" class="fhql-eye"
+                show=(localize "FHQL.Objective.Show") hide=(localize "FHQL.Objective.HideAction")}}
             {{/if}}
             <button type="button" class="fhql-icon-button" data-action="deleteObjective"
                     data-tooltip="{{localize 'FHQL.Objective.Delete'}}" aria-label="{{localize 'FHQL.Objective.Delete'}}">
@@ -207,10 +201,8 @@
             {{else}}
             <span class="fhql-grow-text">{{name}}</span>
             {{#if ../gm}}
-            <button type="button" class="fhql-icon-button fhql-eye" data-action="toggleObjectiveHidden" aria-pressed="{{#if hidden}}true{{else}}false{{/if}}"
-                    data-tooltip="{{#if hidden}}{{localize 'FHQL.Objective.Show'}}{{else}}{{localize 'FHQL.Objective.HideAction'}}{{/if}}"
-                    aria-label="{{#if hidden}}{{localize 'FHQL.Objective.Show'}}{{else}}{{localize 'FHQL.Objective.HideAction'}}{{/if}}">
-              <i class="fa-solid {{#if hidden}}fa-eye-slash{{else}}fa-eye{{/if}}" inert></i></button>
+            {{> "modules/fhql/templates/partials/eye-toggle.hbs" action="toggleObjectiveHidden" class="fhql-eye"
+                show=(localize "FHQL.Objective.Show") hide=(localize "FHQL.Objective.HideAction")}}
             {{/if}}
             {{/if}}
             {{#if requirement}}
@@ -351,10 +343,8 @@
                       aria-label="{{#if locked}}{{localize 'FHQL.Reward.Unlock'}}{{else}}{{localize 'FHQL.Reward.Lock'}}{{/if}}">
                 <i class="fa-solid {{#if locked}}fa-lock{{else}}fa-lock-open{{/if}}" inert></i></button>
               {{/if}}
-              <button type="button" class="fhql-icon-button" data-action="toggleRewardHidden" aria-pressed="{{#if hidden}}true{{else}}false{{/if}}"
-                      data-tooltip="{{#if hidden}}{{localize 'FHQL.Reward.Show'}}{{else}}{{localize 'FHQL.Reward.HideAction'}}{{/if}}"
-                      aria-label="{{#if hidden}}{{localize 'FHQL.Reward.Show'}}{{else}}{{localize 'FHQL.Reward.HideAction'}}{{/if}}">
-                <i class="fa-solid {{#if hidden}}fa-eye-slash{{else}}fa-eye{{/if}}" inert></i></button>
+              {{> "modules/fhql/templates/partials/eye-toggle.hbs" action="toggleRewardHidden"
+                  show=(localize "FHQL.Reward.Show") hide=(localize "FHQL.Reward.HideAction")}}
               {{/if}}
               {{#if ../editing}}
               {{#if claimable}}

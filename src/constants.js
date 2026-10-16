@@ -4,6 +4,12 @@ export const MODULE_ID = 'fhql';
 /** Base path for module assets. */
 export const MODULE_PATH = `modules/${MODULE_ID}`;
 
+/**
+ * Template pieces shared by several templates, used as {{> "modules/fhql/templates/partials/name.hbs"}}.
+ * Loaded on init; `npm run load` checks this list against the folder and the templates.
+ */
+export const PARTIALS = Object.freeze(['eye-toggle', 'notes-lock'].map((name) => `${MODULE_PATH}/templates/partials/${name}.hbs`));
+
 /** Journal page subtype holding quest data. */
 export const QUEST_TYPE = `${MODULE_ID}.quest`;
 

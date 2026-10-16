@@ -1,0 +1,4 @@
+{{!-- GM show/hide toggle for a row. Takes action, show and hide (labels) and class; reads `hidden` from the row. --}}
+<button type="button" class="fhql-icon-button{{#if class}} {{class}}{{/if}}" data-action="{{action}}" aria-pressed="{{#if hidden}}true{{else}}false{{/if}}"
+        data-tooltip="{{#if hidden}}{{show}}{{else}}{{hide}}{{/if}}" aria-label="{{#if hidden}}{{show}}{{else}}{{hide}}{{/if}}">
+  <i class="fa-solid {{#if hidden}}fa-eye-slash{{else}}fa-eye{{/if}}" inert></i></button>

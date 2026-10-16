@@ -54,5 +54,17 @@ for (const [, path] of themeSource.matchAll(/\$\{MODULE_PATH\}\/(styles\/fonts\/
    const licence = path.replace(/[^/]+$/, 'OFL.txt');
    if (!existsSync(new URL(licence, root))) { problems.push(`missing licence ${licence}`); }
 }
+// Every partial file is in PARTIALS (or Foundry never loads it), and every partial a template uses exists.
+const { readdirSync } = await import('node:fs');
+const { PARTIALS } = await import('../src/constants.js');
+const partialFiles = readdirSync(new URL('templates/partials/', root)).map((f) => `modules/fhql/templates/partials/${f}`).sort();
+if ([...PARTIALS].sort().join() !== partialFiles.join()) { problems.push(`PARTIALS (${PARTIALS}) differs from templates/partials/ (${partialFiles})`); }
+for (const file of readdirSync(new URL('templates/', root)).filter((f) => f.endsWith('.hbs')))
+{
+   for (const [, name] of readFileSync(new URL(`templates/${file}`, root), 'utf8').matchAll(/\{\{>\s*"([^"]+)"/g))
+   {
+      if (!PARTIALS.includes(name)) { problems.push(`${file} uses partial ${name}, which isn't in PARTIALS`); }
+   }
+}
 if (problems.length) { console.error(problems.join('\n')); process.exit(1); }
-console.log('Theme files and bundled fonts are consistent.');
+console.log('Theme files, bundled fonts and template partials are consistent.');

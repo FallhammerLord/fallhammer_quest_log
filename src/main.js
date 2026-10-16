@@ -1,5 +1,5 @@
-import { MODULE_ID, QUEST_TYPE } from './constants.js';
-import { DocumentSheetConfig, TIDY_THEME_SETTING } from './compat.js';
+import { MODULE_ID, PARTIALS, QUEST_TYPE } from './constants.js';
+import { DocumentSheetConfig, loadPartials, TIDY_THEME_SETTING } from './compat.js';
 import { ensureThemeStyles, loadBundledFonts, refreshOpenApps } from './theme.js';
 import { migrateTextureSetting, registerSettings } from './settings.js';
 import { runMigrations } from './data/migrations.js';
@@ -28,6 +28,7 @@ import { onlySeenChanged, startSeenTracking } from './data/seen.js';
 Hooks.once('init', () =>
 {
    loadBundledFonts();
+   loadPartials(PARTIALS);
    CONFIG.JournalEntryPage.dataModels[QUEST_TYPE] = QuestData;
    DocumentSheetConfig.registerSheet(JournalEntryPage, MODULE_ID, QuestPageSheet, {
       types: [QUEST_TYPE],

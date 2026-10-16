@@ -1,4 +1,4 @@
-import { MODULE_ID, MODULE_PATH, QUEST_TYPE } from '../constants.js';
+import { MODULE_ID, MODULE_PATH, PARTIALS, QUEST_TYPE } from '../constants.js';
 import {
    createQuest, createQuestFolder, createSubquest, deleteQuest, moveQuestToFolder, questPage, setParent, subquests
 } from '../data/quests.js';
@@ -93,6 +93,11 @@ export function registerQuenchTests(quench)
          {
             const response = await fetch(`${MODULE_PATH}/styles/textures/wash-top.webp`, { method: 'HEAD' });
             assert.isTrue(response.ok);
+         });
+
+         it('registers its template pieces', function ()
+         {
+            for (const path of PARTIALS) { assert.property(Handlebars.partials, path); }
          });
 
          it('uses the quest page type', function ()

@@ -1,0 +1,4 @@
+{{!-- Who holds the player notes, and the GM's Edit anyway. Shown when notesLockedBy is set. --}}
+<span class="fhql-empty-note fhql-push"><i class="fa-solid fa-lock" inert></i> {{notesLockedBy}}</span>
+{{#if notesTakeOver}}<button type="button" class="fhql-button fhql-small" data-action="editNotes" data-force
+  aria-label="{{localize 'FHQL.Notes.TakeOver'}}" data-tooltip="{{localize 'FHQL.Notes.TakeOverHint'}}"><i class="fa-solid fa-pen" inert></i><span class="fhql-label">{{localize "FHQL.Notes.TakeOver"}}</span></button>{{/if}}
