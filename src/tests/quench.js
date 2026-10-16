@@ -73,9 +73,9 @@ export function registerQuenchTests(quench)
 
          it('has every theme stylesheet loaded', function ()
          {
-            const missing = game.modules.get(MODULE_ID).styles
-               ? [...game.modules.get(MODULE_ID).styles].filter((path) => !document.querySelector(`link[href*="${path}"]`))
-               : [];
+            // v14 lists each style as { src, layer }; older versions as a path.
+            const paths = [...(game.modules.get(MODULE_ID).styles ?? [])].map((style) => style?.src ?? style);
+            const missing = paths.filter((path) => !document.querySelector(`link[href*="${path}"]`));
             assert.deepEqual(missing, [], 'theme files missing (relaunch the world after an update)');
          });
 
