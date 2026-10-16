@@ -4,7 +4,7 @@ import { registerRelay, relay } from './relay.js';
 import { MODULE_ID } from '../constants.js';
 import { addObjective, getQuestEntry, questAccess, questPage, updateQuest } from './quests.js';
 import { claimTargets } from './rewards.js';
-import { actorsForGM, assignedToSomeone, playerFor, sharedActor } from './owners.js';
+import { actorsForGM, assignedToSomeone, playerFor, playerOwners, sharedActor } from './owners.js';
 
 /**
  * Item requirements on objectives, and players depositing items toward them. See docs/SCOPE.md 5.11.
@@ -90,8 +90,11 @@ export function itemMatches(item, requirement)
  *
  * @param {object} objective - Objective data.
  * @param {boolean} asGM - Whether the GM is depositing.
+ * For the GM, `givers` lists the players who own the actor, so a hand over from a shared sheet can
+ * be credited to whoever actually gave it.
+ *
  * @returns {{ itemUuid: string, userId: string, actorId: string, label: string, count: number,
- *   assigned: boolean, shared: boolean }[]} Choices.
+ *   assigned: boolean, shared: boolean, givers: {id: string, name: string}[] }[]} Choices.
  */
 export function depositCandidates(objective, asGM)
 {
@@ -102,6 +105,7 @@ export function depositCandidates(objective, asGM)
    for (const actor of actors)
    {
       const owner = asGM ? playerFor(actor) : game.user;
+      const givers = asGM ? playerOwners(actor).map((u) => ({ id: u.id, name: u.name })) : [];
       for (const item of actor.items)
       {
          if (!itemMatches(item, objective.requirement)) { continue; }
@@ -115,7 +119,8 @@ export function depositCandidates(objective, asGM)
             label: `${actor.name}: ${item.name}${count > 1 ? ` ×${count}` : ''}`,
             count,
             assigned: asGM ? assignedToSomeone(actor) : actor.id === game.user.character?.id,
-            shared: sharedActor(actor)
+            shared: sharedActor(actor),
+            givers
          });
       }
    }

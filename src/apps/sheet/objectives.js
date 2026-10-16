@@ -102,6 +102,8 @@ function confirmDeposit(app, anchor, objective, choices, preselect)
         <select class="fhql-input" name="source">${choices.map((c, i) => `<option value="${i}" ${i === start ? 'selected' : ''}>${escape(c.label)}${hint(c) ? ` (${escape(hint(c))})` : ''}</option>`).join('')}</select></label>
       <label class="fhql-field"><span>${escape(t(give ? 'FHQL.Deposit.HowManyGive' : 'FHQL.Deposit.HowManyShow'))}</span>
         <input class="fhql-input fhql-count-input" type="number" name="qty" min="1" step="1"></label>
+      <label class="fhql-field" data-giver-field hidden><span>${escape(t('FHQL.Deposit.GivenBy'))}</span>
+        <select class="fhql-input" name="giver"></select></label>
       <p class="fhql-hint" data-deposit-note></p>
       <div class="fhql-popover-buttons">
         <button type="button" class="fhql-button" data-answer="cancel">${escape(t('FHQL.Popover.Cancel'))}</button>
@@ -111,7 +113,8 @@ function confirmDeposit(app, anchor, objective, choices, preselect)
    return openPanel(app, anchor, html, (panel, done) =>
    {
       const form = panel.querySelector('form');
-      const { source, qty } = form.elements;
+      const { source, qty, giver } = form.elements;
+      const giverField = panel.querySelector('[data-giver-field]');
       const note = panel.querySelector('[data-deposit-note]');
       // Each source caps the amount at its stack and at what's still needed.
       const limit = () => Math.max(1, Math.min(choices[Number(source.value)].count, need));
@@ -121,6 +124,10 @@ function confirmDeposit(app, anchor, objective, choices, preselect)
          qty.max = String(max);
          qty.value = String(max);
          note.textContent = t('FHQL.Deposit.ConfirmNote', { need, have: choices[Number(source.value)].count });
+         // GM, shared sheet: say which of its players gave it (starts on the one it's assigned to).
+         const givers = choices[Number(source.value)].givers ?? [];
+         giverField.hidden = givers.length < 2;
+         giver.innerHTML = givers.map((g) => `<option value="${g.id}">${escape(g.name)}</option>`).join('');
       };
       refresh();
       source.addEventListener('change', refresh);
@@ -128,7 +135,8 @@ function confirmDeposit(app, anchor, objective, choices, preselect)
       {
          event.preventDefault();
          const amount = Math.min(limit(), Math.max(1, Math.floor(Number(qty.value)) || 1));
-         done({ choice: choices[Number(source.value)], qty: amount });
+         const choice = choices[Number(source.value)];
+         done({ choice: giverField.hidden ? choice : { ...choice, userId: giver.value }, qty: amount });
       });
       panel.addEventListener('click', (event) => { if (event.target.closest('[data-answer="cancel"]')) { done(null); } });
       (choices.length > 1 ? source : qty).setAttribute('autofocus', '');

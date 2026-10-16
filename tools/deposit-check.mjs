@@ -230,6 +230,18 @@ const unassigned = depositCandidates(quest.objective(), false);
 expect('with no assigned character and two sources, the player chooses', defaultDepositChoice(unassigned) === null);
 globalThis.game.user = users[0];
 
+// The GM hands over from a party sheet two players own: both are offered, and the one chosen is credited.
+quest = makeQuest({ uuid: 'Item.cache', name: 'Resource Cache', img: '', count: 9, mode: 'give' });
+const shared = makeActor('shared', ['p1', 'p2']);
+const sharedCache = makeItem(shared, 'i11', 'Resource Cache', 4);
+users[2].character = shared;
+globalThis.game.actors = [shared];
+const gmShared = depositCandidates(quest.objective(), true)[0];
+expect('a shared sheet offers each of its players as the giver, assigned first', gmShared?.givers.map((g) => g.id).join() === 'p2,p1');
+const okShared = await requestDeposit(quest.entry, 'o1', { ...gmShared, userId: 'p1' }, 1);
+expect('the chosen giver is recorded', okShared && quest.objective().deposits[0]?.userId === 'p1' && sharedCache.system.quantity === 3);
+users[2].character = null;
+
 /* ---------- Rewards: recipients, claims, Undo ---------- */
 const { registerRewardQueries, recipientOptions, requestClaim, undoClaim } = await import(new URL('../src/data/rewards.js', import.meta.url));
 registerRewardQueries();

@@ -17,6 +17,16 @@ export function playerFor(actor)
 
 /**
  * @param {Actor} actor - An actor.
+ * @returns {User[]} Players who own it, the one it is assigned to first.
+ */
+export function playerOwners(actor)
+{
+   const owners = game.users.filter((u) => !u.isGM && actor.testUserPermission(u, OWNER()));
+   return owners.sort((a, b) => Number(b.character?.id === actor.id) - Number(a.character?.id === actor.id));
+}
+
+/**
+ * @param {Actor} actor - An actor.
  * @returns {boolean} Whether more than one player owns it, like a party inventory actor.
  */
 export function sharedActor(actor)
