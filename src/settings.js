@@ -4,8 +4,17 @@ import { availableFonts } from './compat.js';
 import { refreshQuestBeacon } from './ui/QuestBeacon.js';
 import { TextureImagesApp } from './apps/TextureImagesApp.js';
 
-/** Registers module settings. Called on `init`. */
+/** Registers module settings, in the order Module Settings lists them. Called on `init`. */
 export function registerSettings()
+{
+   registerLookSettings();
+   registerBeaconSettings();
+   registerTableSettings();
+   registerRememberedChoices();
+}
+
+/** Look: themes, contrast, easter eggs, portrait frames, textures and fonts. */
+function registerLookSettings()
 {
    const themeChoices = {
       [THEMES.auto]: 'FHQL.Settings.Theme.Auto',
@@ -161,8 +170,11 @@ export function registerSettings()
          onChange: restyle
       });
    }
+}
 
-
+/** The Quest Beacon above the players list (each player chooses). */
+function registerBeaconSettings()
+{
    game.settings.register(MODULE_ID, 'showInProgress', {
       name: 'FHQL.Settings.ShowInProgress.Name',
       hint: 'FHQL.Settings.ShowInProgress.Hint',
@@ -182,7 +194,11 @@ export function registerSettings()
       default: true,
       onChange: () => refreshQuestBeacon()
    });
+}
 
+/** The table's rules (GM): who sees and does what, rewards, ownership and announcements. */
+function registerTableSettings()
+{
    const worldToggle = (key, fallback, onChange) => game.settings.register(MODULE_ID, key, {
       name: `FHQL.Settings.${key}.Name`,
       hint: `FHQL.Settings.${key}.Hint`,
@@ -230,13 +246,6 @@ export function registerSettings()
       default: levels.OWNER
    });
 
-   game.settings.register(MODULE_ID, 'listFilter', {
-      scope: 'client',
-      config: false,
-      type: Object,
-      default: { statuses: [], collapsed: [] }
-   });
-
    game.settings.register(MODULE_ID, 'announceOutcomes', {
       name: 'FHQL.Settings.AnnounceOutcomes.Name',
       hint: 'FHQL.Settings.AnnounceOutcomes.Hint',
@@ -244,6 +253,31 @@ export function registerSettings()
       config: true,
       type: Boolean,
       default: true
+   });
+
+   const { LIMITED, OBSERVER } = CONST.DOCUMENT_OWNERSHIP_LEVELS;
+   game.settings.register(MODULE_ID, 'defaultOwnership', {
+      name: 'FHQL.Settings.DefaultOwnership.Name',
+      hint: 'FHQL.Settings.DefaultOwnership.Hint',
+      scope: 'world',
+      config: true,
+      type: Number,
+      choices: {
+         [LIMITED]: 'FHQL.Settings.DefaultOwnership.Limited',
+         [OBSERVER]: 'FHQL.Settings.DefaultOwnership.Observer'
+      },
+      default: OBSERVER
+   });
+}
+
+/** Not shown in Module Settings: what the module remembers (filters, window places, data version). */
+function registerRememberedChoices()
+{
+   game.settings.register(MODULE_ID, 'listFilter', {
+      scope: 'client',
+      config: false,
+      type: Object,
+      default: { statuses: [], collapsed: [] }
    });
 
    // The last data upgrade applied to this world (src/data/migrations.js).
@@ -274,21 +308,8 @@ export function registerSettings()
       type: Boolean,
       default: false
    });
-
-   const { LIMITED, OBSERVER } = CONST.DOCUMENT_OWNERSHIP_LEVELS;
-   game.settings.register(MODULE_ID, 'defaultOwnership', {
-      name: 'FHQL.Settings.DefaultOwnership.Name',
-      hint: 'FHQL.Settings.DefaultOwnership.Hint',
-      scope: 'world',
-      config: true,
-      type: Number,
-      choices: {
-         [LIMITED]: 'FHQL.Settings.DefaultOwnership.Limited',
-         [OBSERVER]: 'FHQL.Settings.DefaultOwnership.Observer'
-      },
-      default: OBSERVER
-   });
 }
+
 
 /** A player who had turned textures off keeps smooth panels under the new strength setting. Runs on ready. */
 export async function migrateTextureSetting()
