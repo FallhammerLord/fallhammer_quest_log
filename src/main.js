@@ -3,6 +3,7 @@ import { DocumentSheetConfig, TIDY_THEME_SETTING } from './compat.js';
 import { ensureThemeStyles, loadBundledFonts, refreshOpenApps } from './theme.js';
 import { migrateTextureSetting, registerSettings } from './settings.js';
 import { runMigrations } from './data/migrations.js';
+import { registerQuenchTests } from './tests/quench.js';
 import { registerKeybindings } from './keybindings.js';
 import { api } from './api.js';
 import { QuestData } from './data/QuestData.js';
@@ -69,6 +70,8 @@ Hooks.once('ready', () =>
    runMigrations();
 });
 Hooks.on('renderPlayers', () => refreshQuestBeacon());
+// In-world tests, only when the Quench module is active (src/tests/quench.js).
+Hooks.on('quenchReady', registerQuenchTests);
 
 /** The Ledger theme follows Tidy 5e Sheets' colors; restyle when the GM changes them. */
 Hooks.on('updateSetting', (setting) =>

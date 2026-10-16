@@ -21,6 +21,8 @@ npm run layout     # renders templates at 110 widths/themes/modes (runs panels.j
 npm run load       # loads every module file with Foundry mocked; catches bad imports
 npm run contrast   # WCAG AA check of theme tokens: text, hover, filled buttons and status tags; notes edges under 3:1
 npm run deposits   # deposit and reward rules with Foundry mocked: races, refusals, rollback, recipients, Undo
+npm run quests     # also: double-click lock, data upgrades, questPage safety
+                   # In Foundry: install Quench, open it as GM, run "Fallhammer Quest Log: core".
 npm run quests     # quest family rules with Foundry mocked: subquests live in their parent's folder, move together, no loops
 ```
 
@@ -66,6 +68,7 @@ npm run quests     # quest family rules with Foundry mocked: subquests live in t
 | `styles/themes/*.css` | one file per other theme: tokens, then its few theme-only rules; listed in `module.json`. `light.css` holds only Light's shapes (its tokens are the defaults in fhql.css) |
 | `styles/fonts/` | bundled heading fonts, each with its OFL licence: IM Fell English SC (Gothic), Josefin Sans (Dark), Oxanium (Sci-fi), Limelight (Cabaret), Cinzel (Hope and Fear), Courier Prime (Noir); listed in `BUNDLED_FONTS` in `src/theme.js`. Light uses Amiri, Ledger Modesto (both ship with Foundry) |
 | `styles/textures/` | our default wash images (drawn by `tools/make-washes.mjs`) |
+| `src/tests/quench.js` | in-world tests for the Quench module (real documents and data models; temporary quests, deleted after) |
 | `tools/` | layout, load, and contrast checks; test fixtures |
 
 ## Rules that are easy to break
@@ -78,6 +81,7 @@ npm run quests     # quest family rules with Foundry mocked: subquests live in t
 - **Rich-text editors:** use `<prose-mirror toggled>` without `open`. Adding `open` at render broke editing. Unsaved editor text is flushed on Done, on close, and on switching quests via `_flushEdits`. Only *open* editors count as unsaved (a just-saved toggled editor can still report dirty).
 - **Player notes** are edited in place with a one-editor lock on User flags (`src/data/notesLock.js`), not in edit mode.
 - **Handlebars helpers:** don't rely on `eq`/`and`/`or`; compute booleans in JS. `lookup` is fine.
+- **Relay senders can't be verified** (checked 2026-10-16 against the Foundry type definitions: query handlers get only data and a timeout; module sockets carry no server-confirmed sender). A player with console access could name another player. Mitigations: every request is rechecked against the named user's own permissions, requests naming a GM are refused, and deposits and claims are recorded by name with GM Undo.
 - **GM relays** go through `src/data/relay.js` only (`registerRelay` / `relay`): one queue on the GM client for every request type, shared notifications, transport in `compat.js`. The handler isn't told who sent a request: re-check everything against the named user, and refuse requests naming a GM.
 - **Deposits never move without confirmation:** Hand over/Show and drops open the confirm panel (source, amount). The GM client takes only what is still needed, one deposit at a time, recording before taking and rolling back on failure. Keep `npm run deposits` passing; it fails if the relay queue is removed.
 - **Quest families** live in one folder: a new subquest is created in its parent's folder, setting a parent moves the quest there, moving a quest moves its subquests. The Quest Log also nests a subquest under its parent wherever it is stored (older data).

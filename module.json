@@ -1,7 +1,7 @@
 {
   "id": "fhql",
   "title": "Fallhammer Quest Log",
-  "description": "A themeable quest log: light, dark, sci-fi, gothic, and ledger (Tidy 5e style) themes, item turn-ins, reward claiming, and import from Forien's Quest Log.",
+  "description": "A themeable quest log for players and GMs: subquests, item turn-ins, reward claiming, a Quest Beacon above the players list, and import from Forien's Quest Log. Eight themes: Light, Dark, Sci-fi, Gothic, Cabaret, Hope and Fear (Daggerheart), Noir (Blades in the Dark), and Ledger (Tidy 5e Sheets).",
   "version": "0.3.0",
   "authors": [
     {
