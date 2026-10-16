@@ -56,6 +56,7 @@ npm run quests     # Foundry mocked: quest families (folders, no loops), double-
 | `src/apps/sheet/panels.js` | panel heights (priority/proportional sharing), scroll keeping, narrow collapse; runs after every render |
 | `src/apps/sheet/rows.js` | row lookups, `editorUnsaved`, `guardActions` (actions show a notice on failure) |
 | `src/apps/QuestLog.js` | log window: folder tree, filters, search, right-click menu |
+| `src/apps/folderMenu.js` | GM folder menu in the log: new subfolder, rename, move into folder, delete (contents move up) |
 | `src/apps/QuestSheetApp.js` | pop-out quest window |
 | `src/ui/QuestBeacon.js` | panel above the players list |
 | `src/ui/motion.js` | window open/close motion (from/to the Beacon), reduced-motion fade |
