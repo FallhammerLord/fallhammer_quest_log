@@ -14,7 +14,9 @@ const { NONE, LIMITED, OBSERVER } = CONST.DOCUMENT_OWNERSHIP_LEVELS;
  */
 export function questPage(entry)
 {
-   return entry?.pages.find((page) => page.type === QUEST_TYPE);
+   // Safe for any document: an Item or Actor dropped on the sheet has no pages (a crash here once broke
+   // every item drop on Objectives).
+   return entry?.pages?.find?.((page) => page.type === QUEST_TYPE);
 }
 
 /**

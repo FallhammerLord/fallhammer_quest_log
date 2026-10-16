@@ -569,7 +569,7 @@ export function QuestSheetMixin(Base)
          if (depositing) { return depositDropped(this, zone, objectiveId, doc); }
 
          // A quest dropped on Subquests or Objectives becomes a subquest (GM).
-         if (questPage(doc) && ['subquests', 'objectives', 'requirement'].includes(zone.dataset.drop))
+         if (doc?.documentName === 'JournalEntry' && questPage(doc) && ['subquests', 'objectives', 'requirement'].includes(zone.dataset.drop))
          {
             if (!game.user.isGM) { return; }
             const refused = doc.id === entry.id || !parentCandidates(doc).some((e) => e.id === entry.id);

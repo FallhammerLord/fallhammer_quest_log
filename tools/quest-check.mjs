@@ -117,5 +117,8 @@ const { QuestData } = await import('../src/data/QuestData.js');
    check(migrated.parentQuest === 'abc', 'old saved parent links migrate to parentQuest');
 }
 
+// An item or actor dropped on a quest sheet is not a quest, and asking must not throw.
+check(quests.questPage({ documentName: 'Item', name: 'Sealed salt cask' }) === undefined, 'questPage of an item is undefined, not an error');
+
 if (failures) { console.log(`${failures} failed`); process.exit(1); }
 console.log('Quest family rules hold.');
