@@ -15,15 +15,14 @@ A Foundry VTT **v14** quest log module (ID `fhql`, CSS prefix `fhql-`), built as
 ## Commands
 
 ```sh
-npm run check      # lint + load + contrast + deposits. Run before every push; CI runs it on push too.
+npm run check      # lint + load + contrast + deposits + quests. Run before every push; CI runs it on push too.
 npm run layout     # renders templates at 110 widths/themes/modes (runs panels.js), fails on overflow
                    # set CHROMIUM_PATH (here: /opt/pw-browsers/chromium)
 npm run load       # loads every module file with Foundry mocked; catches bad imports
 npm run contrast   # WCAG AA check of theme tokens: text, hover, filled buttons and status tags; notes edges under 3:1
 npm run deposits   # deposit and reward rules with Foundry mocked: races, refusals, rollback, recipients, Undo
-npm run quests     # also: double-click lock, data upgrades, questPage safety
-                   # In Foundry: install Quench, open it as GM, run "Fallhammer Quest Log: core".
-npm run quests     # quest family rules with Foundry mocked: subquests live in their parent's folder, move together, no loops
+npm run quests     # Foundry mocked: quest families (folders, no loops), double-click lock, data upgrades, questPage safety
+# In Foundry: install Quench, open it as GM, run "Fallhammer Quest Log: core" (real documents and data models).
 ```
 
 ## Map
