@@ -1,6 +1,7 @@
 import { HandlebarsApp, browseImage } from '../compat.js';
-import { MODULE_ID, MODULE_PATH, THEMES } from '../constants.js';
+import { MODULE_PATH, THEMES } from '../constants.js';
 import { applyTheme, defaultOverlay, trackApp, untrackApp } from '../theme.js';
+import { getSetting, setSetting } from '../setting.js';
 
 /** Themes with their own images (Follow Foundry uses Light's or Dark's). */
 const IMAGE_THEMES = ['light', 'dark', 'scifi', 'gothic', 'cabaret', 'hopefear', 'noir', 'ledger'];
@@ -30,7 +31,7 @@ export class TextureImagesApp extends HandlebarsApp
    async _prepareContext(options)
    {
       const context = await super._prepareContext(options);
-      const saved = game.settings.get(MODULE_ID, 'textureImages') ?? {};
+      const saved = getSetting('textureImages') ?? {};
       const none = game.i18n.localize('FHQL.TextureImages.NoDefault');
       const themes = IMAGE_THEMES.map((key) =>
       {
@@ -93,6 +94,6 @@ export class TextureImagesApp extends HandlebarsApp
          const entry = { top: String(row.top ?? '').trim(), bottom: String(row.bottom ?? '').trim(), off: !!row.off };
          if (entry.top || entry.bottom || entry.off) { images[key] = entry; }
       }
-      await game.settings.set(MODULE_ID, 'textureImages', images);
+      await setSetting('textureImages', images);
    }
 }

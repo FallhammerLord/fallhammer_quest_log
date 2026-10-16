@@ -1,6 +1,6 @@
-import { MODULE_ID } from '../constants.js';
 import { createQuest, getQuestEntry, questAccess, questPage, setStatus, updateQuest } from './quests.js';
 import { registerRelay, relay } from './relay.js';
+import { getSetting } from '../setting.js';
 
 /**
  * Player workflows that need GM rights: accepting a quest, proposing a new one, and editing shared
@@ -12,7 +12,6 @@ import { registerRelay, relay } from './relay.js';
  */
 
 const RELAY = 'playerAction';
-const setting = (key) => game.settings.get(MODULE_ID, key);
 
 /** Registers the GM-side handler. Called on `init`. */
 export function registerPlayerActionQueries()
@@ -23,7 +22,7 @@ export function registerPlayerActionQueries()
 /** @returns {boolean} Whether the Quest Log is available to the current user. */
 export function questLogAvailable()
 {
-   return game.user.isGM || !setting('hideFromPlayers');
+   return game.user.isGM || !getSetting('hideFromPlayers');
 }
 
 /**
@@ -32,7 +31,7 @@ export function questLogAvailable()
  */
 export function canAccept(entry)
 {
-   return !game.user.isGM && setting('playersCanAccept') && questPage(entry)?.system.status === 'available'
+   return !game.user.isGM && getSetting('playersCanAccept') && questPage(entry)?.system.status === 'available'
     && questAccess(entry).visible;
 }
 
@@ -43,13 +42,13 @@ export function canAccept(entry)
 export function canEditNotesViaGM(entry)
 {
    const access = questAccess(entry);
-   return !access.editable && access.full && setting('playersEditNotes');
+   return !access.editable && access.full && getSetting('playersEditNotes');
 }
 
 /** @returns {boolean} Whether the current user may propose new quests. */
 export function canProposeQuests()
 {
-   return !game.user.isGM && setting('playersCanCreate');
+   return !game.user.isGM && getSetting('playersCanCreate');
 }
 
 /**
@@ -58,7 +57,7 @@ export function canProposeQuests()
  */
 export function canChangeStatusAsPlayer(entry)
 {
-   return !game.user.isGM && setting('trustedCanChangeStatus') && game.user.isTrusted && questAccess(entry).editable;
+   return !game.user.isGM && getSetting('trustedCanChangeStatus') && game.user.isTrusted && questAccess(entry).editable;
 }
 
 /**
@@ -90,7 +89,7 @@ async function performPlayerAction(data)
 
    if (data.action === 'create')
    {
-      if (!setting('playersCanCreate')) { return refuse('NotAllowed'); }
+      if (!getSetting('playersCanCreate')) { return refuse('NotAllowed'); }
       const entry = await createQuest({
          name: String(data.name ?? '').slice(0, 200) || game.i18n.format('FHQL.Player.ProposedName', { user: user.name }),
          system: { status: 'available' }
@@ -105,14 +104,14 @@ async function performPlayerAction(data)
 
    if (data.action === 'accept')
    {
-      if (!setting('playersCanAccept') || !access.visible || questPage(entry).system.status !== 'available') { return refuse('NotAllowed'); }
+      if (!getSetting('playersCanAccept') || !access.visible || questPage(entry).system.status !== 'available') { return refuse('NotAllowed'); }
       await setStatus(entry, 'active');
       return { ok: true };
    }
 
    if (data.action === 'playerNotes')
    {
-      if (!setting('playersEditNotes') || !access.full) { return refuse('NotAllowed'); }
+      if (!getSetting('playersEditNotes') || !access.full) { return refuse('NotAllowed'); }
       await updateQuest(entry, { 'system.playerNotes': String(data.html ?? '') });
       return { ok: true };
    }

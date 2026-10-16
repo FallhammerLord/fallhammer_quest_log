@@ -1,5 +1,5 @@
 import { playerRowElement, playersElement } from '../compat.js';
-import { MODULE_ID, THEMES } from '../constants.js';
+import { THEMES } from '../constants.js';
 import { BELL_HTML, eggFor } from './eggs.js';
 import { openQuestLog, showInOpenLog, toggleQuestLog } from '../api.js';
 import { questAccess, questPage } from '../data/quests.js';
@@ -10,6 +10,7 @@ import { playerOwned } from '../data/rewards.js';
 import { applyTheme } from '../theme.js';
 import { depositedTotal, hasRequirement } from '../data/deposits.js';
 import { isUnseen } from '../data/seen.js';
+import { getSetting } from '../setting.js';
 
 const WIDGET_ID = 'fhql-beacon';
 
@@ -29,7 +30,7 @@ export function refreshQuestBeacon()
    const players = playersElement();
    let widget = document.getElementById(WIDGET_ID);
 
-   if (!players || !questLogAvailable() || !game.settings.get(MODULE_ID, 'showInProgress'))
+   if (!players || !questLogAvailable() || !getSetting('showInProgress'))
    {
       widget?.remove();
       return;
@@ -145,7 +146,7 @@ function renderWidget({ entry, party }, marked)
    const escape = foundry.utils.escapeHTML;
    const localize = (key) => game.i18n.localize(key);
 
-   const objectives = access.full && game.settings.get(MODULE_ID, 'showNextObjective')
+   const objectives = access.full && getSetting('showNextObjective')
     ? system.objectiveList.filter((objective) => access.gm || !objective.hidden)
     : [];
 
@@ -265,7 +266,7 @@ export function debugQuestBeacon()
       playersScrollWidth: players?.scrollWidth ?? null,
       playerRowSize: size(playerRowElement(players)),
       objectivesShown: widget?.querySelectorAll('.fhql-beacon-objectives li').length ?? 0,
-      showNextObjectiveSetting: game.settings.get(MODULE_ID, 'showNextObjective'),
+      showNextObjectiveSetting: getSetting('showNextObjective'),
       widgetSize: size(widget),
       buttonSize: size(button),
       widgetParent: widget?.parentElement ? `${widget.parentElement.tagName.toLowerCase()}#${widget.parentElement.id}` : null,

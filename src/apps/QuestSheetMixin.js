@@ -18,6 +18,7 @@ import { shareActions } from './sheet/share.js';
 import { subquestActions } from './sheet/subquests.js';
 import { animateClose, animateOpen } from '../ui/motion.js';
 import { markSeen } from '../data/seen.js';
+import { getSetting, setSetting } from '../setting.js';
 import {
    applyCollapsed, capturePanelScroll, layoutPanels, onPanelHeadingClick, restorePanelScroll, watchPanels
 } from './sheet/panels.js';
@@ -114,7 +115,7 @@ export function QuestSheetMixin(Base)
          const key = this.constructor.MEMORY_KEY;
          let saved = null;
          // The window may be built before settings exist (early hooks); then it opens at its default size.
-         try { saved = key ? game.settings.get(MODULE_ID, 'windowMemory')?.[key] : null; }
+         try { saved = key ? getSetting('windowMemory')?.[key] : null; }
          catch { saved = null; }
          if (saved)
          {
@@ -136,9 +137,9 @@ export function QuestSheetMixin(Base)
          this.#memoryTimer = setTimeout(() =>
          {
             const { width, height, left, top } = this.position;
-            const all = { ...(game.settings.get(MODULE_ID, 'windowMemory') ?? {}) };
+            const all = { ...(getSetting('windowMemory') ?? {}) };
             all[key] = { width, height, left, top };
-            game.settings.set(MODULE_ID, 'windowMemory', all);
+            setSetting('windowMemory', all);
          }, 500);
       }
 
@@ -347,7 +348,7 @@ export function QuestSheetMixin(Base)
          const localize = (key) => game.i18n.localize(key);
          const allObjectives = objectivesContext(system, access, editing);
          // "Hide done" is the viewer's own choice; edit mode always shows everything.
-         const hideDone = !editing && game.settings.get(MODULE_ID, 'hideDoneObjectives');
+         const hideDone = !editing && getSetting('hideDoneObjectives');
          const objectives = hideDone ? allObjectives.filter((o) => o.state !== 'done') : allObjectives;
          const doneCount = allObjectives.filter((o) => o.state === 'done').length;
          // Narrow layout shows the first few objectives with "Show all"; CSS applies the cap only when narrow.
@@ -414,7 +415,7 @@ export function QuestSheetMixin(Base)
             gmNotes: access.gm ? {
                raw: gmNotesRaw,
                html: await enrich(gmNotesRaw),
-               open: editing || game.settings.get(MODULE_ID, 'gmNotesOpen')
+               open: editing || getSetting('gmNotesOpen')
             } : null
          };
       }
@@ -448,7 +449,7 @@ export function QuestSheetMixin(Base)
          {
             if (event.target.matches?.('[data-hide-done]'))
             {
-               game.settings.set(MODULE_ID, 'hideDoneObjectives', event.target.checked).then(() => this.render());
+               setSetting('hideDoneObjectives', event.target.checked).then(() => this.render());
                return;
             }
             this.#onFieldChange(event);
@@ -469,7 +470,7 @@ export function QuestSheetMixin(Base)
          {
             if (event.target.matches?.('details.fhql-gm-notes') && !this._editing)
             {
-               game.settings.set(MODULE_ID, 'gmNotesOpen', event.target.open);
+               setSetting('gmNotesOpen', event.target.open);
             }
          }, true);
       }

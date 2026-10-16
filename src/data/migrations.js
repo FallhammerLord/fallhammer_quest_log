@@ -1,5 +1,6 @@
 import { activeGM } from '../compat.js';
 import { MODULE_ID, QUEST_TYPE } from '../constants.js';
+import { getSetting, setSetting } from '../setting.js';
 
 /**
  * World data upgrades. The world remembers the last one applied (setting `dataVersion`); on ready, the
@@ -40,15 +41,15 @@ export const CURRENT_DATA_VERSION = Math.max(0, ...MIGRATIONS.map((m) => m.versi
  */
 export async function runMigrations()
 {
-   if (!activeGM()?.isSelf) { return game.settings.get(MODULE_ID, 'dataVersion'); }
-   let version = game.settings.get(MODULE_ID, 'dataVersion');
+   if (!activeGM()?.isSelf) { return getSetting('dataVersion'); }
+   let version = getSetting('dataVersion');
    for (const step of MIGRATIONS.filter((m) => m.version > version).sort((a, b) => a.version - b.version))
    {
       try
       {
          const changed = await step.run();
          version = step.version;
-         await game.settings.set(MODULE_ID, 'dataVersion', version);
+         await setSetting('dataVersion', version);
          console.log(`${MODULE_ID} | Data upgrade ${step.version} (${step.name}): ${changed} changed.`);
       }
       catch (error)

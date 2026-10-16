@@ -1,5 +1,6 @@
 import { deleteKeyUpdate, postChat } from '../compat.js';
 import { MODULE_ID, OBJECTIVE_STATES, QUEST_TYPE, STATUSES } from '../constants.js';
+import { getSetting } from '../setting.js';
 
 const { NONE, LIMITED, OBSERVER } = CONST.DOCUMENT_OWNERSHIP_LEVELS;
 
@@ -70,7 +71,7 @@ export function visibleQuests(user = game.user)
 /** @returns {number} Ownership level players get when a quest is revealed. */
 function revealedOwnership()
 {
-   return game.settings.get(MODULE_ID, 'defaultOwnership');
+   return getSetting('defaultOwnership');
 }
 
 /**
@@ -269,7 +270,7 @@ export async function setStatus(entry, status)
    if (status === 'active') { Object.assign(changes, { 'system.dates.started': now, 'system.dates.ended': null }); }
    if (status === 'completed' || status === 'failed') { changes['system.dates.ended'] = now; }
 
-   if (status === 'completed' && page.canUserModify(game.user, 'update') && game.settings.get(MODULE_ID, 'autoUnlockRewards'))
+   if (status === 'completed' && page.canUserModify(game.user, 'update') && getSetting('autoUnlockRewards'))
    {
       for (const [id, reward] of Object.entries(page.system.rewards))
       {
@@ -297,7 +298,7 @@ export async function setStatus(entry, status)
  */
 async function announceOutcome(entry, status)
 {
-   if (!game.settings.get(MODULE_ID, 'announceOutcomes')) { return; }
+   if (!getSetting('announceOutcomes')) { return; }
    const players = game.users.filter((u) => !u.isGM);
    const seeing = players.filter((u) => questAccess(entry, u).visible);
    if (!seeing.length) { return; }

@@ -1,5 +1,6 @@
 import { MODULE_ID, MODULE_PATH, THEMES } from './constants.js';
 import { registerFont, tidyBannerColor, windowHeader } from './compat.js';
+import { getSetting } from './setting.js';
 
 const THEME_CLASSES = Object.values(THEMES).map((theme) => `fhql-theme-${theme}`);
 
@@ -15,7 +16,7 @@ const openApps = new Set();
 let preview = {};
 
 /** @param {string} key - A theme or font setting. @returns {string|boolean} Its previewed value, else the saved one. */
-const setting = (key) => preview[key] ?? game.settings.get(MODULE_ID, key);
+const shownSetting = (key) => preview[key] ?? getSetting(key);
 
 /**
  * The theme in effect for this client: their own choice, or the GM's world default when they chose
@@ -26,9 +27,9 @@ const setting = (key) => preview[key] ?? game.settings.get(MODULE_ID, key);
 export function currentTheme()
 {
    const valid = (theme) => THEME_CLASSES.includes(`fhql-theme-${theme}`);
-   const own = setting('theme');
+   const own = shownSetting('theme');
    if (valid(own)) { return own; }
-   const world = setting('worldTheme');
+   const world = shownSetting('worldTheme');
    return valid(world) ? world : THEMES.auto;
 }
 
@@ -44,14 +45,14 @@ export function applyTheme(element)
    element.classList.remove(...THEME_CLASSES);
    element.classList.add(`fhql-theme-${currentTheme()}`);
    const strength = currentStrength();
-   const contrast = setting('contrastMode');
+   const contrast = shownSetting('contrastMode');
    element.classList.toggle('fhql-hc-dark', contrast === 'dark');
    element.classList.toggle('fhql-hc-light', contrast === 'light');
    windowHeader(element)?.classList.add('fhql-titlebar');
    // Smooth panels at 0, and always in high contrast: textures and images off, the theme's shapes stay.
    element.classList.toggle('fhql-no-texture', strength === 0 || contrast === 'dark' || contrast === 'light');
    element.style.setProperty('--fhql-strength', String(strength));
-   element.classList.toggle('fhql-portrait-square', setting('portraitFrame') === 'square');
+   element.classList.toggle('fhql-portrait-square', shownSetting('portraitFrame') === 'square');
    applyOverlay(element);
    applyFonts(element);
    applyBanner(element);
@@ -64,8 +65,8 @@ export function applyTheme(element)
  */
 export function currentStrength()
 {
-   const own = setting('textureStrength');
-   const value = Number(own === 'world' ? setting('worldTextureStrength') : own);
+   const own = shownSetting('textureStrength');
+   const value = Number(own === 'world' ? shownSetting('worldTextureStrength') : own);
    return Number.isFinite(value) ? Math.max(0, Math.min(100, value)) : 50;
 }
 
@@ -99,7 +100,7 @@ export function defaultOverlay(theme)
  */
 export function currentOverlay(theme)
 {
-   const chosen = setting('textureImages')?.[theme] ?? {};
+   const chosen = shownSetting('textureImages')?.[theme] ?? {};
    if (chosen.off) { return { top: '', bottom: '' }; }
    const fallback = defaultOverlay(theme);
    return { top: chosen.top || fallback.top, bottom: chosen.bottom || fallback.bottom };
@@ -190,9 +191,9 @@ function parseColor(color)
  */
 export function currentFont(role)
 {
-   const own = setting(`${role}Font`);
+   const own = shownSetting(`${role}Font`);
    if (own !== 'world') { return own; }
-   return setting(`world${role === 'heading' ? 'Heading' : 'Body'}Font`);
+   return shownSetting(`world${role === 'heading' ? 'Heading' : 'Body'}Font`);
 }
 
 /**

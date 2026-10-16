@@ -14,6 +14,7 @@ import { QuestSheetMixin } from './QuestSheetMixin.js';
 import { stopEditingNotes } from './sheet/notes.js';
 import { guardActions } from './sheet/rows.js';
 import { isUnseen } from '../data/seen.js';
+import { getSetting, setSetting } from '../setting.js';
 
 /** The Quest Log window: quest list plus a quest sheet in the detail pane. Singleton. */
 export class QuestLog extends QuestSheetMixin(HandlebarsApp)
@@ -135,14 +136,14 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
    /** @returns {{ statuses: string[], collapsed: string[] }} This client's saved list filter. */
    static #savedFilter()
    {
-      const saved = game.settings.get(MODULE_ID, 'listFilter') ?? {};
+      const saved = getSetting('listFilter') ?? {};
       return { statuses: saved.statuses ?? [], collapsed: saved.collapsed ?? [] };
    }
 
    /** @param {{ statuses: string[], collapsed: string[] }} filter - Filter to save for this client. */
    static #saveFilter(filter)
    {
-      game.settings.set(MODULE_ID, 'listFilter', filter);
+      setSetting('listFilter', filter);
    }
 
    /**

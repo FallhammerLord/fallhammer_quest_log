@@ -1,10 +1,10 @@
 import { SCENE_CONTROL_GROUP, directoryButtonSlot } from '../compat.js';
 import { openQuestLog } from '../api.js';
-import { MODULE_ID } from '../constants.js';
 import { questLogAvailable } from '../data/playerActions.js';
+import { getSetting } from '../setting.js';
 
 /** @returns {boolean} Whether the current user gets the button controlled by a player setting. */
-const showFor = (settingKey) => game.user.isGM || (questLogAvailable() && game.settings.get(MODULE_ID, settingKey));
+const showFor = (settingKey) => game.user.isGM || (questLogAvailable() && getSetting(settingKey));
 
 const BUTTON_CLASS = 'fhql-open-log';
 

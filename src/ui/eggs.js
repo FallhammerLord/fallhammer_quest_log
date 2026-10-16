@@ -1,5 +1,6 @@
-import { MODULE_ID, QUEST_TYPE, THEMES } from '../constants.js';
+import { QUEST_TYPE, THEMES } from '../constants.js';
 import { currentTheme } from '../theme.js';
+import { getSetting } from '../setting.js';
 
 /**
  * Easter eggs: rare, purely visual moments, one per theme. Never interactive, never announced, never
@@ -19,7 +20,7 @@ import { currentTheme } from '../theme.js';
  */
 export function eggFor(theme)
 {
-   try { return game.settings.get(MODULE_ID, 'easterEggs') && currentTheme() === theme; }
+   try { return getSetting('easterEggs') && currentTheme() === theme; }
    catch { return false; }
 }
 

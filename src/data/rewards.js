@@ -4,6 +4,7 @@ import { itemQuantity, itemQuantityUpdate } from './systemItems.js';
 import { actorsForGM, assignedToSomeone, playerFor, sharedActor } from './owners.js';
 import { MODULE_ID } from '../constants.js';
 import { getQuestEntry, questAccess, questPage } from './quests.js';
+import { getSetting } from '../setting.js';
 
 /**
  * Reward claiming. See docs/SCOPE.md 5.10.
@@ -183,7 +184,7 @@ async function claimNow(data, { force = false } = {})
    else
    {
       claim.prevLevel = source.ownership[user.id] ?? null;
-      await source.update({ [`ownership.${user.id}`]: game.settings.get(MODULE_ID, 'followerOwnership') });
+      await source.update({ [`ownership.${user.id}`]: getSetting('followerOwnership') });
    }
 
    await page.update({ [`system.rewards.${data.rewardId}.claims`]: [...reward.claims, claim] });
