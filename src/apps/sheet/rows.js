@@ -42,7 +42,38 @@ export function editorUnsaved(editor)
 }
 
 /**
- * Wraps action handlers so a failure tells the user, instead of only reaching the console.
+ * Actions that create or change data without asking first. While one is still saving, another click
+ * on the same row (or the same button) is ignored, so a double-click never makes two quests or two
+ * objectives. Actions that open a menu or confirm panel are left out: a second click on their button
+ * is how that panel closes.
+ */
+const EXCLUSIVE = new Set([
+   'addObjective', 'cycleObjective', 'toggleObjectiveHidden', 'clearRequirement',
+   'addTextReward', 'deleteReward', 'toggleRewardLock', 'toggleRewardHidden', 'addSubquest',
+   'setQuestStatus', 'toggleInProgress', 'toggleTracked', 'acceptQuest', 'clearGiver', 'finishEditing',
+   'editNotes', 'finishNotes', 'createQuest', 'createSamples'
+]);
+
+/** Show the busy state only for actions slower than this (ms), so quick ones don't flicker. */
+const BUSY_AFTER = 150;
+
+/** @type {WeakMap<object, Set<string>>} Each window's exclusive actions still running, by key. */
+const running = new WeakMap();
+
+/**
+ * @param {string} name - Action name.
+ * @param {HTMLElement} [target] - The clicked control.
+ * @returns {string} The action and the row (objective, reward, or quest) it acts on.
+ */
+function lockKey(name, target)
+{
+   const row = target?.closest?.('[data-objective-id], [data-reward-id], [data-quest-id]');
+   return `${name}:${row?.dataset.objectiveId ?? row?.dataset.rewardId ?? row?.dataset.questId ?? ''}`;
+}
+
+/**
+ * Wraps action handlers so a failure tells the user, instead of only reaching the console, and so an
+ * exclusive action can't run twice at once on the same row (see EXCLUSIVE).
  *
  * @param {Record<string, Function>} actions - Handlers, called with `this` as the window.
  * @returns {Record<string, Function>} The same handlers, guarded.
@@ -51,11 +82,37 @@ export function guardActions(actions)
 {
    return Object.fromEntries(Object.entries(actions).map(([name, handler]) => [name, async function guarded(...args)
    {
+      const exclusive = EXCLUSIVE.has(name);
+      const target = args[1];
+      const key = exclusive ? lockKey(name, target) : null;
+      const busy = running.get(this) ?? new Set();
+      if (exclusive)
+      {
+         if (busy.has(key)) { return undefined; }
+         busy.add(key);
+         running.set(this, busy);
+      }
+      const shown = exclusive && target?.classList ? setTimeout(() =>
+      {
+         target.classList.add('is-busy');
+         target.setAttribute('aria-busy', 'true');
+      }, BUSY_AFTER) : null;
       try { return await handler.apply(this, args); }
       catch (err)
       {
          console.error(`fhql | Action "${name}" failed`, err);
          ui.notifications.error(game.i18n.localize('FHQL.Error.Action'));
+         return undefined;
+      }
+      finally
+      {
+         if (exclusive)
+         {
+            busy.delete(key);
+            clearTimeout(shown);
+            target?.classList?.remove('is-busy');
+            target?.removeAttribute?.('aria-busy');
+         }
       }
    }]));
 }

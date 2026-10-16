@@ -120,5 +120,25 @@ const { QuestData } = await import('../src/data/QuestData.js');
 // An item or actor dropped on a quest sheet is not a quest, and asking must not throw.
 check(quests.questPage({ documentName: 'Item', name: 'Sealed salt cask' }) === undefined, 'questPage of an item is undefined, not an error');
 
+// A double-click on a data-changing action runs it once; another row still runs; menus are not locked.
+{
+   globalThis.ui = { notifications: { error() {} } };
+   const { guardActions } = await import('../src/apps/sheet/rows.js');
+   const calls = [];
+   const slow = (tag) => async function () { calls.push(tag); await new Promise((r) => { setTimeout(r, 30); }); };
+   const actions = guardActions({ addObjective: slow('add'), cycleObjective: slow('cycle'), questMenu: slow('menu') });
+   const app = {};
+   const row = (id) => ({ closest: () => ({ dataset: { objectiveId: id } }), classList: { add() {}, remove() {} }, setAttribute() {}, removeAttribute() {} });
+   const button = { closest: () => null, classList: { add() {}, remove() {} }, setAttribute() {}, removeAttribute() {} };
+   await Promise.all([actions.addObjective.call(app, {}, button), actions.addObjective.call(app, {}, button)]);
+   check(calls.filter((c) => c === 'add').length === 1, 'a double-click on Add objective adds one');
+   await Promise.all([actions.cycleObjective.call(app, {}, row('a')), actions.cycleObjective.call(app, {}, row('b'))]);
+   check(calls.filter((c) => c === 'cycle').length === 2, 'ticking two different objectives quickly runs both');
+   await Promise.all([actions.questMenu.call(app, {}, button), actions.questMenu.call(app, {}, button)]);
+   check(calls.filter((c) => c === 'menu').length === 2, 'menu buttons are not locked (a second click closes the menu)');
+   await actions.addObjective.call(app, {}, button);
+   check(calls.filter((c) => c === 'add').length === 2, 'the lock clears once the action finishes');
+}
+
 if (failures) { console.log(`${failures} failed`); process.exit(1); }
 console.log('Quest family rules hold.');

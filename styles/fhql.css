@@ -1057,6 +1057,8 @@
 .fhql-app .fhql-chip { min-height: 24px; min-width: 28px; justify-content: center; }
 .fhql-app .fhql-undo { min-width: 24px; min-height: 24px; display: inline-grid; place-items: center; }
 .fhql-app .fhql-icon-button { min-width: 24px; min-height: 24px; }
+/* A data-changing action still saving (src/apps/sheet/rows.js): further clicks are ignored meanwhile. */
+.fhql-app [aria-busy="true"] { cursor: progress; opacity: 0.6; }
 
 /* ---------- Scrollbars and dropdown lists follow the theme ---------- */
 .fhql-app, .fhql-app * { scrollbar-color: var(--fhql-rule) transparent; }
