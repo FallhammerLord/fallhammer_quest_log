@@ -11,6 +11,9 @@
 @property --fhql-text-heading { syntax: '<length>'; inherits: true; initial-value: 17px; }
 @property --fhql-text-body { syntax: '<length>'; inherits: true; initial-value: 16px; }
 @property --fhql-text-small { syntax: '<length>'; inherits: true; initial-value: 13px; }
+/* The quest title's line height and the giver picture's size, worked out on the quest header (see sheet.css). */
+@property --fhql-title-line { syntax: '<length>'; inherits: true; initial-value: 27px; }
+@property --fhql-portrait-size { syntax: '<length>'; inherits: true; initial-value: 56px; }
 :is(.fhql-app, .fhql-beacon) {
   --fhql-text-heading: 1.025em;
   --fhql-text-body: 1em;

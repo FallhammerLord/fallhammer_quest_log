@@ -93,6 +93,7 @@
 }
 .fhql-app.fhql-theme-ledger .fhql-sheet-head:not(:has(.fhql-sheet-fields)) .fhql-button.is-on i { color: inherit; }
 .fhql-app.fhql-theme-ledger .fhql-heading { font-size: 1.9em; font-weight: normal; line-height: 1.05; }
+.fhql-app.fhql-theme-ledger .fhql-sheet-head { --fhql-title-line: calc(1.9em * 1.05); }
 .fhql-app.fhql-theme-ledger .fhql-sheet-head .fhql-in-progress { color: var(--fhql-metal); }
 
 /* Portrait: a silver ring (round, or square when the GM picks square frames). */
