@@ -132,6 +132,7 @@ Checklist pass, 2026-10-17:
 - Items and rewards: hand over confirm panel (source, amount, assigned character first, party inventory); drag from a character sheet; Undo returns the item; GM hand over from an NPC; Claim/Give panels, GM Give to an NPC, Undo "Take it back".
 - Two players: Show players opens the quest on the player's screen; GM notes page hidden from players (console check); new-change dots for players.
 - List, sheet, Beacon: resizable list pane; reordering objectives and rewards; panels (pinned header, own scrolling, narrow collapse, Hide done, very short window); Beacon five-objective cap, toggle and motion; window memory and width snaps.
+- Item hand-in layout (bracket, right-aligned count, folded "who handed in", name hidden when it matches) and no auto-tick: verified the same day.
 - Themes and settings: every theme; texture strength (slider, per-player override, live preview); Theme images window and font settings; easter eggs; portrait frame; player workflow settings, Advanced settings window, quests hidden from players' journal sidebar.
 
 ## Waiting on the user
@@ -143,8 +144,6 @@ Untested (2026-10-17):
 - Notes lock: a second user sees the lock; GM Edit anyway.
 - Quest family folding: arrow, Alt for the whole family, fold-all button, Left/Right keys, signals on folded parents, unfold when opened from the Beacon.
 - Options Fold finished families and Active subquests first.
-
-New (2026-10-17): item hand-in layout (bracket, right-aligned count, folded "who handed in", name hidden when it matches the objective); filled requirements no longer tick the objective.
 
 Not on the checklist, unconfirmed: Edit notes opening the editor in one click; hover previews of quest links; the outcome chat card.
 
