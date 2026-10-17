@@ -1,4 +1,5 @@
 import { MODULE_ID, MODULE_PATH, PARTIALS, QUEST_TYPE, TEMPLATES } from '../constants.js';
+import { cssUrl } from '../theme.js';
 import {
    createQuest, createQuestFolder, createSubquest, deleteQuest, moveQuestToFolder, questPage, setParent, subquests
 } from '../data/quests.js';
@@ -93,6 +94,15 @@ export function registerQuenchTests(quench)
          {
             const response = await fetch(`${MODULE_PATH}/styles/textures/wash-top.webp`, { method: 'HEAD' });
             assert.isTrue(response.ok);
+         });
+
+         it('sets theme images from the site root, and they load', async function ()
+         {
+            // A relative path in a CSS variable resolves inside the module's styles folder and never loads.
+            const url = cssUrl('modules/fhql/styles/textures/wash-top.webp');
+            assert.match(url, /^url\("(\/|https?:)/);
+            const response = await fetch(url.slice(5, -2), { method: 'HEAD' });
+            assert.isTrue(response.ok, `${url} did not load`);
          });
 
          it('registers its template pieces', function ()

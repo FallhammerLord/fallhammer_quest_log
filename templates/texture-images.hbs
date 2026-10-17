@@ -16,7 +16,7 @@
         <button type="button" class="fhql-icon-button" data-action="browse" data-field="{{bottom.name}}" aria-label="{{localize "FHQL.TextureImages.Browse"}}"><i class="fa-solid fa-file-image" inert></i></button>
         <button type="button" class="fhql-icon-button" data-action="clearImage" data-field="{{bottom.name}}" aria-label="{{localize "FHQL.TextureImages.UseDefault"}}"><i class="fa-solid fa-rotate-left" inert></i></button>
       </div>
-      <label class="fhql-inline fhql-texture-off"><input type="checkbox" name="{{key}}.off" {{checked off}}> {{localize "FHQL.TextureImages.Off"}}</label>
+      <label class="fhql-inline fhql-texture-off"><input type="checkbox" name="{{key}}.off" {{#if off}}checked{{/if}}> {{localize "FHQL.TextureImages.Off"}}</label>
     </fieldset>
     {{/each}}
   </div>

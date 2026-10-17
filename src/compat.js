@@ -320,3 +320,17 @@ export function folderMaxDepth()
 {
    return CONST.FOLDER_MAX_DEPTH ?? 4;
 }
+
+/**
+ * An asset path as a full address from the site root (with Foundry's route prefix, if any). Paths
+ * set on an element through a CSS variable resolve against the stylesheet that uses them, not the
+ * page, so a relative path ("worlds/…") would point inside the module's styles folder.
+ *
+ * @param {string} path - A path relative to Foundry's root, or a full URL.
+ * @returns {string} The address to use in CSS.
+ */
+export function assetUrl(path)
+{
+   if (/^([a-z][a-z0-9+.-]*:|\/)/i.test(path)) { return path; }
+   return foundry.utils.getRoute(path);
+}

@@ -1,5 +1,5 @@
 import { MODULE_ID, MODULE_PATH, THEMES } from './constants.js';
-import { registerFont, tidyBannerColor, windowHeader } from './compat.js';
+import { assetUrl, registerFont, tidyBannerColor, windowHeader } from './compat.js';
 import { getSetting } from './setting.js';
 
 const THEME_CLASSES = Object.values(THEMES).map((theme) => `fhql-theme-${theme}`);
@@ -106,8 +106,12 @@ function currentOverlay(theme)
    return { top: chosen.top || fallback.top, bottom: chosen.bottom || fallback.bottom };
 }
 
-/** @param {string} path - An image path. @returns {string} A CSS url() for it. */
-const cssUrl = (path) => `url("${encodeURI(path).replace(/"/g, '%22')}")`;
+/**
+ * @param {string} path - An image path, relative to Foundry's root or a full URL.
+ * @returns {string} A CSS url() for it, from the site root (see assetUrl). Only characters that would
+ *   end the quoted string are escaped: Foundry's file browser returns paths already URL-encoded.
+ */
+export const cssUrl = (path) => `url("${assetUrl(path).replace(/["\\\n]/g, encodeURIComponent)}")`;
 
 /**
  * Sets the overlay images on a themed element: a top wash for headers, a lower wash for scrolling
