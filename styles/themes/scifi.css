@@ -43,12 +43,10 @@
 .fhql-app.fhql-theme-scifi .fhql-status-badge {
   border-radius: 0;
   font-family: var(--fhql-font-heading);
-  font-size: 0.8em;
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
 .fhql-app.fhql-theme-scifi .fhql-subheading {
-  font-size: 0.85em;
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: var(--fhql-accent);

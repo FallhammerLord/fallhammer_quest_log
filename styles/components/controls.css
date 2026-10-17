@@ -25,10 +25,11 @@
 .fhql-app .fhql-button:hover { background: var(--fhql-hover); border-color: var(--fhql-accent); }
 .fhql-app .fhql-button.fhql-danger { color: var(--fhql-status-failed); }
 
+/* Every icon button is 28px, whatever the text size around it. */
 .fhql-app .fhql-icon-button {
   flex: none;
-  width: 1.8em;
-  height: 1.8em;
+  width: 28px;
+  height: 28px;
   padding: 0;
   color: var(--fhql-ink-muted);
   background: transparent;
@@ -65,8 +66,8 @@
 }
 
 .fhql-app .fhql-field { display: grid; gap: 0.2em; }
-.fhql-app .fhql-field > span { color: var(--fhql-ink-muted); font-size: 0.85em; }
-.fhql-app .fhql-field > .fhql-subheading { color: var(--fhql-ink); font-size: 1.1em; }
+.fhql-app .fhql-field > span { color: var(--fhql-ink-muted); font-size: var(--fhql-text-small); }
+.fhql-app .fhql-field > .fhql-subheading { color: var(--fhql-ink); font-size: var(--fhql-text-heading); }
 .fhql-app .fhql-field-row { display: flex; flex-wrap: wrap; gap: 1em; align-items: end; }
 .fhql-app .fhql-check { display: inline-flex; align-items: center; gap: 0.35em; cursor: pointer; }
 .fhql-app .fhql-check input { margin: 0; accent-color: var(--fhql-accent); }

@@ -105,7 +105,7 @@
   gap: 0.25em 0.6em;
   align-items: center;
   color: var(--fhql-ink-muted);
-  font-size: 0.92em;
+  font-size: var(--fhql-text-small);
 }
 .fhql-app .fhql-sep { opacity: 0.6; }
 .fhql-app .fhql-sheet-actions {
@@ -136,7 +136,7 @@
   color: var(--fhql-status);
   border: 1px solid var(--fhql-status);
   border-radius: 999px;
-  font-size: 0.9em;
+  font-size: var(--fhql-text-small);
   font-weight: 600;
 }
 
@@ -274,14 +274,14 @@
 .fhql-app .fhql-empty-note {
   margin-inline-start: auto;
   font-variant: normal;
-  font-size: 0.85em;
+  font-size: var(--fhql-text-small);
   font-weight: normal;
   text-transform: none;
   letter-spacing: 0;
   color: var(--fhql-ink-muted);
 }
 .fhql-app .fhql-empty-note + .fhql-button { margin-inline-start: 0.4em; }
-.fhql-app .fhql-button.fhql-small { min-height: 24px; padding: 0.1em 0.5em; font-size: 0.85em; font-variant: normal; letter-spacing: 0; text-transform: none; }
+.fhql-app .fhql-button.fhql-small { min-height: 24px; padding: 0.1em 0.5em; font-size: var(--fhql-text-small); font-variant: normal; letter-spacing: 0; text-transform: none; }
 /* Targets: at least 24px (WCAG 2.2 AA, 2.5.8); icon-only actions 28px, since they carry no text to aim at. */
 .fhql-app .fhql-button.fhql-icon-only { min-width: 28px; min-height: 28px; padding: 0; justify-content: center; }
 .fhql-app .fhql-add { margin-block-start: 0.5em; }
@@ -352,24 +352,24 @@
   inset-inline-start: calc(var(--fhql-req-indent) - 14px - 0.5em);
   top: -0.15em;
   width: calc(14px + 0.2em);
-  height: calc(0.15em + 12px);
+  height: calc(0.15em + var(--fhql-thumb-size) / 2);
   border-inline-start: 1px solid var(--fhql-rule);
   border-block-end: 1px solid var(--fhql-rule);
   border-end-start-radius: 3px;
   pointer-events: none;
 }
-.fhql-app .fhql-requirement-item { flex: 1 1 6em; display: inline-flex; gap: 0.35em; align-items: flex-start; min-width: min(6em, 100%); font-size: 0.9em; }
+.fhql-app .fhql-requirement-item { flex: 1 1 6em; display: inline-flex; gap: 0.35em; align-items: flex-start; min-width: min(6em, 100%); font-size: var(--fhql-text-body); }
 .fhql-app .fhql-requirement-item > :is(.fhql-link, .fhql-muted) { align-self: center; }
 .fhql-app .fhql-requirement-item > .fhql-link { min-width: 0; text-align: start; overflow-wrap: break-word; }
 /* Who handed in, progress, and the hand-over button stay together at the row's end, under the eye button above;
    they move below the item only when the item would get less than about six letters' room. */
-.fhql-app .fhql-requirement-end { display: inline-flex; gap: 0.35em; align-items: center; margin-inline-start: auto; font-size: 0.9em; }
+.fhql-app .fhql-requirement-end { display: inline-flex; gap: 0.35em; align-items: center; margin-inline-start: auto; font-size: var(--fhql-text-small); }
 .fhql-app .fhql-requirement > :is(.fhql-requirement-edit, .fhql-deposits) { flex: 1 0 100%; }
 .fhql-app .fhql-deposits-toggle { width: auto; min-height: 24px; padding: 0 0.4em; gap: 0.3em; font-variant-numeric: tabular-nums; }
 .fhql-app .fhql-requirement-thumb {
   flex: none;
-  width: 24px;
-  height: 24px;
+  width: var(--fhql-thumb-size);
+  height: var(--fhql-thumb-size);
   padding: 0;
   background: transparent;
   cursor: pointer;
@@ -384,7 +384,8 @@
 /* Tallies: every count (panel headings, item hand-ins) sits in the same small box, and turns green once
    complete. Things sharing a line share its height: tallies and the buttons beside them are all 24px. */
 /* One text size for every tally and the buttons beside them, whatever the heading or theme font size. */
-.fhql-app { --fhql-tally-font: 0.75rem; }
+/* One picture size for rewards, subquests and hand-in items: the 28px of the row controls beside them. */
+.fhql-app { --fhql-tally-font: var(--fhql-text-small); --fhql-thumb-size: 28px; }
 .fhql-app .fhql-tally {
   display: inline-flex;
   align-items: center;
@@ -409,9 +410,9 @@
 .fhql-app .fhql-requirement-edit { display: inline-flex; flex-wrap: wrap; gap: 0.35em; align-items: center; min-width: 0; max-width: 100%; }
 .fhql-app .fhql-requirement-edit .fhql-small-select { min-width: 0; max-width: 100%; }
 .fhql-app .fhql-requirement-edit .fhql-count-input { width: 4.5em; flex: none; }
-.fhql-app .fhql-deposits { display: flex; flex-wrap: wrap; gap: 0.15em 0.75em; font-size: 0.85em; }
+.fhql-app .fhql-deposits { display: flex; flex-wrap: wrap; gap: 0.15em 0.75em; font-size: var(--fhql-text-small); }
 .fhql-app .fhql-objectives-drop { display: grid; gap: 0.25em; justify-items: start; margin-top: 0.4em; }
-.fhql-app .fhql-hint { margin: 0; font-size: 0.85em; color: var(--fhql-ink-muted); }
+.fhql-app .fhql-hint { margin: 0; font-size: var(--fhql-text-small); color: var(--fhql-ink-muted); }
 
 /* Rewards and subquests */
 /* A little room at the scroll edges, so the first and last row's borders and focus rings aren't clipped. */
@@ -420,8 +421,8 @@
 .fhql-app .fhql-rows > li { display: flex; gap: 0.5em; align-items: center; min-width: 0; }
 .fhql-app .fhql-thumb {
   flex: none;
-  width: 30px;
-  height: 30px;
+  width: var(--fhql-thumb-size);
+  height: var(--fhql-thumb-size);
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -473,7 +474,7 @@
   align-items: center;
   margin-block-start: 0.5em;
   padding: 0.35em 0.5em;
-  font-size: 0.88em;
+  font-size: var(--fhql-text-small);
   color: var(--fhql-ink-muted);
   border: 1px dashed var(--fhql-rule);
   border-radius: var(--fhql-radius);
@@ -512,7 +513,7 @@
    right of the first line, as on objectives. */
 .fhql-app .fhql-reward {
   display: grid;
-  grid-template-columns: 30px minmax(0, 1fr) auto;
+  grid-template-columns: var(--fhql-thumb-size) minmax(0, 1fr) auto;
   gap: 0.2em 0.55em;
   align-items: start;
 }
@@ -528,12 +529,12 @@
 .fhql-app .fhql-reward.is-claimed .fhql-thumb { opacity: 0.55; }
 /* "Cross out done items" off (per player): done and claimed text stays muted, without the line. */
 .fhql-app.fhql-no-strike :is(.fhql-objectives li.is-done > span, .fhql-objectives li.is-done .fhql-input, .fhql-reward.is-claimed .fhql-reward-name) { text-decoration: none; }
-.fhql-app .fhql-reward-state { display: flex; flex-wrap: wrap; gap: 0.1em 0.7em; font-size: 0.82em; }
+.fhql-app .fhql-reward-state { display: flex; flex-wrap: wrap; gap: 0.1em 0.7em; font-size: var(--fhql-text-small); }
 .fhql-app .fhql-claim { color: var(--fhql-status-completed); display: inline-flex; gap: 0.3em; align-items: center; }
 .fhql-app .fhql-undo { border: 0; color: var(--fhql-ink-muted); vertical-align: middle; }
-.fhql-app .fhql-reward-actions { display: flex; flex-wrap: wrap; gap: 0.25em; align-items: center; justify-content: flex-end; min-height: 30px; }
+.fhql-app .fhql-reward-actions { display: flex; flex-wrap: wrap; gap: 0.25em; align-items: center; justify-content: flex-end; min-height: var(--fhql-thumb-size); }
 .fhql-app .fhql-icon-button.is-on { color: var(--fhql-accent); }
-.fhql-app .fhql-small-select { width: auto; min-height: 24px; padding: 0.1em 0.3em; font-size: 0.82em; }
+.fhql-app .fhql-small-select { width: auto; min-height: 24px; padding: 0.1em 0.3em; font-size: var(--fhql-text-small); }
 .fhql-app .fhql-grow-text { flex: 1; min-width: 0; }
 .fhql-app .fhql-eye { margin-inline-start: auto; opacity: 0.7; }
 .fhql-app .fhql-eye:hover, .fhql-app .fhql-eye[aria-pressed="true"] { opacity: 1; }
@@ -545,7 +546,7 @@
 .fhql-beacon .fhql-beacon-gift { color: var(--fhql-accent); flex: none; }
 
 /* Edit mode puts reward controls on their own line under the name. */
-.fhql-app .fhql-rewards.is-editing .fhql-reward { grid-template-columns: 30px minmax(0, 1fr); }
+.fhql-app .fhql-rewards.is-editing .fhql-reward { grid-template-columns: var(--fhql-thumb-size) minmax(0, 1fr); }
 .fhql-app .fhql-rewards.is-editing .fhql-reward-actions { grid-column: 2; justify-content: flex-start; }
 
 /* ---------- Narrow layouts ----------
@@ -559,8 +560,6 @@
 @container fhql-rewards (max-width: 230px) {
   .fhql-app .fhql-reward-buttons .fhql-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   .fhql-app .fhql-reward-buttons .fhql-button { gap: 0; }
-  .fhql-app .fhql-reward:not(.is-editing *) { grid-template-columns: 24px minmax(0, 1fr) auto; }
-  .fhql-app .fhql-reward .fhql-thumb { width: 24px; height: 24px; }
 }
 @container fhql-rows (max-width: 230px) {
   .fhql-app .fhql-row-link .fhql-row-status { display: none; }

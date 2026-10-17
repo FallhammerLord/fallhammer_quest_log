@@ -68,7 +68,7 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
 }
 
 /* Panel headings: letter-spaced deco capitals after a small sunburst fan, a gold hairline under them. */
-.fhql-app:is(.fhql-theme-dark, :where(.fhql-theme-auto.theme-dark, body.theme-dark .fhql-theme-auto:not(.theme-light))) .fhql-subheading { font-variant: normal; text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.95em; }
+.fhql-app:is(.fhql-theme-dark, :where(.fhql-theme-auto.theme-dark, body.theme-dark .fhql-theme-auto:not(.theme-light))) .fhql-subheading { font-variant: normal; text-transform: uppercase; letter-spacing: 0.12em; }
 .fhql-app:is(.fhql-theme-dark, :where(.fhql-theme-auto.theme-dark, body.theme-dark .fhql-theme-auto:not(.theme-light))) .fhql-card > .fhql-subheading {
   padding-inline-start: 19px;
   background: var(--fhql-dark-fan) no-repeat left center / 14px 10px;

@@ -52,7 +52,7 @@
 .fhql-beacon .fhql-beacon-more {
   flex: none;
   padding: 0 0.35em;
-  font-size: 0.8em;
+  font-size: var(--fhql-text-small);
   color: var(--fhql-accent-ink);
   background: var(--fhql-accent);
   border-radius: var(--fhql-radius);
@@ -66,7 +66,7 @@
   margin: 0;
   padding: 0.35em 0.7em 0.45em;
   list-style: none;
-  font-size: 0.85em;
+  font-size: var(--fhql-text-small);
   line-height: 1.25;
   border-block-start: 1px solid var(--fhql-rule);
 }
@@ -93,7 +93,7 @@
   margin: 0;
   padding: 0 0.6em;
   font: inherit;
-  font-size: 0.82em;
+  font-size: var(--fhql-text-small);
   font-weight: bold;
   color: var(--fhql-accent);
   background: none;

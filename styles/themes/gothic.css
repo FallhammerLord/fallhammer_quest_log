@@ -111,7 +111,6 @@
   clip-path: polygon(0 100%, 0 32%, 50% 0, 100% 32%, 100% 100%);
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  font-size: 0.8em;
 }
 
 /* Description: the first letter rubricated, as scribes did in red ink. initial-letter sinks it two lines deep with its top flush

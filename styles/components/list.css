@@ -15,7 +15,7 @@
 
 .fhql-app .fhql-preview-note {
   margin: 0 0 0.5em;
-  font-size: 0.85em;
+  font-size: var(--fhql-text-small);
   color: var(--fhql-ink-muted);
 }
 
@@ -72,7 +72,7 @@
   overflow-wrap: break-word;
   line-height: 1.25;
 }
-.fhql-app .fhql-row-status { font-size: 0.8em; color: var(--fhql-ink-muted); }
+.fhql-app .fhql-row-status { font-size: var(--fhql-text-small); color: var(--fhql-ink-muted); }
 
 /* ---------- Journal sidebar button ---------- */
 #journal .fhql-open-log { flex: 1 0 100%; }
@@ -93,7 +93,8 @@
   border-block-end: 1px solid var(--fhql-rule);
 }
 .fhql-app .fhql-toolbar-row { display: flex; gap: 0.3em; align-items: center; }
-.fhql-app .fhql-search { font-size: 0.92em; }
+/* The list toolbar's controls (buttons, search, chips) are all 28px tall. */
+.fhql-app .fhql-search { font-size: var(--fhql-text-body); box-sizing: border-box; height: 28px; }
 .fhql-app .fhql-chips { display: flex; flex-wrap: wrap; gap: 0.25em; }
 .fhql-app .fhql-chip {
   display: inline-flex;
@@ -102,7 +103,7 @@
   width: auto;
   padding: 0.1em 0.45em;
   font: inherit;
-  font-size: 0.78em;
+  font-size: var(--fhql-text-small);
   color: var(--fhql-ink-muted);
   background: transparent;
   border: 1px solid var(--fhql-rule);
@@ -112,7 +113,7 @@
 .fhql-app .fhql-chip .fhql-status-icon { color: var(--fhql-status); }
 .fhql-app .fhql-chip.is-on { color: var(--fhql-ink); border-color: var(--fhql-status); background: var(--fhql-surface-raised); }
 .fhql-app .fhql-chip:focus-visible { outline: 2px solid var(--fhql-accent); outline-offset: 1px; }
-.fhql-app .fhql-chip { padding: 0.2em 0.55em; font-size: 0.85em; min-height: 24px; }
+.fhql-app .fhql-chip { padding: 0.2em 0.55em; font-size: var(--fhql-text-small); min-height: 28px; }
 .fhql-app .fhql-chip-count { font-weight: normal; font-size: var(--fhql-tally-font); font-variant-numeric: tabular-nums; }
 /* New folder (GM) and fold-all lead the filter row; the chips take the rest and wrap under each other. */
 .fhql-app .fhql-chips-row { display: flex; gap: 0.25em; align-items: flex-start; }
@@ -261,7 +262,7 @@
   align-items: center;
   gap: 0.3em;
   margin: 0;
-  font-size: 0.82em;
+  font-size: var(--fhql-text-small);
   color: var(--fhql-ink-muted);
   font-variant-numeric: tabular-nums;
 }

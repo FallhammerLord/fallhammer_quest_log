@@ -22,7 +22,7 @@
   padding: 0.2em 0.5em 0.3em;
   font-family: var(--fhql-font-heading);
   font-weight: bold;
-  font-size: 0.9em;
+  font-size: var(--fhql-text-small);
   color: var(--fhql-ink-muted);
   border-block-end: 1px solid var(--fhql-rule);
 }
@@ -50,7 +50,7 @@
 .fhql-app .fhql-popover-item.fhql-danger { color: var(--fhql-status-failed); }
 .fhql-app .fhql-popover-item.is-current { font-weight: bold; }
 .fhql-app .fhql-popover-item.is-current i { color: var(--fhql-accent); }
-.fhql-app .fhql-popover-item small { display: block; color: var(--fhql-ink-muted); font-size: 0.82em; font-weight: normal; }
+.fhql-app .fhql-popover-item small { display: block; color: var(--fhql-ink-muted); font-size: var(--fhql-text-small); font-weight: normal; }
 .fhql-app .fhql-popover-message { padding: 0.3em 0.5em; line-height: 1.4; }
 .fhql-app .fhql-popover-message p { margin: 0; }
 .fhql-app .fhql-popover-form { display: grid; gap: 0.5em; padding: 0.3em; }
@@ -62,6 +62,6 @@
 }
 
 /* Quest Log tips (src/apps/tips.js). */
-.fhql-app .fhql-tips { display: grid; gap: 0.5em; margin: 0; padding: 0; list-style: none; max-width: 26em; font-size: 0.9em; }
+.fhql-app .fhql-tips { display: grid; gap: 0.5em; margin: 0; padding: 0; list-style: none; max-width: 26em; font-size: var(--fhql-text-body); }
 .fhql-app .fhql-tips > li { display: grid; grid-template-columns: 1.4em minmax(0, 1fr); gap: 0.4em; align-items: baseline; }
 .fhql-app .fhql-tips > li > i { color: var(--fhql-accent); text-align: center; }

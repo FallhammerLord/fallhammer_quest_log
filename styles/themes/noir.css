@@ -51,7 +51,7 @@
 }
 
 /* Headings: typed capitals, spaced out, over a perforated rule. */
-.fhql-app.fhql-theme-noir .fhql-subheading { text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.95em; }
+.fhql-app.fhql-theme-noir .fhql-subheading { text-transform: uppercase; letter-spacing: 0.14em; }
 .fhql-app.fhql-theme-noir .fhql-card:not(.fhql-compact) > .fhql-subheading {
   padding-block-end: 0.3em;
   border-block-end: 1px dashed var(--fhql-rule);
@@ -70,7 +70,6 @@
   border-radius: 2px;
   rotate: -3deg;
   font-family: var(--fhql-font-heading);
-  font-size: 0.8em;
   text-transform: uppercase;
   letter-spacing: 0.12em;
 }
