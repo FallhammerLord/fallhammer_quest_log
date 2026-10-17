@@ -59,11 +59,12 @@
   align-items: start;
   padding-block-end: 0.8em;
   border-block-end: 3px double var(--fhql-rule);
-  /* The giver picture is as tall as one title line plus the status line (its 24px badge) and the gap
-     between them. Worked out from the fonts here, never measured: a measured size flashed on every
-     redraw and fed back into how the title wraps. Ledger's larger title sets its own line height. */
+  /* The giver picture spans one title line plus the status line (its 24px badge) and the gap between
+     them, with half a line to spare so portraits stay legible. Worked out from the fonts here, never
+     measured: a measured size flashed on every redraw and fed back into how the title wraps. Ledger's
+     larger title sets its own line height. */
   --fhql-title-line: calc(1.4em * 1.2);
-  --fhql-portrait-size: clamp(40px, calc(var(--fhql-title-line) + 0.3em + 24px), 96px);
+  --fhql-portrait-size: clamp(48px, calc(var(--fhql-title-line) + 0.3em + 24px + 0.5em), 96px);
 }
 
 .fhql-app .fhql-portrait {
@@ -262,7 +263,7 @@
     grid-template-areas: "portrait title menu" "meta meta meta" "actions actions actions" "fields fields fields";
   }
   /* The status line moves below: the picture matches the title line alone. */
-  .fhql-app .fhql-sheet-head { --fhql-portrait-size: clamp(40px, var(--fhql-title-line), 96px); }
+  .fhql-app .fhql-sheet-head { --fhql-portrait-size: clamp(48px, var(--fhql-title-line), 96px); }
   .fhql-app .fhql-portrait { font-size: 20px; }
   .fhql-app .fhql-sheet-inner { --fhql-pad-x: 0.6em; }
 }
