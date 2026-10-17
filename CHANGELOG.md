@@ -21,7 +21,7 @@ First feature-complete preview. Requires Foundry VTT v14.
 - Subquests work: adding or clicking one opens it beside its parent (a second subquest takes the first one's place; deeper ones open beside theirs), the log nests them, the GM can unlink one as its own quest or delete it, and dropping a quest on Subquests or Objectives makes it a subquest. (The parent link was hidden by a Foundry name clash; saved links carry over.)
 - The Beacon leads the Quest Log: switching quests moves an open log, and clicking shows the Beacon's quest before closing.
 - Our windows' title bars follow the theme.
-- Hope and Fear theme (after Daggerheart's styling: indigo, Hope gold, Fear violet, duality-dice texture) and Noir theme (for Blades in the Dark: graphite, blinds and rain, a typed case file).
+- Hope and Fear theme (after Daggerheart's styling: indigo, Hope gold, Fear violet, duality sparks gathering where Hope's glow meets Fear's) and Noir theme (for Blades in the Dark: graphite, blinds and rain, a typed case file).
 - Sturdier under fast clicking: a double-click can't run a data-changing action twice, redraws are batched and limited to affected windows, and the latest quest click wins.
 - An open rich-text editor gets the free space in its column.
 - World data upgrades run once per world (data version), with in-world Quench tests for GMs who use Quench.
