@@ -174,8 +174,8 @@
       <section class="fhql-card fhql-area-objectives" data-panel="objectives">
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.Objectives"}}
           {{#if hideDoneToggle}}<button type="button" class="fhql-button fhql-small fhql-toggle fhql-hide-done {{#if hideDone}}is-on{{/if}}" data-action="toggleHideDone"
-            aria-pressed="{{#if hideDone}}true{{else}}false{{/if}}"><i class="fa-solid fa-eye-slash" inert></i> {{localize "FHQL.Objective.HideDone"}}</button>{{/if}}
-          <span class="fhql-count">{{doneCount}}/{{objectiveTotal}}</span></h3>
+            aria-pressed="{{#if hideDone}}true{{else}}false{{/if}}" aria-label="{{localize 'FHQL.Objective.HideDone'}}" data-tooltip="{{localize 'FHQL.Objective.HideDone'}}"><i class="fa-solid fa-eye-slash" inert></i><span class="fhql-label">{{localize "FHQL.Objective.HideDone"}}</span></button>{{/if}}
+          <span class="fhql-count fhql-tally {{#if objectivesComplete}}is-complete{{/if}}">{{doneCount}}/{{objectiveTotal}}</span></h3>
         <div class="fhql-panel-body" data-scroll="objectives">
         {{#if allHidden}}<p class="fhql-muted">{{localize "FHQL.Objective.AllDoneHidden"}}</p>{{/if}}
         <ul class="fhql-objectives {{#if objectivesCapped}}is-capped{{/if}}">
@@ -218,13 +218,13 @@
               </span>
               <span class="fhql-requirement-end">
                 {{#if depositsList.length}}
-                <button type="button" class="fhql-button fhql-small fhql-deposits-toggle {{#if depositsOpen}}is-on{{/if}}" data-action="toggleDeposits"
+                <button type="button" class="fhql-button fhql-small fhql-tally-button fhql-deposits-toggle {{#if depositsOpen}}is-on{{/if}}" data-action="toggleDeposits"
                         aria-expanded="{{#if depositsOpen}}true{{else}}false{{/if}}" aria-label="{{depositsLabel}}" data-tooltip="{{localize 'FHQL.Deposit.Who'}}">
                   <i class="fa-solid fa-users" inert></i> {{depositsList.length}}</button>
                 {{/if}}
-                <span class="fhql-requirement-progress" style="--fhql-fill: {{requirement.fill}}" aria-label="{{localize 'FHQL.Deposit.Progress'}} {{requirement.progress}}">{{requirement.progress}}</span>
+                <span class="fhql-requirement-progress fhql-tally {{#if requirement.met}}is-complete{{/if}}" style="--fhql-fill: {{requirement.fill}}" aria-label="{{localize 'FHQL.Deposit.Progress'}} {{requirement.progress}}">{{requirement.progress}}</span>
                 {{#if canDeposit}}
-                <button type="button" class="fhql-button fhql-small fhql-primary fhql-icon-only" data-action="depositItem" aria-haspopup="dialog" aria-label="{{depositAria}}" data-tooltip="{{depositAria}}">
+                <button type="button" class="fhql-button fhql-small fhql-primary fhql-icon-only fhql-tally-button" data-action="depositItem" aria-haspopup="dialog" aria-label="{{depositAria}}" data-tooltip="{{depositAria}}">
                   <i class="fa-solid {{depositIcon}}" inert></i></button>
                 {{/if}}
               </span>
@@ -274,7 +274,7 @@
       {{#if subquests.length}}
       <section class="fhql-card fhql-area-subquests" data-panel="subquests" {{#if gm}}data-drop="subquests"{{/if}}>
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.Subquests"}}
-          <span class="fhql-count">{{subquests.length}}</span>
+          <span class="fhql-count fhql-tally {{#if subquestsComplete}}is-complete{{/if}}">{{subquests.length}}</span>
           {{#if gm}}<button type="button" class="fhql-button fhql-small" data-action="addSubquest" aria-label="{{localize 'FHQL.Quest.AddSubquestLabel'}}" data-tooltip="{{localize 'FHQL.Quest.AddSubquestLabel'}}"><i class="fa-solid fa-plus" inert></i><span class="fhql-label">{{localize "FHQL.Quest.AddSubquest"}}</span></button>{{/if}}
         </h3>
         <div class="fhql-panel-body" data-scroll="subquests">
@@ -304,7 +304,7 @@
       {{#if showRewards}}
       <section class="fhql-card fhql-area-rewards" data-panel="rewards" {{#if editable}}data-drop="rewards"{{/if}}>
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.Rewards"}}
-          <span class="fhql-count">{{#if rewardSummary}}{{rewardSummary}}{{else}}{{rewards.length}}{{/if}}</span></h3>
+          <span class="fhql-count fhql-tally {{#if rewardsComplete}}is-complete{{/if}}">{{#if rewardSummary}}{{rewardSummary}}{{else}}{{rewards.length}}{{/if}}</span></h3>
         <div class="fhql-panel-body" data-scroll="rewards">
         <ul class="fhql-rewards {{#if editing}}is-editing{{/if}}">
           {{#each rewards}}

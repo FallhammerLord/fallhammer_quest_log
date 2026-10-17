@@ -4,6 +4,7 @@
 
 First feature-complete preview. Requires Foundry VTT v14.
 
+- Counts are boxed tallies that turn green once complete (objectives done, items handed in, rewards claimed, subquests finished), and everything sharing a line shares its height. Hide done sits right beside the Objectives count (icon-only in a narrow panel).
 - Rewards keep the GM's lock and eye on the right of the first line; Claim and Give sit under the reward's name.
 - New per-player setting **Cross out done items** (on by default): turn off to show done objectives and claimed rewards muted with a tick only.
 - The Quest Log opens at 1040 × 920 with a 350px list, and the list never squeezes the quest under 320px; its divider settles on 250, 350 or 500px when dragged near (Shift drags freely), and its width is remembered when the log reopens. New folder and Fold all lead the filter row; each status chip shows how many quests it holds.

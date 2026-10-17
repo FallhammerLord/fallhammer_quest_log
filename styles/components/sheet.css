@@ -207,7 +207,7 @@
   /* The collapse arrow leads the title; counts and buttons stay right. */
   .fhql-app .fhql-card[data-panel] > .fhql-subheading { cursor: pointer; justify-content: flex-start; }
   .fhql-app .fhql-card[data-panel] > .fhql-subheading > .fhql-count { margin-inline-start: auto; }
-  .fhql-app .fhql-card[data-panel] > .fhql-subheading > .fhql-hide-done ~ .fhql-count { margin-inline-start: 0.5em; }
+  .fhql-app .fhql-card[data-panel] > .fhql-subheading > .fhql-hide-done ~ .fhql-count { margin-inline-start: 0.4em; }
   .fhql-app .fhql-card[data-panel] > .fhql-subheading::before { content: "\25BE"; color: var(--fhql-ink-muted); font-size: 0.8em; }
   .fhql-app .fhql-card.is-collapsed > .fhql-subheading::before { content: "\25B8"; }
   .fhql-app .fhql-objectives.is-capped > li:nth-child(n + 9) { display: none; }
@@ -222,7 +222,16 @@
 }
 
 /* Objectives: Hide done */
-.fhql-app .fhql-hide-done { width: auto; gap: 0.3em; margin-inline-start: auto; font-family: var(--fhql-font-body); font-size: 0.72em; font-weight: normal; letter-spacing: 0; text-transform: none; }
+.fhql-app .fhql-button.fhql-small.fhql-hide-done { width: auto; height: 24px; min-height: 24px; gap: 0.3em; margin-inline-start: auto; font-family: var(--fhql-font-body); font-size: var(--fhql-tally-font); font-weight: normal; letter-spacing: 0; text-transform: none; }
+/* In a narrow Objectives panel, Hide done shows only its icon so it and the count stay on the heading's line.
+   (A size container is safe here: the heading holds no text field.) */
+.fhql-app .fhql-card[data-panel="objectives"] > .fhql-subheading { container: fhql-objectives-head / inline-size; }
+@container fhql-objectives-head (max-width: 270px) {
+  .fhql-app .fhql-button.fhql-small.fhql-hide-done { width: 24px; min-width: 24px; padding: 0; justify-content: center; }
+  .fhql-app .fhql-hide-done .fhql-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+}
+/* Hide done sits right beside the count, not split from it. */
+.fhql-app .fhql-subheading > .fhql-hide-done ~ .fhql-count { margin-inline-start: 0.4em; }
 @container fhql-sheet (max-width: 400px) {
   .fhql-app .fhql-sheet-head {
     grid-template-areas: "portrait title menu" "meta meta meta" "actions actions actions" "fields fields fields";
@@ -232,7 +241,7 @@
 }
 
 /* Section headings */
-.fhql-app .fhql-subheading { display: flex; align-items: baseline; gap: 0.5em; margin: 0 0 0.5em; }
+.fhql-app .fhql-subheading { display: flex; align-items: center; gap: 0.5em; margin: 0 0 0.5em; }
 .fhql-app.fhql-theme-light .fhql-subheading,
 .fhql-app.fhql-theme-auto .fhql-subheading { font-variant: small-caps; letter-spacing: 0.04em; }
 .fhql-app .fhql-count {
@@ -354,13 +363,31 @@
   border-radius: var(--fhql-radius);
 }
 .fhql-app .fhql-requirement-thumb img { width: 100%; height: 100%; object-fit: cover; border: 0; }
-.fhql-app .fhql-requirement-progress {
+/* Tallies: every count (panel headings, item hand-ins) sits in the same small box, and turns green once
+   complete. Things sharing a line share its height: tallies and the buttons beside them are all 24px. */
+/* One text size for every tally and the buttons beside them, whatever the heading or theme font size. */
+.fhql-app { --fhql-tally-font: 0.75rem; }
+.fhql-app .fhql-tally {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: 24px;
+  padding: 0 0.4em;
+  font-size: var(--fhql-tally-font);
   font-variant-numeric: tabular-nums;
-  padding: 0 0.35em;
   border: 1px solid var(--fhql-rule);
   border-radius: var(--fhql-radius);
 }
-.fhql-app .fhql-requirement.is-met .fhql-requirement-progress { color: var(--fhql-status-completed); border-color: currentColor; }
+.fhql-app .fhql-tally.is-complete { color: var(--fhql-status-completed); border-color: currentColor; }
+.fhql-app .fhql-subheading > .fhql-tally {
+  font-family: var(--fhql-font-body);
+  font-weight: normal;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: nowrap;
+}
+.fhql-app .fhql-button.fhql-tally-button { box-sizing: border-box; height: 24px; min-height: 24px; font-size: var(--fhql-tally-font); }
+.fhql-app .fhql-button.fhql-icon-only.fhql-tally-button { width: 24px; min-width: 24px; }
 .fhql-app .fhql-requirement-edit { display: inline-flex; flex-wrap: wrap; gap: 0.35em; align-items: center; min-width: 0; max-width: 100%; }
 .fhql-app .fhql-requirement-edit .fhql-small-select { min-width: 0; max-width: 100%; }
 .fhql-app .fhql-requirement-edit .fhql-count-input { width: 4.5em; flex: none; }

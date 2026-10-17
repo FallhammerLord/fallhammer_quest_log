@@ -138,6 +138,7 @@
 .fhql-app.fhql-theme-ledger .fhql-card.fhql-compact { padding-block-end: 0; }
 .fhql-app.fhql-theme-ledger .fhql-card.fhql-compact > .fhql-subheading { margin-block-end: 0; }
 .fhql-app.fhql-theme-ledger .fhql-card > .fhql-subheading :is(.fhql-count, .fhql-empty-note) { color: var(--fhql-banner-ink); opacity: 0.85; }
+.fhql-app.fhql-theme-ledger .fhql-card > .fhql-subheading .fhql-tally { border-color: currentColor; }
 .fhql-app.fhql-theme-ledger .fhql-card > .fhql-subheading .fhql-button {
   color: var(--fhql-banner-ink);
   background: rgb(0 0 0 / 0.28);
@@ -158,7 +159,7 @@
   background: linear-gradient(to right, var(--fhql-meter) var(--fhql-fill, 0%), var(--fhql-surface-sunken) var(--fhql-fill, 0%));
   border-color: var(--fhql-meter);
 }
-.fhql-app.fhql-theme-ledger .fhql-requirement.is-met .fhql-requirement-progress { color: var(--fhql-meter-ink); border-color: var(--fhql-meter); }
+.fhql-app.fhql-theme-ledger .fhql-requirement-progress.is-complete { color: var(--fhql-meter-ink); border-color: var(--fhql-meter); }
 
 /* Quest list: folders as banner bars. */
 .fhql-app.fhql-theme-ledger .fhql-folder {

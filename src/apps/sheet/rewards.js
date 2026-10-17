@@ -59,7 +59,8 @@ export function rewardsContext(entry, system, access)
    return {
       rewards,
       rewardSummary: claimableRewards.length
-       ? game.i18n.format('FHQL.Reward.Summary', { claimed: claimedCount, total: claimableRewards.length }) : ''
+       ? game.i18n.format('FHQL.Reward.Summary', { claimed: claimedCount, total: claimableRewards.length }) : '',
+      rewardsComplete: claimableRewards.length > 0 && claimedCount === claimableRewards.length
    };
 }
 

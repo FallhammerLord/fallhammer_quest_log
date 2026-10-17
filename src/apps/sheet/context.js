@@ -105,6 +105,9 @@ export async function sheetContext(app, entry, saveStateLabel)
       rewards,
       rewardSummary,
       subquests: children,
+      // Tallies turn green once complete, like a filled item requirement.
+      subquestsComplete: children.length > 0 && children.every((c) => c.status === 'completed' || c.status === 'failed'),
+      objectivesComplete: allObjectives.length > 0 && doneCount === allObjectives.length,
       showHiddenNotice: access.gm && system.status === 'hidden',
       showObjectives: allObjectives.length > 0 || editing,
       showRewards: rewards.length > 0 || editing,
