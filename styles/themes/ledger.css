@@ -3,17 +3,17 @@
  * Loaded after styles/fhql.css and styles/components/ (see module.json).
  */
 
-/* ---------- Tokens: Ledger (charcoal sheet under a crimson banner; matches Tidy 5e Sheets when active) ---------- */
+/* ---------- Tokens: Ledger (crimson banner, charcoal sheet, black wells, silver trim; matches Tidy 5e Sheets when active) ---------- */
 .fhql-app.fhql-theme-ledger {
   --fhql-surface: #1d1e23;
   --fhql-surface-raised: #2a2c32;
-  --fhql-surface-sunken: #16171b;
+  --fhql-surface-sunken: #121317;
   --fhql-ink: #f1ede8;
   --fhql-ink-muted: #b5afa8;
   --fhql-rule: #3b3e46;
   --fhql-hover: rgb(255 255 255 / 0.06);
-  --fhql-accent: #d9ae5f;
-  --fhql-accent-ink: #1d1e23;
+  --fhql-accent: #c4cad3;
+  --fhql-accent-ink: #16171b;
   --fhql-danger-ink: #16171b;
   --fhql-status-hidden: #9a9590;
   --fhql-status-available: #e0c070;
@@ -23,7 +23,7 @@
   /* The banner: header band, section bars, folder rows, title bar. Tidy's colors override these inline. */
   --fhql-banner: #741b2b;
   --fhql-banner-ink: #f8f4f1;
-  --fhql-metal: #b8954f;
+  --fhql-metal: #a7aeb8;
   --fhql-meter: #2f6b3a;
   --fhql-meter-ink: #f8f4f1;
   --fhql-font-heading-theme: "Modesto Condensed", "Palatino Linotype", serif;
@@ -33,14 +33,13 @@
   --fhql-texture: none;
   --fhql-texture-full: 100;
   --fhql-list-texture: none;
-  /* A soft damask-like lattice with a sheen, laid over whatever banner color is in use. */
+  /* 1920s fan scales in silver, with a sheen, laid over whatever banner color is in use. Each fan's
+     lines stop where the fan in front covers them, so the tile needs no fill and suits any color. */
   --fhql-banner-texture:
-    radial-gradient(ellipse at 12% 0%, rgb(255 255 255 / 0.24), transparent 55%),
-    radial-gradient(ellipse at 100% 120%, rgb(0 0 0 / 0.7), transparent 60%),
-    repeating-linear-gradient(60deg, rgb(255 255 255 / 0.09) 0 1px, transparent 1px 12px),
-    repeating-linear-gradient(-60deg, rgb(255 255 255 / 0.09) 0 1px, transparent 1px 12px),
-    radial-gradient(circle at 50% 50%, rgb(0 0 0 / 0.24) 0 3px, transparent 4px);
-  --fhql-banner-texture-size: auto, auto, auto, auto, 24px 14px;
+    radial-gradient(ellipse at 12% 0%, rgb(255 255 255 / 0.2), transparent 55%),
+    radial-gradient(ellipse at 100% 120%, rgb(0 0 0 / 0.6), transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='22' viewBox='0 0 44 22'%3E%3Cg fill='none' stroke-linecap='round'%3E%3Cpath d='M35.3 1.7L34.5 0.5 33.5 -0.5M10.5 -0.5L9.5 0.5 8.7 1.7M13.3 12.7L12.5 11.5 11.5 10.5 10.5 9.5 9.3 8.7 8.1 7.9 6.9 7.2 5.6 6.7 4.2 6.3 2.8 6.0 1.4 5.8 0.0 5.7M44.0 5.7L42.6 5.8 41.2 6.0 39.8 6.3 38.4 6.7 37.1 7.2 35.9 7.9 34.7 8.7 33.5 9.5 32.5 10.5 31.5 11.5 30.7 12.7M34.5 22.5L33.5 21.5 32.5 20.5 31.3 19.7 30.1 18.9 28.9 18.2 27.6 17.7 26.2 17.3 24.8 17.0 23.4 16.8 22.0 16.7 20.6 16.8 19.2 17.0 17.8 17.3 16.4 17.7 15.1 18.2 13.9 18.9 12.7 19.7 11.5 20.5 10.5 21.5 9.5 22.5' stroke='rgb(220,226,234)' stroke-opacity='0.13' stroke-width='0.6'/%3E%3Cpath d='M30.1 4.2L29.5 3.5 28.8 2.9 28.1 2.3 27.3 1.9 26.5 1.4 25.6 1.1 24.7 0.8 23.8 0.6 22.9 0.5 22.0 0.4 21.1 0.5 20.2 0.6 19.3 0.8 18.4 1.1 17.5 1.4 16.7 1.9 15.9 2.3 15.2 2.9 14.5 3.5 13.9 4.2M8.1 15.2L7.5 14.5 6.8 13.9 6.1 13.3 5.3 12.9 4.5 12.4 3.6 12.1 2.7 11.8 1.8 11.6 0.9 11.5 0.0 11.4 -0.9 11.5M44.9 11.5L44.0 11.4 43.1 11.5 42.2 11.6 41.3 11.8 40.4 12.1 39.5 12.4 38.7 12.9 37.9 13.3 37.2 13.9 36.5 14.5 35.9 15.2M24.7 22.8L23.8 22.6 22.9 22.5 22.0 22.4 21.1 22.5 20.2 22.6 19.3 22.8' stroke='rgb(220,226,234)' stroke-opacity='0.1' stroke-width='0.5'/%3E%3Cpath d='M40.6 0.3L41.1 0.0M33.5 -0.5L33.9 -0.9M10.5 -0.5L10.1 -0.9M3.4 0.3L2.9 0.0M18.6 11.3L19.1 11.0M11.5 10.5L11.9 10.1 12.3 9.7 12.7 9.3 13.1 8.9 13.5 8.5 13.9 8.1 14.3 7.7 14.7 7.3 15.2 6.8 15.6 6.4M8.1 7.9L8.4 7.4 8.7 6.9 9.0 6.4 9.3 5.9 9.6 5.4 9.9 4.9 10.1 4.4 10.4 3.9 10.7 3.4 11.0 2.9M4.2 6.3L4.4 5.7 4.5 5.2 4.7 4.6 4.8 4.1 5.0 3.5 5.1 3.0 5.2 2.4 5.4 1.9 5.5 1.3 5.7 0.7M0.0 5.7L0.0 5.1 0.0 4.6 0.0 4.0 0.0 3.4 0.0 2.9 0.0 2.3 0.0 1.7 0.0 1.1 0.0 0.6 0.0 0.0M44.0 5.7L44.0 5.1 44.0 4.6 44.0 4.0 44.0 3.4 44.0 2.9 44.0 2.3 44.0 1.7 44.0 1.1 44.0 0.6 44.0 0.0M39.8 6.3L39.6 5.7 39.5 5.2 39.3 4.6 39.2 4.1 39.0 3.5 38.9 3.0 38.8 2.4 38.6 1.9 38.5 1.3 38.3 0.7M35.9 7.9L35.6 7.4 35.3 6.9 35.0 6.4 34.7 5.9 34.4 5.4 34.1 4.9 33.9 4.4 33.6 3.9 33.3 3.4 33.0 2.9M32.5 10.5L32.1 10.1 31.7 9.7 31.3 9.3 30.9 8.9 30.5 8.5 30.1 8.1 29.7 7.7 29.3 7.3 28.8 6.8 28.4 6.4M25.4 11.3L24.9 11.0M40.6 22.3L41.1 22.0M33.5 21.5L33.9 21.1 34.3 20.7 34.7 20.3 35.1 19.9 35.5 19.5 35.9 19.1 36.3 18.7 36.7 18.3 37.2 17.8 37.6 17.4M30.1 18.9L30.4 18.4 30.7 17.9 31.0 17.4 31.3 16.9 31.6 16.4 31.9 15.9 32.1 15.4 32.4 14.9 32.7 14.4 33.0 13.9M26.2 17.3L26.4 16.7 26.5 16.2 26.7 15.6 26.8 15.1 27.0 14.5 27.1 14.0 27.2 13.4 27.4 12.9 27.5 12.3 27.7 11.7M22.0 16.7L22.0 16.1 22.0 15.6 22.0 15.0 22.0 14.4 22.0 13.9 22.0 13.3 22.0 12.7 22.0 12.1 22.0 11.6 22.0 11.0M17.8 17.3L17.6 16.7 17.5 16.2 17.3 15.6 17.2 15.1 17.0 14.5 16.9 14.0 16.8 13.4 16.6 12.9 16.5 12.3 16.3 11.7M13.9 18.9L13.6 18.4 13.3 17.9 13.0 17.4 12.7 16.9 12.4 16.4 12.1 15.9 11.9 15.4 11.6 14.9 11.3 14.4 11.0 13.9M10.5 21.5L10.1 21.1 9.7 20.7 9.3 20.3 8.9 19.9 8.5 19.5 8.1 19.1 7.7 18.7 7.3 18.3 6.8 17.8 6.4 17.4M3.4 22.3L2.9 22.0M0.0 22.6L0.0 22.0M44.0 22.6L44.0 22.0' stroke='rgb(220,226,234)' stroke-opacity='0.08' stroke-width='0.45'/%3E%3Cpath d='M19.1 11.0L18.0 9.4 16.9 7.9 15.6 6.4 14.1 5.1 12.6 4.0 11.0 2.9 9.3 2.1 7.5 1.3 5.7 0.7 3.8 0.3 1.9 0.1 0.0 0.0M44.0 0.0L42.1 0.1 40.2 0.3 38.3 0.7 36.5 1.3 34.7 2.1 33.0 2.9 31.4 4.0 29.9 5.1 28.4 6.4 27.1 7.9 26.0 9.4 24.9 11.0M41.1 22.0L40.0 20.4 38.9 18.9 37.6 17.4 36.1 16.1 34.6 15.0 33.0 13.9 31.3 13.1 29.5 12.3 27.7 11.7 25.8 11.3 23.9 11.1 22.0 11.0 20.1 11.1 18.2 11.3 16.3 11.7 14.5 12.3 12.7 13.1 11.0 13.9 9.4 15.0 7.9 16.1 6.4 17.4 5.1 18.9 4.0 20.4 2.9 22.0M5.7 22.7L3.8 22.3 1.9 22.1 0.0 22.0M44.0 22.0L42.1 22.1 40.2 22.3 38.3 22.7' stroke='rgb(220,226,234)' stroke-opacity='0.3' stroke-width='0.9'/%3E%3C/g%3E%3C/svg%3E");
+  --fhql-banner-texture-size: auto, auto, 44px 22px;
 }
 
 /* ---------- Ledger theme: banner header, section bars, striped rows ---------- */
@@ -96,7 +95,7 @@
 .fhql-app.fhql-theme-ledger .fhql-heading { font-size: 1.9em; font-weight: normal; line-height: 1.05; }
 .fhql-app.fhql-theme-ledger .fhql-sheet-head .fhql-in-progress { color: var(--fhql-metal); }
 
-/* Portrait: a metal ring (round, or square when the GM picks square frames). */
+/* Portrait: a silver ring (round, or square when the GM picks square frames). */
 .fhql-app.fhql-theme-ledger .fhql-portrait {
   border: 3px solid var(--fhql-metal);
   box-shadow: 0 0 0 2px rgb(0 0 0 / 0.5), 0 2px 8px rgb(0 0 0 / 0.5);
@@ -129,7 +128,7 @@
   font-variant: normal;
   letter-spacing: 0.01em;
 }
-/* The quest list's toolbar carries the same lattice over its own color, edged like the quest header. */
+/* The quest list's toolbar carries the same fan scales over its own color, edged like the quest header. */
 .fhql-app.fhql-theme-ledger .fhql-list > .fhql-toolbar {
   background-image: var(--fhql-veil-sunken), var(--fhql-overlay-top), var(--fhql-banner-texture);
   background-size: 100% 100%, 100% 100%, var(--fhql-banner-texture-size);

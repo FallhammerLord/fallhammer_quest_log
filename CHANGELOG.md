@@ -6,6 +6,8 @@ First feature-complete preview. Requires Foundry VTT v14.
 
 - Nested quest folders: the GM right-clicks a folder to add a subfolder, rename, move it into another folder, or delete it (its quests move up a level). Up to three levels, as Foundry allows.
 - A GM handing over from a sheet several players share chooses who gave it.
+- Theme images work: overlays (the default washes on Light and Ledger, and the GM's own) now load, and the Theme images button in Module Settings opens its window.
+- Ledger is now crimson, charcoal, black and silver, with 1920s fan scales on its banner, section bars and list toolbar.
 - Row borders and focus rings no longer clip at the edge of a scrolling panel; the editor's pen button is centered.
 - Quest Log with folders (inside the FHQL Quests journal folder), status filters, search, nested subquests, and a right-click quest menu.
 - Quest sheet in the log or its own window: rich text, quest giver and reward drag-and-drop, GM-only notes, subquests, quest image, dates, read and edit modes with autosave.
@@ -29,7 +31,7 @@ First feature-complete preview. Requires Foundry VTT v14.
 - Resizing settles on comfortable widths when you drag near them (hold Shift to resize freely).
 - Quest giver portraits are round in every theme, or square by GM setting.
 - Cabaret theme: wine velvet, gilt and footlights; a sequined harlequin trellis, a velvet-curtain quest list, gilt frames.
-- Texture strength: a table slider set by the GM, with a per-player override (Smooth turns textures off). Theme images: header and lower washes per theme, D&D 5e's own when that system runs, or the GM's uploads. Ledger's lattice now runs across its panel headings and list toolbar.
+- Texture strength: a table slider set by the GM, with a per-player override (Smooth turns textures off). Theme images: header and lower washes per theme, D&D 5e's own when that system runs, or the GM's uploads. Ledger's texture runs across its panel headings and list toolbar.
 - New-change dots, objective glows, an optional chat card when a quest is completed or failed, remembered window size, / to search, sliding folders, and hover previews of quest links.
 - Show players: the GM opens a quest on players' screens, like Forien's Show.
 - Player notes are edited in place from the read view, one person at a time; others see who is editing.
