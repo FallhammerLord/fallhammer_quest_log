@@ -31,13 +31,18 @@
       {{/if}}
     </div>
 
-    {{#if gm}}
-    <button type="button" class="fhql-icon-button fhql-menu" data-action="questMenu" aria-haspopup="menu"
-            aria-label="{{localize 'FHQL.Quest.MoreActions'}}" data-tooltip="{{localize 'FHQL.Quest.MoreActions'}}">
-      <i class="fa-solid fa-ellipsis-vertical" inert></i></button>
-    {{else}}
-    <span></span>
-    {{/if}}
+    {{! Edit and the GM's ⋮ menu sit at the top right, so the status buttons below fit one row. }}
+    <div class="fhql-menu">
+      {{#if editable}}{{#unless editing}}
+      <button type="button" class="fhql-button fhql-small" data-action="editQuest" aria-label="{{localize 'FHQL.QuestLog.Edit'}}">
+        <i class="fa-solid fa-pen" inert></i><span class="fhql-label">{{localize "FHQL.QuestLog.Edit"}}</span></button>
+      {{/unless}}{{/if}}
+      {{#if gm}}
+      <button type="button" class="fhql-icon-button" data-action="questMenu" aria-haspopup="menu"
+              aria-label="{{localize 'FHQL.Quest.MoreActions'}}" data-tooltip="{{localize 'FHQL.Quest.MoreActions'}}">
+        <i class="fa-solid fa-ellipsis-vertical" inert></i></button>
+      {{/if}}
+    </div>
 
     <div class="fhql-sheet-meta">
       <span class="fhql-status-badge fhql-status-{{status}}"><i class="{{statusIcon}}" inert></i> {{statusLabel}}</span>
@@ -106,10 +111,6 @@
       <button type="button" class="fhql-button" data-action="popOut"
               aria-label="{{localize 'FHQL.Menu.PopOut'}}" data-tooltip="{{localize 'FHQL.Menu.PopOutHint'}}">
         <i class="fa-solid fa-up-right-from-square" inert></i><span class="fhql-label">{{localize "FHQL.Menu.PopOut"}}</span></button>
-      {{/if}}
-      {{#if editable}}
-      <button type="button" class="fhql-button fhql-push" data-action="editQuest" aria-label="{{localize 'FHQL.QuestLog.Edit'}}">
-        <i class="fa-solid fa-pen" inert></i><span class="fhql-label">{{localize "FHQL.QuestLog.Edit"}}</span></button>
       {{/if}}
     </div>
     {{/if}}

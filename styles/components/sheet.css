@@ -54,14 +54,15 @@
 .fhql-app .fhql-sheet-head {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
-  grid-template-areas: "portrait title menu" "portrait meta meta" "actions actions actions" "fields fields fields";
+  /* The picture runs down the left edge beside the title, status line and buttons. */
+  grid-template-areas: "portrait title menu" "portrait meta meta" "portrait actions actions" "fields fields fields";
   gap: 0.3em 0.9em;
   align-items: start;
   padding-block-end: 0.8em;
   border-block-end: 3px double var(--fhql-rule);
-  /* The giver picture is a fixed 100px, Foundry's own token size, so portraits stay sharp. Fixed, never
-     worked out from the title or measured: a size that followed the title jumped on every redraw and
-     on every theme change (each theme's title font differs). */
+  /* The giver picture is a fixed 100px, Foundry's own token size, so portraits stay sharp; the title,
+     status line and buttons start at its top edge. Fixed, never worked out from the title or measured:
+     a size that followed the title jumped on every redraw and on every theme change. */
   --fhql-portrait-size: 100px;
 }
 
@@ -101,9 +102,7 @@
 }
 
 .fhql-app .fhql-sheet-title { grid-area: title; min-width: 0; }
-/* The title and status lines sit together, centered on the taller picture beside them. */
-.fhql-app .fhql-sheet-head > .fhql-sheet-title { align-self: end; }
-.fhql-app .fhql-sheet-head > .fhql-sheet-meta { align-self: start; }
+
 .fhql-app .fhql-sheet-title .fhql-heading { text-wrap: balance; line-height: 1.2; }
 .fhql-app .fhql-sheet-meta {
   grid-area: meta;
@@ -168,7 +167,7 @@
   text-align: start;
 }
 
-.fhql-app .fhql-menu { grid-area: menu; }
+.fhql-app .fhql-menu { grid-area: menu; display: flex; gap: 0.25em; align-items: center; }
 
 /* Body */
 .fhql-app .fhql-sheet-body { display: flex; flex-direction: column; gap: 0.8em; min-height: 0; }

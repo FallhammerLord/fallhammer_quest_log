@@ -517,7 +517,7 @@ export function QuestSheetMixin(Base)
        */
       _openQuestMenu(entry, anchor)
       {
-         return openQuestMenu(this, entry, anchor, { fromList: true });
+         return openQuestMenu(this, entry, anchor);
       }
    };
 }

@@ -35,7 +35,7 @@ Folders and filters:
 - Log opens at 1040 × 920; list 350px by default (double-click the divider to reset); dragging settles on 250/350/500 (Shift: free); close and reopen the log: the width stays; New folder and fold-all at the left of the chips; chips show counts; long names wrap to two lines, and only cut names show a tooltip.
 - Hide done is a toggle button in the Objectives heading.
 - Item hand-ins: the item sits under the objective's text with a bracket; count and Hand over on the right; no repeated name when it matches; the people button folds "who handed in" open and shut. Filling the count leaves the objective open for the GM to tick.
-- In the log, **Pop out** on the quest header opens it in its own window (not shown in a popped-out window). **Show players** is in the ⋮ menu; right-clicking a row also offers Pop out.
+- Header: the giver picture (100px) runs down the left edge; title, status line and buttons sit beside it, top-aligned. Players have a **Pop out** button in the log; the GM finds **Pop out** and **Show players** in the ⋮ menu (and on right-clicking a row). A popped-out window offers no Pop out.
 - The **?** in the Quest Log title bar opens tips (GM sees three more).
 - Tooltips are short and don't cover neighboring rows much (fold toggle: "Fold or open (Alt: all)").
 - Folders: the folder icon shows open or closed and fades between them as rows slide; a black folder stays visible on dark themes.

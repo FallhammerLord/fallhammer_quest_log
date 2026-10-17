@@ -62,7 +62,7 @@ for (const c of CASES)
    for (const width of LOG_WIDTHS)
    {
       const sheet = sheetContext(t, c);
-      const ctx = { ...listContext(t, c.gm), ...sheet, sheet: { ...sheet.sheet, canPopOut: true } };
+      const ctx = { ...listContext(t, c.gm), ...sheet, sheet: { ...sheet.sheet, canPopOut: !c.gm } };
       pages.push({ id: `log-${c.name}-${width}`, html: frame('log', width, c.theme, listT(ctx) + sheetT(ctx), c.font) });
    }
 }
