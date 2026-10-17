@@ -284,7 +284,9 @@ const BUNDLED_FONTS = [
    { family: 'Oxanium', url: `${MODULE_PATH}/styles/fonts/oxanium/Oxanium-SemiBold.woff2`, weight: '400 700' },
    { family: 'Limelight', url: `${MODULE_PATH}/styles/fonts/limelight/Limelight-Regular.woff2` },
    { family: 'Cinzel', url: `${MODULE_PATH}/styles/fonts/cinzel/Cinzel-SemiBold.woff2`, weight: '400 700' },
-   { family: 'Courier Prime', url: `${MODULE_PATH}/styles/fonts/courier-prime/CourierPrime-Bold.woff2`, weight: '400 700' }
+   { family: 'Courier Prime', url: `${MODULE_PATH}/styles/fonts/courier-prime/CourierPrime-Bold.woff2`, weight: '400 700' },
+   // Body text, not a heading: Hope and Fear reads in Overpass, as the Daggerheart system's sheets do.
+   { family: 'Overpass', url: `${MODULE_PATH}/styles/fonts/overpass/Overpass-Variable.woff2`, weight: '100 900' }
 ];
 
 /**

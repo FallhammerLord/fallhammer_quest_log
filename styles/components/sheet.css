@@ -42,9 +42,10 @@
   margin-inline: calc(-1 * var(--fhql-pad-x));
   padding: var(--fhql-pad-top) var(--fhql-pad-x) 0;
   background-color: var(--fhql-surface);
-  background-image: var(--fhql-veil), var(--fhql-overlay-top), var(--fhql-texture);
-  background-size: 100% 100%, 100% 100%, var(--fhql-texture-size);
-  background-position: 0 0, 0 0, var(--fhql-texture-position);
+  /* A theme may give the header its own texture (--fhql-head-texture); else it shares the sheet's. */
+  background-image: var(--fhql-veil), var(--fhql-overlay-top), var(--fhql-head-texture, var(--fhql-texture));
+  background-size: 100% 100%, 100% 100%, var(--fhql-head-texture-size, var(--fhql-texture-size));
+  background-position: 0 0, 0 0, var(--fhql-head-texture-position, var(--fhql-texture-position));
   background-repeat: no-repeat, no-repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat, repeat;
   background-blend-mode: var(--fhql-texture-blend);
 }

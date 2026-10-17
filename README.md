@@ -57,7 +57,7 @@ their system for reduced motion get plain fades.
 
 ## Credits
 
-Heading fonts bundled under the SIL Open Font License 1.1 (licence beside each font in `styles/fonts/`):
+Fonts bundled under the SIL Open Font License 1.1 (licence beside each font in `styles/fonts/`):
 
 | Font | Theme | By |
 |---|---|---|
@@ -67,6 +67,7 @@ Heading fonts bundled under the SIL Open Font License 1.1 (licence beside each f
 | Limelight | Cabaret | Sorkin Type Co |
 | Cinzel | Hope and Fear | The Cinzel Project Authors (Natanael Gama) |
 | Courier Prime | Noir | The Courier Prime Project Authors (Quote-Unquote Apps) |
+| Overpass (body text) | Hope and Fear | The Overpass Project Authors (Red Hat) |
 
 Light uses Amiri and Ledger uses Modesto Condensed, both shipped with Foundry. Icons are Font Awesome,
 as shipped with Foundry. Theme textures and wash images are drawn for this module

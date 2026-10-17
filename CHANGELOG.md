@@ -4,6 +4,7 @@
 
 First feature-complete preview. Requires Foundry VTT v14.
 
+- Hope and Fear follows the Daggerheart system's own sheets: frosted indigo glass over the scene, Overpass text under Cinzel titles, gold filled buttons and pill status tags, Fear in blue, and duality sparks in the quest header. Solid when Foundry's no-blur option is on.
 - Advanced settings: easter eggs, ownership levels, reward unlocking, chat announcements and the players' Quest Log buttons move to their own window, keeping Module Settings short.
 - Players' journal sidebar no longer lists quests or the FHQL Quests folder; players reach quests through the Quest Log and the Beacon.
 - The Beacon shows up to five objectives; more scroll inside it, and a redraw keeps the scroll.

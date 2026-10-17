@@ -82,7 +82,7 @@ export function registerQuenchTests(quench)
 
          it('registers its bundled fonts with Foundry and the browser', async function ()
          {
-            for (const family of ['IM Fell English SC', 'Josefin Sans', 'Oxanium', 'Limelight', 'Cinzel', 'Courier Prime'])
+            for (const family of ['IM Fell English SC', 'Josefin Sans', 'Oxanium', 'Limelight', 'Cinzel', 'Courier Prime', 'Overpass'])
             {
                assert.property(CONFIG.fontDefinitions, family);
                await document.fonts.load(`16px "${family}"`);
