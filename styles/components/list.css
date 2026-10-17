@@ -139,28 +139,39 @@
   padding-inline-start: calc(var(--fhql-depth, 0) * 1.1em);
 }
 .fhql-app li[data-row="quest"] > .fhql-row { flex: 1 1 auto; min-width: 0; padding-inline-start: 0.15em; }
-.fhql-app :is(.fhql-twisty, .fhql-twisty-gap) { flex: none; width: 24px; min-height: 24px; }
+.fhql-app :is(.fhql-twisty, .fhql-twisty-gap) { flex: none; width: 24px; min-height: 2.2em; }
+/* The fold toggle: a full-height bar holding three pips, lit with the accent while the family is
+   open, dim while folded. */
 .fhql-app .fhql-twisty {
   display: grid;
   place-items: center;
   padding: 0;
-  font-size: 0.75em;
-  color: var(--fhql-ink-muted);
   background: transparent;
   border: 0;
   border-radius: var(--fhql-radius);
   cursor: pointer;
 }
-.fhql-app .fhql-twisty:hover { color: var(--fhql-accent); background: var(--fhql-hover); }
-.fhql-app .fhql-twisty i { transition: rotate 0.15s; }
-.fhql-app li.is-folded > .fhql-twisty i { rotate: -90deg; }
-@media (prefers-reduced-motion: reduce) { .fhql-app .fhql-twisty i { transition: none; } }
-/* A faint line down from each parent's arrow ties its subquests to it. */
+.fhql-app .fhql-twisty:hover { background: var(--fhql-hover); }
+.fhql-app .fhql-twisty:focus-visible { outline: 2px solid var(--fhql-accent); outline-offset: -2px; }
+.fhql-app li:has(> .fhql-row.is-selected) > .fhql-twisty { background: var(--fhql-surface-raised); }
+.fhql-app .fhql-pips { display: grid; gap: 3px; }
+.fhql-app .fhql-pips > i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--fhql-accent);
+  box-shadow: 0 0 5px color-mix(in srgb, var(--fhql-accent) 80%, transparent);
+  transition: opacity 0.15s, box-shadow 0.15s;
+}
+.fhql-app li.is-folded > .fhql-twisty .fhql-pips > i { opacity: 0.35; box-shadow: none; background: var(--fhql-ink-muted); }
+.fhql-app .fhql-twisty:hover .fhql-pips > i { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .fhql-app .fhql-pips > i { transition: none; } }
+/* A faint line ties subquests to their parent, just left of each subquest's icon (under the parent's icon). */
 .fhql-app li[data-row="quest"].is-child::before {
   content: '';
   position: absolute;
   inset-block: 0;
-  inset-inline-start: calc((var(--fhql-depth, 1) - 1) * 1.1em + 12px);
+  inset-inline-start: calc(var(--fhql-depth, 1) * 1.1em + 24px - 0.45em);
   width: 1px;
   background: var(--fhql-rule);
   pointer-events: none;
