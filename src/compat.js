@@ -86,6 +86,16 @@ export function pruneDirectory(element, dropFolder, dropEntry)
    }
 }
 
+/**
+ * @param {string} namespace - The setting's module ID.
+ * @param {string} key - The setting's key.
+ * @returns {object|undefined} Its registered options (name, hint, type, choices).
+ */
+export function settingConfig(namespace, key)
+{
+   return game.settings.settings.get(`${namespace}.${key}`);
+}
+
 /** @returns {HTMLElement|null} The players list element, if rendered. */
 export function playersElement()
 {

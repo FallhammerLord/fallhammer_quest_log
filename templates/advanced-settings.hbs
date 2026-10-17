@@ -1,0 +1,19 @@
+<div class="fhql-advanced-body">
+  <p class="fhql-muted">{{localize "FHQL.Advanced.Intro"}}</p>
+  {{#each fields}}
+  <div class="fhql-advanced-field">
+    {{#if checkbox}}
+    <label class="fhql-inline" for="{{id}}"><input type="checkbox" id="{{id}}" name="{{key}}" {{#if checked}}checked{{/if}}> {{name}}</label>
+    {{else}}
+    <label for="{{id}}">{{name}}</label>
+    <select class="fhql-input" id="{{id}}" name="{{key}}">
+      {{#each options}}<option value="{{value}}"{{#if selected}} selected{{/if}}>{{label}}</option>{{/each}}
+    </select>
+    {{/if}}
+    {{#if hint}}<p class="fhql-hint">{{hint}}</p>{{/if}}
+  </div>
+  {{/each}}
+  <footer class="fhql-advanced-footer">
+    <button type="submit" class="fhql-button fhql-primary"><i class="fa-solid fa-floppy-disk" inert></i> {{localize "FHQL.Advanced.Save"}}</button>
+  </footer>
+</div>

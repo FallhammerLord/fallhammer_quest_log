@@ -511,6 +511,14 @@
       "Objective": "Move objective: drag, or use the up and down arrows",
       "Reward": "Move reward: drag, or use the up and down arrows",
       "Moved": "Moved to {position} of {count}"
+    },
+    "Advanced": {
+      "MenuName": "Advanced settings",
+      "MenuLabel": "Open advanced settings",
+      "MenuHint": "Settings a GM sets once: easter eggs, ownership levels, reward unlocking, chat announcements, and the players' Quest Log buttons.",
+      "Title": "Advanced settings",
+      "Intro": "These apply to everyone at the table.",
+      "Save": "Save"
     }
   }
 }

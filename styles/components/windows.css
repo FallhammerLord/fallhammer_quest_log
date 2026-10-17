@@ -39,3 +39,10 @@
 .fhql-app .fhql-texture-slot { display: grid; grid-template-columns: 7.5em minmax(0, 1fr) auto auto; gap: 0.3em; align-items: center; }
 .fhql-app .fhql-texture-slot > .fhql-input { min-width: 0; }
 .fhql-app .fhql-texture-images-footer { display: flex; justify-content: flex-end; }
+
+/* ---------- Advanced settings window (GM, from Module Settings) ---------- */
+.fhql-app .fhql-advanced-body { display: grid; gap: 0.8em; padding: 0.9em 1em; }
+.fhql-app .fhql-advanced-body > p { margin: 0; }
+.fhql-app .fhql-advanced-field { display: grid; gap: 0.25em; padding-block-end: 0.6em; border-block-end: 1px solid var(--fhql-rule); }
+.fhql-app .fhql-advanced-field .fhql-hint { margin: 0; font-size: 0.85em; color: var(--fhql-ink-muted); }
+.fhql-app .fhql-advanced-footer { display: flex; justify-content: flex-end; }

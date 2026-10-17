@@ -3,6 +3,7 @@ import { refreshOpenApps } from './theme.js';
 import { availableFonts } from './compat.js';
 import { refreshQuestBeacon } from './ui/QuestBeacon.js';
 import { TextureImagesApp } from './apps/TextureImagesApp.js';
+import { ADVANCED_SETTINGS, AdvancedSettingsApp } from './apps/AdvancedSettingsApp.js';
 
 /** Registers module settings, in the order Module Settings lists them. Called on `init`. */
 export function registerSettings()
@@ -72,7 +73,7 @@ function registerLookSettings()
       name: 'FHQL.Settings.EasterEggs.Name',
       hint: 'FHQL.Settings.EasterEggs.Hint',
       scope: 'world',
-      config: true,
+      config: false, // In Advanced settings (src/apps/AdvancedSettingsApp.js)
       type: Boolean,
       default: true
    });
@@ -122,6 +123,14 @@ function registerLookSettings()
       type: Object,
       default: {},
       onChange: restyle
+   });
+   game.settings.registerMenu(MODULE_ID, 'advancedMenu', {
+      name: 'FHQL.Advanced.MenuName',
+      label: 'FHQL.Advanced.MenuLabel',
+      hint: 'FHQL.Advanced.MenuHint',
+      icon: 'fa-solid fa-sliders',
+      type: AdvancedSettingsApp,
+      restricted: true
    });
    game.settings.registerMenu(MODULE_ID, 'textureImagesMenu', {
       name: 'FHQL.TextureImages.MenuName',
@@ -203,7 +212,7 @@ function registerTableSettings()
       name: `FHQL.Settings.${key}.Name`,
       hint: `FHQL.Settings.${key}.Hint`,
       scope: 'world',
-      config: true,
+      config: !ADVANCED_SETTINGS.includes(key),
       type: Boolean,
       default: fallback,
       requiresReload: false,
@@ -227,7 +236,7 @@ function registerTableSettings()
       name: 'FHQL.Settings.AutoUnlockRewards.Name',
       hint: 'FHQL.Settings.AutoUnlockRewards.Hint',
       scope: 'world',
-      config: true,
+      config: false, // In Advanced settings (src/apps/AdvancedSettingsApp.js)
       type: Boolean,
       default: true
    });
@@ -237,7 +246,7 @@ function registerTableSettings()
       name: 'FHQL.Settings.FollowerOwnership.Name',
       hint: 'FHQL.Settings.FollowerOwnership.Hint',
       scope: 'world',
-      config: true,
+      config: false, // In Advanced settings (src/apps/AdvancedSettingsApp.js)
       type: Number,
       choices: {
          [levels.OWNER]: 'FHQL.Settings.FollowerOwnership.Owner',
@@ -250,7 +259,7 @@ function registerTableSettings()
       name: 'FHQL.Settings.AnnounceOutcomes.Name',
       hint: 'FHQL.Settings.AnnounceOutcomes.Hint',
       scope: 'world',
-      config: true,
+      config: false, // In Advanced settings (src/apps/AdvancedSettingsApp.js)
       type: Boolean,
       default: true
    });
@@ -260,7 +269,7 @@ function registerTableSettings()
       name: 'FHQL.Settings.DefaultOwnership.Name',
       hint: 'FHQL.Settings.DefaultOwnership.Hint',
       scope: 'world',
-      config: true,
+      config: false, // In Advanced settings (src/apps/AdvancedSettingsApp.js)
       type: Number,
       choices: {
          [LIMITED]: 'FHQL.Settings.DefaultOwnership.Limited',

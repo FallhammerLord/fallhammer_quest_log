@@ -67,6 +67,7 @@ npm run quests     # Foundry mocked: quest families (folders, no loops), double-
 | `src/ui/eggs.js` | theme easter eggs (Gothic bell on the Beacon, Cabaret curtain call, Sci-fi glitch on passive clicks); GM setting `easterEggs` |
 | `src/ui/popover.js` | in-window child panels (menus, pickers, confirms); markup in `templates/popovers/` |
 | `src/theme.js` | theme class, texture strength, overlay images, fonts, Tidy banner color, live preview |
+| `src/apps/AdvancedSettingsApp.js` | GM window from Module Settings: `ADVANCED_SETTINGS` (easter eggs, ownership levels, reward unlocking, announcements, players' buttons); registered `config: false` in settings.js |
 | `src/apps/TextureImagesApp.js` | GM window from Module Settings: header/lower wash image per theme |
 | `styles/fhql.css` | Light tokens (default), textures, windows, shared pieces |
 | `styles/components/*.css` | in load order: controls (generic buttons, inputs), list, sheet, Beacon, small windows, popovers, overrides (targets, scrollbars, smooth panels, title bars), high contrast, moments; tokens only. Order in `module.json` matters (later files win ties) and must match `STYLE_FILES` in `src/theme.js` |
@@ -136,10 +137,8 @@ Storage survives disable/re-enable; editing and autosave; view/edit modes; quick
 1. **Verify in play** (biggest risk): everything under "Waiting on the user", especially two-player cases (simultaneous deposits, Show players, notes lock) with a second browser as a player. The user can't run two-player tests yet; they'll shake out in play.
 2. **Release v0.3.0:** screenshots from the user's world, then merge to `main` and publish (workflow in `.github/workflows/release.yml`). Waits on the user.
 3. **Links and macros:** quest links and hotbar macros open our sheet directly (today they land on the journal page summary).
-4. **Advanced settings submenu:** proposal pending with the user (what to move there).
-5. **FQL macro shim:** explained to the user 2026-10-17; build only if they have FQL macros or modules calling FQL's API.
 
-Backburner (user's call, 2026-10-17): high contrast take two (the user's colorblind player is fine today); scale past a few dozen quests (quest index, 500-quest timing); translations; compendium/Adventure import keeping parent links (only matters if someone publishes adventures with quests). Dropped: nested objectives. Parked themes: Biosynth, Numenera-style.
+Backburner (user's call, 2026-10-17): high contrast take two (the user's colorblind player is fine today); scale past a few dozen quests (quest index, 500-quest timing); translations; compendium/Adventure import keeping parent links (only matters if someone publishes adventures with quests). Dropped: nested objectives; FQL macro shim (not needed). Parked themes: Biosynth, Numenera-style.
 
 Quest image guidance (told to the user): shown full pane width, max 160px tall, cropped top and bottom only. Recommend 5:1, 2000×400, key content in the middle 60% of height. Per-quest banner tint declined (2026-10-01).
 
