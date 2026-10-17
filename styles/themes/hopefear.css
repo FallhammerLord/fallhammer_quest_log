@@ -147,6 +147,7 @@ body:is(.performance-low, .noblur) .fhql-app.fhql-theme-hopefear :is(.fhql-sheet
 }
 /* The middle pip is split like the theme's gem: Hope meeting Fear (a mixed color reads as grey). */
 .fhql-app.fhql-theme-hopefear li:not(.is-folded) > .fhql-twisty .fhql-pips > i:nth-child(2) {
-  background: linear-gradient(135deg, var(--fhql-hope) 50%, var(--fhql-fear) 50%);
   border-color: transparent;
+  /* One clean diagonal: the split is drawn once across the whole pip, border included, not repeated into its edge. */
+  background: linear-gradient(135deg, var(--fhql-hope) 50%, var(--fhql-fear) 50%) border-box no-repeat;
 }
