@@ -65,7 +65,7 @@
         class="{{#if level}}is-child{{/if}}" style="--fhql-depth: {{depth}}">
       {{#if family}}
       <button type="button" class="fhql-twisty" data-action="toggleFamily" aria-expanded="true" aria-label="{{toggleLabel}}"
-              data-tooltip="{{localize 'FHQL.Family.ToggleHint'}}"><span class="fhql-pips" aria-hidden="true"><i></i><i></i><i></i></span></button>
+              data-tooltip="{{localize 'FHQL.Family.ToggleHint'}}" data-tooltip-direction="UP"><span class="fhql-pips" aria-hidden="true"><i></i><i></i><i></i></span></button>
       {{else}}
       <span class="fhql-twisty-gap"></span>
       {{/if}}

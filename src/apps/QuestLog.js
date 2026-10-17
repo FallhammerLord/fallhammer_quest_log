@@ -39,7 +39,7 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
          icon: 'fa-solid fa-scroll',
          resizable: true
       },
-      position: { width: 1040, height: 680 },
+      position: { width: 1040, height: 920 },
       actions: guardActions({
          selectQuest: QuestLog.#onSelectQuest,
          createQuest: QuestLog.#onCreateQuest,
@@ -527,11 +527,11 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
    static MIN_SIZE = { width: 420, height: 380 };
 
    /**
-    * Comfort widths (see snapWidth). The list takes 500px by default (players resize it); the sheet beside it turns two-column
+    * Comfort widths (see snapWidth). The list takes 350px by default (players resize it); the sheet beside it turns two-column
     * at 560px (styles/components/sheet.css, fhql-sheet container). 560: list beside a one-column sheet, just past
-    * the stacked layout (540). 880: the first roomy two-column width (300px list + a two-column quest). 1040: the default.
+    * the stacked layout (540). 920: the first roomy two-column width (350px list + a two-column quest). 1040: the default.
     */
-   static SNAP_WIDTHS = [560, 880, 1040];
+   static SNAP_WIDTHS = [560, 920, 1040];
 
    /** @override */
    _updatePosition(position)

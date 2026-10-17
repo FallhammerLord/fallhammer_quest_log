@@ -6,10 +6,11 @@ First feature-complete preview. Requires Foundry VTT v14.
 
 - Rewards keep the GM's lock and eye on the right of the first line; Claim and Give sit under the reward's name.
 - New per-player setting **Cross out done items** (on by default): turn off to show done objectives and claimed rewards muted with a tick only.
-- The Quest Log list starts at 500px and never squeezes the quest under 320px; its divider settles on 250, 350 or 500px when dragged near (Shift drags freely), and its width is remembered when the log reopens. New folder and Fold all lead the filter row; each status chip shows how many quests it holds.
+- The Quest Log opens at 1040 × 920 with a 350px list, and the list never squeezes the quest under 320px; its divider settles on 250, 350 or 500px when dragged near (Shift drags freely), and its width is remembered when the log reopens. New folder and Fold all lead the filter row; each status chip shows how many quests it holds.
 - Names that wrap inside buttons (reward and item links, list rows) grow their button instead of overlapping the next line, and wrap between words.
 - Quest names in the list may take two lines; a name still cut short shows in full on hover (and only then).
 - Hide done on Objectives is a small toggle button.
+- The fold toggle's tooltip opens upward, so it no longer covers the row below. Item hand-ins drop the faint "Hand over" label; the icon says it.
 - Item hand-ins line up under their objective's text, tied to it by a bracket, with the count and Hand over button on the right. The item's name is left out when it matches the objective's. Who handed in folds behind a small button.
 - Filling an item requirement no longer ticks the objective; the GM does (Undo leaves it alone too).
 - Party focus is now **Primary** (everyone's Beacon); **Track** stays personal.

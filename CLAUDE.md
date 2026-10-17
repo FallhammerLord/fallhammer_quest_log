@@ -59,7 +59,7 @@ npm run quests     # Foundry mocked: quest families (folders, no loops), double-
 | `src/apps/QuestLog.js` | log window: folder tree, filters, search, right-click menu |
 | `src/apps/listTree.js` | list quest families: rows with ancestors in `data-chain` (folders, then parent quests), family summary and signals, folded state (`listFilter.collapsed` / `.expanded`, option `listFoldFinished`), ancestors for reveal |
 | `src/apps/tips.js` | ? button in the Quest Log title bar and its tips panel (`templates/popovers/tips.hbs`) |
-| `src/apps/listSplitter.js` | draggable/keyboard divider between list and quest; width in client setting `listWidth` (`--fhql-list-width`, default 500, snaps 250/350/500; CSS caps it via `--fhql-list-col` so the quest keeps 320px; never clamp before the window is laid out) |
+| `src/apps/listSplitter.js` | draggable/keyboard divider between list and quest; width in client setting `listWidth` (`--fhql-list-width`, default 350, snaps 250/350/500; CSS caps it via `--fhql-list-col` so the quest keeps 320px; clamp only while dragging: at first render Foundry hasn't sized the window, which reset saved widths to 200) |
 | `src/apps/folderMenu.js` | GM folder menu in the log: new subfolder, rename, move into folder, delete (contents move up) |
 | `src/apps/QuestSheetApp.js` | pop-out quest window |
 | `src/ui/QuestBeacon.js` | panel above the players list |
@@ -84,7 +84,7 @@ npm run quests     # Foundry mocked: quest families (folders, no loops), double-
 
 - **Imports:** one missing or misnamed import stops the whole module in Foundry and ESLint won't see it. `npm run load` catches it; always run `npm run check`.
 - **Editing by slicing:** two bugs came from Python/regex cuts that ran past their end marker and deleted neighboring functions. After any cut, diff the file against the previous commit.
-- **Comfort widths** (`SNAP_WIDTHS` on QuestLog and QuestSheetApp, `snapWidth` in `src/apps/minSize.js`) are tied to the CSS breakpoints (log stacks at 540, sheet goes two-column at 560, list 500px by default, so the default 1040 window shows a one-column quest; players can widen it, so the log's snaps are a guide, not exact). Change one, check the other.
+- **Comfort widths** (`SNAP_WIDTHS` on QuestLog and QuestSheetApp, `snapWidth` in `src/apps/minSize.js`) are tied to the CSS breakpoints (log stacks at 540, sheet goes two-column at 560, list 350px by default; log opens 1040 × 920, snaps 560/920/1040; players can widen it, so the log's snaps are a guide, not exact). Change one, check the other.
 - **List rows hide by ancestors:** a quest row's `data-chain` holds its folders and then its parent quests; folding any of them hides it (`#applyListFilters`). New row kinds must carry a chain, and `listTree.js` lists quests caught in old parent loops at the top level so none vanish.
 - **Panel layout:** the sheet's height is shared by `panels.js`, not CSS. Panel contents go inside `.fhql-panel-body[data-scroll=key]` on a `.fhql-card[data-panel=key]`; new panels need both, or they won't size or keep their scroll. Narrow-only rules live inside `@container fhql-sheet (max-width: 559px)`; a same-weight default rule later in the file beats an override inside an earlier container query.
 - **Width containers:** never put `container-type` on an element that contains a text field or rich-text editor. Foundry's own form/editor styles collapse inside one. Containers sit only on the sheet, reward list, and subquest list. The layout test enforces this.
@@ -146,7 +146,7 @@ Untested (2026-10-17):
 - Quest family folding: arrow, Alt for the whole family, fold-all button, Left/Right keys, signals on folded parents, unfold when opened from the Beacon.
 - Options Fold finished families and Active subquests first.
 
-New (2026-10-17): rewards layout (controls right, Claim/Give under the name); Cross out done items setting; list 500px with divider snaps and remembered width, New folder and fold-all in the filter row, wrapped link buttons grow (Foundry fixes button height), chip counts; two-line names with tooltip only when cut; Hide done button.
+New (2026-10-17): rewards layout (controls right, Claim/Give under the name); Cross out done items setting; log 1040 × 920 and list 350px (the user's comfortable layout) with divider snaps and remembered width, fold toggle tooltip opens upward, no "Hand over" label beside hand-ins, New folder and fold-all in the filter row, wrapped link buttons grow (Foundry fixes button height), chip counts; two-line names with tooltip only when cut; Hide done button.
 
 Not on the checklist, unconfirmed: Edit notes opening the editor in one click; hover previews of quest links; the outcome chat card.
 

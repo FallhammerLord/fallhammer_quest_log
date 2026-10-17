@@ -8,11 +8,11 @@ import { getSetting, setSetting } from '../setting.js';
 
 /** Narrowest and default list widths (px); the widest leaves the quest at least QUEST_MIN. */
 const LIST_MIN = 200;
-const LIST_DEFAULT = 500;
+const LIST_DEFAULT = 350;
 const QUEST_MIN = 320;
 
 /** Comfort widths the divider settles on while dragging, and how close (px) counts as near. */
-const LIST_SNAPS = [250, 350, LIST_DEFAULT];
+const LIST_SNAPS = [250, LIST_DEFAULT, 500];
 const SNAP_RANGE = 16;
 
 /** How far one arrow press moves the line (px). */
@@ -33,12 +33,12 @@ function clampWidth(content, width)
  * @param {HTMLElement} content - The window's content element.
  * @param {HTMLElement} handle - The divider.
  * @param {number} width - List width; 0 for the default.
+ * @param {boolean} [clamp] - Fit it to the window now (while dragging). Off when opening: the window
+ *   isn't sized yet then, and the stylesheet keeps the quest at least QUEST_MIN wide anyway (--fhql-list-col).
  */
-function setWidth(content, handle, width)
+function setWidth(content, handle, width, clamp = false)
 {
-   // A saved width is kept as is: before the window is laid out it has no width to clamp against,
-   // and the stylesheet already keeps the quest at least QUEST_MIN wide (--fhql-list-col).
-   const px = width ? (content.clientWidth ? clampWidth(content, width) : Math.round(width)) : LIST_DEFAULT;
+   const px = !width ? LIST_DEFAULT : Math.round(clamp ? clampWidth(content, width) : width);
    content.style.setProperty('--fhql-list-width', `${px}px`);
    handle.setAttribute('aria-valuenow', String(px));
 }
@@ -74,7 +74,7 @@ export function addListSplitter(app)
       {
          const width = e.clientX - left;
          const near = e.shiftKey ? undefined : LIST_SNAPS.find((w) => Math.abs(width - w) <= SNAP_RANGE);
-         setWidth(content, handle, near ?? width);
+         setWidth(content, handle, near ?? width, true);
       };
       const end = () =>
       {
@@ -92,7 +92,7 @@ export function addListSplitter(app)
       const step = { ArrowLeft: -KEY_STEP, ArrowRight: KEY_STEP }[event.key];
       if (!step) { return; }
       event.preventDefault();
-      setWidth(content, handle, Number(handle.getAttribute('aria-valuenow')) + step);
+      setWidth(content, handle, Number(handle.getAttribute('aria-valuenow')) + step, true);
       save();
    });
    handle.addEventListener('dblclick', () =>

@@ -62,7 +62,6 @@ function requirementContext(objective, { open, gm, editing, listOpen })
          met: total >= requirement.count,
          // An objective made by dropping the item already carries its name: don't say it twice.
          sameName: requirement.name.trim().toLowerCase() === objective.name.trim().toLowerCase(),
-         modeLabel: localize(give ? 'FHQL.Deposit.ModeGive' : 'FHQL.Deposit.ModeShow'),
          modeOptions: ['give', 'show'].map((mode) => ({
             value: mode, selected: mode === requirement.mode,
             label: localize(mode === 'give' ? 'FHQL.Deposit.ModeGive' : 'FHQL.Deposit.ModeShow')

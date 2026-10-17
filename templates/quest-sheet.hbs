@@ -215,7 +215,6 @@
                 <button type="button" class="fhql-requirement-thumb" data-action="openDocument" data-uuid="{{requirement.uuid}}"
                         aria-label="{{requirement.name}}" data-tooltip="{{requirement.name}}">{{#if requirement.img}}<img src="{{requirement.img}}" alt="">{{else}}<i class="fa-solid fa-box" inert></i>{{/if}}</button>
                 {{#unless requirement.sameName}}<button type="button" class="fhql-link" data-action="openDocument" data-uuid="{{requirement.uuid}}">{{requirement.name}}</button>{{/unless}}
-                {{#unless ../editing}}{{#unless canDeposit}}<span class="fhql-muted">{{requirement.modeLabel}}</span>{{/unless}}{{/unless}}
               </span>
               <span class="fhql-requirement-end">
                 {{#if depositsList.length}}
