@@ -130,27 +130,34 @@ function share(items, avail, mode)
    for (const it of items) { it.card.style.flexBasis = `${Math.floor(it.height)}px`; }
 }
 
-/** The quest giver's picture stays between these sizes (px), however the title wraps. */
+/** The quest giver's picture stays between these sizes (px). */
 const PORTRAIT_MIN = 40;
 const PORTRAIT_MAX = 96;
 
 /**
- * Makes the quest giver's picture as tall as the title and status lines beside it. In a narrow sheet
- * the status line moves below the picture, which then matches the title alone.
+ * Makes the quest giver's picture as tall as one title line plus the status line beside it (the title
+ * alone in a narrow sheet, where the status line sits below the picture). Measured from the fonts and
+ * the status badge, never from how the title wraps: the picture's width decides the wrapping, so
+ * measuring the wrapped title made the two resize each other without end.
  *
  * @param {HTMLElement} sheet - The sheet element.
  */
 function sizePortrait(sheet)
 {
-   const title = sheet.querySelector('.fhql-sheet-head > .fhql-sheet-title');
-   const meta = sheet.querySelector('.fhql-sheet-head > .fhql-sheet-meta');
-   if (!title?.offsetHeight) { return; }
-   const top = title.getBoundingClientRect();
-   const line = meta?.getBoundingClientRect();
-   const beside = line && line.height && line.left >= top.left - 1;
-   const height = (beside ? line.bottom : top.bottom) - top.top;
-   const size = Math.round(Math.max(PORTRAIT_MIN, Math.min(PORTRAIT_MAX, height)));
-   sheet.style.setProperty('--fhql-portrait-size', `${size}px`);
+   const head = sheet.querySelector('.fhql-sheet-head');
+   const title = head?.querySelector(':scope > .fhql-sheet-title');
+   const meta = head?.querySelector(':scope > .fhql-sheet-meta');
+   const first = title?.firstElementChild;
+   if (!first) { return; }
+   const cs = getComputedStyle(first);
+   const line = first.matches('input') ? first.offsetHeight
+      : (parseFloat(cs.lineHeight) || parseFloat(cs.fontSize) * 1.2);
+   // The status line sits beside the picture unless the sheet is narrow (its grid areas, not the picture, decide).
+   const beside = meta && meta.offsetHeight && meta.getBoundingClientRect().left >= title.getBoundingClientRect().left - 1;
+   const status = beside ? (parseFloat(getComputedStyle(head).rowGap) || 0) + Math.max(meta.querySelector('.fhql-status-badge')?.offsetHeight ?? 0, parseFloat(getComputedStyle(meta).lineHeight) || 0) : 0;
+   const size = Math.round(Math.max(PORTRAIT_MIN, Math.min(PORTRAIT_MAX, line + status)));
+   // Writing the same value again would wake the size observer for nothing.
+   if (sheet.style.getPropertyValue('--fhql-portrait-size') !== `${size}px`) { sheet.style.setProperty('--fhql-portrait-size', `${size}px`); }
 }
 
 /**
