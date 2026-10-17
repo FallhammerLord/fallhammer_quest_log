@@ -134,6 +134,7 @@ Checklist pass, 2026-10-17:
 - Two players: Show players opens the quest on the player's screen; GM notes page hidden from players (console check); new-change dots for players.
 - List, sheet, Beacon: resizable list pane; reordering objectives and rewards; panels (pinned header, own scrolling, narrow collapse, Hide done, very short window); Beacon five-objective cap, toggle and motion; window memory and width snaps.
 - Item hand-in layout (bracket, right-aligned count, folded "who handed in", name hidden when it matches) and no auto-tick: verified the same day.
+- Polish pass (screenshot, same day): rewards layout (controls right, Claim/Give under the name), chip counts, New folder and fold-all in the filter row, Hide done button, hand-ins without the mode label, wrapped link buttons, fold tooltip opening upward, 1040 × 920 log with 350px list.
 - Themes and settings: every theme; texture strength (slider, per-player override, live preview); Theme images window and font settings; easter eggs; portrait frame; player workflow settings, Advanced settings window, quests hidden from players' journal sidebar.
 
 ## Waiting on the user
@@ -146,7 +147,7 @@ Untested (2026-10-17):
 - Quest family folding: arrow, Alt for the whole family, fold-all button, Left/Right keys, signals on folded parents, unfold when opened from the Beacon.
 - Options Fold finished families and Active subquests first.
 
-New (2026-10-17): rewards layout (controls right, Claim/Give under the name); Cross out done items setting; log 1040 × 920 and list 350px (the user's comfortable layout) with divider snaps and remembered width, fold toggle tooltip opens upward, no "Hand over" label beside hand-ins, New folder and fold-all in the filter row, wrapped link buttons grow (Foundry fixes button height), chip counts; two-line names with tooltip only when cut; Hide done button.
+New, not yet confirmed (2026-10-17): list width remembered after closing and reopening the log; divider snaps; Cross out done items setting; two-line names with a tooltip only when cut.
 
 Not on the checklist, unconfirmed: Edit notes opening the editor in one click; hover previews of quest links; the outcome chat card.
 
