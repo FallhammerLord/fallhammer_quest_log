@@ -7,7 +7,7 @@ import { getSetting, setSetting } from '../setting.js';
 
 /** Narrowest and default list widths (px); the widest leaves the quest at least QUEST_MIN. */
 const LIST_MIN = 200;
-const LIST_DEFAULT = 250;
+const LIST_DEFAULT = 300;
 const QUEST_MIN = 320;
 
 /** How far one arrow press moves the line (px). */

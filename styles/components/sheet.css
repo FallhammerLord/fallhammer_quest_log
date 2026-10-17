@@ -217,8 +217,7 @@
 }
 
 /* Objectives: Hide done */
-.fhql-app .fhql-hide-done { display: inline-flex; gap: 0.3em; align-items: center; margin-inline-start: auto; font-family: var(--fhql-font-body); font-size: 0.75em; font-weight: normal; letter-spacing: 0; text-transform: none; color: var(--fhql-ink-muted); cursor: pointer; }
-.fhql-app .fhql-hide-done input { margin: 0; }
+.fhql-app .fhql-hide-done { width: auto; gap: 0.3em; margin-inline-start: auto; font-family: var(--fhql-font-body); font-size: 0.72em; font-weight: normal; letter-spacing: 0; text-transform: none; }
 @container fhql-sheet (max-width: 400px) {
   .fhql-app .fhql-sheet-head {
     grid-template-areas: "portrait title menu" "meta meta meta" "actions actions actions" "fields fields fields";
@@ -448,21 +447,30 @@
 
 /* ---------- Rewards and claiming ---------- */
 .fhql-app .fhql-rewards { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5em; }
+/* Picture, name (with Claim or Give and who claimed beneath it), then the GM's lock and eye on the
+   right of the first line, as on objectives. */
 .fhql-app .fhql-reward {
   display: grid;
   grid-template-columns: 30px minmax(0, 1fr) auto;
   gap: 0.2em 0.55em;
-  align-items: center;
+  align-items: start;
 }
+.fhql-app .fhql-reward-main { align-self: center; }
+.fhql-app .fhql-reward-buttons { display: flex; flex-wrap: wrap; gap: 0.25em; }
+.fhql-app .fhql-reward-buttons > .fhql-button { width: auto; }
 .fhql-app .fhql-reward[draggable="true"] { cursor: grab; }
 .fhql-app .fhql-reward-main { display: grid; gap: 0.1em; min-width: 0; }
-.fhql-app .fhql-reward-name { text-align: start; }
+.fhql-app .fhql-reward-name { text-align: start; overflow-wrap: anywhere; }
+/* In a narrow rewards panel, "Claimed by …" wraps like text instead of overflowing. */
+.fhql-app .fhql-reward-state .fhql-claim { display: inline; overflow-wrap: anywhere; }
 .fhql-app .fhql-reward.is-claimed .fhql-reward-name { text-decoration: line-through; color: var(--fhql-ink-muted); }
 .fhql-app .fhql-reward.is-claimed .fhql-thumb { opacity: 0.55; }
+/* "Cross out done items" off (per player): done and claimed text stays muted, without the line. */
+.fhql-app.fhql-no-strike :is(.fhql-objectives li.is-done > span, .fhql-objectives li.is-done .fhql-input, .fhql-reward.is-claimed .fhql-reward-name) { text-decoration: none; }
 .fhql-app .fhql-reward-state { display: flex; flex-wrap: wrap; gap: 0.1em 0.7em; font-size: 0.82em; }
 .fhql-app .fhql-claim { color: var(--fhql-status-completed); display: inline-flex; gap: 0.3em; align-items: center; }
 .fhql-app .fhql-undo { border: 0; color: var(--fhql-ink-muted); }
-.fhql-app .fhql-reward-actions { display: flex; flex-wrap: wrap; gap: 0.25em; align-items: center; justify-content: flex-end; }
+.fhql-app .fhql-reward-actions { display: flex; flex-wrap: wrap; gap: 0.25em; align-items: center; justify-content: flex-end; min-height: 30px; }
 .fhql-app .fhql-icon-button.is-on { color: var(--fhql-accent); }
 .fhql-app .fhql-small-select { width: auto; min-height: 24px; padding: 0.1em 0.3em; font-size: 0.82em; }
 .fhql-app .fhql-grow-text { flex: 1; min-width: 0; }
@@ -486,14 +494,11 @@
   .fhql-app .fhql-sheet-actions .fhql-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   .fhql-app .fhql-sheet-actions .fhql-button { gap: 0; padding-inline: 0.55em; }
 }
-@container fhql-rewards (max-width: 340px) {
-  .fhql-app .fhql-reward { grid-template-columns: 30px minmax(0, 1fr); }
-  .fhql-app .fhql-reward-actions { grid-column: 2; justify-content: flex-start; }
-}
+
 @container fhql-rewards (max-width: 230px) {
-  .fhql-app .fhql-reward-actions .fhql-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-  .fhql-app .fhql-reward-actions .fhql-button { gap: 0; }
-  .fhql-app .fhql-reward { grid-template-columns: 24px minmax(0, 1fr); }
+  .fhql-app .fhql-reward-buttons .fhql-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .fhql-app .fhql-reward-buttons .fhql-button { gap: 0; }
+  .fhql-app .fhql-reward:not(.is-editing *) { grid-template-columns: 24px minmax(0, 1fr) auto; }
   .fhql-app .fhql-reward .fhql-thumb { width: 24px; height: 24px; }
 }
 @container fhql-rows (max-width: 230px) {

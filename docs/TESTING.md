@@ -30,6 +30,10 @@ Folders and filters:
 - Click a folder header to collapse it; the log remembers.
 - Status chips filter the list; the search box filters by name, quest giver and objective as you type. As a player, a hidden objective's words find nothing. While filtering, "Showing N of M · Clear" appears; Clear resets chips and search.
 - Delete an objective and remove a reward: each asks first.
+- Rewards: lock and eye on the first line at the right; Claim/Give under the name, also in a narrow window.
+- Configure Settings → Cross out done items: off removes the line on objectives, rewards and the Beacon; on brings it back.
+- List: 300px wide by default (double-click the divider to reset); fold-all button at the left of the chips; chips show counts; long names wrap to two lines, and only cut names show a tooltip.
+- Hide done is a toggle button in the Objectives heading.
 - Item hand-ins: the item sits under the objective's text with a bracket; count and Hand over on the right; no repeated name when it matches; the people button folds "who handed in" open and shut. Filling the count leaves the objective open for the GM to tick.
 - In the log, **Pop out** on the quest header opens it in its own window (not shown in a popped-out window). **Show players** is in the ⋮ menu; right-clicking a row also offers Pop out.
 - The **?** in the Quest Log title bar opens tips (GM sees three more).

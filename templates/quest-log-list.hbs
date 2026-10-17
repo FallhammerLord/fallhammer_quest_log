@@ -22,15 +22,17 @@
     <div class="fhql-search-row">
       <input type="search" class="fhql-input fhql-search" data-list-search value="{{query}}"
              placeholder="{{localize 'FHQL.Filter.Search'}}" aria-label="{{localize 'FHQL.Filter.Search'}}">
-      <button type="button" class="fhql-button fhql-small fhql-icon-only" data-action="foldAllFamilies" hidden
-              aria-label="{{localize 'FHQL.Family.FoldAll'}}" data-tooltip="{{localize 'FHQL.Family.FoldAll'}}"><i class="fa-solid fa-compress" inert></i></button>
     </div>
-    <div class="fhql-chips" role="group" aria-label="{{localize 'FHQL.Filter.Label'}}">
-      {{#each statusChips}}
-      <button type="button" class="fhql-chip fhql-status-{{status}} {{#if active}}is-on{{/if}}" data-action="toggleStatusFilter"
-              data-status="{{status}}" aria-pressed="{{#if active}}true{{else}}false{{/if}}" data-tooltip="{{label}}" aria-label="{{label}}">
-        <i class="{{icon}} fhql-status-icon" inert></i><span>{{label}}</span></button>
-      {{/each}}
+    <div class="fhql-chips-row">
+      <button type="button" class="fhql-chip fhql-chip-fold" data-action="foldAllFamilies" hidden
+              aria-label="{{localize 'FHQL.Family.FoldAll'}}" data-tooltip="{{localize 'FHQL.Family.FoldAll'}}"><i class="fa-solid fa-compress" inert></i></button>
+      <div class="fhql-chips" role="group" aria-label="{{localize 'FHQL.Filter.Label'}}">
+        {{#each statusChips}}
+        <button type="button" class="fhql-chip fhql-status-{{status}} {{#if active}}is-on{{/if}}" data-action="toggleStatusFilter"
+                data-status="{{status}}" aria-pressed="{{#if active}}true{{else}}false{{/if}}" data-tooltip="{{label}}" aria-label="{{ariaLabel}}">
+          <i class="{{icon}} fhql-status-icon" inert></i><b class="fhql-chip-count" aria-hidden="true">{{count}}</b></button>
+        {{/each}}
+      </div>
     </div>
     <p class="fhql-filter-status" role="status" hidden><span data-filter-count></span> ·
       <button type="button" class="fhql-link-button" data-action="clearFilters">{{localize "FHQL.Filter.Clear"}}</button></p>
@@ -63,7 +65,7 @@
       <button type="button" class="fhql-row fhql-status-{{status}} {{#if selected}}is-selected{{/if}}"
               data-action="selectQuest" data-quest-id="{{id}}" {{#if selected}}aria-current="true"{{/if}}>
         <i class="fhql-status-icon {{statusIcon}}" data-tooltip="{{statusLabel}}" inert></i>
-        <span class="fhql-row-name" data-tooltip="{{name}}">{{name}}</span>
+        <span class="fhql-row-name">{{name}}</span>
         <span class="fhql-row-status">
           {{#if family}}
           {{#if familyUnseen}}{{#unless unseen}}<span class="fhql-new-dot fhql-family-signal" data-tooltip="{{localize 'FHQL.Family.NewInside'}}" aria-label="{{localize 'FHQL.Family.NewInside'}}"></span>{{/unless}}{{/if}}

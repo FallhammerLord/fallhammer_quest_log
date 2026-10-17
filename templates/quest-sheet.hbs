@@ -173,8 +173,8 @@
       {{#if showObjectives}}
       <section class="fhql-card fhql-area-objectives" data-panel="objectives">
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.Objectives"}}
-          {{#if hideDoneToggle}}<label class="fhql-hide-done"><input type="checkbox" data-hide-done {{#if hideDone}}checked{{/if}}>
-            {{localize "FHQL.Objective.HideDone"}}</label>{{/if}}
+          {{#if hideDoneToggle}}<button type="button" class="fhql-button fhql-small fhql-toggle fhql-hide-done {{#if hideDone}}is-on{{/if}}" data-action="toggleHideDone"
+            aria-pressed="{{#if hideDone}}true{{else}}false{{/if}}"><i class="fa-solid fa-eye-slash" inert></i> {{localize "FHQL.Objective.HideDone"}}</button>{{/if}}
           <span class="fhql-count">{{doneCount}}/{{objectiveTotal}}</span></h3>
         <div class="fhql-panel-body" data-scroll="objectives">
         {{#if allHidden}}<p class="fhql-muted">{{localize "FHQL.Objective.AllDoneHidden"}}</p>{{/if}}
@@ -328,6 +328,19 @@
               <span class="fhql-reward-name">{{name}}</span>
               {{/if}}
 
+              {{#if hasButtons}}
+              <span class="fhql-reward-buttons">
+                {{#if canClaim}}
+                <button type="button" class="fhql-button fhql-small fhql-primary" data-action="claimReward" aria-label="{{claimVerb}}">
+                  <i class="fa-solid fa-hand-holding" inert></i><span class="fhql-label">{{claimVerb}}</span></button>
+                {{/if}}
+                {{#if canGive}}
+                <button type="button" class="fhql-button fhql-small" data-action="giveReward"
+                        data-tooltip="{{localize 'FHQL.Reward.GiveHint'}}" aria-label="{{localize 'FHQL.Reward.Give'}}"><i class="fa-solid fa-hand-holding-heart" inert></i><span class="fhql-label">{{localize "FHQL.Reward.Give"}}</span></button>
+                {{/if}}
+              </span>
+              {{/if}}
+
               {{#if claimable}}
               <span class="fhql-reward-state">
                 {{#each claimsList}}
@@ -344,14 +357,6 @@
             </div>
 
             <div class="fhql-reward-actions">
-              {{#if canClaim}}
-              <button type="button" class="fhql-button fhql-small fhql-primary" data-action="claimReward" aria-label="{{claimVerb}}">
-                <i class="fa-solid fa-hand-holding" inert></i><span class="fhql-label">{{claimVerb}}</span></button>
-              {{/if}}
-              {{#if canGive}}
-              <button type="button" class="fhql-button fhql-small" data-action="giveReward"
-                      data-tooltip="{{localize 'FHQL.Reward.GiveHint'}}" aria-label="{{localize 'FHQL.Reward.Give'}}"><i class="fa-solid fa-hand-holding-heart" inert></i><span class="fhql-label">{{localize "FHQL.Reward.Give"}}</span></button>
-              {{/if}}
               {{#if ../gm}}
               {{#if claimable}}
               <button type="button" class="fhql-icon-button {{#unless locked}}is-on{{/unless}}" data-action="toggleRewardLock"

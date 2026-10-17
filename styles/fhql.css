@@ -67,8 +67,10 @@
 
 .fhql-app .window-content {
   display: grid;
-  /* The list's width: 250px, or as the player dragged it (src/apps/listSplitter.js). */
-  grid-template-columns: var(--fhql-list-width, 250px) minmax(0, 1fr);
+  /* The list's width: 300px, or as the player dragged it (src/apps/listSplitter.js), but never so wide
+     the quest gets under 320px (the window may have shrunk since). The splitter uses the same sum. */
+  --fhql-list-col: min(var(--fhql-list-width, 300px), max(200px, 100% - 320px));
+  grid-template-columns: var(--fhql-list-col) minmax(0, 1fr);
   position: relative;
   /* One row the window's height: the list and the sheet each fill it and scroll inside. */
   grid-template-rows: minmax(0, 1fr);

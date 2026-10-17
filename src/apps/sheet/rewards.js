@@ -31,6 +31,9 @@ export function rewardsContext(entry, system, access)
        const claimable = isClaimable(r);
        const exhaustedForAll = claimable && r.claimLimit === 'once' && r.claims.length > 0;
        const mine = claimable && claimsExhausted(r, userId);
+       const canClaim = !access.gm && claimable && !gmHandsOut && !r.locked && !mine
+        && (r.type === 'actor' || claimTargets(game.user).length > 0);
+       const canGive = access.gm && claimable && !exhaustedForAll;
        return {
           id, ...r,
           icon: REWARD_ICONS[r.type] ?? REWARD_ICONS.text,
@@ -40,10 +43,11 @@ export function rewardsContext(entry, system, access)
           claimsList: r.claims.map((c, index) => ({ index, label: claimLabel(c) })),
           perPlayer: r.claimLimit === 'perPlayer',
           gmHandsOut: !access.gm && claimable && gmHandsOut && !mine,
-          canClaim: !access.gm && claimable && !gmHandsOut && !r.locked && !mine
-           && (r.type === 'actor' || claimTargets(game.user).length > 0),
+          canClaim,
           showLocked: !access.gm && claimable && r.locked && !gmHandsOut,
-          canGive: access.gm && claimable && !exhaustedForAll,
+          canGive,
+          // Claim or Give sits under the reward's name; the row's other controls stay on the right.
+          hasButtons: canClaim || canGive,
           draggable: claimable && r.type === 'item' && (access.gm ? !exhaustedForAll : (!r.locked && !mine && !gmHandsOut)),
           claimVerb: game.i18n.localize(r.type === 'actor' ? 'FHQL.Reward.Recruit' : 'FHQL.Reward.Claim')
        };

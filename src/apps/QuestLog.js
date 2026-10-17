@@ -124,13 +124,20 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
       if (!entries.some((entry) => entry.id === this.#selectedId)) { this.#selectedId = entries[0]?.id ?? null; }
 
       const filter = QuestLog.#savedFilter();
-      const present = new Set(entries.map((e) => questPage(e).system.status));
-      const statusChips = Object.keys(STATUSES).filter((s) => present.has(s)).map((status) => ({
-         status,
-         icon: STATUSES[status].icon,
-         label: game.i18n.localize(`FHQL.Status.${status}`),
-         active: filter.statuses.includes(status)
-      }));
+      const counts = new Map();
+      for (const e of entries) { const s = questPage(e).system.status; counts.set(s, (counts.get(s) ?? 0) + 1); }
+      const statusChips = Object.keys(STATUSES).filter((s) => counts.has(s)).map((status) =>
+      {
+         const label = game.i18n.localize(`FHQL.Status.${status}`);
+         return {
+            status,
+            icon: STATUSES[status].icon,
+            label,
+            count: counts.get(status),
+            ariaLabel: `${label} (${counts.get(status)})`,
+            active: filter.statuses.includes(status)
+         };
+      });
 
       return {
          ...context,
@@ -438,6 +445,16 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
          }
       });
 
+      // A quest or folder name cut short by the list's width shows in full on hover, and only then.
+      el.addEventListener('pointerover', (event) =>
+      {
+         const name = event.target.closest?.('.fhql-list .fhql-row-name');
+         if (!name) { return; }
+         const cut = name.scrollWidth > name.clientWidth + 1 || name.scrollHeight > name.clientHeight + 1;
+         if (cut) { name.dataset.tooltip = name.textContent; }
+         else { delete name.dataset.tooltip; }
+      });
+
       // Esc in a search box with text clears it first; Foundry's own Esc then leaves the box, then closes.
       el.addEventListener('keydown', (event) =>
       {
@@ -509,11 +526,11 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
    static MIN_SIZE = { width: 420, height: 380 };
 
    /**
-    * Comfort widths (see snapWidth). The list takes about 252px; the sheet beside it turns two-column
+    * Comfort widths (see snapWidth). The list takes about 302px by default; the sheet beside it turns two-column
     * at 560px (styles/components/sheet.css, fhql-sheet container). 560: list beside a one-column sheet, just past
-    * the stacked layout (540). 830: the first roomy two-column width. 1040: the default.
+    * the stacked layout (540). 880: the first roomy two-column width (300px list + a two-column quest). 1040: the default.
     */
-   static SNAP_WIDTHS = [560, 830, 1040];
+   static SNAP_WIDTHS = [560, 880, 1040];
 
    /** @override */
    _updatePosition(position)

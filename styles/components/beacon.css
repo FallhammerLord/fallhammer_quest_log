@@ -74,6 +74,7 @@
 .fhql-beacon .fhql-beacon-objectives li > span { min-width: 0; overflow-wrap: anywhere; }
 .fhql-beacon .fhql-beacon-objectives li.is-done { color: var(--fhql-ink-muted); }
 .fhql-beacon .fhql-beacon-objectives li.is-done > span { text-decoration: line-through; }
+.fhql-beacon.fhql-no-strike .fhql-beacon-objectives li.is-done > span { text-decoration: none; }
 .fhql-beacon .fhql-beacon-objectives li.is-done .fhql-state-icon { color: var(--fhql-status-completed); }
 .fhql-beacon .fhql-beacon-objectives li.is-failed .fhql-state-icon { color: var(--fhql-status-failed); }
 .fhql-beacon .fhql-in-progress { color: var(--fhql-accent); }

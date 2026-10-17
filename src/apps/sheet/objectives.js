@@ -6,6 +6,7 @@ import {
    stillNeeded, undoDeposit
 } from '../../data/deposits.js';
 import { addObjective, cycleObjective, deleteObjective, questPage, updateQuest } from '../../data/quests.js';
+import { getSetting, setSetting } from '../../setting.js';
 import { objectiveFor } from './rows.js';
 
 /**
@@ -297,6 +298,13 @@ async function onClearRequirement(event, target)
    if (error) { ui.notifications.warn(game.i18n.localize(`FHQL.Deposit.Error.${error}`)); }
 }
 
+/** Hide done: the viewer's own choice, kept on this device. */
+async function onToggleHideDone()
+{
+   await setSetting('hideDoneObjectives', !getSetting('hideDoneObjectives'));
+   this.render();
+}
+
 /** Folds or unfolds an objective's "who handed in" list (kept per window). */
 function onToggleDeposits(event, target)
 {
@@ -315,5 +323,6 @@ export const objectiveActions = {
    depositItem: onDepositItem,
    undoDeposit: onUndoDeposit,
    clearRequirement: onClearRequirement,
-   toggleDeposits: onToggleDeposits
+   toggleDeposits: onToggleDeposits,
+   toggleHideDone: onToggleHideDone
 };

@@ -53,6 +53,7 @@ export function applyTheme(element)
    element.classList.toggle('fhql-no-texture', strength === 0 || contrast === 'dark' || contrast === 'light');
    element.style.setProperty('--fhql-strength', String(strength));
    element.classList.toggle('fhql-portrait-square', shownSetting('portraitFrame') === 'square');
+   element.classList.toggle('fhql-no-strike', !getSetting('strikeDone'));
    applyOverlay(element);
    applyFonts(element);
    applyBanner(element);

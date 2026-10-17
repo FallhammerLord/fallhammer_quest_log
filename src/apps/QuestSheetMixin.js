@@ -336,15 +336,7 @@ export function QuestSheetMixin(Base)
          const el = this.element;
          animateOpen(el, this._motionFrom);
          this._motionFrom = null;
-         el.addEventListener('change', (event) =>
-         {
-            if (event.target.matches?.('[data-hide-done]'))
-            {
-               setSetting('hideDoneObjectives', event.target.checked).then(() => this.render());
-               return;
-            }
-            this.#onFieldChange(event);
-         });
+         el.addEventListener('change', (event) => this.#onFieldChange(event));
          el.addEventListener('click', (event) => onPanelHeadingClick(this, event));
          wireReorder(this, el);
          el.addEventListener('dragover', (event) => this.#onDragOver(event));

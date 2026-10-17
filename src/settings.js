@@ -211,6 +211,17 @@ function registerBeaconSettings()
 function registerListSettings()
 {
    const redrawList = () => { if (QuestLog.instance.rendered) { QuestLog.instance.render({ parts: ['list'] }); } };
+   // Done objectives and claimed rewards are crossed out by default; a reader can turn that off.
+   game.settings.register(MODULE_ID, 'strikeDone', {
+      name: 'FHQL.Settings.StrikeDone.Name',
+      hint: 'FHQL.Settings.StrikeDone.Hint',
+      scope: 'client',
+      config: true,
+      type: Boolean,
+      default: true,
+      onChange: () => { refreshOpenApps(); refreshQuestBeacon(); }
+   });
+
    for (const [key, name] of [['listFoldFinished', 'FoldFinished'], ['listActiveFirst', 'ActiveFirst']])
    {
       game.settings.register(MODULE_ID, key, {

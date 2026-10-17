@@ -253,6 +253,10 @@
         "Name": "Post quest outcomes to chat",
         "Hint": "When a quest is completed or failed, post it to chat for the players who can see it."
       },
+      "StrikeDone": {
+        "Name": "Cross out done items",
+        "Hint": "Done objectives and claimed rewards are crossed out. Turn off to show them muted with a tick only, which some find easier to read. Applies to your client only."
+      },
       "FoldFinished": {
         "Name": "Quest Log: fold finished families",
         "Hint": "A parent quest whose subquests are all completed or failed starts folded in the list. Open one by hand and it stays open."

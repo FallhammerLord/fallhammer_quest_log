@@ -61,6 +61,16 @@
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+/* Quest names may take a second line before they're cut; a cut name shows in full on hover (QuestLog.js). */
+.fhql-app li[data-row="quest"] .fhql-row-name {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.25;
+}
 .fhql-app .fhql-row-status { font-size: 0.8em; color: var(--fhql-ink-muted); }
 
 /* ---------- Journal sidebar button ---------- */
@@ -101,8 +111,13 @@
 .fhql-app .fhql-chip .fhql-status-icon { color: var(--fhql-status); }
 .fhql-app .fhql-chip.is-on { color: var(--fhql-ink); border-color: var(--fhql-status); background: var(--fhql-surface-raised); }
 .fhql-app .fhql-chip:focus-visible { outline: 2px solid var(--fhql-accent); outline-offset: 1px; }
-.fhql-app .fhql-chip span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-.fhql-app .fhql-chip { padding: 0.2em 0.55em; font-size: 0.85em; }
+.fhql-app .fhql-chip { padding: 0.2em 0.55em; font-size: 0.85em; min-height: 24px; }
+.fhql-app .fhql-chip-count { font-weight: normal; font-variant-numeric: tabular-nums; }
+/* Fold-all leads the filter row; the chips take the rest and wrap under each other. */
+.fhql-app .fhql-chips-row { display: flex; gap: 0.25em; align-items: flex-start; }
+.fhql-app .fhql-chips-row > .fhql-chips { flex: 1 1 auto; min-width: 0; }
+.fhql-app .fhql-chip-fold { flex: none; justify-content: center; min-width: 28px; }
+.fhql-app .fhql-chip-fold[hidden] { display: none; }
 
 .fhql-app .fhql-folder-row { margin-block-start: 0.35em; }
 .fhql-app .fhql-folder {
@@ -227,7 +242,7 @@
 .fhql-app .fhql-splitter {
   position: absolute;
   inset-block: 0;
-  inset-inline-start: calc(var(--fhql-list-width, 250px) - 3px);
+  inset-inline-start: calc(var(--fhql-list-col, 300px) - 3px);
   z-index: 5;
   width: 6px;
   cursor: col-resize;

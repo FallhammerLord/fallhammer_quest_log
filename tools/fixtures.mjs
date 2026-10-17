@@ -16,7 +16,7 @@ export function listContext(t, gm = true)
    });
    return {
       gm, hasQuests: true, query: '', fqlPending: gm ? 3 : 0,
-      statusChips: Object.keys(S).map((k) => ({ status: k, icon: S[k], label: t(`Status.${k}`), active: false })),
+      statusChips: Object.keys(S).map((k, i) => ({ status: k, icon: S[k], label: t(`Status.${k}`), count: i + 1, ariaLabel: t(`Status.${k}`), active: false })),
       items: [
          q('t', 'Rumors at the Gate', 'available', 0, ''),
          { folder: true, id: 'f1', name: 'Act One: The Salt Roads of the Burning Pass', color: '#c9a24a', depth: 0, chain: '', count: 3 },
@@ -69,11 +69,11 @@ export function sheetContext(t, { gm = true, editing = false, long = false } = {
    });
    const rewards = gm ? [
       { id: 'r0', type: 'text', name: '40 gold, paid by Warden Hask on delivery', icon: 'fa-solid fa-coins', claims: [], claimsList: [] },
-      reward('r1', { name: 'test equipment', canGive: true, draggable: true }),
+      reward('r1', { name: 'test equipment', canGive: true, hasButtons: true, draggable: true }),
       reward('r2', { name: 'Potion of Superior Healing (set of three)', struck: true, claims: [1], claimsList: [{ index: 0, label: 'Player2 (Corvus AAI:2101 G5)' }] }),
-      reward('r3', { type: 'actor', name: 'Brannoc the Remarkably Stubborn Mule', icon: 'fa-solid fa-user', locked: true, hidden: true, canGive: true, perPlayer: true })
+      reward('r3', { type: 'actor', name: 'Brannoc the Remarkably Stubborn Mule', icon: 'fa-solid fa-user', locked: true, hidden: true, canGive: true, hasButtons: true, perPlayer: true })
    ] : [
-      reward('r1', { name: 'test equipment', canClaim: true }),
+      reward('r1', { name: 'test equipment', canClaim: true, hasButtons: true }),
       reward('r2', { name: 'Potion of Superior Healing (set of three)', struck: true, claims: [1], claimsList: [{ index: 0, label: 'Player2 (Corvus AAI:2101 G5)' }] }),
       reward('r4', { name: 'Sealed letter from the Archivist of Highmere', showLocked: true })
    ];
