@@ -60,7 +60,9 @@ export function rewardsContext(entry, system, access)
       rewards,
       rewardSummary: claimableRewards.length
        ? game.i18n.format('FHQL.Reward.Summary', { claimed: claimedCount, total: claimableRewards.length }) : '',
-      rewardsComplete: claimableRewards.length > 0 && claimedCount === claimableRewards.length
+      rewardsComplete: claimableRewards.length > 0 && claimedCount === claimableRewards.length,
+      // A narrow Rewards heading shows "1/3" instead of "1 of 3 claimed".
+      rewardShort: `${claimedCount}/${claimableRewards.length}`
    };
 }
 

@@ -4,6 +4,7 @@
 
 First feature-complete preview. Requires Foundry VTT v14.
 
+- One size for small things on a line: heading buttons, the GM-only tag and subquest status badges match the tallies; list counts share one size (a finished family's turns green); the subquest unlink button matches the eye and lock; a narrow Rewards heading shows 1/3.
 - Counts are boxed tallies that turn green once complete (objectives done, items handed in, rewards claimed, subquests finished), and everything sharing a line shares its height. Hide done sits right beside the Objectives count (icon-only in a narrow panel).
 - Rewards keep the GM's lock and eye on the right of the first line; Claim and Give sit under the reward's name.
 - New per-player setting **Cross out done items** (on by default): turn off to show done objectives and claimed rewards muted with a tick only.

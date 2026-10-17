@@ -223,6 +223,24 @@
 
 /* Objectives: Hide done */
 .fhql-app .fhql-button.fhql-small.fhql-hide-done { width: auto; height: 24px; min-height: 24px; gap: 0.3em; margin-inline-start: auto; font-family: var(--fhql-font-body); font-size: var(--fhql-tally-font); font-weight: normal; letter-spacing: 0; text-transform: none; }
+/* Buttons in panel headings (Edit notes, Add notes, + Add, Hide done) share the tallies' height and text size. */
+.fhql-app .fhql-subheading .fhql-button.fhql-small {
+  box-sizing: border-box;
+  height: 24px;
+  min-height: 24px;
+  font-family: var(--fhql-font-body);
+  font-size: var(--fhql-tally-font);
+  font-weight: normal;
+  letter-spacing: 0;
+  text-transform: none;
+}
+/* A narrow Rewards heading says "1/3" instead of "1 of 3 claimed". */
+.fhql-app .fhql-card[data-panel="rewards"] > .fhql-subheading { container: fhql-rewards-head / inline-size; }
+.fhql-app .fhql-tally-short { display: none; }
+@container fhql-rewards-head (max-width: 230px) {
+  .fhql-app .fhql-tally-long { display: none; }
+  .fhql-app .fhql-tally-short { display: inline; }
+}
 /* In a narrow Objectives panel, Hide done shows only its icon so it and the count stay on the heading's line.
    (A size container is safe here: the heading holds no text field.) */
 .fhql-app .fhql-card[data-panel="objectives"] > .fhql-subheading { container: fhql-objectives-head / inline-size; }
@@ -436,6 +454,18 @@
 }
 .fhql-app .fhql-row-link:hover .fhql-row-name { color: var(--fhql-accent); }
 .fhql-app .fhql-row-link .fhql-row-status { color: var(--fhql-status); }
+/* Row controls (unlink, like the eye and lock) are borderless 28px icons. */
+.fhql-app .fhql-icon-button.fhql-subquest-remove { min-width: 28px; min-height: 28px; }
+/* A subquest's status: the header's status badge, at tally height and size. */
+.fhql-app .fhql-row-link .fhql-status-badge.fhql-badge-small {
+  box-sizing: border-box;
+  height: 24px;
+  padding: 0 0.5em;
+  font-size: var(--fhql-tally-font);
+  font-weight: normal;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
 .fhql-app .fhql-drop-hint {
   display: flex;
   flex-wrap: wrap;
@@ -471,10 +501,9 @@
 .fhql-app .fhql-gm-notes[open] .fhql-chevron { transform: rotate(90deg); }
 .fhql-app .fhql-gm-tag {
   margin-inline-start: auto;
-  padding: 0 0.4em;
-  font-size: 0.78em;
-  border: 1px solid var(--fhql-gm);
-  border-radius: var(--fhql-radius);
+  font-family: var(--fhql-font-body);
+  font-weight: normal;
+  border-color: var(--fhql-gm);
 }
 
 /* ---------- Rewards and claiming ---------- */
@@ -501,7 +530,7 @@
 .fhql-app.fhql-no-strike :is(.fhql-objectives li.is-done > span, .fhql-objectives li.is-done .fhql-input, .fhql-reward.is-claimed .fhql-reward-name) { text-decoration: none; }
 .fhql-app .fhql-reward-state { display: flex; flex-wrap: wrap; gap: 0.1em 0.7em; font-size: 0.82em; }
 .fhql-app .fhql-claim { color: var(--fhql-status-completed); display: inline-flex; gap: 0.3em; align-items: center; }
-.fhql-app .fhql-undo { border: 0; color: var(--fhql-ink-muted); }
+.fhql-app .fhql-undo { border: 0; color: var(--fhql-ink-muted); vertical-align: middle; }
 .fhql-app .fhql-reward-actions { display: flex; flex-wrap: wrap; gap: 0.25em; align-items: center; justify-content: flex-end; min-height: 30px; }
 .fhql-app .fhql-icon-button.is-on { color: var(--fhql-accent); }
 .fhql-app .fhql-small-select { width: auto; min-height: 24px; padding: 0.1em 0.3em; font-size: 0.82em; }

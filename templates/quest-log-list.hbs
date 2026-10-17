@@ -56,7 +56,7 @@
               {{#if outside}}data-tooltip="{{localize 'FHQL.Folders.OutsideHint'}}"{{/if}}>
         <span class="fhql-folder-icon" aria-hidden="true">{{#if outside}}<i class="fa-solid fa-circle-exclamation"></i>{{else}}<i class="fa-solid fa-folder"></i><i class="fa-solid fa-folder-open"></i>{{/if}}</span>
         <span class="fhql-row-name">{{name}}</span>
-        <span class="fhql-row-status">{{count}}</span>
+        <span class="fhql-row-status fhql-list-count">{{count}}</span>
       </button>
     </li>
     {{else}}

@@ -284,9 +284,9 @@
             <button type="button" class="fhql-row-link" data-action="openSubquest" data-quest-id="{{id}}" data-tooltip="{{localize 'FHQL.Subquest.OpenBeside'}}">
               <span class="fhql-thumb"><i class="{{icon}} fhql-status-icon" inert></i></span>
               <span class="fhql-row-name">{{name}}</span>
-              <span class="fhql-row-status">{{label}}</span>
+              <span class="fhql-row-status fhql-status-badge fhql-badge-small">{{label}}</span>
             </button>
-            {{#if ../gm}}<button type="button" class="fhql-button fhql-small fhql-icon-only fhql-subquest-remove" data-action="removeSubquest" data-quest-id="{{id}}"
+            {{#if ../gm}}<button type="button" class="fhql-icon-button fhql-subquest-remove" data-action="removeSubquest" data-quest-id="{{id}}"
                     aria-label="{{localize 'FHQL.Subquest.Remove'}}" data-tooltip="{{localize 'FHQL.Subquest.Remove'}}"><i class="fa-solid fa-link-slash" inert></i></button>{{/if}}
           </li>
           {{/each}}
@@ -304,7 +304,7 @@
       {{#if showRewards}}
       <section class="fhql-card fhql-area-rewards" data-panel="rewards" {{#if editable}}data-drop="rewards"{{/if}}>
         <h3 class="fhql-subheading">{{localize "FHQL.Quest.Rewards"}}
-          <span class="fhql-count fhql-tally {{#if rewardsComplete}}is-complete{{/if}}">{{#if rewardSummary}}{{rewardSummary}}{{else}}{{rewards.length}}{{/if}}</span></h3>
+          <span class="fhql-count fhql-tally {{#if rewardsComplete}}is-complete{{/if}}">{{#if rewardSummary}}<span class="fhql-tally-long">{{rewardSummary}}</span><span class="fhql-tally-short" aria-hidden="true">{{rewardShort}}</span>{{else}}{{rewards.length}}{{/if}}</span></h3>
         <div class="fhql-panel-body" data-scroll="rewards">
         <ul class="fhql-rewards {{#if editing}}is-editing{{/if}}">
           {{#each rewards}}
@@ -405,7 +405,7 @@
       <summary>
         <i class="fa-solid fa-chevron-right fhql-chevron" inert></i>
         <i class="fa-solid fa-user-secret" inert></i> {{localize "FHQL.Quest.GMNotes"}}
-        <span class="fhql-gm-tag">{{localize "FHQL.Quest.GMOnly"}}</span>
+        <span class="fhql-gm-tag fhql-tally">{{localize "FHQL.Quest.GMOnly"}}</span>
       </summary>
       <div class="fhql-panel-body" data-scroll="gmNotes">
       {{#if editing}}

@@ -113,7 +113,7 @@
 .fhql-app .fhql-chip.is-on { color: var(--fhql-ink); border-color: var(--fhql-status); background: var(--fhql-surface-raised); }
 .fhql-app .fhql-chip:focus-visible { outline: 2px solid var(--fhql-accent); outline-offset: 1px; }
 .fhql-app .fhql-chip { padding: 0.2em 0.55em; font-size: 0.85em; min-height: 24px; }
-.fhql-app .fhql-chip-count { font-weight: normal; font-variant-numeric: tabular-nums; }
+.fhql-app .fhql-chip-count { font-weight: normal; font-size: var(--fhql-tally-font); font-variant-numeric: tabular-nums; }
 /* New folder (GM) and fold-all lead the filter row; the chips take the rest and wrap under each other. */
 .fhql-app .fhql-chips-row { display: flex; gap: 0.25em; align-items: flex-start; }
 .fhql-app .fhql-chips-row > .fhql-chips { flex: 1 1 auto; min-width: 0; }
@@ -230,7 +230,9 @@
   pointer-events: none;
 }
 /* A folded parent sums up what is inside; its signals show only while folded. */
-.fhql-app .fhql-family-count { font-size: 0.78em; color: var(--fhql-ink-muted); font-variant-numeric: tabular-nums; }
+/* Counts in the list rows (folder totals, a family's done/total) share one size and color; a finished family's turns green. */
+.fhql-app :is(.fhql-family-count, .fhql-list-count) { font-size: var(--fhql-tally-font); font-weight: normal; color: var(--fhql-ink-muted); font-variant-numeric: tabular-nums; }
+.fhql-app li[data-family-finished] .fhql-family-count { color: var(--fhql-status-completed); }
 .fhql-app li[data-row="quest"]:not(.is-folded) .fhql-family-signal { display: none; }
 /* A parent shown only because a subquest matches the filter. */
 .fhql-app li[data-row="quest"].is-context > .fhql-row { opacity: 0.6; }
