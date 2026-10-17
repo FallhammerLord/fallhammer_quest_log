@@ -17,6 +17,9 @@ const WIDGET_ID = 'fhql-beacon';
 /** Keeps the widget sized to the players list as that list resizes or expands. */
 let resizeObserver;
 
+/** Objectives the Beacon shows before its list scrolls. */
+const BEACON_ROWS = 5;
+
 const OBJECTIVE_ICONS = { open: 'fa-regular fa-square', done: 'fa-solid fa-square-check', failed: 'fa-solid fa-square-xmark' };
 
 /**
@@ -52,7 +55,14 @@ export function refreshQuestBeacon()
    applyTheme(widget);
    const html = renderLoadedTemplate(TEMPLATES.beacon, shown ? beaconContext(shown, marked) : { empty: true });
    // Before the template has loaded (only during startup), keep what is there; the ready hook redraws.
-   if (html !== null) { widget.innerHTML = html; }
+   if (html !== null)
+   {
+      // A redraw of the same quest keeps the objective list where the player scrolled it.
+      const before = widget.querySelector('.fhql-beacon-panel');
+      const scrolled = before?.dataset.questId === shown?.entry.id ? before.querySelector('.fhql-beacon-objectives')?.scrollTop ?? 0 : 0;
+      widget.innerHTML = html;
+      capObjectives(widget, scrolled);
+   }
    matchPlayersSize(widget, players);
 
    if (!resizeObserver)
@@ -65,6 +75,31 @@ export function refreshQuestBeacon()
    }
    resizeObserver.disconnect();
    resizeObserver.observe(players);
+}
+
+/**
+ * Shows at most BEACON_ROWS objectives; the rest scroll inside the list. Rows can wrap to several
+ * lines, so the cap is measured, not set in CSS.
+ *
+ * @param {HTMLElement} widget - The Beacon.
+ * @param {number} scrollTop - Where the list was scrolled before the redraw.
+ */
+function capObjectives(widget, scrollTop)
+{
+   const list = widget.querySelector('.fhql-beacon-objectives');
+   if (!list) { return; }
+   list.style.maxHeight = '';
+   const last = list.children[BEACON_ROWS - 1];
+   if (list.children.length > BEACON_ROWS && last)
+   {
+      // Measured to the fifth row's foot; max-height counts padding only under border-box sizing.
+      const style = getComputedStyle(list);
+      const pad = (side) => parseFloat(style[side]) || 0;
+      const toFoot = last.getBoundingClientRect().bottom - list.getBoundingClientRect().top;
+      const height = style.boxSizing === 'border-box' ? toFoot + pad('paddingBottom') : toFoot - pad('paddingTop') - pad('borderTopWidth');
+      list.style.maxHeight = `min(40vh, ${Math.ceil(height)}px)`;
+   }
+   list.scrollTop = scrollTop;
 }
 
 /**
