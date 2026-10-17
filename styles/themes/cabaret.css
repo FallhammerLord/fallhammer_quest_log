@@ -169,3 +169,12 @@
   .fhql-app.fhql-theme-cabaret .fhql-egg-drape { display: none; }
   .fhql-app.fhql-theme-cabaret .fhql-egg-marquee { animation: fhql-marquee-fade 2.4s ease forwards; }
 }
+
+/* Quest family pips (styles/components/list.css): Marquee bulbs that light one after another, with a warm glow. */
+.fhql-app.fhql-theme-cabaret {
+  --fhql-pip-ring: var(--fhql-cabaret-gilt);
+  --fhql-pip-1: var(--fhql-cabaret-bulb);
+  --fhql-pip-2: var(--fhql-cabaret-bulb);
+  --fhql-pip-3: var(--fhql-cabaret-bulb);
+  --fhql-pip-glow: 0 0 4px var(--fhql-cabaret-bulb-glow), 0 0 8px rgb(255 210 122 / 0.6);
+}

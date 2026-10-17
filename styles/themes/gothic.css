@@ -160,3 +160,9 @@
 @media (prefers-reduced-motion: reduce) {
   .fhql-beacon .fhql-egg-bell { animation: fhql-bell-fade 2s ease var(--fhql-toll-elapsed, 0ms) forwards; }
 }
+
+/* Quest family pips (styles/components/list.css): Brass rings that fill with oxblood, no glow. */
+.fhql-app.fhql-theme-gothic {
+  --fhql-pip-ring: var(--fhql-gothic-brass);
+  --fhql-pip-glow: none;
+}

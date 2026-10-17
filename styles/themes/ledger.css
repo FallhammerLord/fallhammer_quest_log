@@ -173,3 +173,13 @@
 
 /* Beacon: a banner stripe across the top. */
 .fhql-beacon.fhql-theme-ledger .fhql-beacon-panel { border-block-start: 3px solid var(--fhql-banner); }
+
+/* Quest family pips (styles/components/list.css): Silver rivets set as small diamonds. */
+.fhql-app.fhql-theme-ledger {
+  --fhql-pip-radius: 1px;
+  --fhql-pip-transform: rotate(45deg) scale(0.85);
+  --fhql-pip-1: var(--fhql-metal);
+  --fhql-pip-2: var(--fhql-metal);
+  --fhql-pip-3: var(--fhql-metal);
+  --fhql-pip-glow: none;
+}

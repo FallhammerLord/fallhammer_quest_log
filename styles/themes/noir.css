@@ -75,3 +75,10 @@
   letter-spacing: 0.12em;
 }
 
+/* Quest family pips (styles/components/list.css): Stark white periods, no glow. */
+.fhql-app.fhql-theme-noir {
+  --fhql-pip-1: var(--fhql-ink);
+  --fhql-pip-2: var(--fhql-ink);
+  --fhql-pip-3: var(--fhql-ink);
+  --fhql-pip-glow: none;
+}

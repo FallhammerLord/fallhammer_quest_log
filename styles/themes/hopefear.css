@@ -139,3 +139,14 @@ body:is(.performance-low, .noblur) .fhql-app.fhql-theme-hopefear :is(.fhql-sheet
 }
 .fhql-app.fhql-theme-hopefear .fhql-button:is(.fhql-primary, .is-on) i { color: inherit; }
 
+/* Quest family pips (styles/components/list.css): Hope flowing into Fear: gold at the top, blue at the bottom. */
+.fhql-app.fhql-theme-hopefear {
+  --fhql-pip-1: var(--fhql-hope);
+  --fhql-pip-2: var(--fhql-hope);
+  --fhql-pip-3: var(--fhql-fear);
+}
+/* The middle pip is split like the theme's gem: Hope meeting Fear (a mixed color reads as grey). */
+.fhql-app.fhql-theme-hopefear li:not(.is-folded) > .fhql-twisty .fhql-pips > i:nth-child(2) {
+  background: linear-gradient(135deg, var(--fhql-hope) 50%, var(--fhql-fear) 50%);
+  border-color: transparent;
+}

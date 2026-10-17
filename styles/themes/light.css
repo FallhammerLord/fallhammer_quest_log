@@ -48,3 +48,10 @@
   initial-letter: 2;
   margin-inline-end: 0.1em;
 }
+
+/* Quest family pips (styles/components/list.css): Ink drops: pointed at the top, solid, no glow (a glow smudges on parchment). */
+.fhql-app:is(.fhql-theme-light, :where(.fhql-theme-auto.theme-light, body:not(.theme-dark) .fhql-theme-auto:not(.theme-dark))) {
+  --fhql-pip-radius: 0 50% 50% 50%;
+  --fhql-pip-transform: rotate(45deg);
+  --fhql-pip-glow: none;
+}

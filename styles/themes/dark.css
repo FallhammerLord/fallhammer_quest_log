@@ -95,3 +95,8 @@ body.theme-dark .fhql-app.fhql-theme-auto:not(.theme-light) {
   initial-letter: 2;
   margin-inline-end: 0.12em;
 }
+
+/* Quest family pips (styles/components/list.css): Gold beads with a soft glow. */
+.fhql-app:is(.fhql-theme-dark, :where(.fhql-theme-auto.theme-dark, body.theme-dark .fhql-theme-auto:not(.theme-light))) {
+  --fhql-pip-glow: 0 0 5px rgb(224 160 84 / 0.7);
+}

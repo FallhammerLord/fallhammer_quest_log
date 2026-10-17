@@ -132,3 +132,9 @@
   .fhql-app.fhql-theme-scifi .fhql-egg-copy { display: none; }
   .fhql-app.fhql-theme-scifi .fhql-egg-readout { animation: fhql-glitch-still 900ms ease forwards; }
 }
+
+/* Quest family pips (styles/components/list.css): Square LEDs with a cyan glow. */
+.fhql-app.fhql-theme-scifi {
+  --fhql-pip-radius: 1px;
+  --fhql-pip-glow: 0 0 6px rgb(52 228 255 / 0.85);
+}

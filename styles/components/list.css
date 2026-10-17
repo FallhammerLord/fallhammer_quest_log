@@ -155,7 +155,7 @@
 .fhql-app .fhql-twisty:focus-visible { outline: 2px solid var(--fhql-accent); outline-offset: -2px; }
 .fhql-app li:has(> .fhql-row.is-selected) > .fhql-twisty { background: var(--fhql-surface-raised); }
 /* Pips grow from top to bottom. Folded: empty rings. Open: filled, glowing where the theme glows.
-   Themes set their own look with --fhql-pip-radius, --fhql-pip-glow, --fhql-pip-ring and per-pip
+   Themes set their own look with --fhql-pip-radius, --fhql-pip-transform, --fhql-pip-glow, --fhql-pip-ring and per-pip
    fills --fhql-pip-1/2/3 (all default to the accent). On a click (.is-animating, set by QuestLog.js)
    they fill top to bottom as the subquests slide in, and drain bottom to top as they slide away. */
 .fhql-app {
@@ -172,6 +172,7 @@
   border-radius: var(--fhql-pip-radius);
   background: var(--fhql-pip-fill);
   box-shadow: var(--fhql-pip-glow);
+  transform: var(--fhql-pip-transform, none);
 }
 .fhql-app .fhql-pips > i:nth-child(2) { --fhql-pip-fill: var(--fhql-pip-2, var(--fhql-accent)); width: 6px; height: 6px; }
 .fhql-app .fhql-pips > i:nth-child(3) { --fhql-pip-fill: var(--fhql-pip-3, var(--fhql-accent)); width: 7px; height: 7px; }
