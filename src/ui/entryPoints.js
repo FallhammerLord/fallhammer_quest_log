@@ -1,4 +1,5 @@
-import { SCENE_CONTROL_GROUP, directoryButtonSlot } from '../compat.js';
+import { SCENE_CONTROL_GROUP, directoryButtonSlot, pruneDirectory } from '../compat.js';
+import { getQuestEntry, questPage, questRootFolder } from '../data/quests.js';
 import { openQuestLog } from '../api.js';
 import { questLogAvailable } from '../data/playerActions.js';
 import { getSetting } from '../setting.js';
@@ -16,6 +17,12 @@ export function registerEntryPoints()
 {
    Hooks.on('renderJournalDirectory', (app, element) =>
    {
+      // Players reach quests through the Quest Log and the Beacon; the journal list stays theirs.
+      if (!game.user.isGM)
+      {
+         const root = questRootFolder();
+         pruneDirectory(element instanceof HTMLElement ? element : app.element, (id) => id === root?.id, (id) => !!questPage(getQuestEntry(id)));
+      }
       const slot = directoryButtonSlot(element);
       if (!slot) { return; }
       const existing = slot.parent.querySelector(`.${BUTTON_CLASS}`);

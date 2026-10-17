@@ -67,6 +67,25 @@ export function directoryButtonSlot(element)
    return header ? { parent: header, prepend: true } : null;
 }
 
+/**
+ * Removes folders and entries from a rendered sidebar directory (folder contents go with their folder).
+ *
+ * @param {HTMLElement} element - The directory's root element.
+ * @param {(id: string) => boolean} dropFolder - Whether to remove a folder, by ID.
+ * @param {(id: string) => boolean} dropEntry - Whether to remove an entry, by ID.
+ */
+export function pruneDirectory(element, dropFolder, dropEntry)
+{
+   for (const row of element?.querySelectorAll('[data-folder-id]') ?? [])
+   {
+      if (dropFolder(row.dataset.folderId)) { row.remove(); }
+   }
+   for (const row of element?.querySelectorAll('[data-entry-id]') ?? [])
+   {
+      if (dropEntry(row.dataset.entryId)) { row.remove(); }
+   }
+}
+
 /** @returns {HTMLElement|null} The players list element, if rendered. */
 export function playersElement()
 {
