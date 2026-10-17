@@ -97,6 +97,7 @@ npm run quests     # Foundry mocked: quest families (folders, no loops), double-
 - **Timings** are named constants beside their use, saying what ties them down (a CSS animation length, a write batch).
 - **Relay senders can't be verified** (checked 2026-10-16 against the Foundry type definitions: query handlers get only data and a timeout; module sockets carry no server-confirmed sender). A player with console access could name another player. Mitigations: every request is rechecked against the named user's own permissions, requests naming a GM are refused, and deposits and claims are recorded by name with GM Undo.
 - **GM relays** go through `src/data/relay.js` only (`registerRelay` / `relay`): one queue on the GM client for every request type, shared notifications, transport in `compat.js`. The handler isn't told who sent a request: re-check everything against the named user, and refuse requests naming a GM.
+- **Filled requirements don't tick objectives** (user's call, 2026-10-17): the GM ticks them; Undo leaves the state alone.
 - **Deposits never move without confirmation:** Hand over/Show and drops open the confirm panel (source, amount). The GM client takes only what is still needed, one deposit at a time, recording before taking and rolling back on failure. Keep `npm run deposits` passing; it fails if the relay queue is removed.
 - **Quest families** live in one folder: a new subquest is created in its parent's folder, setting a parent moves the quest there, moving a quest moves its subquests. The Quest Log also nests a subquest under its parent wherever it is stored (older data).
 - **Stored data changes shape → add a step to `MIGRATIONS`** in `src/data/migrations.js` (next version number), keep reading old data in `QuestData.migrateData` meanwhile, and add a case to `npm run quests`.
@@ -142,6 +143,8 @@ Untested (2026-10-17):
 - Notes lock: a second user sees the lock; GM Edit anyway.
 - Quest family folding: arrow, Alt for the whole family, fold-all button, Left/Right keys, signals on folded parents, unfold when opened from the Beacon.
 - Options Fold finished families and Active subquests first.
+
+New (2026-10-17): item hand-in layout (bracket, right-aligned count, folded "who handed in", name hidden when it matches the objective); filled requirements no longer tick the objective.
 
 Not on the checklist, unconfirmed: Edit notes opening the editor in one click; hover previews of quest links; the outcome chat card.
 

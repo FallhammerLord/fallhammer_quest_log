@@ -46,6 +46,7 @@ export function sheetContext(t, { gm = true, editing = false, long = false } = {
          progress: '7/12', fill: '58%', met: false, modeLabel: t('Deposit.ModeGive'), modeOptions: [mode('give'), mode('show')]
       },
       canDeposit: !editing, depositVerb: t('Deposit.Give'), depositAria: t('Deposit.Give'), depositIcon: 'fa-hand-holding-hand',
+      depositsLabel: 'Who handed in (2)', depositsOpen: !gm,
       depositsList: [
          { index: 0, label: 'Player2 (Corvus AAI:2101 G5): 4', held: true, gm },
          { index: 1, label: 'Rinn (Kestrel of the Long Watch): 3', held: true, gm }

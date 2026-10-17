@@ -212,15 +212,23 @@
             {{#if requirement}}
             <div class="fhql-requirement {{#if requirement.met}}is-met{{/if}}">
               <span class="fhql-requirement-item">
-                <span class="fhql-requirement-thumb">{{#if requirement.img}}<img src="{{requirement.img}}" alt="">{{else}}<i class="fa-solid fa-box" inert></i>{{/if}}</span>
-                <button type="button" class="fhql-link" data-action="openDocument" data-uuid="{{requirement.uuid}}">{{requirement.name}}</button>
-                <span class="fhql-requirement-progress" style="--fhql-fill: {{requirement.fill}}" aria-label="{{localize 'FHQL.Deposit.Progress'}} {{requirement.progress}}">{{requirement.progress}}</span>
+                <button type="button" class="fhql-requirement-thumb" data-action="openDocument" data-uuid="{{requirement.uuid}}"
+                        aria-label="{{requirement.name}}" data-tooltip="{{requirement.name}}">{{#if requirement.img}}<img src="{{requirement.img}}" alt="">{{else}}<i class="fa-solid fa-box" inert></i>{{/if}}</button>
+                {{#unless requirement.sameName}}<button type="button" class="fhql-link" data-action="openDocument" data-uuid="{{requirement.uuid}}">{{requirement.name}}</button>{{/unless}}
                 {{#unless ../editing}}{{#unless canDeposit}}<span class="fhql-muted">{{requirement.modeLabel}}</span>{{/unless}}{{/unless}}
               </span>
-              {{#if canDeposit}}
-              <button type="button" class="fhql-button fhql-small fhql-primary fhql-icon-only" data-action="depositItem" aria-haspopup="dialog" aria-label="{{depositAria}}" data-tooltip="{{depositAria}}">
-                <i class="fa-solid {{depositIcon}}" inert></i></button>
-              {{/if}}
+              <span class="fhql-requirement-end">
+                {{#if depositsList.length}}
+                <button type="button" class="fhql-button fhql-small fhql-deposits-toggle {{#if depositsOpen}}is-on{{/if}}" data-action="toggleDeposits"
+                        aria-expanded="{{#if depositsOpen}}true{{else}}false{{/if}}" aria-label="{{depositsLabel}}" data-tooltip="{{localize 'FHQL.Deposit.Who'}}">
+                  <i class="fa-solid fa-users" inert></i> {{depositsList.length}}</button>
+                {{/if}}
+                <span class="fhql-requirement-progress" style="--fhql-fill: {{requirement.fill}}" aria-label="{{localize 'FHQL.Deposit.Progress'}} {{requirement.progress}}">{{requirement.progress}}</span>
+                {{#if canDeposit}}
+                <button type="button" class="fhql-button fhql-small fhql-primary fhql-icon-only" data-action="depositItem" aria-haspopup="dialog" aria-label="{{depositAria}}" data-tooltip="{{depositAria}}">
+                  <i class="fa-solid {{depositIcon}}" inert></i></button>
+                {{/if}}
+              </span>
               {{#if ../editing}}
               <span class="fhql-requirement-edit">
                 <input type="number" min="1" step="1" class="fhql-input fhql-count-input" data-field="objective.count" value="{{requirement.count}}"
@@ -232,7 +240,7 @@
                         data-tooltip="{{localize 'FHQL.Deposit.Clear'}}" aria-label="{{localize 'FHQL.Deposit.Clear'}}"><i class="fa-solid fa-xmark" inert></i></button>
               </span>
               {{/if}}
-              {{#if depositsList.length}}
+              {{#if depositsOpen}}
               <span class="fhql-deposits">
                 {{#each depositsList}}
                 <span class="fhql-claim"><i class="fa-solid fa-check" inert></i> {{label}}

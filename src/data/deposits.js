@@ -208,13 +208,12 @@ async function depositNow(data, { force = false } = {})
          for (const [key, value] of Object.entries(itemQuantityUpdate(item, take))) { foundry.utils.setProperty(snapshot, key, value); }
       }
    }
-   const before = { deposits: [...objective.deposits], state: objective.state };
+   const before = { deposits: [...objective.deposits] };
    const record = {
       userId: user.id, actorUuid: actor.uuid, actorName: actor.name, itemUuid: item.uuid, qty: take, at: Date.now(), item: snapshot
    };
    const path = `system.objectives.${data.objectiveId}`;
    const changes = { [`${path}.deposits`]: [...before.deposits, record] };
-   if (before.state === 'open' && take >= need) { changes[`${path}.state`] = 'done'; }
 
    // Record first, then take the item; undo the record if taking fails.
    await page.update(changes);
@@ -228,7 +227,7 @@ async function depositNow(data, { force = false } = {})
       catch (err)
       {
          console.error(`${MODULE_ID} | Taking a deposited item failed; rolling back`, err);
-         await page.update({ [`${path}.deposits`]: before.deposits, [`${path}.state`]: before.state });
+         await page.update({ [`${path}.deposits`]: before.deposits });
          return fail('Failed');
       }
    }
@@ -288,11 +287,7 @@ export async function undoDeposit(entry, objectiveId, index, { returnItem = fals
       }
    }
 
-   const deposits = objective.deposits.filter((d, i) => i !== index);
-   const changes = { [`system.objectives.${objectiveId}.deposits`]: deposits };
-   const total = deposits.reduce((sum, d) => sum + d.qty, 0);
-   if (objective.state === 'done' && total < objective.requirement.count) { changes[`system.objectives.${objectiveId}.state`] = 'open'; }
-   await page.update(changes);
+   await page.update({ [`system.objectives.${objectiveId}.deposits`]: objective.deposits.filter((d, i) => i !== index) });
    return true;
 }
 

@@ -445,6 +445,8 @@
       }
     },
     "Deposit": {
+      "Who": "Who handed in",
+      "WhoLabel": "Who handed in ({count})",
       "Give": "Hand over",
       "Show": "Show",
       "ActionLabel": "{verb}: {item}",
@@ -554,7 +556,7 @@
       "Families": "The three dots beside a quest fold or open its subquests. Alt-click does the whole family; the button by the search box does every family.",
       "Search": "Press / to search. Search finds quest names, quest givers and objectives. Esc clears it.",
       "Keys": "Up and Down move through the list; Right opens a folder or family, Left folds it.",
-      "HandOver": "To turn in an item an objective asks for, use Hand over on the objective, or drag the item from your character sheet onto it.",
+      "HandOver": "To turn in an item an objective asks for, use Hand over on the objective, or drag the item from your character sheet onto it. The people icon beside the count shows who handed in.",
       "Widen": "Drag the line between the list and the quest to widen the list. Double-click it to reset.",
       "RightClick": "Right-click a quest for its menu, or a folder to add, rename, move or delete it.",
       "Drop": "In edit mode, drop an actor on the giver, items or actors on Rewards, an item on an objective to require it, and a quest on Subquests.",

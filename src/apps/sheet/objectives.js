@@ -21,9 +21,10 @@ const OBJECTIVE_ICONS = { open: 'fa-regular fa-square', done: 'fa-solid fa-squar
  * @param {object} system - Quest data.
  * @param {object} access - From questAccess.
  * @param {boolean} editing - Edit mode.
+ * @param {Set<string>} openDeposits - Objectives whose "who handed in" list is unfolded in this window.
  * @returns {object[]} Objectives.
  */
-export function objectivesContext(system, access, editing)
+export function objectivesContext(system, access, editing, openDeposits)
 {
    if (!access.full) { return []; }
    const open = !['completed', 'failed'].includes(system.status);
@@ -33,7 +34,7 @@ export function objectivesContext(system, access, editing)
        ...o,
        icon: OBJECTIVE_ICONS[o.state],
        stateLabel: game.i18n.localize(`FHQL.Objective.${o.state}`),
-       ...requirementContext(o, { open, gm: access.gm, editing })
+       ...requirementContext(o, { open, gm: access.gm, editing, listOpen: openDeposits.has(o.id) })
     }));
 }
 
@@ -44,7 +45,7 @@ export function objectivesContext(system, access, editing)
  * @param {{ open: boolean, gm: boolean, editing: boolean }} state - Quest open, viewer is GM, edit mode.
  * @returns {object} Fields merged into the objective's context.
  */
-function requirementContext(objective, { open, gm, editing })
+function requirementContext(objective, { open, gm, editing, listOpen })
 {
    if (!hasRequirement(objective)) { return { requirement: null }; }
    const localize = (key) => game.i18n.localize(key);
@@ -58,6 +59,8 @@ function requirementContext(objective, { open, gm, editing })
          progress: `${total}/${requirement.count}`,
          fill: `${Math.min(100, Math.round((total / requirement.count) * 100))}%`,
          met: total >= requirement.count,
+         // An objective made by dropping the item already carries its name: don't say it twice.
+         sameName: requirement.name.trim().toLowerCase() === objective.name.trim().toLowerCase(),
          modeLabel: localize(give ? 'FHQL.Deposit.ModeGive' : 'FHQL.Deposit.ModeShow'),
          modeOptions: ['give', 'show'].map((mode) => ({
             value: mode, selected: mode === requirement.mode,
@@ -67,7 +70,9 @@ function requirementContext(objective, { open, gm, editing })
       canDeposit: open && !editing && !objective.hidden && stillNeeded(objective) > 0,
       depositAria: game.i18n.format('FHQL.Deposit.ActionLabel', { verb, item: requirement.name }),
       depositIcon: give ? 'fa-hand-holding-hand' : 'fa-eye',
-      depositsList: objective.deposits.map((d, index) => ({ index, label: depositLabel(d), held: !!d.item, gm }))
+      depositsList: objective.deposits.map((d, index) => ({ index, label: depositLabel(d), held: !!d.item, gm })),
+      depositsOpen: listOpen && objective.deposits.length > 0,
+      depositsLabel: game.i18n.format('FHQL.Deposit.WhoLabel', { count: objective.deposits.length })
    };
 }
 
@@ -292,6 +297,15 @@ async function onClearRequirement(event, target)
    if (error) { ui.notifications.warn(game.i18n.localize(`FHQL.Deposit.Error.${error}`)); }
 }
 
+/** Folds or unfolds an objective's "who handed in" list (kept per window). */
+function onToggleDeposits(event, target)
+{
+   const id = target.closest('[data-objective-id]')?.dataset.objectiveId;
+   if (!id) { return; }
+   if (!this._openDeposits.delete(id)) { this._openDeposits.add(id); }
+   this.render();
+}
+
 /** Objective and deposit actions, merged into the quest sheet's actions. */
 export const objectiveActions = {
    addObjective: onAddObjective,
@@ -300,5 +314,6 @@ export const objectiveActions = {
    toggleObjectiveHidden: onToggleObjectiveHidden,
    depositItem: onDepositItem,
    undoDeposit: onUndoDeposit,
-   clearRequirement: onClearRequirement
+   clearRequirement: onClearRequirement,
+   toggleDeposits: onToggleDeposits
 };

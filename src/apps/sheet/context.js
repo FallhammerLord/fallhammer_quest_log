@@ -43,7 +43,7 @@ export async function sheetContext(app, entry, saveStateLabel)
    const notesViaGM = canEditNotesViaGM(entry);
    const enrich = (html) => textEditor().enrichHTML(html ?? '', { secrets: access.editable, relativeTo: page });
    const localize = (key) => game.i18n.localize(key);
-   const allObjectives = objectivesContext(system, access, editing);
+   const allObjectives = objectivesContext(system, access, editing, app._openDeposits);
    // "Hide done" is the viewer's own choice; edit mode always shows everything.
    const hideDone = !editing && getSetting('hideDoneObjectives');
    const objectives = hideDone ? allObjectives.filter((o) => o.state !== 'done') : allObjectives;

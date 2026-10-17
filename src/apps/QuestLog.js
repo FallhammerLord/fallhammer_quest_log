@@ -83,6 +83,7 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
       {
          this._editing = false;
          this._showAllObjectives = false;
+         this._openDeposits.clear();
          stopEditingNotes(this);
       }
       this.#selectedId = id;

@@ -236,7 +236,7 @@ Like Forien's Show: a GM button on the quest header opens the quest's window on 
 
 ### 5.11 Item requirements and deposits (2026-10-01)
 
-An objective can require an item: "Bring 3 wolf pelts". The requirement lives on the objective, so it shows on the sheet and the Beacon as progress (2/3) and ticks the objective done when filled.
+An objective can require an item: "Bring 3 wolf pelts". The requirement lives on the objective, so it shows on the sheet and the Beacon as progress (2/3). Filling it never ticks the objective: the GM does that (decided 2026-10-17), so a hand-in can still need a scene or a check.
 
 - **Setting it (edit mode):** drop an item on an objective to require it, or on the objectives list to add a new objective for it. Set the count and the mode. Removing a requirement is refused while deposits are recorded.
 - **Modes:** *Hand over* (default): the item leaves the character; the quest keeps a copy of its data so Undo can return it. *Show only*: the player proves they carry it and keeps it; the same item can't be shown twice.
@@ -245,7 +245,7 @@ An objective can require an item: "Bring 3 wolf pelts". The requirement lives on
 - **Matching:** made from the required item (compendium source, world duplicate source, or legacy source flag), the same item, or failing those the same name. Quantity is read from `system.quantity` or `system.basic.quantity` (Cypher System), or their `.value`, where the system has one, else each item counts as 1. Both live in `compat.js`.
 - **Overfill guard:** deposits run on the GM client one at a time (`fhql.deposit` query, queued). Each takes the smaller of what the item holds and what is still needed *at that moment*; a stack bigger than needed is reduced and the rest kept. When nothing is needed the deposit is refused and nothing is touched. The deposit is recorded first, then the item taken; if taking fails the record is rolled back.
 - **Checks on the GM side:** quest visible in full to the named player, not Hidden, not Completed or Failed; objective not hidden; item on a character the named player owns; requests naming a GM refused.
-- **Undo (GM):** removes a deposit and offers to return the item, onto its original stack if it still exists, else as a new item. The objective reopens if it falls short. Lowering the count after deposits keeps them all (shows "5/3"); Undo returns extras.
+- **Undo (GM):** removes a deposit and offers to return the item, onto its original stack if it still exists, else as a new item. The objective's state is left alone. Lowering the count after deposits keeps them all (shows "5/3"); Undo returns extras.
 - **Copies:** duplicating a quest clears deposits, so Undo can't return items twice. Deleting an objective holding handed-over items asks first.
 - **Tested offline:** `npm run deposits` covers racing deposits, refusals, rollback, and Undo. Two real players depositing at once is untested in Foundry.
 

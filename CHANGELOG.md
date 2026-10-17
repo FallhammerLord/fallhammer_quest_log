@@ -4,6 +4,8 @@
 
 First feature-complete preview. Requires Foundry VTT v14.
 
+- Item hand-ins line up under their objective's text, tied to it by a bracket, with the count and Hand over button on the right. The item's name is left out when it matches the objective's. Who handed in folds behind a small button.
+- Filling an item requirement no longer ticks the objective; the GM does (Undo leaves it alone too).
 - Party focus is now **Primary** (everyone's Beacon); **Track** stays personal.
 - Search finds quest givers and objectives as well as names (players match only what they can see). While a filter or search hides quests, "Showing 3 of 12 · Clear" sits under the filters.
 - Deleting an objective or removing a reward asks first.

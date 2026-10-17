@@ -75,6 +75,9 @@ export function QuestSheetMixin(Base)
       /** Narrow layout: show every objective instead of the first few. Reset when the quest changes. */
       _showAllObjectives = false;
 
+      /** Objectives whose "who handed in" list is unfolded. Reset when the quest changes. */
+      _openDeposits = new Set();
+
       /** Narrow layout: panels the viewer collapsed, by panel key. Kept while the window is open. */
       _collapsedPanels = new Set();
 

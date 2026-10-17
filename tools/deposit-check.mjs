@@ -136,7 +136,7 @@ expect('both racing deposits succeed', r1.ok && r2.ok);
 expect('first player hands over the whole stack of 2', !a1.items.has('i1'));
 expect('second player gives only the 1 still needed and keeps 4', s2.system.quantity === 4);
 expect('objective totals exactly 3', quest.objective().deposits.reduce((s, d) => s + d.qty, 0) === 3);
-expect('objective marked done', quest.objective().state === 'done');
+expect('a filled objective is not ticked for the GM', quest.objective().state === 'open');
 expect('each hand over posts a chat card naming the item', chat.length === 2 && chat.every((c) => c.includes('fhql-chat-claim') && c.includes('Wolf pelt')));
 
 // A full objective takes nothing.
@@ -144,10 +144,12 @@ const r3 = await deposit('p2', s2);
 expect('deposit to a full objective is refused', !r3.ok && r3.message.includes('Full'));
 expect('refused deposit leaves the stack alone', s2.system.quantity === 4);
 
-// Undo returns the item onto the stack it came from, and reopens the objective.
+// Undo returns the item onto the stack it came from, and leaves the objective's state to the GM.
+quest.objective().state = 'done';
 await undoDeposit(quest.entry, 'o1', 1, { returnItem: true });
 expect('undo returns 1 pelt onto the remaining stack', s2.system.quantity === 5);
-expect('undo reopens the objective', quest.objective().state === 'open');
+expect('undo leaves a ticked objective ticked', quest.objective().state === 'done');
+quest.objective().state = 'open';
 
 // Undo of a fully handed-over stack recreates the item.
 await undoDeposit(quest.entry, 'o1', 0, { returnItem: true });
