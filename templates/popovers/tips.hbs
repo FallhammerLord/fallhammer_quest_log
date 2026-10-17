@@ -1,0 +1,6 @@
+{{!-- Quest Log tips (the ? in the title bar). --}}
+<div class="fhql-popover-title">{{localize "FHQL.Tips.Title"}}</div>
+<ul class="fhql-tips">
+  {{#each tips}}<li><i class="{{icon}}" inert></i><span>{{text}}</span></li>{{/each}}
+</ul>
+<div class="fhql-popover-buttons"><button type="button" class="fhql-button fhql-primary" data-answer="ok" autofocus>{{localize "FHQL.Tips.Close"}}</button></div>

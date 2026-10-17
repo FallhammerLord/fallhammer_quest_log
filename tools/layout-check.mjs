@@ -61,7 +61,8 @@ for (const c of CASES)
    for (const width of SHEET_WIDTHS) { pages.push({ id: `sheet-${c.name}-${width}`, html: frame('sheet', width, c.theme, sheetT({ ...sheetContext(t, c), popout: true }), c.font) }); }
    for (const width of LOG_WIDTHS)
    {
-      const ctx = { ...listContext(t, c.gm), ...sheetContext(t, c) };
+      const sheet = sheetContext(t, c);
+      const ctx = { ...listContext(t, c.gm), ...sheet, sheet: { ...sheet.sheet, canPopOut: true } };
       pages.push({ id: `log-${c.name}-${width}`, html: frame('log', width, c.theme, listT(ctx) + sheetT(ctx), c.font) });
    }
 }

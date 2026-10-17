@@ -27,8 +27,8 @@ As GM:
 - Status buttons in the read view: Reveal, Start, Complete, Fail, Reopen. Click an objective's box to cycle open, done, failed.
 - Drop an actor on the giver, items or actors on Rewards, a quest on Subquests. Drop an item on an objective to require it.
 - Right-click a quest for its menu (pop out, access, move, set parent, delete); right-click a folder to add a subfolder, rename, move or delete it.
-- **Show players** opens a quest on players' screens.
-- Mark a quest **Party focus** to put it on everyone's Beacon.
+- **Show players** (in the GM's ⋮ quest menu) opens a quest on players' screens.
+- Mark a quest **Primary** to put it on everyone's Beacon (players can also **Track** quests on their own).
 
 As a player:
 

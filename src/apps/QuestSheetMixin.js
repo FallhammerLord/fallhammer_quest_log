@@ -13,7 +13,6 @@ import { depositDropped, flashChangedObjectives, objectiveActions } from './shee
 import { rewardActions } from './sheet/rewards.js';
 import { notesActions, openNotesIfAsked, rememberOpenNotes, savePlayerNotes, stopEditingNotes } from './sheet/notes.js';
 import { openQuestMenu, questMenuActions } from './sheet/questMenu.js';
-import { shareActions } from './sheet/share.js';
 import { subquestActions } from './sheet/subquests.js';
 import { animateClose, animateOpen } from '../ui/motion.js';
 import { markSeen } from '../data/seen.js';
@@ -57,7 +56,6 @@ export function QuestSheetMixin(Base)
             ...rewardActions,
             ...notesActions,
             ...questMenuActions,
-            ...shareActions,
             ...subquestActions
          })
       };
@@ -517,14 +515,14 @@ export function QuestSheetMixin(Base)
       }
 
       /**
-       * Opens the quest menu (⋮, or right-click on a Quest Log row).
+       * Opens the quest menu from a right-click on a Quest Log row (the ⋮ button has its own action).
        *
        * @param {JournalEntry} entry - The quest.
        * @param {HTMLElement|{ x: number, y: number }} anchor - Where to open the menu.
        */
       _openQuestMenu(entry, anchor)
       {
-         return openQuestMenu(this, entry, anchor);
+         return openQuestMenu(this, entry, anchor, { fromList: true });
       }
    };
 }

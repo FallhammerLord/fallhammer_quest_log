@@ -13,7 +13,7 @@ As GM:
 - **Done** returns to the read view. **Edit** reopens editing.
 - In the read view: status buttons (Reveal, Start, Complete, Fail, Reopen) and clickable objective boxes, no edit mode needed.
 - Click an objective's box to cycle open → done → failed.
-- Toggle **Party focus** and an objective's hide (eye) button.
+- Toggle **Primary** and an objective's hide (eye) button.
 - Delete a quest. Its subquests stay.
 
 As a player (second browser or user):
@@ -23,12 +23,15 @@ As a player (second browser or user):
 - Opening a quest from the journal sidebar shows a summary with **Open in Quest Log**.
 
 Folders and filters:
-- A parent quest's arrow folds its subquests; Alt-click folds the whole family; the button beside search folds or opens all. A folded parent shows "done/total" and a dot, star or bookmark when a subquest inside is new, party focus or tracked. Left/Right arrows fold and open. Opening a subquest from the Beacon unfolds its parents. Drag the list's right edge to widen it (double-click resets).
+- A parent quest's arrow folds its subquests; Alt-click folds the whole family; the button beside search folds or opens all. A folded parent shows "done/total" and a dot, star or bookmark when a subquest inside is new, primary or tracked. Left/Right arrows fold and open. Opening a subquest from the Beacon unfolds its parents. Drag the list's right edge to widen it (double-click resets).
 - Right-click a folder (GM): New subfolder, Rename, Move into folder, Delete folder (its quests move up a level). Up to three levels below FHQL Quests.
 - The journal folder is named **FHQL Quests** (an older "Quests" folder is renamed on load).
 - **New folder** (folder-plus icon) creates a folder inside it. Drag quest rows onto a folder header to move them, or use ⋮ → Move to folder.
 - Click a folder header to collapse it; the log remembers.
-- Status chips filter the list; the search box filters by name as you type.
+- Status chips filter the list; the search box filters by name, quest giver and objective as you type. As a player, a hidden objective's words find nothing. While filtering, "Showing N of M · Clear" appears; Clear resets chips and search.
+- Delete an objective and remove a reward: each asks first.
+- In the log, **Pop out** on the quest header opens it in its own window (not shown in a popped-out window). **Show players** is in the ⋮ menu; right-clicking a row also offers Pop out.
+- The **?** in the Quest Log title bar opens tips (GM sees three more).
 - Right-click a quest row (GM) for the quest menu. Quick choices (menus, pickers, confirmations) open as panels inside the window; Esc closes them.
 
 Player workflows (world settings, off by default):
@@ -42,7 +45,7 @@ Player workflows (world settings, off by default):
 Entry points:
 - Journal tab shows a **Quest Log** button in its header, for GM and players.
 - Token controls show a scroll button; clicking it opens the log and leaves the Token tool active.
-- Mark a quest **Party focus**: its name and all its objectives appear on the Quest Beacon above the players list, on every client that can see it. Clicking opens the log on that quest.
+- Mark a quest **Primary**: its name and all its objectives appear on the Quest Beacon above the players list, on every client that can see it. Clicking opens the log on that quest.
 - Mark or track two quests: a switcher on the Beacon shows the count and lists them.
 - Configure Settings has per-client toggles for the Beacon and its objectives.
 

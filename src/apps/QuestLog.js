@@ -3,6 +3,7 @@ import { inputPopover } from '../ui/popover.js';
 import { openFolderMenu } from './folderMenu.js';
 import { ancestorsOf, foldedIds, questRows } from './listTree.js';
 import { addListSplitter } from './listSplitter.js';
+import { addTipsButton, onShowTips } from './tips.js';
 import { MODULE_ID, MODULE_PATH, STATUSES } from '../constants.js';
 import { applyTheme, trackApp, untrackApp } from '../theme.js';
 import { clampToMinSize, snapWidth } from './minSize.js';
@@ -47,7 +48,9 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
          toggleFolder: QuestLog.#onToggleFolder,
          toggleFamily: QuestLog.#onToggleFamily,
          foldAllFamilies: QuestLog.#onFoldAllFamilies,
+         showTips: onShowTips,
          toggleStatusFilter: QuestLog.#onToggleStatusFilter,
+         clearFilters: QuestLog.#onClearFilters,
          openFqlImport: QuestLog.#onOpenFqlImport
       })
    };
@@ -317,6 +320,14 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
          allButton.querySelector('i')?.setAttribute('class', `fa-solid ${anyOpen ? 'fa-compress' : 'fa-expand'}`);
       }
 
+      // "Showing 3 of 12 · Clear" while a filter or search hides quests.
+      const status = list.querySelector('.fhql-filter-status');
+      if (status)
+      {
+         status.hidden = !filtering;
+         status.querySelector('[data-filter-count]').textContent = game.i18n.format('FHQL.Filter.Showing', { shown: visible, total: quests.length });
+      }
+
       const empty = list.querySelector('.fhql-no-matches');
       if (empty) { empty.hidden = visible > 0 || !list.querySelector('[data-row="quest"]'); }
    }
@@ -515,6 +526,7 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
       super._onRender(context, options);
       applyTheme(this.element);
       trackApp(this);
+      addTipsButton(this);
       this.#applyListFilters();
    }
 
@@ -652,6 +664,25 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
       target.setAttribute('aria-pressed', String(filter.statuses.includes(status)));
       target.classList.toggle('is-on', filter.statuses.includes(status));
       this.#applyListFilters();
+   }
+
+   /** Clears the status chips and the search text. @this {QuestLog} */
+   static #onClearFilters()
+   {
+      const filter = QuestLog.#savedFilter();
+      filter.statuses = [];
+      QuestLog.#saveFilter(filter);
+      this.#query = '';
+      const list = this.element.querySelector('.fhql-list');
+      const search = list?.querySelector('[data-list-search]');
+      if (search) { search.value = ''; }
+      for (const chip of list?.querySelectorAll('[data-action="toggleStatusFilter"]') ?? [])
+      {
+         chip.setAttribute('aria-pressed', 'false');
+         chip.classList.remove('is-on');
+      }
+      this.#applyListFilters();
+      search?.focus();
    }
 
    /** @this {QuestLog} */

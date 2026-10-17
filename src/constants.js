@@ -17,7 +17,7 @@ export const PARTIALS = Object.freeze(['eye-toggle', 'notes-lock'].map((name) =>
 export const TEMPLATES = Object.freeze(Object.fromEntries(Object.entries({
    beacon: 'ui/beacon', preview: 'ui/preview', curtain: 'ui/curtain', chatCard: 'cards/chat',
    menu: 'popovers/menu', confirm: 'popovers/confirm', input: 'popovers/input', choice: 'popovers/choice',
-   deposit: 'popovers/deposit'
+   deposit: 'popovers/deposit', tips: 'popovers/tips'
 }).map(([key, name]) => [key, `${MODULE_PATH}/templates/${name}.hbs`])));
 
 /** Journal page subtype holding quest data. */

@@ -1,5 +1,5 @@
 import { STATUSES } from '../constants.js';
-import { questPage } from '../data/quests.js';
+import { questAccess, questPage } from '../data/quests.js';
 import { isUnseen } from '../data/seen.js';
 
 /**
@@ -11,6 +11,25 @@ import { isUnseen } from '../data/seen.js';
 
 /** "Active subquests first" order; ties keep the list's own order. */
 const STATUS_ORDER = { active: 0, available: 1, hidden: 2, completed: 3, failed: 4 };
+
+/**
+ * What the search box matches for a quest: its name, and for those who may read it in full, the
+ * quest giver and the objectives they can see (players never match hidden objectives).
+ *
+ * @param {JournalEntry} entry - A quest.
+ * @returns {string} Lower-case search text.
+ */
+function searchText(entry)
+{
+   const parts = [entry.name];
+   const access = questAccess(entry);
+   if (access.full)
+   {
+      const { giver, objectiveList } = questPage(entry).system;
+      parts.push(giver.name, ...objectiveList.filter((o) => access.gm || !o.hidden).map((o) => o.name));
+   }
+   return parts.filter(Boolean).join('\n').toLowerCase();
+}
 
 /** Statuses that count as done in a family's summary. */
 const FINISHED = new Set(['completed', 'failed']);
@@ -65,7 +84,7 @@ export function questRows(entries, { depth, chain, selectedId, tracked, activeFi
          id: entry.id,
          uuid: entry.uuid,
          name: entry.name,
-         search: entry.name.toLowerCase(),
+         search: searchText(entry),
          status,
          inProgress,
          tracked: tracked.has(entry.id),

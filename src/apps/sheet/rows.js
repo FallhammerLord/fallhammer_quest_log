@@ -49,7 +49,7 @@ export function editorUnsaved(editor)
  */
 const EXCLUSIVE = new Set([
    'addObjective', 'cycleObjective', 'toggleObjectiveHidden', 'clearRequirement',
-   'addTextReward', 'deleteReward', 'toggleRewardLock', 'toggleRewardHidden', 'addSubquest',
+   'addTextReward', 'toggleRewardLock', 'toggleRewardHidden', 'addSubquest',
    'setQuestStatus', 'toggleInProgress', 'toggleTracked', 'acceptQuest', 'clearGiver', 'finishEditing',
    'editNotes', 'finishNotes', 'createQuest', 'createSamples'
 ]);

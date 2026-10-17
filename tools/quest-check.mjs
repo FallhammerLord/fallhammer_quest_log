@@ -132,9 +132,10 @@ check(quests.questPage(parent).system.parentQuest === '', 'a parent below the qu
    globalThis.game.user.getFlag = () => undefined;
    globalThis.game.i18n.format = (key, data) => `${key} ${JSON.stringify(data)}`;
    const { questRows, ancestorsOf } = await import('../src/apps/listTree.js');
-   const fam = (name, status, parentQuest = '') => ({
+   const fam = (name, status, parentQuest = '', more = {}) => ({
       id: name, uuid: `JournalEntry.${name}`, name, folder: act1,
-      pages: [{ type: QUEST_TYPE, system: { status, inProgress: false, parentQuest } }]
+      testUserPermission: () => true, canUserModify: () => false,
+      pages: [{ type: QUEST_TYPE, system: { status, inProgress: false, parentQuest, giver: { name: '' }, objectiveList: [], ...more } }]
    });
    const top = fam('top', 'active');
    const kids = [fam('k1', 'completed', 'top'), fam('k2', 'active', 'top'), fam('k3', 'failed', 'top')];
@@ -157,6 +158,18 @@ check(quests.questPage(parent).system.parentQuest === '', 'a parent below the qu
    const filter = { collapsed: ['f9'], expanded: ['done2'] };
    check([...foldedIds(fakeList, filter, false)].join() === 'f9', 'only what the player folded is folded by default');
    check([...foldedIds(fakeList, filter, true)].sort().join() === 'done1,f9', 'with fold finished on, finished families fold unless opened by hand');
+   // Search finds the giver and objectives; players never match a hidden objective.
+   const searched = fam('Rescue', 'active', '', {
+      giver: { name: 'Mayor Vell' }, objectiveList: [{ name: 'Find the mill' }, { name: 'Secret cellar', hidden: true }]
+   });
+   const searchFor = () => questRows([searched], { depth: 0, chain: [], selectedId: null, tracked: new Set(), activeFirst: false })[0].search;
+   check(searchFor().includes('mayor vell') && searchFor().includes('find the mill'), 'search text holds the quest giver and objectives');
+   check(searchFor().includes('secret cellar'), 'the GM can search hidden objectives');
+   globalThis.game.user.isGM = false;
+   check(!searchFor().includes('secret cellar') && searchFor().includes('find the mill'), 'players never match a hidden objective');
+   searched.testUserPermission = (user, level) => level < globalThis.CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER;
+   check(searchFor() === 'rescue', 'players with limited access match the name only');
+   globalThis.game.user.isGM = true;
    const lookup = (id) => ({ top, k2: kids[1] })[id];
    const up = ancestorsOf(grand, lookup);
    check(up.quests.join() === 'top,k2' && up.folders.join() === 'root,act1', 'a quest\'s ancestors run from its top folder down to its parent');

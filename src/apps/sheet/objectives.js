@@ -235,17 +235,15 @@ async function onDeleteObjective(event, target)
    if (!found) { return; }
    // Handed-over items live only in the deposit records; deleting them loses the way to return them.
    const held = found.objective.deposits.filter((d) => d.item).reduce((sum, d) => sum + d.qty, 0);
-   if (held)
-   {
-      const ok = await confirmPopover(this, target, {
-         message: `<p>${game.i18n.format('FHQL.Deposit.DeleteQuestion', {
-            qty: held, item: foundry.utils.escapeHTML(found.objective.requirement.name)
-         })}</p>`,
-         yes: game.i18n.localize('FHQL.Objective.Delete'),
-         danger: true
+   const message = held
+      ? game.i18n.format('FHQL.Deposit.DeleteQuestion', { qty: held, item: foundry.utils.escapeHTML(found.objective.requirement.name) })
+      : game.i18n.format('FHQL.Objective.DeleteConfirm', {
+         name: foundry.utils.escapeHTML(found.objective.name || game.i18n.localize('FHQL.Objective.Name'))
       });
-      if (!ok) { return; }
-   }
+   const ok = await confirmPopover(this, target, {
+      message: `<p>${message}</p>`, yes: game.i18n.localize('FHQL.Objective.Delete'), danger: true
+   });
+   if (!ok) { return; }
    await deleteObjective(this.questEntry, found.id);
 }
 

@@ -32,6 +32,8 @@
         <i class="{{icon}} fhql-status-icon" inert></i><span>{{label}}</span></button>
       {{/each}}
     </div>
+    <p class="fhql-filter-status" role="status" hidden><span data-filter-count></span> ·
+      <button type="button" class="fhql-link-button" data-action="clearFilters">{{localize "FHQL.Filter.Clear"}}</button></p>
     {{/if}}
   </div>
 

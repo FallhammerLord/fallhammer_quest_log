@@ -3,14 +3,19 @@ import { menuPopover } from '../../ui/popover.js';
 import { showablePlayers, showToPlayers } from '../../ui/share.js';
 
 /**
- * Quest sheet: the GM's Show to players button. Picks everyone who can see the quest, or one player,
+ * Quest menu: the GM's Show players choice. Picks everyone who can see the quest, or one player,
  * and opens the quest window on their screens.
  */
 
-/** Show to players (GM, read view). Called with `this` as the quest sheet. */
-async function onShowToPlayers(event, target)
+/**
+ * Show to players (GM, from the quest menu).
+ *
+ * @param {object} app - The window the picker opens in.
+ * @param {JournalEntry} entry - The quest.
+ * @param {HTMLElement|{ x: number, y: number }} anchor - Where to open the picker.
+ */
+export async function showQuestToPlayers(app, entry, anchor)
 {
-   const entry = this.questEntry;
    if (!entry) { return; }
    const t = (key, data) => (data ? game.i18n.format(key, data) : game.i18n.localize(key));
    const players = showablePlayers(entry);
@@ -19,7 +24,7 @@ async function onShowToPlayers(event, target)
       ui.notifications.warn(t('FHQL.Share.NoOne'));
       return;
    }
-   const choice = await menuPopover(this, target, {
+   const choice = await menuPopover(app, anchor, {
       title: t('FHQL.Share.Title'),
       items: [
          { value: '__all', label: t('FHQL.Share.Everyone', { count: players.length }), icon: 'fa-solid fa-users' },
@@ -32,6 +37,3 @@ async function onShowToPlayers(event, target)
    if (shown.length) { notify('info', t('FHQL.Share.Shown', { names: shown.map((u) => u.name).join(', ') })); }
    if (missed.length) { notify('warn', t('FHQL.Share.Missed', { names: missed.map((u) => u.name).join(', ') })); }
 }
-
-/** Show to players action, merged into the quest sheet's actions. */
-export const shareActions = { showToPlayers: onShowToPlayers };

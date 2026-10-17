@@ -47,23 +47,24 @@ npm run quests     # Foundry mocked: quest families (folders, no loops), double-
 | `src/import/fql.js` | FQL import (in place, parent repair, report) |
 | `src/apps/QuestSheetMixin.js` | shared quest sheet core: edit mode, field saves, drops, focus/save safety, window memory |
 | `src/apps/sheet/context.js` | the sheet's render data for one quest (each feature adds its part) |
-| `src/apps/sheet/questActions.js` | sheet feature: status, party focus, track, accept, open linked document, clear giver |
+| `src/apps/sheet/questActions.js` | sheet feature: status, Primary (stored as `inProgress`), track, accept, open linked document, clear giver |
 | `src/apps/sheet/objectives.js` | sheet feature: objectives, requirements, deposits (context + actions) |
 | `src/apps/sheet/rewards.js` | sheet feature: rewards and claiming (context + actions) |
 | `src/apps/sheet/notes.js` | sheet feature: player notes in place (context + actions) |
 | `src/apps/sheet/subquests.js` | sheet feature: add, open beside (one side slot per window), unlink (standalone or delete) |
-| `src/apps/sheet/questMenu.js` | sheet feature: GM quest menu (pop out, access, move, parent, delete) |
+| `src/apps/sheet/questMenu.js` | sheet feature: GM quest menu (show players, pop out on right-click only, access, move, parent, delete); the header's Pop out action |
 | `src/apps/sheet/reorder.js` | sheet feature: reorder objectives and rewards in edit mode (drag the handle, or arrow keys); `reorderQuestList` saves |
 | `src/apps/sheet/panels.js` | panel heights (priority/proportional sharing), scroll keeping, narrow collapse; runs after every render |
 | `src/apps/sheet/rows.js` | row lookups, `editorUnsaved`, `guardActions` (actions show a notice on failure) |
 | `src/apps/QuestLog.js` | log window: folder tree, filters, search, right-click menu |
 | `src/apps/listTree.js` | list quest families: rows with ancestors in `data-chain` (folders, then parent quests), family summary and signals, folded state (`listFilter.collapsed` / `.expanded`, option `listFoldFinished`), ancestors for reveal |
+| `src/apps/tips.js` | ? button in the Quest Log title bar and its tips panel (`templates/popovers/tips.hbs`) |
 | `src/apps/listSplitter.js` | draggable/keyboard divider between list and quest; width in client setting `listWidth` (`--fhql-list-width`) |
 | `src/apps/folderMenu.js` | GM folder menu in the log: new subfolder, rename, move into folder, delete (contents move up) |
 | `src/apps/QuestSheetApp.js` | pop-out quest window |
 | `src/ui/QuestBeacon.js` | panel above the players list |
 | `src/ui/motion.js` | window open/close motion (from/to the Beacon), reduced-motion fade |
-| `src/ui/share.js` | Show to players: GM asks players' clients to open a quest (query) |
+| `src/ui/share.js` | Show to players: GM asks players' clients to open a quest (query); the picker is `src/apps/sheet/share.js` |
 | `src/data/seen.js` | new-change dots: per-user seen times (server timestamps), baseline, batched writes |
 | `src/ui/questPreview.js` | hover card for quest links (chat, journals) via Foundry's tooltip |
 | `src/ui/eggs.js` | theme easter eggs (Gothic bell on the Beacon, Cabaret curtain call, Sci-fi glitch on passive clicks); GM setting `easterEggs` |
@@ -89,6 +90,7 @@ npm run quests     # Foundry mocked: quest families (folders, no loops), double-
 - **Width containers:** never put `container-type` on an element that contains a text field or rich-text editor. Foundry's own form/editor styles collapse inside one. Containers sit only on the sheet, reward list, and subquest list. The layout test enforces this.
 - **Rich-text editors:** use `<prose-mirror toggled>` without `open`. Adding `open` at render broke editing. Unsaved editor text is flushed on Done, on close, and on switching quests via `_flushEdits`. Only *open* editors count as unsaved (a just-saved toggled editor can still report dirty).
 - **Player notes** are edited in place with a one-editor lock on User flags (`src/data/notesLock.js`), not in edit mode.
+- **Sheet template context** sits under `sheet` (`{{#with sheet}}`); layout fixtures must add sheet fields there.
 - **Handlebars helpers:** don't rely on `eq`/`and`/`or`; compute booleans in JS. `lookup` is fine.
 - **Template pieces** used in more than one place live in `templates/partials/`, listed in `PARTIALS` (`src/constants.js`), loaded on init (`preloadTemplates`), and called by full path: `{{> "modules/fhql/templates/partials/eye-toggle.hbs" ...}}`. `npm run load` checks the list against the folder and the templates.
 - **Timings** are named constants beside their use, saying what ties them down (a CSS animation length, a write batch).
@@ -131,7 +133,8 @@ Storage survives disable/re-enable; editing and autosave; view/edit modes; quick
 - Rewards: Claim/Give confirm panel with any owned actor (party inventory); GM Give to any actor (NPCs credited to the GM); Undo "Take it back" (merged stacks reduced by the claimed amount; missing item still clears the claim).
 - Pinned header and list toolbar; panels sized by priority and scrolling on their own (wide); one scroll with collapsible panels and Show all (narrow); scroll kept after ticking an objective; Hide done; editor toolbar pinned in edit mode; very short window falls back to whole-sheet scroll.
 - Beacon toggle (open, restore if minimized, close log and quest windows) with rise/settle motion; no double animation with Foundry's close.
-- Show players: GM picks everyone or one player; their quest window opens (needs a second browser as a player).
+- UI round (2026-10-17): Primary/Track naming, ? tips in the title bar, search by giver and objectives, "Showing N of M · Clear", delete confirms for objectives and rewards, Pop out on the header, Show players in ⋮.
+- Show players (now in ⋮): GM picks everyone or one player; their quest window opens (needs a second browser as a player).
 - Comforts: new-change dots (list, Beacon); objective glow and count tick; Beacon glow on finish; outcome chat card (public or whispered); window size/place memory; / to search, Esc clears; sliding folders; hover previews of quest links. Scroll no longer jumps when ticking an objective. Sci-fi hex texture. Gothic as Yharnam (soot/oxblood/brass/moonlight palette, spear finials, iron railing list) and the old warm Gothic as the new Cabaret theme (gilt trellis with sequins, footlights, velvet curtain list, gilt frames); needs a world relaunch (new style file). Subquests (parentQuest rename): + Add and clicking a subquest open it beside the window it came from (one side slot per window: a second subquest replaces the first in place; nested ones open beside their parent; cascade when no room); unlink button (keep standalone or delete); drop a quest on Subquests or Objectives to make it a subquest; Hand over sits in the eye column; Set parent; nesting in the log. Beacon: switching quests moves an open log; clicking shows the Beacon's quest before closing. Gothic headings in bundled IM Fell English SC (declared from code only, `loadBundledFonts`, and registered in Foundry's font list via `registerFont`; no @font-face in CSS, where a second, broken declaration could win). Drop caps via `initial-letter` (top flush with the first line). Beacon menus float on the page (fixed position was thrown off by transformed ancestors). Theme heading fonts: Amiri (Light), Josefin Sans (Dark), Oxanium (Sci-fi), Limelight (Cabaret). Hope and Fear and Noir themes (new style files: relaunch). High contrast: built but hidden from Module Settings (`contrastMode` config: false) while it is re-prototyped; the user found it too flat (loses each theme's character). Themed title bars on our windows. Easter eggs: Gothic bell on the Beacon (last objective done), hunter tooltip at 3+ marked, Cabaret curtain call (third completion in a session), Sci-fi glitch (passive clicks, 1 in 20, 10 s silent cooldown, 400ms), GM off switch. Light and Dark shapes: bookbinder frames, ivy marks, fleuron (Light); gold deco brackets, sunburst fans, stepped diamond (Dark); both also on Follow Foundry. New light.css: relaunch (safety net loads it anyway). Cabaret loads even before a relaunch (console note). Comfort width snaps while resizing (log 560/830/1040, pop-out 420/580/760, within 20px; Shift resizes freely). Hand over as an icon button. Portrait frame setting (GM): round (default) or square, all themes; empty edit-mode drop slot stays square.
 - Player notes in place: Edit notes opens the editor in one click (auto-clicks the editor's pen; unverified), lock shown to a second user, GM Edit anyway, saved text stays visible after the editor's Save.
 

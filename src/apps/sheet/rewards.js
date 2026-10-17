@@ -103,7 +103,15 @@ async function onAddTextReward()
 async function onDeleteReward(event, target)
 {
    const found = rewardFor(this, target);
-   if (found) { await deleteReward(this.questEntry, found.id); }
+   if (!found) { return; }
+   const ok = await confirmPopover(this, target, {
+      message: `<p>${game.i18n.format('FHQL.Reward.DeleteConfirm', {
+         name: foundry.utils.escapeHTML(found.reward.name || game.i18n.localize('FHQL.Reward.Name'))
+      })}</p>`,
+      yes: game.i18n.localize('FHQL.Reward.Delete'),
+      danger: true
+   });
+   if (ok) { await deleteReward(this.questEntry, found.id); }
 }
 
 async function onToggleRewardLock(event, target)

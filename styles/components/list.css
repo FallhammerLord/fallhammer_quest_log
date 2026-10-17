@@ -153,6 +153,8 @@
 }
 .fhql-app .fhql-twisty:hover { background: var(--fhql-hover); }
 .fhql-app .fhql-twisty:focus-visible { outline: 2px solid var(--fhql-accent); outline-offset: -2px; }
+/* A mouse click leaves no ring or highlight (Foundry's own button focus style included); keyboard focus keeps the ring. */
+.fhql-app .fhql-twisty:focus:not(:focus-visible) { outline: none; box-shadow: none; }
 .fhql-app li:has(> .fhql-row.is-selected) > .fhql-twisty { background: var(--fhql-surface-raised); }
 /* Pips grow from top to bottom (5, 7, 9px). Folded: empty rings. Open: filled, glowing where the theme glows.
    Themes set their own look with --fhql-pip-radius, --fhql-pip-transform, --fhql-pip-glow, --fhql-pip-ring and per-pip
@@ -163,7 +165,7 @@
   --fhql-pip-ring: var(--fhql-ink-muted);
   --fhql-pip-glow: 0 0 5px color-mix(in srgb, var(--fhql-pip-fill, var(--fhql-accent)) 80%, transparent);
 }
-.fhql-app .fhql-pips { display: grid; justify-items: center; gap: 3px; }
+.fhql-app .fhql-pips { display: grid; justify-items: center; gap: 3px; width: 100%; }
 .fhql-app .fhql-pips > i {
   --fhql-pip-fill: var(--fhql-pip-1, var(--fhql-accent));
   /* Odd sizes in an odd-width toggle, so every pip sits exactly on its centerline. */
@@ -222,3 +224,29 @@
 .fhql-app .fhql-splitter:focus-visible { outline: 2px solid var(--fhql-accent); }
 .fhql-app.fhql-quest-sheet .fhql-splitter { display: none; }
 @container fhql (max-width: 540px) { .fhql-app .fhql-splitter { display: none; } }
+
+/* "Showing 3 of 12 · Clear" under the filters while they hide quests. */
+.fhql-app .fhql-filter-status {
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+  margin: 0;
+  font-size: 0.82em;
+  color: var(--fhql-ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+.fhql-app .fhql-filter-status[hidden] { display: none; }
+.fhql-app .fhql-link-button {
+  width: auto;
+  min-height: 24px;
+  padding: 0 0.3em;
+  font: inherit;
+  color: var(--fhql-accent);
+  text-decoration: underline;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  cursor: pointer;
+}
+.fhql-app .fhql-link-button:hover { color: var(--fhql-ink); background: var(--fhql-hover); }
+.fhql-app .fhql-link-button:focus-visible { outline: 2px solid var(--fhql-accent); outline-offset: 1px; }

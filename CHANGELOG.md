@@ -4,7 +4,13 @@
 
 First feature-complete preview. Requires Foundry VTT v14.
 
-- Quest families fold in the list: the arrow beside a parent quest hides its subquests (Alt: the whole family; a toolbar button folds or opens all). A folded parent shows how many are done and any new, tracked or party-focus subquest inside; guide lines tie subquests to their parent; opening a subquest from the Beacon or a link unfolds its parents; Left and Right arrows fold and open. Options: fold finished families, and list active subquests first. The list pane can be widened by dragging its edge. The fold toggle is three pips that fill top to bottom as subquests open, in each theme's own style (ink drops, gold beads, LEDs, brass rings, marquee bulbs, Hope-to-Fear, white periods, silver diamonds).
+- Party focus is now **Primary** (everyone's Beacon); **Track** stays personal.
+- Search finds quest givers and objectives as well as names (players match only what they can see). While a filter or search hides quests, "Showing 3 of 12 · Clear" sits under the filters.
+- Deleting an objective or removing a reward asks first.
+- **Pop out** is a button on the quest header in the log; **Show players** moves into the GM's ⋮ quest menu.
+- A **?** button in the Quest Log's title bar lists quick tips.
+- The fold toggle no longer keeps a ring after a mouse click (keyboard focus still shows one).
+- Quest families fold in the list: the arrow beside a parent quest hides its subquests (Alt: the whole family; a toolbar button folds or opens all). A folded parent shows how many are done and any new, tracked or primary subquest inside; guide lines tie subquests to their parent; opening a subquest from the Beacon or a link unfolds its parents; Left and Right arrows fold and open. Options: fold finished families, and list active subquests first. The list pane can be widened by dragging its edge. The fold toggle is three pips that fill top to bottom as subquests open, in each theme's own style (ink drops, gold beads, LEDs, brass rings, marquee bulbs, Hope-to-Fear, white periods, silver diamonds).
 - Hope and Fear follows the Daggerheart system's own sheets: frosted indigo glass over the scene, Overpass text under Cinzel titles, gold filled buttons and pill status tags, Fear in blue, and duality sparks in the quest header. Solid when Foundry's no-blur option is on.
 - Advanced settings: easter eggs, ownership levels, reward unlocking, chat announcements and the players' Quest Log buttons move to their own window, keeping Module Settings short.
 - Players' journal sidebar no longer lists quests or the FHQL Quests folder; players reach quests through the Quest Log and the Beacon.
@@ -17,7 +23,7 @@ First feature-complete preview. Requires Foundry VTT v14.
 - Row borders and focus rings no longer clip at the edge of a scrolling panel; the editor's pen button is centered.
 - Quest Log with folders (inside the FHQL Quests journal folder), status filters, search, nested subquests, and a right-click quest menu.
 - Quest sheet in the log or its own window: rich text, quest giver and reward drag-and-drop, GM-only notes, subquests, quest image, dates, read and edit modes with autosave.
-- Quest Beacon above the players list: party Focus quests and personally tracked quests with their objectives, a switcher, and an empty state that opens the log.
+- Quest Beacon above the players list: Primary quests and personally tracked quests with their objectives, a switcher, and an empty state that opens the log.
 - Reward claiming: items onto characters, actors as followers, GM Give and Undo, locks, per-player rewards, chat cards.
 - Player workflows (GM settings): accept quests, propose quests, trusted status changes, shared player notes; hide the Quest Log from players; per-button toggles.
 - Hidden quests hide from every player, including per-player access, restored on reveal.

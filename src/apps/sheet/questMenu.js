@@ -1,25 +1,29 @@
 import { DocumentOwnershipConfig } from '../../compat.js';
 import { MODULE_ID } from '../../constants.js';
 import { confirmPopover, menuPopover } from '../../ui/popover.js';
+import { showQuestToPlayers } from './share.js';
 import {
    deleteQuest, moveQuestToFolder, parentCandidates, questPage, questRootFolder, questSubfolders, setParent
 } from '../../data/quests.js';
 
 /**
- * Quest sheet: the GM's quest menu (⋮ button, and right-click on Quest Log rows). Pop out, access,
- * move to folder, set parent, delete.
+ * Quest sheet: the GM's quest menu (⋮ button, and right-click on Quest Log rows). Show players, pop
+ * out (right-click only: the sheet has its own Pop out button, also here), access, move to folder,
+ * set parent, delete.
  */
 
 /**
  * @param {object} app - The quest sheet or Quest Log.
  * @param {JournalEntry} entry - The quest the menu acts on.
+ * @param {boolean} fromList - Opened by right-clicking a Quest Log row.
  * @returns {object[]} Menu items. GM only.
  */
-function questMenuItems(app, entry)
+function questMenuItems(app, entry, fromList)
 {
    const t = (key) => game.i18n.localize(key);
    return [
-      ...(app.options.questId === entry.id ? [] : [{ value: 'popOut', label: t('FHQL.Menu.PopOut'), icon: 'fa-solid fa-up-right-from-square' }]),
+      { value: 'show', label: t('FHQL.Share.Button'), icon: 'fa-solid fa-share-from-square' },
+      ...(!fromList ? [] : [{ value: 'popOut', label: t('FHQL.Menu.PopOut'), icon: 'fa-solid fa-up-right-from-square' }]),
       { value: 'access', label: t('FHQL.Menu.Access'), icon: 'fa-solid fa-user-lock' },
       { value: 'move', label: t('FHQL.Menu.Move'), icon: 'fa-solid fa-folder-open' },
       { value: 'parent', label: t('FHQL.Menu.Parent'), icon: 'fa-solid fa-diagram-project' },
@@ -33,14 +37,16 @@ function questMenuItems(app, entry)
  * @param {object} app - The window it opens in.
  * @param {JournalEntry} entry - The quest.
  * @param {HTMLElement|{ x: number, y: number }} anchor - Where to open the menu.
+ * @param {{ fromList?: boolean }} [options] - fromList: opened from a Quest Log row (adds Pop out).
  */
-export async function openQuestMenu(app, entry, anchor)
+export async function openQuestMenu(app, entry, anchor, { fromList = false } = {})
 {
    if (!entry || !game.user.isGM) { return; }
-   const choice = await menuPopover(app, anchor, { items: questMenuItems(app, entry) });
+   const choice = await menuPopover(app, anchor, { items: questMenuItems(app, entry, fromList) });
    const control = anchor instanceof HTMLElement ? anchor : null;
    switch (choice)
    {
+      case 'show': return showQuestToPlayers(app, entry, control ?? anchor);
       case 'popOut': return game.modules.get(MODULE_ID).api.openQuestSheet(entry.id);
       case 'access': return new DocumentOwnershipConfig({ document: entry }).render({ force: true });
       case 'move': return chooseFolder(app, entry, control ?? anchor);
@@ -89,7 +95,8 @@ async function confirmDelete(app, entry, anchor)
    await deleteQuest(entry);
 }
 
-/** The ⋮ button's action, merged into the quest sheet's actions. */
+/** The ⋮ and Pop out buttons' actions, merged into the quest sheet's actions. */
 export const questMenuActions = {
-   questMenu(event, target) { return openQuestMenu(this, this.questEntry, target); }
+   questMenu(event, target) { return openQuestMenu(this, this.questEntry, target); },
+   popOut() { if (this.questEntry) { game.modules.get(MODULE_ID).api.openQuestSheet(this.questEntry.id); } }
 };

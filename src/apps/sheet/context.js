@@ -82,6 +82,8 @@ export async function sheetContext(app, entry, saveStateLabel)
        })) : [],
       canSetStatus: access.gm || trusted,
       canAccept: canAccept(entry),
+      // Pop out shows in the Quest Log only; a pop-out window already is one.
+      canPopOut: app.options.questId !== entry.id,
       ...notesContext(app, entry, access, notesViaGM),
       inProgress: system.inProgress,
       tracked: isTracked(entry),

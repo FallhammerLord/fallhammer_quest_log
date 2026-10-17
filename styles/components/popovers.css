@@ -60,3 +60,8 @@
   background: var(--fhql-status-failed);
   border-color: var(--fhql-status-failed);
 }
+
+/* Quest Log tips (src/apps/tips.js). */
+.fhql-app .fhql-tips { display: grid; gap: 0.5em; margin: 0; padding: 0; list-style: none; max-width: 26em; font-size: 0.9em; }
+.fhql-app .fhql-tips > li { display: grid; grid-template-columns: 1.4em minmax(0, 1fr); gap: 0.4em; align-items: baseline; }
+.fhql-app .fhql-tips > li > i { color: var(--fhql-accent); text-align: center; }
