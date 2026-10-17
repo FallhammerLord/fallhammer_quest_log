@@ -137,6 +137,7 @@ Checklist pass, 2026-10-17:
 - List, sheet, Beacon: resizable list pane; reordering objectives and rewards; panels (pinned header, own scrolling, narrow collapse, Hide done, very short window); Beacon five-objective cap, toggle and motion; window memory and width snaps.
 - Item hand-in layout (bracket, right-aligned count, folded "who handed in", name hidden when it matches) and no auto-tick: verified the same day.
 - Polish pass (screenshot, same day): rewards layout (controls right, Claim/Give under the name), chip counts, New folder and fold-all in the filter row, Hide done button, hand-ins without the mode label, wrapped link buttons, fold tooltip opening upward, 1040 × 920 log with 350px list.
+- Header and sizing (same day, deployed to the user's player server): 100px giver picture down the left edge, title/status/buttons beside it, Edit by ⋮, GM Pop out in ⋮; no jumping on redraws or theme changes; one status badge size; headings 16.4px. Small leftovers, not breaking: Ledger header has "a little strangery"; Sci-fi has no center ornament on the line between header and body (other themes do).
 - Themes and settings: every theme; texture strength (slider, per-player override, live preview); Theme images window and font settings; easter eggs; portrait frame; player workflow settings, Advanced settings window, quests hidden from players' journal sidebar.
 
 ## Waiting on the user
@@ -149,7 +150,7 @@ Untested (2026-10-17):
 - Quest family folding: arrow, Alt for the whole family, fold-all button, Left/Right keys, signals on folded parents, unfold when opened from the Beacon.
 - Options Fold finished families and Active subquests first.
 
-New, not yet confirmed (2026-10-17): giver picture as tall as title + status lines; one status badge size (header too); headings 16.4px; text sizes unified to heading/body/small in every theme (Sci-fi, Dark, Noir headings change most), 28px icon buttons, one picture size, list toolbar 28px; uniformity round (heading buttons, GM-only tag, subquest status badges at tally size; borderless unlink; list counts one size, finished family green; chip counts 12px; Undo icons centered; narrow Rewards heading says 1/3); tallies (boxed counts in panel headings and hand-ins, green once complete, 24px with their buttons; Hide done beside the count, icon-only in a narrow Objectives panel); list width remembered after closing and reopening the log; divider snaps; Cross out done items setting; two-line names with a tooltip only when cut.
+New, not yet confirmed (2026-10-17): text sizes unified to heading/body/small in every theme (Sci-fi, Dark, Noir headings change most), 28px icon buttons, one picture size, list toolbar 28px; uniformity round (heading buttons, GM-only tag, subquest status badges at tally size; borderless unlink; list counts one size, finished family green; chip counts 12px; Undo icons centered; narrow Rewards heading says 1/3); tallies (boxed counts in panel headings and hand-ins, green once complete, 24px with their buttons; Hide done beside the count, icon-only in a narrow Objectives panel); list width remembered after closing and reopening the log; divider snaps; Cross out done items setting; two-line names with a tooltip only when cut.
 
 Not on the checklist, unconfirmed: Edit notes opening the editor in one click; hover previews of quest links; the outcome chat card.
 
