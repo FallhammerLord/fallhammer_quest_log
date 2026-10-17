@@ -130,6 +130,29 @@ function share(items, avail, mode)
    for (const it of items) { it.card.style.flexBasis = `${Math.floor(it.height)}px`; }
 }
 
+/** The quest giver's picture stays between these sizes (px), however the title wraps. */
+const PORTRAIT_MIN = 40;
+const PORTRAIT_MAX = 96;
+
+/**
+ * Makes the quest giver's picture as tall as the title and status lines beside it. In a narrow sheet
+ * the status line moves below the picture, which then matches the title alone.
+ *
+ * @param {HTMLElement} sheet - The sheet element.
+ */
+function sizePortrait(sheet)
+{
+   const title = sheet.querySelector('.fhql-sheet-head > .fhql-sheet-title');
+   const meta = sheet.querySelector('.fhql-sheet-head > .fhql-sheet-meta');
+   if (!title?.offsetHeight) { return; }
+   const top = title.getBoundingClientRect();
+   const line = meta?.getBoundingClientRect();
+   const beside = line && line.height && line.left >= top.left - 1;
+   const height = (beside ? line.bottom : top.bottom) - top.top;
+   const size = Math.round(Math.max(PORTRAIT_MIN, Math.min(PORTRAIT_MAX, height)));
+   sheet.style.setProperty('--fhql-portrait-size', `${size}px`);
+}
+
 /**
  * Sizes the quest image and every panel for the current window. Safe to call often.
  *
@@ -143,6 +166,7 @@ export function layoutPanels(root)
    // The quest image shrinks from 160px to 80px as the window gets shorter, before panels are squeezed.
    const banner = Math.round(Math.max(80, Math.min(160, (sheet.clientHeight - 480) * 0.5)));
    sheet.style.setProperty('--fhql-banner-h', `${banner}px`);
+   sizePortrait(sheet);
    if (!body) { return; }
 
    // Measuring briefly gives each panel its full height, which leaves nothing to scroll and resets its

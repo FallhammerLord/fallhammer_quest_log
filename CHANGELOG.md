@@ -4,6 +4,7 @@
 
 First feature-complete preview. Requires Foundry VTT v14.
 
+- The quest giver's picture is as tall as the title and status lines beside it. Status badges are one size everywhere, header included.
 - Three text sizes across every theme: panel headings, body, and small (secondary text, counts, small buttons and badges). Pictures share one size; icon buttons are all 28px; the list toolbar's controls share one height.
 - One size for small things on a line: heading buttons, the GM-only tag and subquest status badges match the tallies; list counts share one size (a finished family's turns green); the subquest unlink button matches the eye and lock; a narrow Rewards heading shows 1/3.
 - Counts are boxed tallies that turn green once complete (objectives done, items handed in, rewards claimed, subquests finished), and everything sharing a line shares its height. Hide done sits right beside the Objectives count (icon-only in a narrow panel).
