@@ -157,7 +157,7 @@ Not on the checklist, unconfirmed: Edit notes opening the editor in one click; h
 2. **Release v0.3.0:** merged to `main`; still to do: screenshots from the user's world, then publish a GitHub release tagged v0.3.0 (workflow in `.github/workflows/release.yml`). Waits on the user.
 3. **Links and macros:** quest links and hotbar macros open our sheet directly (today they land on the journal page summary).
 
-Backburner (user's call, 2026-10-17): high contrast take two (the user's colorblind player is fine today); scale past a few dozen quests (quest index, 500-quest timing); translations; compendium/Adventure import keeping parent links (only matters if someone publishes adventures with quests). Dropped: nested objectives; FQL macro shim (not needed). Parked themes: Biosynth, Numenera-style.
+Backburner (user's call, 2026-10-17): high contrast take two (the user's colorblind player is fine today); scale past a few dozen quests (quest index, 500-quest timing); translations; compendium/Adventure import keeping parent links (only matters if someone publishes adventures with quests). Dropped: nested objectives; FQL macro shim (not needed). Parked themes: Biosynth, Numenera-style. No new themes for now (user, 2026-10-17): eight cover the genres; polish the ones we have.
 
 Quest image guidance (told to the user): shown full pane width, max 160px tall, cropped top and bottom only. Recommend 5:1, 2000×400, key content in the middle 60% of height. Per-quest banner tint declined (2026-10-01).
 
