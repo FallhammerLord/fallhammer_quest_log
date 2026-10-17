@@ -4,7 +4,7 @@ Read this first in any new session. The full design and every decision live in `
 
 ## What this is
 
-A Foundry VTT **v14** quest log module (ID `fhql`, CSS prefix `fhql-`), built as a maintained replacement for Forien's Quest Log (FQL), with light, dark, sci-fi, gothic (Bloodborne-style), cabaret, hope and fear (Daggerheart-style), noir (Blades in the Dark), and ledger (Tidy-style) themes and an FQL importer. Plain ES modules, no build step. Version 0.3.0. All work so far is on branch `claude/quirky-cray-tooyrk`, not yet merged or released.
+A Foundry VTT **v14** quest log module (ID `fhql`, CSS prefix `fhql-`), built as a maintained replacement for Forien's Quest Log (FQL), with light, dark, sci-fi, gothic (Bloodborne-style), cabaret, hope and fear (Daggerheart-style), noir (Blades in the Dark), and ledger (Tidy-style) themes and an FQL importer. Plain ES modules, no build step. Version 0.3.0. `main` was created from branch `claude/quirky-cray-tooyrk` on 2026-10-17 (CI green); work continues on that branch. Not yet released (no GitHub release or tag).
 
 ## Working with the user
 
@@ -135,7 +135,7 @@ Storage survives disable/re-enable; editing and autosave; view/edit modes; quick
 ## Next up (backlog, updated 2026-10-17; see `docs/SCOPE.md` §11 and §13). Much will shake out in play.
 
 1. **Verify in play** (biggest risk): everything under "Waiting on the user", especially two-player cases (simultaneous deposits, Show players, notes lock) with a second browser as a player. The user can't run two-player tests yet; they'll shake out in play.
-2. **Release v0.3.0:** screenshots from the user's world, then merge to `main` and publish (workflow in `.github/workflows/release.yml`). Waits on the user.
+2. **Release v0.3.0:** merged to `main`; still to do: screenshots from the user's world, then publish a GitHub release tagged v0.3.0 (workflow in `.github/workflows/release.yml`). Waits on the user.
 3. **Links and macros:** quest links and hotbar macros open our sheet directly (today they land on the journal page summary).
 
 Backburner (user's call, 2026-10-17): high contrast take two (the user's colorblind player is fine today); scale past a few dozen quests (quest index, 500-quest timing); translations; compendium/Adventure import keeping parent links (only matters if someone publishes adventures with quests). Dropped: nested objectives; FQL macro shim (not needed). Parked themes: Biosynth, Numenera-style.
