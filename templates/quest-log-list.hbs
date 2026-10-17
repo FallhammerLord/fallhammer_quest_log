@@ -4,9 +4,6 @@
     <div class="fhql-toolbar-row">
       <button type="button" class="fhql-button" data-action="createQuest">
         <i class="fa-solid fa-plus" inert></i> {{localize "FHQL.QuestLog.NewQuest"}}</button>
-      <button type="button" class="fhql-icon-button" data-action="createFolder"
-              data-tooltip="{{localize 'FHQL.Folders.New'}}" aria-label="{{localize 'FHQL.Folders.New'}}">
-        <i class="fa-solid fa-folder-plus" inert></i></button>
     </div>
     {{#if fqlPending}}
     <button type="button" class="fhql-button fhql-import-button" data-action="openFqlImport">
@@ -23,7 +20,14 @@
       <input type="search" class="fhql-input fhql-search" data-list-search value="{{query}}"
              placeholder="{{localize 'FHQL.Filter.Search'}}" aria-label="{{localize 'FHQL.Filter.Search'}}">
     </div>
+    {{/if}}
+    {{#if toolRow}}
     <div class="fhql-chips-row">
+      {{#if gm}}
+      <button type="button" class="fhql-chip fhql-chip-tool" data-action="createFolder"
+              data-tooltip="{{localize 'FHQL.Folders.New'}}" aria-label="{{localize 'FHQL.Folders.New'}}"><i class="fa-solid fa-folder-plus" inert></i></button>
+      {{/if}}
+      {{#if hasQuests}}
       <button type="button" class="fhql-chip fhql-chip-fold" data-action="foldAllFamilies" hidden
               aria-label="{{localize 'FHQL.Family.FoldAll'}}" data-tooltip="{{localize 'FHQL.Family.FoldAll'}}"><i class="fa-solid fa-compress" inert></i></button>
       <div class="fhql-chips" role="group" aria-label="{{localize 'FHQL.Filter.Label'}}">
@@ -33,7 +37,10 @@
           <i class="{{icon}} fhql-status-icon" inert></i><b class="fhql-chip-count" aria-hidden="true">{{count}}</b></button>
         {{/each}}
       </div>
+      {{/if}}
     </div>
+    {{/if}}
+    {{#if hasQuests}}
     <p class="fhql-filter-status" role="status" hidden><span data-filter-count></span> ·
       <button type="button" class="fhql-link-button" data-action="clearFilters">{{localize "FHQL.Filter.Clear"}}</button></p>
     {{/if}}

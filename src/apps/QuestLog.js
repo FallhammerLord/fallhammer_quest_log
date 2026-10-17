@@ -144,6 +144,7 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
          gm: game.user.isGM,
          canPropose: canProposeQuests(),
          hasQuests: entries.length > 0,
+         toolRow: entries.length > 0 || game.user.isGM,
          items: this.#listItems(entries, filter),
          statusChips,
          query: this.#query,
@@ -526,7 +527,7 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
    static MIN_SIZE = { width: 420, height: 380 };
 
    /**
-    * Comfort widths (see snapWidth). The list takes about 302px by default; the sheet beside it turns two-column
+    * Comfort widths (see snapWidth). The list takes 500px by default (players resize it); the sheet beside it turns two-column
     * at 560px (styles/components/sheet.css, fhql-sheet container). 560: list beside a one-column sheet, just past
     * the stacked layout (540). 880: the first roomy two-column width (300px list + a two-column quest). 1040: the default.
     */

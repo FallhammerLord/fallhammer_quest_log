@@ -143,6 +143,11 @@
 .fhql-app .fhql-link {
   display: inline;
   width: auto;
+  /* Foundry gives buttons one line's height; a name that wraps must grow its button instead of spilling. */
+  height: auto;
+  min-height: 0;
+  line-height: inherit;
+  white-space: normal;
   padding: 0;
   font: inherit;
   color: var(--fhql-accent);
@@ -326,9 +331,9 @@
   border-end-start-radius: 3px;
   pointer-events: none;
 }
-.fhql-app .fhql-requirement-item { flex: 1 1 6em; display: inline-flex; gap: 0.35em; align-items: flex-start; min-width: 0; font-size: 0.9em; }
+.fhql-app .fhql-requirement-item { flex: 1 1 6em; display: inline-flex; gap: 0.35em; align-items: flex-start; min-width: min(6em, 100%); font-size: 0.9em; }
 .fhql-app .fhql-requirement-item > :is(.fhql-link, .fhql-muted) { align-self: center; }
-.fhql-app .fhql-requirement-item > .fhql-link { min-width: 0; text-align: start; overflow-wrap: anywhere; }
+.fhql-app .fhql-requirement-item > .fhql-link { min-width: 0; text-align: start; overflow-wrap: break-word; }
 /* Who handed in, progress, and the hand-over button stay together at the row's end, under the eye button above;
    they move below the item only when the item would get less than about six letters' room. */
 .fhql-app .fhql-requirement-end { display: inline-flex; gap: 0.35em; align-items: center; margin-inline-start: auto; font-size: 0.9em; }
@@ -460,9 +465,9 @@
 .fhql-app .fhql-reward-buttons > .fhql-button { width: auto; }
 .fhql-app .fhql-reward[draggable="true"] { cursor: grab; }
 .fhql-app .fhql-reward-main { display: grid; gap: 0.1em; min-width: 0; }
-.fhql-app .fhql-reward-name { text-align: start; overflow-wrap: anywhere; }
+.fhql-app .fhql-reward-name { text-align: start; overflow-wrap: break-word; }
 /* In a narrow rewards panel, "Claimed by …" wraps like text instead of overflowing. */
-.fhql-app .fhql-reward-state .fhql-claim { display: inline; overflow-wrap: anywhere; }
+.fhql-app .fhql-reward-state .fhql-claim { display: inline; overflow-wrap: break-word; }
 .fhql-app .fhql-reward.is-claimed .fhql-reward-name { text-decoration: line-through; color: var(--fhql-ink-muted); }
 .fhql-app .fhql-reward.is-claimed .fhql-thumb { opacity: 0.55; }
 /* "Cross out done items" off (per player): done and claimed text stays muted, without the line. */

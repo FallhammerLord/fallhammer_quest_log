@@ -15,7 +15,7 @@ export function listContext(t, gm = true)
       statusIcon: S[status], statusLabel: t(`Status.${status}`), selected: id === 'a'
    });
    return {
-      gm, hasQuests: true, query: '', fqlPending: gm ? 3 : 0,
+      gm, hasQuests: true, toolRow: true, query: '', fqlPending: gm ? 3 : 0,
       statusChips: Object.keys(S).map((k, i) => ({ status: k, icon: S[k], label: t(`Status.${k}`), count: i + 1, ariaLabel: t(`Status.${k}`), active: false })),
       items: [
          q('t', 'Rumors at the Gate', 'available', 0, ''),

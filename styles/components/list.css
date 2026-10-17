@@ -34,6 +34,7 @@
   gap: 0.4em;
   width: 100%;
   min-height: 2.2em;
+  height: auto;
   padding: 0.3em 0.5em 0.3em calc(0.5em + var(--fhql-depth, 0) * 1.1em);
   text-align: start;
   color: var(--fhql-ink);
@@ -68,7 +69,7 @@
   -webkit-line-clamp: 2;
   line-clamp: 2;
   white-space: normal;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
   line-height: 1.25;
 }
 .fhql-app .fhql-row-status { font-size: 0.8em; color: var(--fhql-ink-muted); }
@@ -113,10 +114,10 @@
 .fhql-app .fhql-chip:focus-visible { outline: 2px solid var(--fhql-accent); outline-offset: 1px; }
 .fhql-app .fhql-chip { padding: 0.2em 0.55em; font-size: 0.85em; min-height: 24px; }
 .fhql-app .fhql-chip-count { font-weight: normal; font-variant-numeric: tabular-nums; }
-/* Fold-all leads the filter row; the chips take the rest and wrap under each other. */
+/* New folder (GM) and fold-all lead the filter row; the chips take the rest and wrap under each other. */
 .fhql-app .fhql-chips-row { display: flex; gap: 0.25em; align-items: flex-start; }
 .fhql-app .fhql-chips-row > .fhql-chips { flex: 1 1 auto; min-width: 0; }
-.fhql-app .fhql-chip-fold { flex: none; justify-content: center; min-width: 28px; }
+.fhql-app :is(.fhql-chip-fold, .fhql-chip-tool) { flex: none; justify-content: center; min-width: 28px; }
 .fhql-app .fhql-chip-fold[hidden] { display: none; }
 
 .fhql-app .fhql-folder-row { margin-block-start: 0.35em; }
@@ -242,7 +243,7 @@
 .fhql-app .fhql-splitter {
   position: absolute;
   inset-block: 0;
-  inset-inline-start: calc(var(--fhql-list-col, 300px) - 3px);
+  inset-inline-start: calc(var(--fhql-list-col, 500px) - 3px);
   z-index: 5;
   width: 6px;
   cursor: col-resize;

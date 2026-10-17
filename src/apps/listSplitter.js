@@ -3,12 +3,17 @@ import { getSetting, setSetting } from '../setting.js';
 /**
  * The Quest Log's list pane can be widened: drag the line between the list and the quest, or focus
  * it and press the left or right arrow. Double-click resets. Each player's width is remembered.
+ * Dragging settles on a comfort width when near one (Shift drags freely), like the window's own snaps.
  */
 
 /** Narrowest and default list widths (px); the widest leaves the quest at least QUEST_MIN. */
 const LIST_MIN = 200;
-const LIST_DEFAULT = 300;
+const LIST_DEFAULT = 500;
 const QUEST_MIN = 320;
+
+/** Comfort widths the divider settles on while dragging, and how close (px) counts as near. */
+const LIST_SNAPS = [250, 350, LIST_DEFAULT];
+const SNAP_RANGE = 16;
 
 /** How far one arrow press moves the line (px). */
 const KEY_STEP = 16;
@@ -31,7 +36,9 @@ function clampWidth(content, width)
  */
 function setWidth(content, handle, width)
 {
-   const px = width ? clampWidth(content, width) : LIST_DEFAULT;
+   // A saved width is kept as is: before the window is laid out it has no width to clamp against,
+   // and the stylesheet already keeps the quest at least QUEST_MIN wide (--fhql-list-col).
+   const px = width ? (content.clientWidth ? clampWidth(content, width) : Math.round(width)) : LIST_DEFAULT;
    content.style.setProperty('--fhql-list-width', `${px}px`);
    handle.setAttribute('aria-valuenow', String(px));
 }
@@ -63,7 +70,12 @@ export function addListSplitter(app)
       event.preventDefault();
       handle.setPointerCapture(event.pointerId);
       const left = content.getBoundingClientRect().left;
-      const move = (e) => setWidth(content, handle, e.clientX - left);
+      const move = (e) =>
+      {
+         const width = e.clientX - left;
+         const near = e.shiftKey ? undefined : LIST_SNAPS.find((w) => Math.abs(width - w) <= SNAP_RANGE);
+         setWidth(content, handle, near ?? width);
+      };
       const end = () =>
       {
          handle.removeEventListener('pointermove', move);
