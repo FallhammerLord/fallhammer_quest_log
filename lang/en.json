@@ -251,6 +251,14 @@
       "AnnounceOutcomes": {
         "Name": "Post quest outcomes to chat",
         "Hint": "When a quest is completed or failed, post it to chat for the players who can see it."
+      },
+      "FoldFinished": {
+        "Name": "Quest Log: fold finished families",
+        "Hint": "A parent quest whose subquests are all completed or failed starts folded in the list. Open one by hand and it stays open."
+      },
+      "ActiveFirst": {
+        "Name": "Quest Log: active subquests first",
+        "Hint": "Under each parent, list active subquests first, then available, then finished. Off: the order they were made in."
       }
     },
     "Keybindings": {
@@ -519,6 +527,20 @@
       "Title": "Advanced settings",
       "Intro": "These apply to everyone at the table.",
       "Save": "Save"
+    },
+    "Family": {
+      "Summary": "{done} of {count} subquests done",
+      "Toggle": "Show or hide the subquests of {name}",
+      "ToggleHint": "Fold or open the subquests (Alt: the whole family)",
+      "FoldAll": "Fold all quest families",
+      "UnfoldAll": "Open all quest families",
+      "NewInside": "Something new in a subquest",
+      "FocusInside": "A subquest is the party focus",
+      "TrackedInside": "You track a subquest"
+    },
+    "ListResize": {
+      "Label": "Resize the quest list",
+      "Hint": "Drag, or use the left and right arrows. Double-click to reset."
     }
   }
 }

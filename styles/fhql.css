@@ -67,7 +67,9 @@
 
 .fhql-app .window-content {
   display: grid;
-  grid-template-columns: 250px minmax(0, 1fr);
+  /* The list's width: 250px, or as the player dragged it (src/apps/listSplitter.js). */
+  grid-template-columns: var(--fhql-list-width, 250px) minmax(0, 1fr);
+  position: relative;
   /* One row the window's height: the list and the sheet each fill it and scroll inside. */
   grid-template-rows: minmax(0, 1fr);
   gap: 0;

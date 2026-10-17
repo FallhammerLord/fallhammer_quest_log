@@ -19,8 +19,12 @@
     </div>
     {{/if}}
     {{#if hasQuests}}
-    <input type="search" class="fhql-input fhql-search" data-list-search value="{{query}}"
-           placeholder="{{localize 'FHQL.Filter.Search'}}" aria-label="{{localize 'FHQL.Filter.Search'}}">
+    <div class="fhql-search-row">
+      <input type="search" class="fhql-input fhql-search" data-list-search value="{{query}}"
+             placeholder="{{localize 'FHQL.Filter.Search'}}" aria-label="{{localize 'FHQL.Filter.Search'}}">
+      <button type="button" class="fhql-button fhql-small fhql-icon-only" data-action="foldAllFamilies" hidden
+              aria-label="{{localize 'FHQL.Family.FoldAll'}}" data-tooltip="{{localize 'FHQL.Family.FoldAll'}}"><i class="fa-solid fa-compress" inert></i></button>
+    </div>
     <div class="fhql-chips" role="group" aria-label="{{localize 'FHQL.Filter.Label'}}">
       {{#each statusChips}}
       <button type="button" class="fhql-chip fhql-status-{{status}} {{#if active}}is-on{{/if}}" data-action="toggleStatusFilter"
@@ -46,12 +50,26 @@
       </button>
     </li>
     {{else}}
-    <li data-row="quest" data-status="{{status}}" data-search="{{search}}" data-chain="{{chain}}" data-uuid="{{uuid}}" draggable="true">
-      <button type="button" class="fhql-row fhql-status-{{status}} {{#if selected}}is-selected{{/if}}" style="--fhql-depth: {{depth}}"
+    <li data-row="quest" data-id="{{id}}" data-parent-id="{{parentId}}" data-status="{{status}}" data-search="{{search}}" data-chain="{{chain}}"
+        data-uuid="{{uuid}}" draggable="true" {{#if family}}data-family {{#if familyFinished}}data-family-finished{{/if}}{{/if}}
+        class="{{#if level}}is-child{{/if}}" style="--fhql-depth: {{depth}}">
+      {{#if family}}
+      <button type="button" class="fhql-twisty" data-action="toggleFamily" aria-expanded="true" aria-label="{{toggleLabel}}"
+              data-tooltip="{{localize 'FHQL.Family.ToggleHint'}}"><i class="fa-solid fa-chevron-down" inert></i></button>
+      {{else}}
+      <span class="fhql-twisty-gap"></span>
+      {{/if}}
+      <button type="button" class="fhql-row fhql-status-{{status}} {{#if selected}}is-selected{{/if}}"
               data-action="selectQuest" data-quest-id="{{id}}" {{#if selected}}aria-current="true"{{/if}}>
         <i class="fhql-status-icon {{statusIcon}}" data-tooltip="{{statusLabel}}" inert></i>
         <span class="fhql-row-name" data-tooltip="{{name}}">{{name}}</span>
         <span class="fhql-row-status">
+          {{#if family}}
+          {{#if familyUnseen}}{{#unless unseen}}<span class="fhql-new-dot fhql-family-signal" data-tooltip="{{localize 'FHQL.Family.NewInside'}}" aria-label="{{localize 'FHQL.Family.NewInside'}}"></span>{{/unless}}{{/if}}
+          {{#if familyFocus}}{{#unless inProgress}}<i class="fa-solid fa-star fhql-in-progress fhql-family-signal" data-tooltip="{{localize 'FHQL.Family.FocusInside'}}" aria-label="{{localize 'FHQL.Family.FocusInside'}}"></i>{{/unless}}{{/if}}
+          {{#if familyTracked}}{{#unless tracked}}<i class="fa-solid fa-bookmark fhql-in-progress fhql-family-signal" data-tooltip="{{localize 'FHQL.Family.TrackedInside'}}" aria-label="{{localize 'FHQL.Family.TrackedInside'}}"></i>{{/unless}}{{/if}}
+          <span class="fhql-family-count" data-tooltip="{{familyLabel}}" aria-label="{{familyLabel}}">{{familyDone}}/{{familyCount}}</span>
+          {{/if}}
           {{#if unseen}}<span class="fhql-new-dot" data-tooltip="{{localize 'FHQL.Seen.New'}}" aria-label="{{localize 'FHQL.Seen.New'}}"></span>{{/if}}
           {{#if inProgress}}<i class="fa-solid fa-star fhql-in-progress" data-tooltip="{{localize 'FHQL.Quest.InProgress'}}" aria-label="{{localize 'FHQL.Quest.InProgress'}}"></i>{{/if}}
           {{#if tracked}}<i class="fa-solid fa-bookmark fhql-in-progress" data-tooltip="{{localize 'FHQL.Beacon.Tracked'}}" aria-label="{{localize 'FHQL.Beacon.Tracked'}}"></i>{{/if}}

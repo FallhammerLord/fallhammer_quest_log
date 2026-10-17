@@ -2,6 +2,7 @@ import { MODULE_ID, THEMES } from './constants.js';
 import { refreshOpenApps } from './theme.js';
 import { availableFonts } from './compat.js';
 import { refreshQuestBeacon } from './ui/QuestBeacon.js';
+import { QuestLog } from './apps/QuestLog.js';
 import { TextureImagesApp } from './apps/TextureImagesApp.js';
 import { ADVANCED_SETTINGS, AdvancedSettingsApp } from './apps/AdvancedSettingsApp.js';
 
@@ -10,6 +11,7 @@ export function registerSettings()
 {
    registerLookSettings();
    registerBeaconSettings();
+   registerListSettings();
    registerTableSettings();
    registerRememberedChoices();
 }
@@ -203,6 +205,26 @@ function registerBeaconSettings()
       default: true,
       onChange: () => refreshQuestBeacon()
    });
+}
+
+/** The Quest Log list (each player chooses). */
+function registerListSettings()
+{
+   const redrawList = () => { if (QuestLog.instance.rendered) { QuestLog.instance.render({ parts: ['list'] }); } };
+   for (const [key, name] of [['listFoldFinished', 'FoldFinished'], ['listActiveFirst', 'ActiveFirst']])
+   {
+      game.settings.register(MODULE_ID, key, {
+         name: `FHQL.Settings.${name}.Name`,
+         hint: `FHQL.Settings.${name}.Hint`,
+         scope: 'client',
+         config: true,
+         type: Boolean,
+         default: false,
+         onChange: redrawList
+      });
+   }
+   // The list pane's width in the Quest Log, as this player last dragged it (0: the default).
+   game.settings.register(MODULE_ID, 'listWidth', { scope: 'client', config: false, type: Number, default: 0 });
 }
 
 /** The table's rules (GM): who sees and does what, rewards, ownership and announcements. */

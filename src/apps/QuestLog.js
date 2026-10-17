@@ -1,6 +1,8 @@
 import { HandlebarsApp } from '../compat.js';
 import { inputPopover } from '../ui/popover.js';
 import { openFolderMenu } from './folderMenu.js';
+import { ancestorsOf, foldedIds, questRows } from './listTree.js';
+import { addListSplitter } from './listSplitter.js';
 import { MODULE_ID, MODULE_PATH, STATUSES } from '../constants.js';
 import { applyTheme, trackApp, untrackApp } from '../theme.js';
 import { clampToMinSize, snapWidth } from './minSize.js';
@@ -14,7 +16,6 @@ import {
 import { QuestSheetMixin } from './QuestSheetMixin.js';
 import { stopEditingNotes } from './sheet/notes.js';
 import { guardActions } from './sheet/rows.js';
-import { isUnseen } from '../data/seen.js';
 import { getSetting, setSetting } from '../setting.js';
 
 /** The Quest Log window: quest list plus a quest sheet in the detail pane. Singleton. */
@@ -41,6 +42,8 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
          createSamples: QuestLog.#onCreateSamples,
          createFolder: QuestLog.#onCreateFolder,
          toggleFolder: QuestLog.#onToggleFolder,
+         toggleFamily: QuestLog.#onToggleFamily,
+         foldAllFamilies: QuestLog.#onFoldAllFamilies,
          toggleStatusFilter: QuestLog.#onToggleStatusFilter,
          openFqlImport: QuestLog.#onOpenFqlImport
       })
@@ -77,6 +80,7 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
          stopEditingNotes(this);
       }
       this.#selectedId = id;
+      this.#reveal(id);
    }
 
    /** @override */
@@ -134,14 +138,17 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
       };
    }
 
-   /** @returns {{ statuses: string[], collapsed: string[] }} This client's saved list filter. */
+   /**
+    * @returns {{ statuses: string[], collapsed: string[], expanded: string[] }} This client's saved list
+    *   state: status filter, folded folders and quest families, and finished families opened by hand.
+    */
    static #savedFilter()
    {
       const saved = getSetting('listFilter') ?? {};
-      return { statuses: saved.statuses ?? [], collapsed: saved.collapsed ?? [] };
+      return { statuses: saved.statuses ?? [], collapsed: saved.collapsed ?? [], expanded: saved.expanded ?? [] };
    }
 
-   /** @param {{ statuses: string[], collapsed: string[] }} filter - Filter to save for this client. */
+   /** @param {{ statuses: string[], collapsed: string[], expanded: string[] }} filter - List state to save for this client. */
    static #saveFilter(filter)
    {
       setSetting('listFilter', filter);
@@ -228,7 +235,7 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
    }
 
    /**
-    * Appends quest rows for one folder, each quest followed by its subquests in the same folder.
+    * Appends quest rows for one folder, each quest followed by its subquests (src/apps/listTree.js).
     *
     * @param {object[]} rows - Rows to append to.
     * @param {JournalEntry[]} entries - Quests in this folder.
@@ -237,81 +244,128 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
     */
    #addQuestRows(rows, entries, depth, chain)
    {
-      const tracked = new Set(trackedIds());
-      const ids = new Set(entries.map((e) => e.id));
-      const childrenOf = new Map();
-      const roots = [];
-      for (const entry of entries)
-      {
-         const parent = questPage(entry).system.parentQuest;
-         if (parent && ids.has(parent)) { childrenOf.set(parent, [...(childrenOf.get(parent) ?? []), entry]); }
-         else { roots.push(entry); }
-      }
-
-      const seen = new Set();
-      const add = (entry, level) =>
-      {
-         if (seen.has(entry.id)) { return; }
-         seen.add(entry.id);
-         const { status, inProgress } = questPage(entry).system;
-         rows.push({
-            id: entry.id,
-            uuid: entry.uuid,
-            name: entry.name,
-            search: entry.name.toLowerCase(),
-            status,
-            inProgress,
-            tracked: tracked.has(entry.id),
-            depth: Math.min(level, 6),
-            chain: chain.join(' '),
-            statusIcon: STATUSES[status].icon,
-            statusLabel: game.i18n.localize(`FHQL.Status.${status}`),
-            selected: entry.id === this.#selectedId,
-            unseen: entry.id !== this.#selectedId && isUnseen(entry)
-         });
-         for (const child of childrenOf.get(entry.id) ?? []) { add(child, level + 1); }
-      };
-      for (const entry of roots) { add(entry, depth); }
+      rows.push(...questRows(entries, {
+         depth, chain, selectedId: this.#selectedId, tracked: new Set(trackedIds()), activeFirst: getSetting('listActiveFirst')
+      }));
    }
 
    /**
-    * Shows or hides list rows for the status chips, search text, and collapsed folders, without a
-    * re-render, so typing in the search box keeps focus. While searching, collapsed folders open.
+    * Shows or hides list rows for the status chips, search text, and folded folders and quest
+    * families, without a re-render, so typing in the search box keeps focus. While searching, folded
+    * folders and families open. A parent that doesn't match the filter still shows, dimmed, above a
+    * subquest that does, so the subquest keeps its context.
     */
    #applyListFilters()
    {
       const list = this.element?.querySelector('.fhql-list');
       if (!list) { return; }
-      const { statuses, collapsed } = QuestLog.#savedFilter();
+      const filter = QuestLog.#savedFilter();
+      const { statuses } = filter;
       const query = this.#query.trim().toLowerCase();
-      const collapsedSet = new Set(collapsed);
+      const folded = foldedIds(list, filter, getSetting('listFoldFinished'));
       const chainOf = (el) => (el.dataset.chain ? el.dataset.chain.split(' ') : []);
+      const quests = [...list.querySelectorAll('[data-row="quest"]')];
 
-      const matchedFolders = new Set();
-      let visible = 0;
-      for (const row of list.querySelectorAll('[data-row="quest"]'))
+      const matching = new Set();
+      const holdsMatch = new Set();
+      for (const row of quests)
       {
-         const matches = (!statuses.length || statuses.includes(row.dataset.status))
-          && (!query || row.dataset.search.includes(query));
-         const chain = chainOf(row);
-         if (matches) { chain.forEach((id) => matchedFolders.add(id)); }
-         const folded = !query && chain.some((id) => collapsedSet.has(id));
-         row.hidden = !matches || folded;
-         if (matches) { visible++; }
+         const matches = (!statuses.length || statuses.includes(row.dataset.status)) && (!query || row.dataset.search.includes(query));
+         if (!matches) { continue; }
+         matching.add(row);
+         chainOf(row).forEach((id) => holdsMatch.add(id));
+      }
+
+      let visible = 0;
+      for (const row of quests)
+      {
+         const shown = matching.has(row) || holdsMatch.has(row.dataset.id);
+         const hiddenByFold = !query && chainOf(row).some((id) => folded.has(id));
+         row.hidden = !shown || hiddenByFold;
+         row.classList.toggle('is-context', shown && !matching.has(row));
+         if (matching.has(row)) { visible++; }
+         if (row.dataset.family === undefined) { continue; }
+         const open = !!query || !folded.has(row.dataset.id);
+         row.classList.toggle('is-folded', !open);
+         row.querySelector('[data-action="toggleFamily"]')?.setAttribute('aria-expanded', String(open));
       }
 
       const filtering = statuses.length > 0 || !!query;
       for (const row of list.querySelectorAll('[data-row="folder"]'))
       {
-         const folded = !query && chainOf(row).some((id) => collapsedSet.has(id));
-         row.hidden = folded || (filtering && !matchedFolders.has(row.dataset.folderId));
-         const open = !!query || !collapsedSet.has(row.dataset.folderId);
+         const hiddenByFold = !query && chainOf(row).some((id) => folded.has(id));
+         row.hidden = hiddenByFold || (filtering && !holdsMatch.has(row.dataset.folderId));
+         const open = !!query || !folded.has(row.dataset.folderId);
          row.classList.toggle('is-collapsed', !open);
          row.querySelector('[data-action="toggleFolder"]')?.setAttribute('aria-expanded', String(open));
       }
 
+      // The toolbar's fold-all button folds every family while any is open, else opens them all.
+      const families = quests.filter((row) => row.dataset.family !== undefined);
+      const allButton = list.querySelector('[data-action="foldAllFamilies"]');
+      if (allButton)
+      {
+         allButton.hidden = !families.length;
+         const anyOpen = families.some((row) => !folded.has(row.dataset.id));
+         const label = game.i18n.localize(anyOpen ? 'FHQL.Family.FoldAll' : 'FHQL.Family.UnfoldAll');
+         allButton.dataset.fold = String(anyOpen);
+         allButton.setAttribute('aria-label', label);
+         allButton.dataset.tooltip = label;
+         allButton.querySelector('i')?.setAttribute('class', `fa-solid ${anyOpen ? 'fa-compress' : 'fa-expand'}`);
+      }
+
       const empty = list.querySelector('.fhql-no-matches');
       if (empty) { empty.hidden = visible > 0 || !list.querySelector('[data-row="quest"]'); }
+   }
+
+   /**
+    * Folds or opens folders and quest families, sliding the rows that change.
+    *
+    * @param {string[]} ids - Folder or quest IDs.
+    * @param {boolean} fold - Fold them (true) or open them (false).
+    */
+   #setFolded(ids, fold)
+   {
+      const filter = QuestLog.#savedFilter();
+      const set = new Set(ids);
+      filter.collapsed = fold ? [...new Set([...filter.collapsed, ...ids])] : filter.collapsed.filter((id) => !set.has(id));
+      // Opening a finished family by hand is remembered, so "fold finished families" leaves it open.
+      filter.expanded = fold ? filter.expanded.filter((id) => !set.has(id)) : [...new Set([...filter.expanded, ...ids])];
+      QuestLog.#saveFilter(filter);
+      const rows = [...this.element.querySelectorAll('.fhql-list-items > li')];
+      // A second click mid-slide: drop the running slide, so its end can't re-hide a reopened row.
+      for (const row of rows) { if (row.fhqlSlide) { row.fhqlSlide = null; row.getAnimations().forEach((a) => a.cancel()); row.hidden = row.fhqlClosing ?? row.hidden; row.style.overflow = ''; } }
+      const before = new Set(rows.filter((row) => !row.hidden));
+      this.#applyListFilters();
+      QuestLog.#slideRows(rows.filter((row) => before.has(row) && row.hidden), rows.filter((row) => !before.has(row) && !row.hidden));
+   }
+
+   /** @param {HTMLElement} row - A family's row. @returns {boolean} Whether it is folded now. */
+   #isFolded(row)
+   {
+      return row.classList.contains('is-folded') || row.classList.contains('is-collapsed');
+   }
+
+   /**
+    * Opens the folders and parent quests above a quest, so it shows in the list when opened from the
+    * Beacon, a link, or Show players. Writes only when something was folded.
+    *
+    * @param {string} id - The quest's JournalEntry ID.
+    */
+   #reveal(id)
+   {
+      const entry = getQuestEntry(id);
+      if (!entry) { return; }
+      const { folders, quests } = ancestorsOf(entry, getQuestEntry);
+      const filter = QuestLog.#savedFilter();
+      const ids = [...folders, ...quests];
+      const foldFinished = getSetting('listFoldFinished');
+      if (ids.some((x) => filter.collapsed.includes(x)) || (foldFinished && quests.some((x) => !filter.expanded.includes(x))))
+      {
+         filter.collapsed = filter.collapsed.filter((x) => !ids.includes(x));
+         if (foldFinished) { filter.expanded = [...new Set([...filter.expanded, ...quests])]; }
+         QuestLog.#saveFilter(filter);
+      }
    }
 
    /** @override */
@@ -319,6 +373,7 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
    {
       super._onFirstRender(context, options);
       const el = this.element;
+      addListSplitter(this);
 
       // Arrow keys, Home, and End move through visible quest and folder rows.
       el.addEventListener('keydown', (event) =>
@@ -335,6 +390,33 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
          if (!next) { return; }
          event.preventDefault();
          next.focus();
+      });
+
+      // Right opens a folded folder or quest family (or steps into it); Left folds it (or steps out to its parent).
+      el.addEventListener('keydown', (event) =>
+      {
+         if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') { return; }
+         const button = event.target.closest?.('.fhql-list-items .fhql-row, .fhql-list-items .fhql-folder');
+         const row = button?.closest('li');
+         if (!row || this.#query.trim()) { return; }
+         const family = row.dataset.family !== undefined || row.dataset.row === 'folder';
+         const folded = this.#isFolded(row);
+         const id = row.dataset.id ?? row.dataset.folderId;
+         event.preventDefault();
+         if (event.key === 'ArrowRight' && family && folded) { this.#setFolded([id], false); return; }
+         if (event.key === 'ArrowLeft' && family && !folded) { this.#setFolded([id], true); return; }
+         if (event.key === 'ArrowRight' && family)
+         {
+            const next = row.nextElementSibling;
+            if (next && !next.hidden && next.dataset.chain?.split(' ').includes(id)) { next.querySelector('.fhql-row, .fhql-folder')?.focus(); }
+            return;
+         }
+         if (event.key === 'ArrowLeft')
+         {
+            const up = row.dataset.parentId || row.dataset.chain?.split(' ').filter(Boolean).at(-1);
+            const target = up && this.element.querySelector(`[data-row="quest"][data-id="${CSS.escape(up)}"] .fhql-row, [data-folder-id="${CSS.escape(up)}"] .fhql-folder`);
+            target?.focus();
+         }
       });
 
       // Esc in a search box with text clears it first; Foundry's own Esc then leaves the box, then closes.
@@ -486,17 +568,38 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
    /** @this {QuestLog} */
    static #onToggleFolder(event, target)
    {
-      const id = target.closest('[data-folder-id]')?.dataset.folderId;
-      if (!id || this.#query.trim()) { return; }
-      const filter = QuestLog.#savedFilter();
-      filter.collapsed = filter.collapsed.includes(id) ? filter.collapsed.filter((c) => c !== id) : [...filter.collapsed, id];
-      QuestLog.#saveFilter(filter);
-      const rows = [...this.element.querySelectorAll('.fhql-list-items > li')];
-      // A second click mid-slide: drop the running slide, so its end can't re-hide a reopened row.
-      for (const row of rows) { if (row.fhqlSlide) { row.fhqlSlide = null; row.getAnimations().forEach((a) => a.cancel()); row.hidden = row.fhqlClosing ?? row.hidden; row.style.overflow = ''; } }
-      const before = new Set(rows.filter((row) => !row.hidden));
-      this.#applyListFilters();
-      QuestLog.#slideRows(rows.filter((row) => before.has(row) && row.hidden), rows.filter((row) => !before.has(row) && !row.hidden));
+      const row = target.closest('[data-folder-id]');
+      if (!row || this.#query.trim()) { return; }
+      this.#setFolded([row.dataset.folderId], !this.#isFolded(row));
+   }
+
+   /**
+    * The arrow beside a parent quest folds or opens its subquests. Alt-click does the same for every
+    * family inside it too.
+    *
+    * @this {QuestLog}
+    */
+   static #onToggleFamily(event, target)
+   {
+      const row = target.closest('[data-row="quest"]');
+      if (!row || this.#query.trim()) { return; }
+      const fold = !this.#isFolded(row);
+      const ids = [row.dataset.id];
+      if (event.altKey)
+      {
+         for (const inner of this.element.querySelectorAll('[data-row="quest"][data-family]'))
+         {
+            if (inner.dataset.chain.split(' ').includes(row.dataset.id)) { ids.push(inner.dataset.id); }
+         }
+      }
+      this.#setFolded(ids, fold);
+   }
+
+   /** @this {QuestLog} */
+   static #onFoldAllFamilies(event, target)
+   {
+      const ids = [...this.element.querySelectorAll('[data-row="quest"][data-family]')].map((row) => row.dataset.id);
+      this.#setFolded(ids, target.dataset.fold === 'true');
    }
 
    /**

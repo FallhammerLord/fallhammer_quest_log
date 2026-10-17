@@ -23,6 +23,7 @@ As a player (second browser or user):
 - Opening a quest from the journal sidebar shows a summary with **Open in Quest Log**.
 
 Folders and filters:
+- A parent quest's arrow folds its subquests; Alt-click folds the whole family; the button beside search folds or opens all. A folded parent shows "done/total" and a dot, star or bookmark when a subquest inside is new, party focus or tracked. Left/Right arrows fold and open. Opening a subquest from the Beacon unfolds its parents. Drag the list's right edge to widen it (double-click resets).
 - Right-click a folder (GM): New subfolder, Rename, Move into folder, Delete folder (its quests move up a level). Up to three levels below FHQL Quests.
 - The journal folder is named **FHQL Quests** (an older "Quests" folder is renamed on load).
 - **New folder** (folder-plus icon) creates a folder inside it. Drag quest rows onto a folder header to move them, or use ⋮ → Move to folder.

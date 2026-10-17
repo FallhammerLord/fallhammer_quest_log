@@ -4,6 +4,7 @@
 
 First feature-complete preview. Requires Foundry VTT v14.
 
+- Quest families fold in the list: the arrow beside a parent quest hides its subquests (Alt: the whole family; a toolbar button folds or opens all). A folded parent shows how many are done and any new, tracked or party-focus subquest inside; guide lines tie subquests to their parent; opening a subquest from the Beacon or a link unfolds its parents; Left and Right arrows fold and open. Options: fold finished families, and list active subquests first. The list pane can be widened by dragging its edge.
 - Hope and Fear follows the Daggerheart system's own sheets: frosted indigo glass over the scene, Overpass text under Cinzel titles, gold filled buttons and pill status tags, Fear in blue, and duality sparks in the quest header. Solid when Foundry's no-blur option is on.
 - Advanced settings: easter eggs, ownership levels, reward unlocking, chat announcements and the players' Quest Log buttons move to their own window, keeping Module Settings short.
 - Players' journal sidebar no longer lists quests or the FHQL Quests folder; players reach quests through the Quest Log and the Beacon.

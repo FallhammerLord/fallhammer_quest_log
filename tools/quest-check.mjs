@@ -127,6 +127,41 @@ check(quests.questPage(parent).system.parentQuest === '', 'a parent below the qu
    check(!('nonsense' in page.system), 'only objectives and rewards can be reordered');
 }
 
+// Quest families in the list: a parent sums up its subquests; options sort and fold them.
+{
+   globalThis.game.user.getFlag = () => undefined;
+   globalThis.game.i18n.format = (key, data) => `${key} ${JSON.stringify(data)}`;
+   const { questRows, ancestorsOf } = await import('../src/apps/listTree.js');
+   const fam = (name, status, parentQuest = '') => ({
+      id: name, uuid: `JournalEntry.${name}`, name, folder: act1,
+      pages: [{ type: QUEST_TYPE, system: { status, inProgress: false, parentQuest } }]
+   });
+   const top = fam('top', 'active');
+   const kids = [fam('k1', 'completed', 'top'), fam('k2', 'active', 'top'), fam('k3', 'failed', 'top')];
+   const grand = fam('g1', 'available', 'k2');
+   const rows = questRows([top, ...kids, grand], { depth: 1, chain: ['act1'], selectedId: null, tracked: new Set(['g1']), activeFirst: false });
+   const row = (id) => rows.find((r) => r.id === id);
+   check(row('top').family && row('top').familyCount === 4 && row('top').familyDone === 2, 'a parent counts every subquest below it and how many are done');
+   check(row('g1').chain === 'act1 top k2' && row('g1').parentId === 'k2', 'a subquest carries its folders and parent quests, nearest last');
+   check(row('top').familyTracked && !row('k1').family, 'a tracked subquest shows on its parent; a quest with no subquests is no family');
+   check(rows.map((r) => r.id).join() === 'top,k1,k2,g1,k3', 'by default subquests keep their order, each followed by its own');
+   const sorted = questRows([top, ...kids, grand], { depth: 1, chain: [], selectedId: null, tracked: new Set(), activeFirst: true });
+   check(sorted.map((r) => r.id).join() === 'top,k2,g1,k1,k3', 'active first puts active subquests before finished ones');
+   const done = questRows([top, kids[0], kids[2]], { depth: 0, chain: [], selectedId: null, tracked: new Set(), activeFirst: false });
+   check(done[0].familyFinished, 'a family whose subquests are all finished is marked finished');
+   const loopA = fam('la', 'active', 'lb');
+   const loopB = fam('lb', 'active', 'la');
+   check(questRows([loopA, loopB], { depth: 0, chain: [], selectedId: null, tracked: new Set(), activeFirst: false }).length === 2, 'a parent loop in old data still lists each quest once');
+   const { foldedIds } = await import('../src/apps/listTree.js');
+   const fakeList = { querySelectorAll: () => [{ dataset: { id: 'done1' } }, { dataset: { id: 'done2' } }] };
+   const filter = { collapsed: ['f9'], expanded: ['done2'] };
+   check([...foldedIds(fakeList, filter, false)].join() === 'f9', 'only what the player folded is folded by default');
+   check([...foldedIds(fakeList, filter, true)].sort().join() === 'done1,f9', 'with fold finished on, finished families fold unless opened by hand');
+   const lookup = (id) => ({ top, k2: kids[1] })[id];
+   const up = ancestorsOf(grand, lookup);
+   check(up.quests.join() === 'top,k2' && up.folders.join() === 'root,act1', 'a quest\'s ancestors run from its top folder down to its parent');
+}
+
 // Nested folders: Foundry allows 4 levels counting FHQL Quests, so 3 below it.
 {
    const deep = await quests.createQuestFolder('Chapter', act1.id);

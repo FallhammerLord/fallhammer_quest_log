@@ -130,3 +130,61 @@
 .fhql-app .fhql-folder .fhql-row-status { font-weight: normal; font-variant-numeric: tabular-nums; }
 .fhql-app .fhql-no-matches { padding: 0.5em; }
 .fhql-app .fhql-list-items [hidden] { display: none; }
+
+/* ---------- Quest families: a parent folds to hide its subquests (src/apps/listTree.js) ---------- */
+.fhql-app li[data-row="quest"] {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  padding-inline-start: calc(var(--fhql-depth, 0) * 1.1em);
+}
+.fhql-app li[data-row="quest"] > .fhql-row { flex: 1 1 auto; min-width: 0; padding-inline-start: 0.15em; }
+.fhql-app :is(.fhql-twisty, .fhql-twisty-gap) { flex: none; width: 24px; min-height: 24px; }
+.fhql-app .fhql-twisty {
+  display: grid;
+  place-items: center;
+  padding: 0;
+  font-size: 0.75em;
+  color: var(--fhql-ink-muted);
+  background: transparent;
+  border: 0;
+  border-radius: var(--fhql-radius);
+  cursor: pointer;
+}
+.fhql-app .fhql-twisty:hover { color: var(--fhql-accent); background: var(--fhql-hover); }
+.fhql-app .fhql-twisty i { transition: rotate 0.15s; }
+.fhql-app li.is-folded > .fhql-twisty i { rotate: -90deg; }
+@media (prefers-reduced-motion: reduce) { .fhql-app .fhql-twisty i { transition: none; } }
+/* A faint line down from each parent's arrow ties its subquests to it. */
+.fhql-app li[data-row="quest"].is-child::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: calc((var(--fhql-depth, 1) - 1) * 1.1em + 12px);
+  width: 1px;
+  background: var(--fhql-rule);
+  pointer-events: none;
+}
+/* A folded parent sums up what is inside; its signals show only while folded. */
+.fhql-app .fhql-family-count { font-size: 0.78em; color: var(--fhql-ink-muted); font-variant-numeric: tabular-nums; }
+.fhql-app li[data-row="quest"]:not(.is-folded) .fhql-family-signal { display: none; }
+/* A parent shown only because a subquest matches the filter. */
+.fhql-app li[data-row="quest"].is-context > .fhql-row { opacity: 0.6; }
+
+.fhql-app .fhql-search-row { display: flex; gap: 0.35em; align-items: center; }
+.fhql-app .fhql-search-row > .fhql-search { flex: 1 1 auto; min-width: 0; }
+.fhql-app .fhql-search-row > [hidden] { display: none; }
+
+/* The line between the list and the quest: drag to widen the list (src/apps/listSplitter.js). */
+.fhql-app .fhql-splitter {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: calc(var(--fhql-list-width, 250px) - 3px);
+  z-index: 5;
+  width: 6px;
+  cursor: col-resize;
+}
+.fhql-app .fhql-splitter:is(:hover, :focus-visible) { background: color-mix(in srgb, var(--fhql-accent) 45%, transparent); }
+.fhql-app .fhql-splitter:focus-visible { outline: 2px solid var(--fhql-accent); }
+.fhql-app.fhql-quest-sheet .fhql-splitter { display: none; }
+@container fhql (max-width: 540px) { .fhql-app .fhql-splitter { display: none; } }
