@@ -18,6 +18,9 @@ import { stopEditingNotes } from './sheet/notes.js';
 import { guardActions } from './sheet/rows.js';
 import { getSetting, setSetting } from '../setting.js';
 
+/** How long a family's pips take to fill or drain (ms): the last pip's 120ms delay plus its 80ms fade, as in list.css. */
+const PIP_MS = 200;
+
 /** The Quest Log window: quest list plus a quest sheet in the detail pane. Singleton. */
 export class QuestLog extends QuestSheetMixin(HandlebarsApp)
 {
@@ -336,8 +339,12 @@ export class QuestLog extends QuestSheetMixin(HandlebarsApp)
       // A second click mid-slide: drop the running slide, so its end can't re-hide a reopened row.
       for (const row of rows) { if (row.fhqlSlide) { row.fhqlSlide = null; row.getAnimations().forEach((a) => a.cancel()); row.hidden = row.fhqlClosing ?? row.hidden; row.style.overflow = ''; } }
       const before = new Set(rows.filter((row) => !row.hidden));
+      // The toggled families' pips fill or drain in step with the slide (styles/components/list.css).
+      const toggled = rows.filter((row) => set.has(row.dataset.id) && row.dataset.family !== undefined);
+      toggled.forEach((row) => { clearTimeout(row.fhqlPipTimer); row.classList.add('is-animating'); });
       this.#applyListFilters();
       QuestLog.#slideRows(rows.filter((row) => before.has(row) && row.hidden), rows.filter((row) => !before.has(row) && !row.hidden));
+      toggled.forEach((row) => { row.fhqlPipTimer = setTimeout(() => row.classList.remove('is-animating'), PIP_MS); });
    }
 
    /** @param {HTMLElement} row - A family's row. @returns {boolean} Whether it is folded now. */
