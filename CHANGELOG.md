@@ -4,6 +4,7 @@
 
 First feature-complete preview. Requires Foundry VTT v14.
 
+- Reorder objectives and rewards in edit mode: drag the grip (objectives) or the picture (rewards), or focus it and press the up or down arrow.
 - Nested quest folders: the GM right-clicks a folder to add a subfolder, rename, move it into another folder, or delete it (its quests move up a level). Up to three levels, as Foundry allows.
 - A GM handing over from a sheet several players share chooses who gave it.
 - Theme images work: overlays (the default washes on Light and Ledger, and the GM's own) now load, and the Theme images button in Module Settings opens its window.

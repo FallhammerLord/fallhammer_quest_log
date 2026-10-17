@@ -486,3 +486,20 @@
 }
 .fhql-app .fhql-dates { font-variant-numeric: tabular-nums; }
 .fhql-app file-picker { display: flex; gap: 0.3em; min-width: 0; }
+
+/* Reordering in edit mode (src/apps/sheet/reorder.js): a grip on objectives, the picture on rewards. */
+.fhql-app .fhql-reorder { cursor: grab; }
+.fhql-app .fhql-reorder:active { cursor: grabbing; }
+.fhql-app button.fhql-thumb.fhql-reorder { position: relative; padding: 0; font: inherit; }
+.fhql-app .fhql-reorder-grip {
+  position: absolute;
+  inset: auto 1px 1px auto;
+  padding: 1px 2px;
+  font-size: 0.6em;
+  color: var(--fhql-ink);
+  background: var(--fhql-surface-sunken);
+  border-radius: 2px;
+}
+.fhql-app :is(.fhql-objectives, .fhql-rewards) > li.is-dragging { opacity: 0.5; }
+.fhql-app :is(.fhql-objectives, .fhql-rewards) > li.is-reorder-before { box-shadow: inset 0 2px 0 var(--fhql-accent); }
+.fhql-app :is(.fhql-objectives, .fhql-rewards) > li.is-reorder-after { box-shadow: inset 0 -2px 0 var(--fhql-accent); }

@@ -53,6 +53,7 @@ npm run quests     # Foundry mocked: quest families (folders, no loops), double-
 | `src/apps/sheet/notes.js` | sheet feature: player notes in place (context + actions) |
 | `src/apps/sheet/subquests.js` | sheet feature: add, open beside (one side slot per window), unlink (standalone or delete) |
 | `src/apps/sheet/questMenu.js` | sheet feature: GM quest menu (pop out, access, move, parent, delete) |
+| `src/apps/sheet/reorder.js` | sheet feature: reorder objectives and rewards in edit mode (drag the handle, or arrow keys); `reorderQuestList` saves |
 | `src/apps/sheet/panels.js` | panel heights (priority/proportional sharing), scroll keeping, narrow collapse; runs after every render |
 | `src/apps/sheet/rows.js` | row lookups, `editorUnsaved`, `guardActions` (actions show a notice on failure) |
 | `src/apps/QuestLog.js` | log window: folder tree, filters, search, right-click menu |

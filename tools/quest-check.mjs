@@ -116,6 +116,17 @@ check([parent, child, loose, grandchild].every((e) => e.folder?.id === act2.id),
 await quests.setParent(parent, grandchild.id);
 check(quests.questPage(parent).system.parentQuest === '', 'a parent below the quest is refused (no loops)');
 
+// Reordering: objectives take the new order; ids left out keep their place after it.
+{
+   const page = quests.questPage(parent);
+   page.system.objectives = { a: { name: 'A', sort: 100 }, b: { name: 'B', sort: 200 }, c: { name: 'C', sort: 300 } };
+   await quests.reorderQuestList(parent, 'objectives', ['c', 'a']);
+   const order = Object.entries(page.system.objectives).sort((x, y) => x[1].sort - y[1].sort).map(([id]) => id).join('');
+   check(order === 'cab', 'reordering objectives saves the new order');
+   await quests.reorderQuestList(parent, 'nonsense', ['a']);
+   check(!('nonsense' in page.system), 'only objectives and rewards can be reordered');
+}
+
 // Nested folders: Foundry allows 4 levels counting FHQL Quests, so 3 below it.
 {
    const deep = await quests.createQuestFolder('Chapter', act1.id);

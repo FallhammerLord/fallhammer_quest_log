@@ -182,6 +182,10 @@
           {{#each objectives}}
           <li class="is-{{state}} {{#if requirement}}has-requirement{{/if}}" data-objective-id="{{id}}"
               {{#if ../editing}}data-drop="requirement"{{else if canDeposit}}data-deposit{{/if}}>
+            {{#if ../editing}}
+            <button type="button" class="fhql-icon-button fhql-reorder" draggable="true" data-reorder="objectives" data-action="moveRow"
+                    data-tooltip="{{localize 'FHQL.Reorder.Hint'}}" aria-label="{{localize 'FHQL.Reorder.Objective'}}"><i class="fa-solid fa-grip-vertical" inert></i></button>
+            {{/if}}
             {{#if ../editable}}
             <button type="button" class="fhql-icon-button" data-action="cycleObjective" data-tooltip="{{stateLabel}}"
                     aria-label="{{stateLabel}}"><i class="fhql-state-icon {{icon}}" inert></i></button>
@@ -299,7 +303,12 @@
           {{#each rewards}}
           <li class="fhql-reward {{#if struck}}is-claimed{{/if}}" data-reward-id="{{id}}"
               {{#if draggable}}draggable="true" data-reward-drag data-uuid="{{uuid}}"{{/if}}>
+            {{#if ../editing}}
+            <button type="button" class="fhql-thumb fhql-reorder" draggable="true" data-reorder="rewards" data-action="moveRow"
+                    data-tooltip="{{localize 'FHQL.Reorder.Hint'}}" aria-label="{{localize 'FHQL.Reorder.Reward'}}">{{#if img}}<img src="{{img}}" alt="">{{else}}<i class="{{icon}}" inert></i>{{/if}}<i class="fa-solid fa-grip-vertical fhql-reorder-grip" inert></i></button>
+            {{else}}
             <span class="fhql-thumb">{{#if img}}<img src="{{img}}" alt="">{{else}}<i class="{{icon}}" inert></i>{{/if}}</span>
+            {{/if}}
 
             <div class="fhql-reward-main">
               {{#if (lookup ../textRewardEditing type)}}

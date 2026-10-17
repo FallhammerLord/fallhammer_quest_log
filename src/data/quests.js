@@ -450,6 +450,29 @@ export async function clearGiver(entry)
    await updateQuest(entry, { 'system.giver': { uuid: '', name: '', img: '' } });
 }
 
+/**
+ * Puts a quest's objectives or rewards in a new order (drag or arrow keys in edit mode). IDs not in
+ * the list keep their place after it.
+ *
+ * @param {JournalEntry} entry - The quest entry.
+ * @param {'objectives'|'rewards'} list - Which list.
+ * @param {string[]} orderedIds - The new order.
+ */
+export async function reorderQuestList(entry, list, orderedIds)
+{
+   if (!['objectives', 'rewards'].includes(list)) { return; }
+   const items = questPage(entry)?.system[list];
+   if (!items) { return; }
+   const rest = Object.keys(items).filter((id) => !orderedIds.includes(id)).sort((a, b) => items[a].sort - items[b].sort);
+   const changes = {};
+   [...orderedIds.filter((id) => id in items), ...rest].forEach((id, i) =>
+   {
+      const sort = (i + 1) * CONST.SORT_INTEGER_DENSITY;
+      if (items[id].sort !== sort) { changes[`system.${list}.${id}.sort`] = sort; }
+   });
+   if (Object.keys(changes).length) { await updateQuest(entry, changes); }
+}
+
 /* ---------- Rewards ---------- */
 
 /** @returns {number} A sort value after every existing entry. */

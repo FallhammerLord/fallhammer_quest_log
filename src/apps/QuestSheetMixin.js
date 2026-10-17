@@ -8,6 +8,7 @@ import {
 import { editorUnsaved, guardActions } from './sheet/rows.js';
 import { sheetContext } from './sheet/context.js';
 import { questActions } from './sheet/questActions.js';
+import { reorderActions, wireReorder } from './sheet/reorder.js';
 import { depositDropped, flashChangedObjectives, objectiveActions } from './sheet/objectives.js';
 import { rewardActions } from './sheet/rewards.js';
 import { notesActions, openNotesIfAsked, rememberOpenNotes, savePlayerNotes, stopEditingNotes } from './sheet/notes.js';
@@ -51,6 +52,7 @@ export function QuestSheetMixin(Base)
             showQuest: QuestSheet.#onShowQuest,
             showAllObjectives: QuestSheet.#onShowAllObjectives,
             ...questActions,
+            ...reorderActions,
             ...objectiveActions,
             ...rewardActions,
             ...notesActions,
@@ -343,6 +345,7 @@ export function QuestSheetMixin(Base)
             this.#onFieldChange(event);
          });
          el.addEventListener('click', (event) => onPanelHeadingClick(this, event));
+         wireReorder(this, el);
          el.addEventListener('dragover', (event) => this.#onDragOver(event));
          el.addEventListener('dragleave', (event) => event.target.closest?.('[data-drop]')?.classList.remove('is-drop-target'));
          el.addEventListener('drop', (event) => this.#onDrop(event));

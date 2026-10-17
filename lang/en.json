@@ -505,6 +505,12 @@
     },
     "Preview": {
       "Next": "Next: {objective}"
+    },
+    "Reorder": {
+      "Hint": "Drag to reorder, or press the up or down arrow",
+      "Objective": "Move objective: drag, or use the up and down arrows",
+      "Reward": "Move reward: drag, or use the up and down arrows",
+      "Moved": "Moved to {position} of {count}"
     }
   }
 }
