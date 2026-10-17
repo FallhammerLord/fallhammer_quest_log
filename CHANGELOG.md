@@ -9,6 +9,8 @@ First feature-complete preview. Requires Foundry VTT v14.
 - Deleting an objective or removing a reward asks first.
 - **Pop out** is a button on the quest header in the log; **Show players** moves into the GM's ⋮ quest menu.
 - A **?** button in the Quest Log's title bar lists quick tips.
+- Tooltips are short (two to four words); the details live in the tips.
+- A folder's own icon is its fold toggle: open folder while open, closed while folded, in the same column as quest families' pips. A thin halo keeps black folders visible on dark themes.
 - The fold toggle no longer keeps a ring after a mouse click (keyboard focus still shows one).
 - Quest families fold in the list: the arrow beside a parent quest hides its subquests (Alt: the whole family; a toolbar button folds or opens all). A folded parent shows how many are done and any new, tracked or primary subquest inside; guide lines tie subquests to their parent; opening a subquest from the Beacon or a link unfolds its parents; Left and Right arrows fold and open. Options: fold finished families, and list active subquests first. The list pane can be widened by dragging its edge. The fold toggle is three pips that fill top to bottom as subquests open, in each theme's own style (ink drops, gold beads, LEDs, brass rings, marquee bulbs, Hope-to-Fear, white periods, silver diamonds).
 - Hope and Fear follows the Daggerheart system's own sheets: frosted indigo glass over the scene, Overpass text under Cinzel titles, gold filled buttons and pill status tags, Fear in blue, and duality sparks in the quest header. Solid when Foundry's no-blur option is on.

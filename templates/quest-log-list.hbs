@@ -42,11 +42,10 @@
     {{#each items}}
     {{#if folder}}
     <li class="fhql-folder-row {{#if collapsed}}is-collapsed{{/if}}" data-row="folder" data-folder-id="{{id}}" data-chain="{{chain}}"
-        {{#if @root.gm}}data-folder-drop="{{id}}"{{/if}} style="--fhql-depth: {{depth}}; --fhql-folder-color: {{#if color}}{{color}}{{else}}var(--fhql-rule){{/if}}">
+        {{#if @root.gm}}data-folder-drop="{{id}}"{{/if}} style="--fhql-depth: {{depth}}; --fhql-folder-color: {{#if color}}{{color}}{{else}}var(--fhql-ink-muted){{/if}}">
       <button type="button" class="fhql-folder" data-action="toggleFolder" aria-expanded="{{#if collapsed}}false{{else}}true{{/if}}"
               {{#if outside}}data-tooltip="{{localize 'FHQL.Folders.OutsideHint'}}"{{/if}}>
-        <i class="fa-solid fa-chevron-down fhql-folder-chevron" inert></i>
-        <i class="fa-solid {{#if outside}}fa-circle-exclamation{{else}}fa-folder{{/if}} fhql-folder-icon" inert></i>
+        <span class="fhql-folder-icon" aria-hidden="true">{{#if outside}}<i class="fa-solid fa-circle-exclamation"></i>{{else}}<i class="fa-solid fa-folder"></i><i class="fa-solid fa-folder-open"></i>{{/if}}</span>
         <span class="fhql-row-name">{{name}}</span>
         <span class="fhql-row-status">{{count}}</span>
       </button>

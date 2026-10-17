@@ -107,11 +107,11 @@
 .fhql-app .fhql-folder-row { margin-block-start: 0.35em; }
 .fhql-app .fhql-folder {
   display: grid;
-  grid-template-columns: 1em 1.2em minmax(0, 1fr) auto;
+  grid-template-columns: 25px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 0.35em;
+  gap: 0.15em;
   width: 100%;
-  padding: 0.25em 0.5em 0.25em calc(0.3em + var(--fhql-depth, 0) * 1.1em);
+  padding: 0.25em 0.5em 0.25em calc(var(--fhql-depth, 0) * 1.1em);
   font: inherit;
   font-weight: bold;
   color: var(--fhql-ink);
@@ -124,9 +124,21 @@
 }
 .fhql-app .fhql-folder:hover { background: var(--fhql-hover); }
 .fhql-app .fhql-folder:focus-visible { outline: 2px solid var(--fhql-accent); outline-offset: -2px; }
-.fhql-app .fhql-folder-icon { color: var(--fhql-folder-color); }
-.fhql-app .fhql-folder-chevron { font-size: 0.75em; color: var(--fhql-ink-muted); }
-.fhql-app .fhql-folder-row.is-collapsed .fhql-folder-chevron { transform: rotate(-90deg); }
+/* The folder's own icon is its fold toggle, in the 25px column quest families use for their pips:
+   open folder while open, closed while folded. A thin ink halo keeps Foundry's default black folders
+   visible on dark themes. On a click (.is-animating, set by QuestLog.js) the icons cross-fade in step
+   with the slide. */
+.fhql-app .fhql-folder-icon {
+  display: grid;
+  place-items: center;
+  color: var(--fhql-folder-color);
+  filter: drop-shadow(0 0 0.6px var(--fhql-ink)) drop-shadow(0 0 0.6px var(--fhql-ink));
+}
+.fhql-app .fhql-folder-icon > i { grid-area: 1 / 1; }
+.fhql-app .fhql-folder-row:not(.is-collapsed) .fhql-folder-icon > .fa-folder,
+.fhql-app .fhql-folder-row.is-collapsed .fhql-folder-icon > .fa-folder-open { opacity: 0; }
+.fhql-app .fhql-folder-row.is-animating .fhql-folder-icon > i { transition: opacity 120ms 80ms; }
+@media (prefers-reduced-motion: reduce) { .fhql-app .fhql-folder-row.is-animating .fhql-folder-icon > i { transition: none; } }
 .fhql-app .fhql-folder .fhql-row-status { font-weight: normal; font-variant-numeric: tabular-nums; }
 .fhql-app .fhql-no-matches { padding: 0.5em; }
 .fhql-app .fhql-list-items [hidden] { display: none; }

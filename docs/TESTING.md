@@ -32,6 +32,8 @@ Folders and filters:
 - Delete an objective and remove a reward: each asks first.
 - In the log, **Pop out** on the quest header opens it in its own window (not shown in a popped-out window). **Show players** is in the ⋮ menu; right-clicking a row also offers Pop out.
 - The **?** in the Quest Log title bar opens tips (GM sees three more).
+- Tooltips are short and don't cover neighboring rows much (fold toggle: "Fold or open (Alt: all)").
+- Folders: the folder icon shows open or closed and fades between them as rows slide; a black folder stays visible on dark themes.
 - Right-click a quest row (GM) for the quest menu. Quick choices (menus, pickers, confirmations) open as panels inside the window; Esc closes them.
 
 Player workflows (world settings, off by default):

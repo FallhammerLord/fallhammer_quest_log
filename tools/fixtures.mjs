@@ -23,7 +23,9 @@ export function listContext(t, gm = true)
          // A quest family: a parent with a subquest that has its own subquest.
          { ...q('p', 'The Salt Roads', 'active', 1, 'f1'), family: true, familyCount: 2, familyDone: 1, familyLabel: '1 of 2 subquests done', toggleLabel: 'Show or hide the subquests of The Salt Roads', familyUnseen: true, familyTracked: true },
          { ...q('a', 'Extraordinarilyunbreakablequestnamewithoutspaces', 'active', 2, 'f1 p', true), level: 1, parentId: 'p', family: true, familyCount: 1, familyDone: 0, familyLabel: '0 of 1 subquests done', toggleLabel: 'Show or hide the subquests of a long quest' },
-         { ...q('c', 'Find the missing courier before the rains', 'available', 3, 'f1 p a'), level: 2, parentId: 'a', unseen: true }
+         { ...q('c', 'Find the missing courier before the rains', 'available', 3, 'f1 p a'), level: 2, parentId: 'a', unseen: true },
+         // Foundry's default black folder, folded: its icon must still show on dark themes.
+         { folder: true, id: 'f2', name: 'Act Two', color: '#000000', depth: 0, chain: '', count: 0, collapsed: true }
       ]
    };
 }

@@ -168,7 +168,7 @@
   border-radius: var(--fhql-radius);
 }
 .fhql-app.fhql-theme-ledger .fhql-folder:hover { background: var(--fhql-banner); filter: brightness(1.15); }
-.fhql-app.fhql-theme-ledger .fhql-folder :is(.fhql-folder-chevron, .fhql-row-status) { color: var(--fhql-banner-ink); }
+.fhql-app.fhql-theme-ledger .fhql-folder .fhql-row-status { color: var(--fhql-banner-ink); }
 .fhql-app.fhql-theme-ledger .fhql-folder:focus-visible { outline-color: var(--fhql-banner-ink); }
 
 /* Beacon: a banner stripe across the top. */
