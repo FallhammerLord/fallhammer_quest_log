@@ -1,4 +1,4 @@
-import { textEditor } from '../compat.js';
+import { notify, textEditor } from '../compat.js';
 import { addRequirementObjective, setRequirement } from '../data/deposits.js';
 import { MODULE_ID } from '../constants.js';
 import {
@@ -163,10 +163,18 @@ export function QuestSheetMixin(Base)
          if (node) { node.textContent = label; node.classList.toggle('is-failed', state === 'failed'); }
       }
 
+      /** Why the last save failed, for the label. */
+      #saveError = '';
+
       /** @returns {string} Label for the current save state. */
       #saveStateLabel()
       {
-         const keys = { saving: 'FHQL.QuestLog.Saving', saved: 'FHQL.QuestLog.Saved', failed: 'FHQL.QuestLog.SaveFailed' };
+         if (this.#saveState === 'failed')
+         {
+            if (game.socket && !game.socket.connected) { return game.i18n.localize('FHQL.QuestLog.SaveOffline'); }
+            return game.i18n.format('FHQL.QuestLog.SaveFailed', { reason: this.#saveError.slice(0, 160) });
+         }
+         const keys = { saving: 'FHQL.QuestLog.Saving', saved: 'FHQL.QuestLog.Saved' };
          return keys[this.#saveState] ? game.i18n.localize(keys[this.#saveState]) : '';
       }
 
@@ -378,7 +386,10 @@ export function QuestSheetMixin(Base)
          catch (err)
          {
             console.error(`${MODULE_ID} | Save failed`, err);
+            // Say why: "check your connection" was shown for every failure, connection or not.
+            this.#saveError = err?.message ?? String(err);
             this.#setSaveState('failed');
+            notify('error', this.#saveStateLabel());
          }
       }
 

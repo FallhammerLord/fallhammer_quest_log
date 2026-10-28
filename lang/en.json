@@ -29,7 +29,8 @@
       "Open": "Open Quest Log",
       "Saving": "Saving…",
       "Saved": "Saved",
-      "SaveFailed": "Couldn't save. Check your connection and try again."
+      "SaveFailed": "Couldn't save: {reason}",
+      "SaveOffline": "Couldn't save: not connected to the server. Try again once reconnected."
     },
     "Quest": {
       "NewName": "New Quest",
