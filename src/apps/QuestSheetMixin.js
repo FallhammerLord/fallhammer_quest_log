@@ -22,7 +22,15 @@ import {
 } from './sheet/panels.js';
 
 /** Update option marking a text edit made from this window, so it re-renders lightly and keeps focus. */
-const QUIET = { fhqlQuiet: true };
+/**
+ * Update options for saves made while typing (no redraw of the window being typed in). A fresh object
+ * every time: Foundry writes into the options it is given (the parent document among them), so one
+ * shared object carried a quest page's parent into the next quest rename, which then failed with
+ * "JournalEntry is not a valid embedded Document within the JournalEntry Document".
+ *
+ * @returns {{ fhqlQuiet: true }} Options for one update.
+ */
+const quiet = () => ({ fhqlQuiet: true });
 
 /** Size and place are saved this long (ms) after the last move or resize, so a drag writes once. */
 const MEMORY_DELAY = 500;
@@ -409,15 +417,15 @@ export function QuestSheetMixin(Base)
 
          switch (field)
          {
-            case 'name': return renameQuest(entry, value, QUIET);
+            case 'name': return renameQuest(entry, value, quiet());
             case 'status': return setStatus(entry, value);
             case 'inProgress': return updateQuest(entry, { 'system.inProgress': value });
-            case 'giver.name': return updateQuest(entry, { 'system.giver.name': value }, QUIET);
+            case 'giver.name': return updateQuest(entry, { 'system.giver.name': value }, quiet());
             case 'image': return updateQuest(entry, { 'system.image': value });
             case 'description': return updateQuest(entry, { 'system.description': value });
             case 'playerNotes': return savePlayerNotes(this, entry, value);
             case 'gmNotes': return setGmNotes(entry, value);
-            case 'objective.name': return updateQuest(entry, { [`system.objectives.${objectiveId}.name`]: value }, QUIET);
+            case 'objective.name': return updateQuest(entry, { [`system.objectives.${objectiveId}.name`]: value }, quiet());
             case 'objective.hidden': return updateQuest(entry, { [`system.objectives.${objectiveId}.hidden`]: value });
             case 'objective.count':
             {
@@ -425,7 +433,7 @@ export function QuestSheetMixin(Base)
                return updateQuest(entry, { [`system.objectives.${objectiveId}.requirement.count`]: count });
             }
             case 'objective.mode': return updateQuest(entry, { [`system.objectives.${objectiveId}.requirement.mode`]: value });
-            case 'reward.name': return updateQuest(entry, { [`system.rewards.${rewardId}.name`]: value }, QUIET);
+            case 'reward.name': return updateQuest(entry, { [`system.rewards.${rewardId}.name`]: value }, quiet());
             case 'reward.hidden': return updateQuest(entry, { [`system.rewards.${rewardId}.hidden`]: value });
             case 'reward.claimLimit': return updateQuest(entry, { [`system.rewards.${rewardId}.claimLimit`]: value });
          }

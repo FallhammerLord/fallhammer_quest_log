@@ -4,6 +4,7 @@
 
 First feature-complete preview. Requires Foundry VTT v14.
 
+- Fixed: renaming a quest a second time failed ("JournalEntry is not a valid embedded Document"). A failed save now says why, instead of always blaming the connection.
 - The quest giver's picture is 100px (Foundry's token size) down the header's left edge, with the title, status line and buttons beside it; it no longer changes size on redraws or theme changes. Edit moves to the top right beside ⋮, and the GM's Pop out into the ⋮ menu, so the status buttons fit one row; players keep their Pop out button. Status badges are one size everywhere, header included.
 - Three text sizes across every theme: panel headings, body, and small (secondary text, counts, small buttons and badges). Pictures share one size; icon buttons are all 28px; the list toolbar's controls share one height.
 - One size for small things on a line: heading buttons, the GM-only tag and subquest status badges match the tallies; list counts share one size (a finished family's turns green); the subquest unlink button matches the eye and lock; a narrow Rewards heading shows 1/3.

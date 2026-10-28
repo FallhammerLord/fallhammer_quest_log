@@ -304,8 +304,9 @@ export async function renameQuest(entry, name, options = {})
 {
    name = name.trim();
    if (!name || name === entry.name) { return; }
-   await entry.update({ name }, options);
-   await questPage(entry)?.update({ name }, options);
+   // Each update gets its own copy: Foundry writes into the options object it is given.
+   await entry.update({ name }, { ...options });
+   await questPage(entry)?.update({ name }, { ...options });
 }
 
 /**

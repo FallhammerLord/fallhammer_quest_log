@@ -116,6 +116,33 @@ check([parent, child, loose, grandchild].every((e) => e.folder?.id === act2.id),
 await quests.setParent(parent, grandchild.id);
 check(quests.questPage(parent).system.parentQuest === '', 'a parent below the quest is refused (no loops)');
 
+// Renaming twice: Foundry writes into the options it is given (an embedded update records its parent).
+// One options object shared across updates once made every second title save fail.
+{
+   const seen = [];
+   const mutate = (doc, parent) => async (data, options = {}) =>
+   {
+      if (options.parent && options.parent !== parent) { throw new Error('JournalEntry is not a valid embedded Document within the JournalEntry Document'); }
+      seen.push(options);
+      options.parent = parent;
+      Object.assign(doc, data);
+   };
+   const page = { type: QUEST_TYPE, system: {} };
+   const entry = { id: 'rn', name: 'Old', pages: [page] };
+   page.update = mutate(page, entry);
+   entry.update = mutate(entry, null);
+   const opts = { fhqlQuiet: true };
+   let error = null;
+   try
+   {
+      await quests.renameQuest(entry, 'First', opts);
+      await quests.renameQuest(entry, 'Second', opts);
+   }
+   catch (err) { error = err; }
+   check(!error && entry.name === 'Second' && page.name === 'Second', 'a quest can be renamed again (each update gets its own options)');
+   check(!('parent' in opts) && new Set(seen).size === seen.length, 'renaming never hands Foundry the caller\'s options object, or one twice');
+}
+
 // Reordering: objectives take the new order; ids left out keep their place after it.
 {
    const page = quests.questPage(parent);
